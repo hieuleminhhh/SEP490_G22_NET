@@ -164,5 +164,31 @@ namespace EHM_API.Controllers
 
             return Ok(sortedDishes);
         }
+        [HttpPatch("{dishId}/status")]
+        public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
+        {
+            if (updateDishStatusDTO == null)
+            {
+                return BadRequest(new { message = "Invalid data" });
+            }
+
+            var existingDish = await _dishService.GetDishByIdAsync(dishId);
+            if (existingDish == null)
+            {
+                return NotFound(new { message = "Dish not found" });
+            }
+
+            var updatedDish = await _dishService.UpdateDishStatusAsync(dishId, updateDishStatusDTO.IsActive);
+            if (updatedDish == null)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the dish status" });
+            }
+
+            return Ok(new
+            {
+                message = "Dish status updated successfully",                
+            });
+        }
+
     }
 }
