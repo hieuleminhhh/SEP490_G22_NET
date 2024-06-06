@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
@@ -16,6 +17,7 @@ namespace EHM_API.Services
         Task<IEnumerable<DishDTOAll>> SearchDishesAsync(string name);
         Task<IEnumerable<DishDTOAll>> GetAllDishesAsync();
         Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);
-       
+        Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize);
+
     }
 }

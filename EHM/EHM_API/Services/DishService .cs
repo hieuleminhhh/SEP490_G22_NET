@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
@@ -103,5 +104,25 @@ namespace EHM_API.Services
             }
             return dishDTOs;
         }
+        public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize)
+        {
+            var pagedDishes = await _dishRepository.GetDishesAsync(search, page, pageSize);
+            var dishDTOs = _mapper.Map<IEnumerable<DishDTOAll>>(pagedDishes.Items);
+
+            foreach (var dishDto in dishDTOs)
+            {
+                if (dishDto.CategoryId.HasValue)
+                {
+                    var category = await _context.Categories.FindAsync(dishDto.CategoryId.Value);
+                    if (category != null)
+                    {
+                        dishDto.CategoryName = category.CategoryName;
+                    }
+                }
+            }
+
+            return new PagedResult<DishDTOAll>(dishDTOs, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+        }
+
     }
 }
