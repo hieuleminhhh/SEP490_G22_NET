@@ -2,6 +2,7 @@
 using EHM_API.DTOs.CategoryDTO;
 using EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO;
 using EHM_API.Models;
 
@@ -33,6 +34,7 @@ namespace EHM_API.Map
             CreateMap<Category, ViewCategoryDTO>().ReverseMap();
 
             CreateMap<Combo, ComboDTO>().ReverseMap();
+            CreateMap(typeof(PagedResult<>), typeof(PagedResult<>));
         }
     }
 }

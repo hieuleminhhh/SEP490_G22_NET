@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj": {}
+    "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj": {
+    "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
+        "projectUniqueName": "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
         "projectName": "EHM_API",
-        "projectPath": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
-        "packagesPath": "C:\\Users\\hp\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\obj\\",
+        "projectPath": "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
+        "packagesPath": "C:\\Users\\lenovo\\.nuget\\packages\\",
+        "outputPath": "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\hp\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -86,7 +86,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
         }
       }
     }

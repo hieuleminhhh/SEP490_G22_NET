@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
@@ -26,6 +27,20 @@ namespace EHM_API.Controllers
         {
             var dishes = await _dishService.GetAllDishesAsync();
             return Ok(dishes);
+        }
+
+        [HttpGet("ListDishes")]
+        public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishes(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? search = null)
+        {
+            if (page <= 0) page = 1;
+            if (pageSize <= 0) pageSize = 10;
+
+            var result = await _dishService.GetDishesAsync(search, page, pageSize);
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
