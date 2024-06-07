@@ -47,7 +47,7 @@ namespace EHM_API.Repositories
             return dish;
         }
 
-       
+
 
         public async Task DeleteIngredientsAsync(int dishId)
         {
@@ -137,11 +137,34 @@ namespace EHM_API.Repositories
                 ImageUrl = d.ImageUrl,
                 CategoryId = d.CategoryId,
                 CategoryName = d.Category?.CategoryName,
-                IsActive = d.IsActive
+                IsActive = d.IsActive,
+                DiscountId = d.DishId,
+
             }).ToList();
 
             return new PagedResult<DishDTOAll>(dishDTOs, totalDishes, page, pageSize);
         }
+        public async Task<Dish> GetDishByIdAsync(int dishId)
+        {
+            return await _context.Dishes.FindAsync(dishId);
+        }
+
+        public async Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive)
+        {
+            var dish = await _context.Dishes.FindAsync(dishId);
+            if (dish == null)
+            {
+                return null;
+            }
+
+            dish.IsActive = isActive;
+            _context.Dishes.Update(dish);
+            await _context.SaveChangesAsync();
+
+            return dish;
+        }
+
 
     }
+
 }
