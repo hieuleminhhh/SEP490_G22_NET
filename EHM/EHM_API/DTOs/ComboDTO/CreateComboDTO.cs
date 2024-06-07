@@ -1,8 +1,7 @@
 ﻿namespace EHM_API.DTOs.ComboDTO
 {
-	public class ComboDTO
+	public class CreateComboDTO
 	{
-		public int ComboId { get; set; }
 		public string? NameCombo { get; set; }
 		public decimal? Price { get; set; }
 		public string? Note { get; set; }

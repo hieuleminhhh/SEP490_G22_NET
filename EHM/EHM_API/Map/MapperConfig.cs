@@ -33,7 +33,10 @@ namespace EHM_API.Map
             CreateMap<CreateCategory, Category>().ReverseMap();
             CreateMap<Category, ViewCategoryDTO>().ReverseMap();
 
-            CreateMap<Combo, ComboDTO>().ReverseMap();
+			CreateMap<Combo, ComboDTO>().ReverseMap();
+			CreateMap<CreateComboDishDTO, Combo>().ReverseMap();
+
+			CreateMap<Combo, ComboDTO>().ReverseMap();
             CreateMap(typeof(PagedResult<>), typeof(PagedResult<>));
         }
     }

@@ -42,7 +42,7 @@ namespace EHM_API.Services
 				throw new ArgumentException("Category name cannot be null or empty.");
 			}
 
-			
+
 			var existingCategory = await _categoryRepository.FindByNameAsync(categoryDTO.CategoryName);
 			if (existingCategory != null)
 			{
@@ -74,7 +74,7 @@ namespace EHM_API.Services
 			return await _categoryRepository.DeleteAsync(id);
 		}
 
-		public async Task<CategoryDTO> GetCategoryByNameAsync(string categoryName) 
+		public async Task<CategoryDTO> GetCategoryByNameAsync(string categoryName)
 		{
 			var category = await _categoryRepository.FindByNameAsync(categoryName);
 			if (category == null)
