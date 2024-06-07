@@ -1,15 +1,20 @@
 ﻿using EHM_API.DTOs.ComboDTO;
 
-public interface IComboService
+namespace EHM_API.Services
 {
-    Task<IEnumerable<ComboDTO>> GetAllCombosAsync();
+	public interface IComboService
+	{
+		Task<IEnumerable<ComboDTO>> GetAllCombosAsync();
 
-    Task<ComboDTO> GetComboByIdAsync(int comboId);
-    Task<ViewComboDTO> GetComboWithDishesAsync(int comboId);
+		Task<ComboDTO> GetComboByIdAsync(int comboId);
+		Task<ViewComboDTO> GetComboWithDishesAsync(int comboId);
 
-    Task<ComboDTO> CreateComboAsync(ComboDTO comboDTO);
+		Task<CreateComboDTO> CreateComboAsync(CreateComboDTO comboDTO);
 
-    Task UpdateComboAsync(int id, ComboDTO comboDTO);
+		Task UpdateComboAsync(int id, ComboDTO comboDTO);
 
-    Task DeleteComboAsync(int id);
+		Task DeleteComboAsync(int id);
+		Task<List<ComboDTO>> SearchComboByNameAsync(string name);
+		Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO);
+	}
 }
