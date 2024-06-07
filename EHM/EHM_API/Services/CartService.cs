@@ -1,6 +1,7 @@
 ﻿using EHM_API.DTOs.CartDTO;
 using EHM_API.Models;
 using EHM_API.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -78,18 +79,33 @@ namespace EHM_API.Services
 					}
 				}
 
+			
+				var existingOrderDetail = orderDetails.FirstOrDefault(od =>
+					(dish != null && od.DishId == dish.DishId) ||
+					(combo != null && od.ComboId == combo.ComboId));
 
-				var orderDetail = new OrderDetail
+				if (existingOrderDetail != null)
 				{
-					DishId = dish != null ? (int?)dish.DishId : null,
-					ComboId = combo != null ? (int?)combo.ComboId : null,
-					Quantity = item.Quantity,
-					UnitPrice = item.UnitPrice,
-					Note = item.Note
-				};
+					
+					existingOrderDetail.Quantity += item.Quantity;
+					existingOrderDetail.UnitPrice += item.UnitPrice; 
+					totalAmount += (item.UnitPrice ?? 0m) * (item.Quantity ?? 0);
+				}
+				else
+				{
+					
+					var orderDetail = new OrderDetail
+					{
+						DishId = dish != null ? (int?)dish.DishId : null,
+						ComboId = combo != null ? (int?)combo.ComboId : null,
+						Quantity = item.Quantity,
+						UnitPrice = item.UnitPrice,
+						Note = item.Note
+					};
 
-				orderDetails.Add(orderDetail);
-				totalAmount += item.UnitPrice ?? 0m;
+					orderDetails.Add(orderDetail);
+					totalAmount += (item.UnitPrice ?? 0m) * (item.Quantity ?? 0);
+				}
 			}
 
 			var order = new Order
@@ -101,16 +117,15 @@ namespace EHM_API.Services
 				TotalAmount = totalAmount,
 				OrderDetails = orderDetails,
 				Deposits = checkoutDTO.Deposits
-
 			};
 
 			await _cartRepository.CreateOrder(order);
 		}
 
 
-
 		public async Task<CheckoutSuccessDTO> GetCheckoutSuccessInfoAsync(string guestPhone)
 		{
+
 			var order = await _cartRepository.GetOrderByGuestPhoneAsync(guestPhone);
 
 			if (order == null)
@@ -120,53 +135,39 @@ namespace EHM_API.Services
 
 			var guestAddress = order.GuestPhoneNavigation?.Addresses?.FirstOrDefault();
 
-			// Lấy danh sách OrderDetail và lọc ra các OrderDetail có Dish
+
 			var orderDetails = order.OrderDetails
-				.Where(od => od.DishId != null)
-				.Select(od =>
+				.Select(od => new OrderDetailDTO
 				{
-					var dish = od.Dish;
-					return new OrderDetailDTO
-					{
-						DishId = dish?.DishId ?? 0,
-						ItemName = dish?.ItemName,
-						ItemDescription = dish?.ItemDescription,
-						Price = dish?.Price,
-						ImageUrl = dish?.ImageUrl,
-						CategoryName = dish?.Category?.CategoryName,
-						DiscountId = dish?.DiscountId
-					};
+					NameCombo = od.Combo?.NameCombo,
+					ItemName = od.Dish?.ItemName,
+					UnitPrice = od.UnitPrice,
+					Quantity = od.Quantity,
+					Note = od.Note,
+					ImageUrl = od.Dish?.ImageUrl ?? od.Combo?.ImageUrl
 				}).ToList();
 
-			// Lấy danh sách ComboDetail từ OrderDetail có Combo
-			var comboDetails = order.OrderDetails
-				.Where(od => od.ComboId != null)
-				.Select(od =>
-				{
-					var combo = od.Combo;
-					return new ComboDetailDTO
-					{
-						ComboId = combo.ComboId,
-						NameCombo = combo.NameCombo,
-						Price = combo.Price,
-						Note = combo.Note,
-						ImageUrl = combo.ImageUrl
-					};
-				}).ToList();
+			var totalAmount = orderDetails.Sum(od => (od.UnitPrice ?? 0));
 
 			var checkoutSuccessDTO = new CheckoutSuccessDTO
 			{
+				GuestPhone = order.GuestPhone,
+				Email = order.GuestPhoneNavigation?.Email,
+				AddressId = guestAddress?.AddressId ?? 0,
 				GuestAddress = guestAddress?.GuestAddress,
 				ConsigneeName = guestAddress?.ConsigneeName,
-				GuestPhone = order.GuestPhone,
+				OrderDate = order.OrderDate,
+				Status = order.Status ?? 0,
 				ReceivingTime = order.RecevingOrder,
-				Email = order.GuestPhoneNavigation?.Email,
+				TotalAmount = totalAmount,
+				Deposits = order.Deposits,
 				OrderDetails = orderDetails,
-				ComboDetails = comboDetails
 			};
 
 			return checkoutSuccessDTO;
 		}
+
+
 
 
 	}
