@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
@@ -26,6 +27,20 @@ namespace EHM_API.Controllers
         {
             var dishes = await _dishService.GetAllDishesAsync();
             return Ok(dishes);
+        }
+
+        [HttpGet("ListDishes")]
+        public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishes(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? search = null)
+        {
+            if (page <= 0) page = 1;
+            if (pageSize <= 0) pageSize = 10;
+
+            var result = await _dishService.GetDishesAsync(search, page, pageSize);
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -149,5 +164,31 @@ namespace EHM_API.Controllers
 
             return Ok(sortedDishes);
         }
+        [HttpPatch("{dishId}/status")]
+        public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
+        {
+            if (updateDishStatusDTO == null)
+            {
+                return BadRequest(new { message = "Invalid data" });
+            }
+
+            var existingDish = await _dishService.GetDishByIdAsync(dishId);
+            if (existingDish == null)
+            {
+                return NotFound(new { message = "Dish not found" });
+            }
+
+            var updatedDish = await _dishService.UpdateDishStatusAsync(dishId, updateDishStatusDTO.IsActive);
+            if (updatedDish == null)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the dish status" });
+            }
+
+            return Ok(new
+            {
+                message = "Dish status updated successfully",                
+            });
+        }
+
     }
 }

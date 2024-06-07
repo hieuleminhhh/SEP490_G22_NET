@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +47,7 @@ namespace EHM_API.Repositories
             return dish;
         }
 
-       
+
 
         public async Task DeleteIngredientsAsync(int dishId)
         {
@@ -103,5 +105,66 @@ namespace EHM_API.Repositories
 
             return await query.ToListAsync();
         }
+        public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize)
+        {
+            /*if (!string.IsNullOrEmpty(search) && page != 1)
+            {
+                return await GetDishesAsync(search, 1, pageSize);
+            }*/
+            var query = _context.Dishes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower();
+                query = query.Where(d => d.ItemName.ToLower().Contains(search));
+            }
+
+            var totalDishes = await query.CountAsync();
+
+            var dishes = await query
+                .Include(d => d.Category)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var dishDTOs = dishes.Select(d => new DishDTOAll
+            {
+                DishId = d.DishId,
+                ItemName = d.ItemName,
+                ItemDescription = d.ItemDescription,
+                DiscountedPrice = d.Discount?.DiscountAmount,
+                Price = d.Price,
+                ImageUrl = d.ImageUrl,
+                CategoryId = d.CategoryId,
+                CategoryName = d.Category?.CategoryName,
+                IsActive = d.IsActive,
+                DiscountId = d.DishId,
+
+            }).ToList();
+
+            return new PagedResult<DishDTOAll>(dishDTOs, totalDishes, page, pageSize);
+        }
+        public async Task<Dish> GetDishByIdAsync(int dishId)
+        {
+            return await _context.Dishes.FindAsync(dishId);
+        }
+
+        public async Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive)
+        {
+            var dish = await _context.Dishes.FindAsync(dishId);
+            if (dish == null)
+            {
+                return null;
+            }
+
+            dish.IsActive = isActive;
+            _context.Dishes.Update(dish);
+            await _context.SaveChangesAsync();
+
+            return dish;
+        }
+
+
     }
+
 }

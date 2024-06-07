@@ -104,7 +104,7 @@ namespace EHM_API.Controllers
 				return NotFound();
 			}
 
-		
+
 			var duplicateCategory = await _categoryService.GetCategoryByNameAsync(categoryName);
 			if (duplicateCategory != null && duplicateCategory.CategoryId != id)
 			{
