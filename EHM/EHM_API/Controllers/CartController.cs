@@ -117,7 +117,7 @@ namespace EHM_API.Controllers
 
 			if (checkoutSuccessInfo == null || string.IsNullOrWhiteSpace(checkoutSuccessInfo.GuestPhone))
 			{
-				return NotFound("Không tìm thấy thông tin đơn hàng cho số điện thoại khách hàng này.");
+				return NotFound("No order information found for this customer phone number.");
 			}
 
 			return Ok(checkoutSuccessInfo);
