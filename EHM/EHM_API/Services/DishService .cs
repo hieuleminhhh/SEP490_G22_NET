@@ -123,6 +123,10 @@ namespace EHM_API.Services
 
             return new PagedResult<DishDTOAll>(dishDTOs, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
         }
+        public async Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive)
+        {
+            return await _dishRepository.UpdateDishStatusAsync(dishId, isActive);
+        }
 
     }
 }

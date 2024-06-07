@@ -52,7 +52,7 @@ namespace EHM_API.Repositories
 			return true;
 		}
 
-		public async Task<Category> FindByNameAsync(string categoryName) 
+		public async Task<Category> FindByNameAsync(string categoryName)
 		{
 			return await _context.Categories.FirstOrDefaultAsync(c => c.CategoryName == categoryName);
 		}
