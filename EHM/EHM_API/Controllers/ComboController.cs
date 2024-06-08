@@ -68,11 +68,12 @@ namespace EHM_API.Controllers
 			try
 			{
 
-				var existingCombo = await _comboService.SearchComboByNameAsync(comboDTO.NameCombo);
-				if (existingCombo != null)
+				var existingCombos = await _comboService.SearchComboByNameAsync(comboDTO.NameCombo);
+				if (existingCombos.Any())
 				{
-					return Conflict("Tên Combo đã tồn tại.");
+					return Conflict("The name Combo already exists.");
 				}
+
 
 
 				var createdCombo = await _comboService.CreateComboAsync(comboDTO);

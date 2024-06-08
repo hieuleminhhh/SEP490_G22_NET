@@ -22,12 +22,14 @@ namespace EHM_API.Services
 		public async Task<IEnumerable<ComboDTO>> GetAllCombosAsync()
 		{
 			var combos = await _comboRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<ComboDTO>>(combos);
+			var activeCombos = combos.Where(c => c.IsActive == true);
+			return _mapper.Map<IEnumerable<ComboDTO>>(activeCombos);
 		}
 		public async Task<List<ComboDTO>> SearchComboByNameAsync(string name)
 		{
 			var combos = await _comboRepository.SearchComboByNameAsync(name);
-			return _mapper.Map<List<ComboDTO>>(combos);
+			var activeCombos = combos.Where(c => c.IsActive == true);
+			return _mapper.Map<List<ComboDTO>>(activeCombos);
 		}
 
 		public async Task<ViewComboDTO> GetComboWithDishesAsync(int comboId)
