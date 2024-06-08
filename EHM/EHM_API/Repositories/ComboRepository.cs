@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.ComboDTO;
+using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -100,5 +101,23 @@ namespace EHM_API.Repositories
 				await _context.SaveChangesAsync();
 			}
 		}
-	}
+        public async Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+        {
+            IQueryable<Combo> query = _context.Combos;
+
+            switch (sortField)
+            {
+                case SortField.Name:
+                    query = sortOrder == SortOrder.Ascending ? query.OrderBy(c => c.NameCombo) : query.OrderByDescending(c => c.NameCombo);
+                    break;
+                case SortField.Price:
+                    query = sortOrder == SortOrder.Ascending ? query.OrderBy(c => c.Price) : query.OrderByDescending(c => c.Price);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid sort field.");
+            }
+
+            return await query.ToListAsync();
+        }
+    }
 }
