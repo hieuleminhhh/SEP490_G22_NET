@@ -320,6 +320,8 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.AccountId).HasColumnName("AccountID");
 
+                entity.Property(e => e.Address).HasMaxLength(100);
+
                 entity.Property(e => e.Deposits).HasColumnType("money");
 
                 entity.Property(e => e.GuestPhone)
