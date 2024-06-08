@@ -57,44 +57,48 @@ namespace EHM_API.Controllers
         [HttpPost]
         public async Task<ActionResult> PostDish(CreateDishDTO createDishDTO)
         {
-            string message = "";
+            var errors = new Dictionary<string, string>();
 
             if (string.IsNullOrEmpty(createDishDTO.ItemName))
             {
-                message = "Not empty";
-                return BadRequest(new { message });
+                errors["itemName"] = "Item name is required";
             }
-            if (createDishDTO.ItemName.Length > 100)
+            else if (createDishDTO.ItemName.Length > 100)
             {
-                message = "The dish name cannot exceed 100 characters";
-                return BadRequest(new { message });
+                errors["itemName"] = "The dish name cannot exceed 100 characters";
             }
+
             if (createDishDTO.Price < 0)
             {
-                message = "Price cannot be negative";
-                return BadRequest(new { message });
+                errors["price"] = "Price cannot be negative";
             }
+
             var existingDishes = await _dishService.SearchDishesAsync(createDishDTO.ItemName);
             if (existingDishes.Any())
             {
-                message = "The dish name already exists";
-                return BadRequest(new { message });
+                errors["itemName"] = "The dish name already exists";
             }
+
             if (createDishDTO.ItemDescription?.Length > 500)
             {
-                message = "Food description must not exceed 500 characters";
-                return BadRequest(new { message });
+                errors["itemDescription"] = "Food description must not exceed 500 characters";
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(errors);
             }
 
             var createdDish = await _dishService.CreateDishAsync(createDishDTO);
 
-            message = "The dish has been created successfully";
             return Ok(new
             {
-                message,
+                message = "The dish has been created successfully",
                 createdDish
             });
         }
+
+
 
         [HttpPut("{dishId}")]
         public async Task<IActionResult> PutDish(int dishId, UpdateDishDTO updateDishDTO)
