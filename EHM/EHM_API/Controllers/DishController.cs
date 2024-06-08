@@ -148,26 +148,23 @@ namespace EHM_API.Controllers
             var dishes = await _dishService.SearchDishesAsync(name);
             return Ok(dishes);
         }
-
-        [HttpGet("sorted")]
-        public async Task<ActionResult<IEnumerable<DishDTOAll>>> GetDishesSorted([FromQuery] SortField sortField, [FromQuery] SortOrder sortOrder)
+        [HttpGet("sorted-dishes")]
+        public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder)
         {
-            IEnumerable<DishDTOAll> sortedDishes;
-
-            switch (sortField)
+            if (string.IsNullOrEmpty(categoryName))
             {
-                case SortField.Name:
-                    sortedDishes = await _dishService.GetAllSortedAsync(SortField.Name, sortOrder);
-                    break;
-                case SortField.Price:
-                    sortedDishes = await _dishService.GetAllSortedAsync(SortField.Price, sortOrder);
-                    break;
-                default:
-                    return BadRequest("Invalid sort field.");
+                
+                var dishes = await _dishService.GetAllSortedAsync(sortField, sortOrder);
+                return Ok(dishes);
             }
-
-            return Ok(sortedDishes);
+            else
+            {
+                
+                var sortedDishes = await _dishService.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
+                return Ok(sortedDishes);
+            }
         }
+
         [HttpPatch("{dishId}/status")]
         public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
         {
