@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.ComboDTO;
+using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Repositories;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
@@ -124,5 +125,11 @@ namespace EHM_API.Controllers
 				return BadRequest(ex.Message);
 			}
 		}
-	}
+        [HttpGet("sorted-combos")]
+        public async Task<IActionResult> GetSortedCombosAsync(SortField sortField, SortOrder sortOrder)
+        {
+            var combos = await _comboService.GetAllSortedAsync(sortField, sortOrder);
+            return Ok(combos);
+        }
+    }
 }
