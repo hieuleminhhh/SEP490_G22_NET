@@ -20,6 +20,7 @@ namespace EHM_API.Models
         public decimal? TotalAmount { get; set; }
         public string? GuestPhone { get; set; }
         public decimal Deposits { get; set; }
+        public string? Address { get; set; }
 
         public virtual Account? Account { get; set; }
         public virtual Guest? GuestPhoneNavigation { get; set; }

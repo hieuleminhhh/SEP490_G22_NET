@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.ComboDTO;
+using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using System.Collections.Generic;
@@ -94,5 +95,10 @@ namespace EHM_API.Services
 
 			return _mapper.Map<CreateComboDishDTO>(createdCombo);
 		}
-	}
+        public async Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+        {
+            var combos = await _comboRepository.GetAllSortedAsync(sortField, sortOrder);
+            return _mapper.Map<IEnumerable<ComboDTO>>(combos);
+        }
+    }
 }

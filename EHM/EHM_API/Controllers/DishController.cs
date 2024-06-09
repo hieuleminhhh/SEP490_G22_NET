@@ -57,44 +57,48 @@ namespace EHM_API.Controllers
         [HttpPost]
         public async Task<ActionResult> PostDish(CreateDishDTO createDishDTO)
         {
-            string message = "";
+            var errors = new Dictionary<string, string>();
 
             if (string.IsNullOrEmpty(createDishDTO.ItemName))
             {
-                message = "Not empty";
-                return BadRequest(new { message });
+                errors["itemName"] = "Item name is required";
             }
-            if (createDishDTO.ItemName.Length > 100)
+            else if (createDishDTO.ItemName.Length > 100)
             {
-                message = "The dish name cannot exceed 100 characters";
-                return BadRequest(new { message });
+                errors["itemName"] = "The dish name cannot exceed 100 characters";
             }
+
             if (createDishDTO.Price < 0)
             {
-                message = "Price cannot be negative";
-                return BadRequest(new { message });
+                errors["price"] = "Price cannot be negative";
             }
+
             var existingDishes = await _dishService.SearchDishesAsync(createDishDTO.ItemName);
             if (existingDishes.Any())
             {
-                message = "The dish name already exists";
-                return BadRequest(new { message });
+                errors["itemName"] = "The dish name already exists";
             }
+
             if (createDishDTO.ItemDescription?.Length > 500)
             {
-                message = "Food description must not exceed 500 characters";
-                return BadRequest(new { message });
+                errors["itemDescription"] = "Food description must not exceed 500 characters";
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(errors);
             }
 
             var createdDish = await _dishService.CreateDishAsync(createDishDTO);
 
-            message = "The dish has been created successfully";
             return Ok(new
             {
-                message,
+                message = "The dish has been created successfully",
                 createdDish
             });
         }
+
+
 
         [HttpPut("{dishId}")]
         public async Task<IActionResult> PutDish(int dishId, UpdateDishDTO updateDishDTO)
@@ -144,26 +148,23 @@ namespace EHM_API.Controllers
             var dishes = await _dishService.SearchDishesAsync(name);
             return Ok(dishes);
         }
-
-        [HttpGet("sorted")]
-        public async Task<ActionResult<IEnumerable<DishDTOAll>>> GetDishesSorted([FromQuery] SortField sortField, [FromQuery] SortOrder sortOrder)
+        [HttpGet("sorted-dishes")]
+        public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder)
         {
-            IEnumerable<DishDTOAll> sortedDishes;
-
-            switch (sortField)
+            if (string.IsNullOrEmpty(categoryName))
             {
-                case SortField.Name:
-                    sortedDishes = await _dishService.GetAllSortedAsync(SortField.Name, sortOrder);
-                    break;
-                case SortField.Price:
-                    sortedDishes = await _dishService.GetAllSortedAsync(SortField.Price, sortOrder);
-                    break;
-                default:
-                    return BadRequest("Invalid sort field.");
+                
+                var dishes = await _dishService.GetAllSortedAsync(sortField, sortOrder);
+                return Ok(dishes);
             }
-
-            return Ok(sortedDishes);
+            else
+            {
+                
+                var sortedDishes = await _dishService.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
+                return Ok(sortedDishes);
+            }
         }
+
         [HttpPatch("{dishId}/status")]
         public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
         {

@@ -25,7 +25,7 @@ public class ImageController : ControllerBase
             Directory.CreateDirectory(uploads);
         }
 
-        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+        var fileName = Path.GetFileName(image.FileName);
         var filePath = Path.Combine(uploads, fileName);
 
         using (var stream = new FileStream(filePath, FileMode.Create))
@@ -35,6 +35,7 @@ public class ImageController : ControllerBase
         var imageUrl = $"{Request.Scheme}://{Request.Host}/api/Image/getImage/{fileName}";
         return Ok(new { imageUrl });
     }
+
 
     [HttpGet("getImage/{fileName}")]
     public IActionResult GetImage(string fileName)

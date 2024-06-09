@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.ComboDTO;
+using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 
 namespace EHM_API.Repositories
@@ -22,5 +23,6 @@ namespace EHM_API.Repositories
 		Task DeleteAsync(int id);
 
 		Task<List<Combo>> SearchComboByNameAsync(string name);
-	}
+        Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);
+    }
 }
