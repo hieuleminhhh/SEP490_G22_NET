@@ -15,8 +15,14 @@ namespace EHM_API.Map
         {
             CreateMap<Dish, DishDTOAll>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.CategoryName : null))
-                .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src => src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : src.Price))
-                .ForMember(dest => dest.DiscountPercentage, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.DiscountAmount : (int?)null));
+                .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
+                    src => src.DiscountId == null ? (decimal?)null :
+                           src.DiscountId == 0 ? src.Price :
+                           src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
+                    ))
+                .ForMember(dest => dest.DiscountPercentage, opt => opt.MapFrom(
+                    src => src.DiscountId == null || src.DiscountId == 0 ? (int?)null : src.Discount != null ? src.Discount.DiscountAmount : (int?)null
+                    ));
 
             CreateMap<CreateDishDTO, Dish>();
             CreateMap<UpdateDishDTO, Dish>();

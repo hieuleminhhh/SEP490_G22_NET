@@ -59,6 +59,7 @@ namespace EHM_API.Controllers
         {
             var errors = new Dictionary<string, string>();
 
+            
             if (string.IsNullOrEmpty(createDishDTO.ItemName))
             {
                 errors["itemName"] = "Item name is required";
@@ -67,28 +68,33 @@ namespace EHM_API.Controllers
             {
                 errors["itemName"] = "The dish name cannot exceed 100 characters";
             }
+            else
+            {
+                
+                var existingDishes = await _dishService.SearchDishesAsync(createDishDTO.ItemName);
+                if (existingDishes.Any())
+                {
+                    errors["itemName"] = "The dish name already exists";
+                }
+            }
 
             if (createDishDTO.Price < 0)
             {
                 errors["price"] = "Price cannot be negative";
             }
 
-            var existingDishes = await _dishService.SearchDishesAsync(createDishDTO.ItemName);
-            if (existingDishes.Any())
-            {
-                errors["itemName"] = "The dish name already exists";
-            }
-
-            if (createDishDTO.ItemDescription?.Length > 500)
+            if (createDishDTO.ItemDescription != null && createDishDTO.ItemDescription.Length > 500)
             {
                 errors["itemDescription"] = "Food description must not exceed 500 characters";
             }
 
+            
             if (errors.Any())
             {
                 return BadRequest(errors);
             }
 
+          
             var createdDish = await _dishService.CreateDishAsync(createDishDTO);
 
             return Ok(new
@@ -103,31 +109,46 @@ namespace EHM_API.Controllers
         [HttpPut("{dishId}")]
         public async Task<IActionResult> PutDish(int dishId, UpdateDishDTO updateDishDTO)
         {
+        
             string message = "";
             var existingDish = await _dishService.GetDishByIdAsync(dishId);
-            var updatedDish = await _dishService.UpdateDishAsync(dishId, updateDishDTO);
+            if (existingDish == null)
+            {
+                return NotFound(new { message = "Dish not found" });
+            }
 
+           
             if (string.IsNullOrEmpty(updateDishDTO.ItemName))
             {
-                message = "Not empty";
+                message = "Item name is required";
                 return BadRequest(new { message });
             }
-            if (updateDishDTO.ItemName.Length > 100)
+            else if (updateDishDTO.ItemName.Length > 100)
             {
                 message = "The dish name cannot exceed 100 characters";
                 return BadRequest(new { message });
             }
+
+         
             if (updateDishDTO.Price < 0)
             {
                 message = "Price cannot be negative";
                 return BadRequest(new { message });
             }
-            
-            if (updateDishDTO.ItemDescription?.Length > 500)
+
+   
+            if (updateDishDTO.ItemDescription != null && updateDishDTO.ItemDescription.Length > 500)
             {
                 message = "Food description must not exceed 500 characters";
                 return BadRequest(new { message });
             }
+
+            var updatedDish = await _dishService.UpdateDishAsync(dishId, updateDishDTO);
+            if (updatedDish == null)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the dish" });
+            }
+
             message = "The dish has been successfully updated";
             return Ok(new
             {
@@ -136,7 +157,8 @@ namespace EHM_API.Controllers
             });
         }
 
-      
+
+
 
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<DishDTOAll>>> SearchDishes([FromQuery] string? name)
