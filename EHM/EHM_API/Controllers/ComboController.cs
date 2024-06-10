@@ -318,30 +318,40 @@ namespace EHM_API.Controllers
 
 			return Ok(result);
 		}
-        [HttpPatch("{comboId}/status")]
-        public async Task<IActionResult> UpdateDishStatus(int comboId, [FromBody] UpdateComboDTO updateCombo)
+		[HttpPatch("{comboId}/status")]
+		public async Task<IActionResult> UpdateDishStatus(int comboId, [FromBody] UpdateComboDTO updateCombo)
+		{
+			if (updateCombo == null)
+			{
+				return BadRequest(new { message = "Invalid data" });
+			}
+
+			var existingCombo = await _comboService.GetComboByIdAsync(comboId);
+			if (existingCombo == null)
+			{
+				return NotFound(new { message = "Dish not found" });
+			}
+
+			var updatedCombo = await _comboService.UpdateComboStatusAsync(comboId, (bool)updateCombo.IsActive);
+			if (updatedCombo == null)
+			{
+				return StatusCode(500, new { message = "An error occurred while updating the dish status" });
+			}
+
+			return Ok(new
+			{
+				message = "Combo status updated successfully",
+			});
+		}
+        [HttpGet("GetComboById/{id}")]
+        public async Task<ActionResult<ComboDTO>> GetCombo(int id)
         {
-            if (updateCombo == null)
+            var combo = await _comboService.GetComboByIdAsync(id);
+            if (combo == null)
             {
-                return BadRequest(new { message = "Invalid data" });
+                return NotFound();
             }
-
-            var existingCombo = await _comboService.GetComboByIdAsync(comboId);
-            if (existingCombo == null)
-            {
-                return NotFound(new { message = "Dish not found" });
-            }
-
-            var updatedCombo = await _comboService.UpdateComboStatusAsync(comboId, (bool)updateCombo.IsActive);
-            if (updatedCombo == null)
-            {
-                return StatusCode(500, new { message = "An error occurred while updating the dish status" });
-            }
-
-            return Ok(new
-            {
-                message = "Combo status updated successfully",
-            });
+            return Ok(combo);
         }
     }
 }
