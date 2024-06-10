@@ -8,6 +8,7 @@ namespace EHM_API.Models
         public Combo()
         {
             OrderDetails = new HashSet<OrderDetail>();
+            Dishes = new HashSet<Dish>();
         }
 
         public int ComboId { get; set; }
@@ -18,5 +19,7 @@ namespace EHM_API.Models
         public bool? IsActive { get; set; }
 
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+
+        public virtual ICollection<Dish> Dishes { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Repositories;
 using EHM_API.Services;
@@ -104,12 +105,18 @@ namespace EHM_API.Controllers
 		{
 			try
 			{
-				var createdCombo = await _comboService.CreateComboWithDishesAsync(createComboDishDTO);
-				return CreatedAtAction(nameof(GetCombos), new { createdCombo });
+				var existingCombos = await _comboService.SearchComboByNameAsync(createComboDishDTO.NameCombo);
+				if (existingCombos.Any())
+				{
+					return Conflict("The name Combo already exists.");
+				}
+
+				var result = await _comboService.CreateComboWithDishesAsync(createComboDishDTO);
+				return Ok(result);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return StatusCode(500, ex.Message);
 			}
 		}
 

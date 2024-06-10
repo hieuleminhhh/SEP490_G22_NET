@@ -337,13 +337,13 @@
     "Parameters": [
       {
         "Name": "createComboDishDTO",
-        "Type": "EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -786,6 +786,42 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.VnpayController",
+    "Method": "SimulatePayment",
+    "RelativePath": "api/Vnpay/simulate-payment",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "vnp_TxnRef",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "vnp_Amount",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "vnp_TransactionNo",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "vnp_ResponseCode",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "vnp_TransactionStatus",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.WeatherForecastController",
