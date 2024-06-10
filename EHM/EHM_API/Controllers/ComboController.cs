@@ -1,5 +1,7 @@
 ﻿using EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Repositories;
 using EHM_API.Services;
@@ -298,10 +300,48 @@ namespace EHM_API.Controllers
 
 
 		[HttpGet("sorted-combos")]
-        public async Task<IActionResult> GetSortedCombosAsync(SortField sortField, SortOrder sortOrder)
+		public async Task<IActionResult> GetSortedCombosAsync(SortField sortField, SortOrder sortOrder)
+		{
+			var combos = await _comboService.GetAllSortedAsync(sortField, sortOrder);
+			return Ok(combos);
+		}
+		[HttpGet("ListCombo")]
+		public async Task<ActionResult<PagedResult<ComboDTO>>> GetListCombo(
+		[FromQuery] int page = 1,
+		[FromQuery] int pageSize = 10,
+		[FromQuery] string? search = null)
+		{
+			if (page <= 0) page = 1;
+			if (pageSize <= 0) pageSize = 10;
+
+			var result = await _comboService.GetComboAsync(search, page, pageSize);
+
+			return Ok(result);
+		}
+        [HttpPatch("{comboId}/status")]
+        public async Task<IActionResult> UpdateDishStatus(int comboId, [FromBody] UpdateComboDTO updateCombo)
         {
-            var combos = await _comboService.GetAllSortedAsync(sortField, sortOrder);
-            return Ok(combos);
+            if (updateCombo == null)
+            {
+                return BadRequest(new { message = "Invalid data" });
+            }
+
+            var existingCombo = await _comboService.GetComboByIdAsync(comboId);
+            if (existingCombo == null)
+            {
+                return NotFound(new { message = "Dish not found" });
+            }
+
+            var updatedCombo = await _comboService.UpdateComboStatusAsync(comboId, (bool)updateCombo.IsActive);
+            if (updatedCombo == null)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the dish status" });
+            }
+
+            return Ok(new
+            {
+                message = "Combo status updated successfully",
+            });
         }
     }
 }

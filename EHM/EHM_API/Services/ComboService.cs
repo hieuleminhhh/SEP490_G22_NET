@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using EHM_API.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -90,9 +93,19 @@ namespace EHM_API.Services
 
 
 		public async Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+		{
+			var combos = await _comboRepository.GetAllSortedAsync(sortField, sortOrder);
+			return _mapper.Map<IEnumerable<ComboDTO>>(combos);
+		}
+        public async Task<PagedResult<ComboDTO>> GetComboAsync(string search, int page, int pageSize)
         {
-            var combos = await _comboRepository.GetAllSortedAsync(sortField, sortOrder);
-            return _mapper.Map<IEnumerable<ComboDTO>>(combos);
+            var pagedDishes = await _comboRepository.GetComboAsync(search, page, pageSize);
+            var comboDTO = _mapper.Map<IEnumerable<ComboDTO>>(pagedDishes.Items);
+            return new PagedResult<ComboDTO>(comboDTO, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+        }
+        public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
+        {
+            return await _comboRepository.UpdateComboStatusAsync(comboId, isActive);
         }
     }
 }
