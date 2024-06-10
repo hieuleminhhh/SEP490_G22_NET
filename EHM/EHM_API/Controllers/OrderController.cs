@@ -68,10 +68,29 @@ namespace EHM_API.Controllers
             return NoContent();
         }
 
+		[HttpPut("{id}/cancel")]
+		public async Task<IActionResult> CancelOrder(int id)
+		{
+			try
+			{
+				var isCancelled = await _orderService.CancelOrderAsync(id);
+				if (!isCancelled)
+				{
+					return NotFound(new { message = "Order not found." });
+				}
+
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "A problem happened while handling your request." });
+			}
+		}
 
 
 
-        [HttpDelete("{id}")]
+
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var existingOrder = await _orderService.GetOrderByIdAsync(id);

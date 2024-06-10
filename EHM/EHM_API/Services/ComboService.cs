@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using EHM_API.Repositories;
@@ -22,12 +23,14 @@ namespace EHM_API.Services
 		public async Task<IEnumerable<ComboDTO>> GetAllCombosAsync()
 		{
 			var combos = await _comboRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<ComboDTO>>(combos);
+			var activeCombos = combos.Where(c => c.IsActive == true);
+			return _mapper.Map<IEnumerable<ComboDTO>>(activeCombos);
 		}
 		public async Task<List<ComboDTO>> SearchComboByNameAsync(string name)
 		{
 			var combos = await _comboRepository.SearchComboByNameAsync(name);
-			return _mapper.Map<List<ComboDTO>>(combos);
+			var activeCombos = combos.Where(c => c.IsActive == true);
+			return _mapper.Map<List<ComboDTO>>(activeCombos);
 		}
 
 		public async Task<ViewComboDTO> GetComboWithDishesAsync(int comboId)
@@ -77,25 +80,12 @@ namespace EHM_API.Services
 
 		public async Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO)
 		{
-			var combo = _mapper.Map<Combo>(createComboDishDTO);
-
-			// Thêm Combo vào cơ sở dữ liệu
-			var createdCombo = await _comboRepository.AddAsync(combo);
-
-			// Thêm các Dish vào ComboDetail
-			foreach (var dishDto in createComboDishDTO.Dishes)
-			{
-				var comboDetail = new ComboDetail
-				{
-					ComboId = createdCombo.ComboId,
-					DishId = dishDto.DishId
-				};
-				await _comboRepository.AddComboDetailAsync(comboDetail);
-			}
-
-			return _mapper.Map<CreateComboDishDTO>(createdCombo);
+			var result = await _comboRepository.CreateComboWithDishesAsync(createComboDishDTO);
+			return result;
 		}
-        public async Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+
+
+		public async Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
         {
             var combos = await _comboRepository.GetAllSortedAsync(sortField, sortOrder);
             return _mapper.Map<IEnumerable<ComboDTO>>(combos);

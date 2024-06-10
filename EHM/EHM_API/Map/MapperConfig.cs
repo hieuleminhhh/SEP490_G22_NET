@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.CategoryDTO;
 using EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.DishDTO;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO;
@@ -33,11 +34,19 @@ namespace EHM_API.Map
             CreateMap<CreateCategory, Category>().ReverseMap();
             CreateMap<Category, ViewCategoryDTO>().ReverseMap();
 
-			CreateMap<Combo, ComboDTO>().ReverseMap();
-			CreateMap<CreateComboDishDTO, Combo>().ReverseMap();
+		      CreateMap<Combo, ComboDTO>().ReverseMap();
 
-			CreateMap<Combo, ComboDTO>().ReverseMap();
-            CreateMap(typeof(PagedResult<>), typeof(PagedResult<>));
+			CreateMap<CreateComboDishDTO, Combo>()
+				.ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes.Select(d => new ComboDetail { DishId = d.DishId })));
+
+			CreateMap<ComboDetail, Dish>().ReverseMap();
+
+
+
+			CreateMap<CreateComboDTO, Combo>().ReverseMap();
+
+
+			CreateMap(typeof(PagedResult<>), typeof(PagedResult<>));
         }
     }
 }
