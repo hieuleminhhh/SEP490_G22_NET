@@ -38,7 +38,7 @@ namespace EHM_API.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+
                 optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=sa;TrustServerCertificate=true");
             }
         }
@@ -128,28 +128,29 @@ namespace EHM_API.Models
                 entity.Property(e => e.Price).HasColumnType("money");
             });
 
-            modelBuilder.Entity<ComboDetail>(entity =>
-            {
-                entity.HasNoKey();
+			modelBuilder.Entity<ComboDetail>(entity =>
+			{
+				entity.HasKey(e => new { e.ComboId, e.DishId });
 
-                entity.Property(e => e.ComboId).HasColumnName("ComboID");
+				entity.Property(e => e.ComboId).HasColumnName("ComboID");
 
-                entity.Property(e => e.DishId).HasColumnName("DishID");
+				entity.Property(e => e.DishId).HasColumnName("DishID");
 
-                entity.HasOne(d => d.Combo)
-                    .WithMany()
-                    .HasForeignKey(d => d.ComboId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ComboDetails_Combo");
+				entity.HasOne(d => d.Combo)
+					.WithMany()
+					.HasForeignKey(d => d.ComboId)
+					.OnDelete(DeleteBehavior.ClientSetNull)
+					.HasConstraintName("FK_ComboDetails_Combo");
 
-                entity.HasOne(d => d.Dish)
-                    .WithMany()
-                    .HasForeignKey(d => d.DishId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ComboDetails_Dish");
-            });
+				entity.HasOne(d => d.Dish)
+					.WithMany()
+					.HasForeignKey(d => d.DishId)
+					.OnDelete(DeleteBehavior.ClientSetNull)
+					.HasConstraintName("FK_ComboDetails_Dish");
+			});
 
-            modelBuilder.Entity<Discount>(entity =>
+
+			modelBuilder.Entity<Discount>(entity =>
             {
                 entity.ToTable("Discount");
 

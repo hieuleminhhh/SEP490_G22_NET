@@ -13,7 +13,7 @@ namespace EHM_API.Services
         Task<OrderDTOAll> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto);
         Task<bool> DeleteOrderAsync(int id);
 
+		Task<bool> CancelOrderAsync(int orderId);
 
-
-    }
+	}
 }
