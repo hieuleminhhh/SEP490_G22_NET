@@ -1,6 +1,8 @@
 ﻿using EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
+using EHM_API.Models;
 
 namespace EHM_API.Services
 {
@@ -21,6 +23,10 @@ namespace EHM_API.Services
 		Task<List<ComboDTO>> SearchComboByNameAsync(string name);
 		Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO);
 
-        Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);
+		Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);
+		Task<PagedResult<ComboDTO>> GetComboAsync(string search, int page, int pageSize);
+		Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive);
+
+
     }
 }
