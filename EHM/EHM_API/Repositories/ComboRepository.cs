@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -88,20 +89,70 @@ namespace EHM_API.Repositories
 
 		public async Task AddComboDetailAsync(ComboDetail comboDetail)
 		{
+			if (comboDetail == null)
+				throw new ArgumentNullException(nameof(comboDetail));
+
+			var combo = await _context.Combos.FindAsync(comboDetail.ComboId);
+			var dish = await _context.Dishes.FindAsync(comboDetail.DishId);
+
+			if (combo == null || dish == null)
+				throw new ArgumentException("Combo or Dish does not exist.");
+
 			_context.ComboDetails.Add(comboDetail);
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task DeleteAsync(int id)
+		public async Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO)
 		{
-			var combo = await _context.Combos.FindAsync(id);
+
+			var combo = new Combo
+			{
+				NameCombo = createComboDishDTO.NameCombo,
+				Price = createComboDishDTO.Price,
+				Note = createComboDishDTO.Note,
+				ImageUrl = createComboDishDTO.ImageUrl,
+				IsActive = true
+			};
+
+			_context.Combos.Add(combo);
+			await _context.SaveChangesAsync();
+
+			foreach (var dishDto in createComboDishDTO.Dishes)
+			{
+				var comboDetail = new ComboDetail
+				{
+					ComboId = combo.ComboId,
+					DishId = dishDto.DishId
+				};
+
+
+				_context.ComboDetails.Add(comboDetail);
+			}
+
+			await _context.SaveChangesAsync();
+
+
+			return createComboDishDTO;
+		}
+		public async Task UpdateStatusAsync(int comboId, bool isActive)
+		{
+			var combo = await _context.Combos.FindAsync(comboId);
 			if (combo != null)
 			{
-				_context.Combos.Remove(combo);
+				combo.IsActive = isActive;
 				await _context.SaveChangesAsync();
 			}
 		}
-        public async Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+
+		public async Task<bool> CanActivateComboAsync(int comboId)
+		{
+			var combo = await _context.Combos
+				.Where(c => c.ComboId == comboId && c.IsActive == false)
+				.FirstOrDefaultAsync();
+			return combo != null;
+		}
+
+		public async Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
         {
             IQueryable<Combo> query = _context.Combos;
 

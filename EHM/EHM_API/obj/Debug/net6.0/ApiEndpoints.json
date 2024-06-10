@@ -252,17 +252,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "EHM_API.DTOs.ComboDTO.CreateComboDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.ComboController",
@@ -313,9 +303,25 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.ComboController",
-    "Method": "DeleteCombo",
-    "RelativePath": "api/Combo/{id}",
-    "HttpMethod": "DELETE",
+    "Method": "CancelCombo",
+    "RelativePath": "api/Combo/{id}/cancel",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ComboController",
+    "Method": "ReactivateCombo",
+    "RelativePath": "api/Combo/{id}/reactivate",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -337,13 +343,13 @@
     "Parameters": [
       {
         "Name": "createComboDishDTO",
-        "Type": "EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -404,6 +410,27 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ComboController",
+    "Method": "GetSortedCombosAsync",
+    "RelativePath": "api/Combo/sorted-combos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "sortField",
+        "Type": "EHM_API.Enums.EHM_API.Models.SortField",
+        "IsRequired": false
+      },
+      {
+        "Name": "sortOrder",
+        "Type": "EHM_API.Enums.EHM_API.Models.SortOrder",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.DishController",
@@ -573,12 +600,17 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.DishController",
-    "Method": "GetDishesSorted",
-    "RelativePath": "api/Dish/sorted",
+    "Method": "GetSortedDishesByCategoryAsync",
+    "RelativePath": "api/Dish/sorted-dishes",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
+      {
+        "Name": "categoryName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
       {
         "Name": "sortField",
         "Type": "EHM_API.Enums.EHM_API.Models.SortField",
@@ -590,17 +622,7 @@
         "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.DishDTO.DishDTOAll, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "ImageController",
@@ -645,6 +667,22 @@
       {
         "Name": "model",
         "Type": "EHM_API.DTOs.HomeDTO.LoginDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.MoMoQRController",
+    "Method": "GenerateQRCode",
+    "RelativePath": "api/MoMoQR/{orderId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],
@@ -718,6 +756,22 @@
     "Method": "DeleteOrder",
     "RelativePath": "api/orders/{id}",
     "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "CancelOrder",
+    "RelativePath": "api/orders/{id}/cancel",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
