@@ -70,44 +70,17 @@ namespace EHM_API.Services
         public async Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
         {
             var dishes = await _dishRepository.GetAllSortedAsync(sortField, sortOrder);
-            return await MapDishesToDTOs(dishes);
+            return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
         }
         public async Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder)
         {
             var dishes = await _dishRepository.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
             return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
         }
-        private async Task<DishDTOAll> MapDishToDTO(Dish dish)
-        {
-            var dishDTO = _mapper.Map<DishDTOAll>(dish);
+       
 
-            if (dishDTO.CategoryId.HasValue)
-            {
-                var category = await _context.Categories.FindAsync(dishDTO.CategoryId.Value);
-                if (category != null)
-                {
-                    dishDTO.CategoryName = category.CategoryName;
-                }
-            }
+       
 
-            if (dish.Discount != null && dish.Price.HasValue)
-            {
-                dishDTO.DiscountPercentage = dish.Discount.DiscountAmount;
-                dishDTO.DiscountedPrice = dish.Price - (dish.Price * dish.Discount.DiscountAmount / 100);
-            }
-
-            return dishDTO;
-        }
-
-        private async Task<IEnumerable<DishDTOAll>> MapDishesToDTOs(IEnumerable<Dish> dishes)
-        {
-            var dishDTOs = new List<DishDTOAll>();
-            foreach (var dish in dishes)
-            {
-                dishDTOs.Add(await MapDishToDTO(dish));
-            }
-            return dishDTOs;
-        }
         public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize)
         {
             var pagedDishes = await _dishRepository.GetDishesAsync(search, page, pageSize);
