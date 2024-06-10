@@ -22,7 +22,8 @@ namespace EHM_API.Repositories
 		Task AddComboDetailAsync(ComboDetail comboDetail);
 		Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO);
 
-		Task DeleteAsync(int id);
+		Task UpdateStatusAsync(int comboId, bool isActive);
+		Task<bool> CanActivateComboAsync(int comboId);
 
 		Task<List<Combo>> SearchComboByNameAsync(string name);
         Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);

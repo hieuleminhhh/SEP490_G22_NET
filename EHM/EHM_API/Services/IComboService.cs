@@ -15,7 +15,9 @@ namespace EHM_API.Services
 
 		Task UpdateComboAsync(int id, ComboDTO comboDTO);
 
-		Task DeleteComboAsync(int id);
+		Task CancelComboAsync(int comboId);
+		Task<bool> ReactivateComboAsync(int comboId);
+
 		Task<List<ComboDTO>> SearchComboByNameAsync(string name);
 		Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO);
 
