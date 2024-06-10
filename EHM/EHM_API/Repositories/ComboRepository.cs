@@ -134,16 +134,25 @@ namespace EHM_API.Repositories
 
 			return createComboDishDTO;
 		}
-		public async Task DeleteAsync(int id)
+		public async Task UpdateStatusAsync(int comboId, bool isActive)
 		{
-			var combo = await _context.Combos.FindAsync(id);
+			var combo = await _context.Combos.FindAsync(comboId);
 			if (combo != null)
 			{
-				_context.Combos.Remove(combo);
+				combo.IsActive = isActive;
 				await _context.SaveChangesAsync();
 			}
 		}
-        public async Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+
+		public async Task<bool> CanActivateComboAsync(int comboId)
+		{
+			var combo = await _context.Combos
+				.Where(c => c.ComboId == comboId && c.IsActive == false)
+				.FirstOrDefaultAsync();
+			return combo != null;
+		}
+
+		public async Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
         {
             IQueryable<Combo> query = _context.Combos;
 

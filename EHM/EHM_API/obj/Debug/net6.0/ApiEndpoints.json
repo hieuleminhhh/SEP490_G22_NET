@@ -252,17 +252,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "EHM_API.DTOs.ComboDTO.CreateComboDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.ComboController",
@@ -313,9 +303,25 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.ComboController",
-    "Method": "DeleteCombo",
-    "RelativePath": "api/Combo/{id}",
-    "HttpMethod": "DELETE",
+    "Method": "CancelCombo",
+    "RelativePath": "api/Combo/{id}/cancel",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ComboController",
+    "Method": "ReactivateCombo",
+    "RelativePath": "api/Combo/{id}/reactivate",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -667,6 +673,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EHM_API.Controllers.MoMoQRController",
+    "Method": "GenerateQRCode",
+    "RelativePath": "api/MoMoQR/{orderId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "CreateOrder",
     "RelativePath": "api/orders",
@@ -786,42 +808,6 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "EHM_API.Controllers.VnpayController",
-    "Method": "SimulatePayment",
-    "RelativePath": "api/Vnpay/simulate-payment",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "vnp_TxnRef",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "vnp_Amount",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "vnp_TransactionNo",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "vnp_ResponseCode",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "vnp_TransactionStatus",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.WeatherForecastController",

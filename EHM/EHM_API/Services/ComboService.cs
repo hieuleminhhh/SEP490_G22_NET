@@ -67,15 +67,19 @@ namespace EHM_API.Services
 			await _comboRepository.UpdateAsync(existingCombo);
 		}
 
-		public async Task DeleteComboAsync(int id)
+		public async Task CancelComboAsync(int comboId)
 		{
-			var existingCombo = await _comboRepository.GetByIdAsync(id);
-			if (existingCombo == null)
-			{
-				throw new KeyNotFoundException($"Combo with ID {id} not found.");
-			}
+			await _comboRepository.UpdateStatusAsync(comboId, false);
+		}
 
-			await _comboRepository.DeleteAsync(id);
+		public async Task<bool> ReactivateComboAsync(int comboId)
+		{
+			if (await _comboRepository.CanActivateComboAsync(comboId))
+			{
+				await _comboRepository.UpdateStatusAsync(comboId, true);
+				return true;
+			}
+			return false;
 		}
 
 		public async Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO)
