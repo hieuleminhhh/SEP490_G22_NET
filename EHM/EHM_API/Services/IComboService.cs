@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
 using EHM_API.Enums.EHM_API.Models;
 
 namespace EHM_API.Services
@@ -17,6 +18,7 @@ namespace EHM_API.Services
 		Task DeleteComboAsync(int id);
 		Task<List<ComboDTO>> SearchComboByNameAsync(string name);
 		Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO);
+
         Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);
     }
 }
