@@ -127,7 +127,6 @@ namespace EHM_API.Services
 
 		public async Task<CheckoutSuccessDTO> GetCheckoutSuccessInfoAsync(string guestPhone)
 		{
-
 			var order = await _cartRepository.GetOrderByGuestPhoneAsync(guestPhone);
 
 			if (order == null)
@@ -137,17 +136,21 @@ namespace EHM_API.Services
 
 			var guestAddress = order.GuestPhoneNavigation?.Addresses?.FirstOrDefault();
 
-
 			var orderDetails = order.OrderDetails
-				.Select(od => new OrderDetailDTO
+				.Select(od => new OrderDetailsDTO
 				{
 					NameCombo = od.Combo?.NameCombo,
 					ItemName = od.Dish?.ItemName,
+					DishId = od.DishId ?? 0,
+					ComboId = od.ComboId ?? 0,
+					Price = od.Dish?.Price,
+					DiscountedPrice = od.Dish?.Discount != null ? (od.Dish.Price - (od.Dish.Price * od.Dish.Discount.DiscountAmount / 100)) : od.Dish?.Price,
 					UnitPrice = od.UnitPrice,
 					Quantity = od.Quantity,
 					Note = od.Note,
 					ImageUrl = od.Dish?.ImageUrl ?? od.Combo?.ImageUrl
-				}).ToList();
+				})
+				.ToList(); 
 
 			var totalAmount = orderDetails.Sum(od => (od.UnitPrice ?? 0));
 
@@ -169,6 +172,7 @@ namespace EHM_API.Services
 
 			return checkoutSuccessDTO;
 		}
+
 
 
 
