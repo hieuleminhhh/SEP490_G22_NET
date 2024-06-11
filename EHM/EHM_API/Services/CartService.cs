@@ -116,7 +116,8 @@ namespace EHM_API.Services
 				GuestPhone = guest.GuestPhone,
 				TotalAmount = totalAmount,
 				OrderDetails = orderDetails,
-				Deposits = checkoutDTO.Deposits
+				Deposits = checkoutDTO.Deposits,
+				Address = checkoutDTO.GuestAddress
 			};
 
 			await _cartRepository.CreateOrder(order);
