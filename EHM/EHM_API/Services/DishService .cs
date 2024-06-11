@@ -67,19 +67,19 @@ namespace EHM_API.Services
             return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
         }
 
-        public async Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+        public async Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder)
         {
             var dishes = await _dishRepository.GetAllSortedAsync(sortField, sortOrder);
             return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
         }
-        public async Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder)
+        public async Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
         {
             var dishes = await _dishRepository.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
             return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
         }
-       
 
-       
+
+
 
         public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize)
         {
