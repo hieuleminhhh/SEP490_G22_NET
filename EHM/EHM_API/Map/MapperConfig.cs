@@ -38,7 +38,25 @@ namespace EHM_API.Map
             CreateMap<UpdateOrderDTO, Order>();
             CreateMap<SearchOrdersRequestDTO, Order>();
 
-            CreateMap<Category, CategoryDTO>().ReverseMap();
+			CreateMap<OrderDetail, OrderDetailDTO>()
+		  .ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo.NameCombo))
+		  .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+		  .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.ImageUrl : src.Dish.ImageUrl));
+
+			CreateMap<Order, SearchPhoneOrderDTO>()
+				.ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
+				.ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+				.ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
+				.ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src =>
+					src.Deposits == 0 ? 1 :
+					src.Deposits == src.TotalAmount / 2 ? 2 :
+					src.Deposits == src.TotalAmount ? 3 : 0))
+				.ReverseMap();
+
+
+
+
+			CreateMap<Category, CategoryDTO>().ReverseMap();
             CreateMap<CreateCategory, Category>().ReverseMap();
             CreateMap<Category, ViewCategoryDTO>().ReverseMap();
 

@@ -40,16 +40,22 @@ public class OrderRepository : IOrderRepository
         return await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username);
     }
 
-    public async Task<IEnumerable<Order>> SearchAsync(string guestPhone)
-    {
-        return await _context.Orders
-                             .Include(o => o.Account)
-                             .Where(o => o.GuestPhone == guestPhone)
-                             .ToListAsync();
-    }
+	public async Task<IEnumerable<Order>> SearchAsync(string guestPhone)
+	{
+		return await _context.Orders
+							 .Include(o => o.Account)
+                             .Include(a => a.Address)
+							 .Include(o => o.OrderDetails)
+							.ThenInclude(od => od.Combo)
+							 .Include(o => o.OrderDetails)
+							.ThenInclude(od => od.Dish)
+							 .Where(o => o.GuestPhone == guestPhone)
+							 .ToListAsync();
+	}
 
 
-    public async Task<Order> UpdateAsync(Order order)
+
+	public async Task<Order> UpdateAsync(Order order)
     {
         _context.Entry(order).State = EntityState.Modified;
         await _context.SaveChangesAsync();

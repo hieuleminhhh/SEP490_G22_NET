@@ -7,6 +7,7 @@
 		public int AddressId { get; set; }
 		public string GuestAddress { get; set; }
 		public string ConsigneeName { get; set; }
+		public int OrderId { get; set; }
 		public DateTime? OrderDate { get; set; }
 		public int Status { get; set; }
 		public DateTime? ReceivingTime { get; set; }

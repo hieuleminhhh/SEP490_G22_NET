@@ -158,6 +158,7 @@ namespace EHM_API.Services
 				AddressId = guestAddress?.AddressId ?? 0,
 				GuestAddress = guestAddress?.GuestAddress,
 				ConsigneeName = guestAddress?.ConsigneeName,
+				OrderId = order.OrderId,
 				OrderDate = order.OrderDate,
 				Status = order.Status ?? 0,
 				ReceivingTime = order.RecevingOrder,
