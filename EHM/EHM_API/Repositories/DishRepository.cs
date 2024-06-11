@@ -35,6 +35,7 @@ namespace EHM_API.Repositories
 
         public async Task<Dish> AddAsync(Dish dish)
         {
+          
             _context.Dishes.Add(dish);
             await _context.SaveChangesAsync();
             return dish;
@@ -88,7 +89,7 @@ namespace EHM_API.Repositories
         {
             IQueryable<Dish> query = _context.Dishes
                 .Include(d => d.Category)
-                .Include(d => d.OrderDetails);
+                .Include(d => d.Discount);
 
             if (sortField.HasValue && sortOrder.HasValue)
             {
@@ -102,7 +103,7 @@ namespace EHM_API.Repositories
         {
             IQueryable<Dish> query = _context.Dishes
                 .Include(d => d.Category)
-                .Include(d => d.OrderDetails);
+                .Include(d => d.Discount);
 
             if (!string.IsNullOrEmpty(categoryName))
             {

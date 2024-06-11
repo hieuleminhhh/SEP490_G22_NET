@@ -92,7 +92,7 @@ namespace EHM_API.Services
 		}
 
 
-		public async Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+		public async Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder)
 		{
 			var combos = await _comboRepository.GetAllSortedAsync(sortField, sortOrder);
 			return _mapper.Map<IEnumerable<ComboDTO>>(combos);
