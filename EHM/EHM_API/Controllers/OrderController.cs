@@ -122,26 +122,27 @@ namespace EHM_API.Controllers
             return Ok(orderDTOs);
         }
 
-        [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<OrderDTOAll>>> SearchOrdersAsync([FromQuery] SearchOrdersRequestDTO request)
-        {
-            try
-            {
-                var guestPhone = request?.GuestPhone;
-                if (string.IsNullOrWhiteSpace(guestPhone))
-                {
-                    var allOrders = await _orderService.GetAllOrdersAsync();
-                    return Ok(allOrders);
-                }
 
-                var orders = await _orderService.SearchOrdersAsync(guestPhone);
-                return Ok(orders);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error");
-            }
-        }
+		[HttpGet("search")]
+		public async Task<IActionResult> SearchOrdersByGuestPhone(string guestPhone)
+		{
+			try
+			{
+				var orders = await _orderService.SearchOrdersAsync(guestPhone);
+				if (orders == null || !orders.Any())
+				{
+					return NotFound(new { message = "No orders found for the provided guest phone number." });
+				}
 
-    }
+				return Ok(orders);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "A problem happened while handling your request." });
+			}
+		}
+
+
+
+	}
 }
