@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using EHM_API.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -67,15 +70,19 @@ namespace EHM_API.Services
 			await _comboRepository.UpdateAsync(existingCombo);
 		}
 
-		public async Task DeleteComboAsync(int id)
+		public async Task CancelComboAsync(int comboId)
 		{
-			var existingCombo = await _comboRepository.GetByIdAsync(id);
-			if (existingCombo == null)
-			{
-				throw new KeyNotFoundException($"Combo with ID {id} not found.");
-			}
+			await _comboRepository.UpdateStatusAsync(comboId, false);
+		}
 
-			await _comboRepository.DeleteAsync(id);
+		public async Task<bool> ReactivateComboAsync(int comboId)
+		{
+			if (await _comboRepository.CanActivateComboAsync(comboId))
+			{
+				await _comboRepository.UpdateStatusAsync(comboId, true);
+				return true;
+			}
+			return false;
 		}
 
 		public async Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO)
@@ -86,9 +93,19 @@ namespace EHM_API.Services
 
 
 		public async Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+		{
+			var combos = await _comboRepository.GetAllSortedAsync(sortField, sortOrder);
+			return _mapper.Map<IEnumerable<ComboDTO>>(combos);
+		}
+        public async Task<PagedResult<ComboDTO>> GetComboAsync(string search, int page, int pageSize)
         {
-            var combos = await _comboRepository.GetAllSortedAsync(sortField, sortOrder);
-            return _mapper.Map<IEnumerable<ComboDTO>>(combos);
+            var pagedDishes = await _comboRepository.GetComboAsync(search, page, pageSize);
+            var comboDTO = _mapper.Map<IEnumerable<ComboDTO>>(pagedDishes.Items);
+            return new PagedResult<ComboDTO>(comboDTO, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+        }
+        public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
+        {
+            return await _comboRepository.UpdateComboStatusAsync(comboId, isActive);
         }
     }
 }

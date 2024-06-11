@@ -1,5 +1,7 @@
 ﻿using EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -134,32 +136,85 @@ namespace EHM_API.Repositories
 
 			return createComboDishDTO;
 		}
-		public async Task DeleteAsync(int id)
+		public async Task UpdateStatusAsync(int comboId, bool isActive)
 		{
-			var combo = await _context.Combos.FindAsync(id);
+			var combo = await _context.Combos.FindAsync(comboId);
 			if (combo != null)
 			{
-				_context.Combos.Remove(combo);
+				combo.IsActive = isActive;
 				await _context.SaveChangesAsync();
 			}
 		}
-        public async Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
-        {
-            IQueryable<Combo> query = _context.Combos;
 
-            switch (sortField)
+		public async Task<bool> CanActivateComboAsync(int comboId)
+		{
+			var combo = await _context.Combos
+				.Where(c => c.ComboId == comboId && c.IsActive == false)
+				.FirstOrDefaultAsync();
+			return combo != null;
+		}
+
+		public async Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+		{
+			IQueryable<Combo> query = _context.Combos;
+
+			switch (sortField)
+			{
+				case SortField.Name:
+					query = sortOrder == SortOrder.Ascending ? query.OrderBy(c => c.NameCombo) : query.OrderByDescending(c => c.NameCombo);
+					break;
+				case SortField.Price:
+					query = sortOrder == SortOrder.Ascending ? query.OrderBy(c => c.Price) : query.OrderByDescending(c => c.Price);
+					break;
+				default:
+					throw new ArgumentException("Invalid sort field.");
+			}
+
+			return await query.ToListAsync();
+		}
+        public async Task<PagedResult<ComboDTO>> GetComboAsync(string search, int page, int pageSize)
+        {
+            var query = _context.Combos.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
             {
-                case SortField.Name:
-                    query = sortOrder == SortOrder.Ascending ? query.OrderBy(c => c.NameCombo) : query.OrderByDescending(c => c.NameCombo);
-                    break;
-                case SortField.Price:
-                    query = sortOrder == SortOrder.Ascending ? query.OrderBy(c => c.Price) : query.OrderByDescending(c => c.Price);
-                    break;
-                default:
-                    throw new ArgumentException("Invalid sort field.");
+                search = search.ToLower();
+                query = query.Where(d => d.NameCombo.ToLower().Contains(search));
             }
 
-            return await query.ToListAsync();
+            var totalDishes = await query.CountAsync();
+
+            var dishes = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var comboDTO = dishes.Select(d => new ComboDTO
+            {
+				ComboId = d.ComboId,
+                NameCombo = d.NameCombo,
+				Price = d.Price,
+				Note = d.Note,
+				ImageUrl = d.ImageUrl,
+				IsActive = d.IsActive,
+
+            }).ToList();
+
+            return new PagedResult<ComboDTO>(comboDTO, totalDishes, page, pageSize);
+        }
+        public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
+        {
+            var cb = await _context.Combos.FindAsync(comboId);
+            if (cb == null)
+            {
+                return null;
+            }
+
+            cb.IsActive = isActive;
+            _context.Combos.Update(cb);
+            await _context.SaveChangesAsync();
+
+            return cb;
         }
     }
 }
