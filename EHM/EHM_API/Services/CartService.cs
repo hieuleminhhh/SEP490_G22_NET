@@ -89,7 +89,7 @@ namespace EHM_API.Services
 					
 					existingOrderDetail.Quantity += item.Quantity;
 					existingOrderDetail.UnitPrice += item.UnitPrice; 
-					totalAmount += (item.UnitPrice ?? 0m) * (item.Quantity ?? 0);
+					totalAmount += (item.UnitPrice ?? 0m);
 				}
 				else
 				{
@@ -104,7 +104,7 @@ namespace EHM_API.Services
 					};
 
 					orderDetails.Add(orderDetail);
-					totalAmount += (item.UnitPrice ?? 0m) * (item.Quantity ?? 0);
+					totalAmount += (item.UnitPrice ?? 0m);
 				}
 			}
 
@@ -116,7 +116,9 @@ namespace EHM_API.Services
 				GuestPhone = guest.GuestPhone,
 				TotalAmount = totalAmount,
 				OrderDetails = orderDetails,
-				Deposits = checkoutDTO.Deposits
+				Deposits = checkoutDTO.Deposits,
+				AddressId = checkoutDTO.AddressId
+				
 			};
 
 			await _cartRepository.CreateOrder(order);

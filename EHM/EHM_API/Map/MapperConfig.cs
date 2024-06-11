@@ -42,8 +42,8 @@ namespace EHM_API.Map
 
 		      CreateMap<Combo, ComboDTO>().ReverseMap();
 
-			CreateMap<CreateComboDishDTO, Combo>()
-				.ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes.Select(d => new ComboDetail { DishId = d.DishId })));
+			/*CreateMap<CreateComboDishDTO, Combo>()
+				.ForMember(dest => dest., opt => opt.MapFrom(src => src.Dishes.Select(d => new ComboDetail { DishId = d.DishId })));*/
 
 			CreateMap<ComboDetail, Dish>().ReverseMap();
 

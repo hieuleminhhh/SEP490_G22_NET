@@ -8,7 +8,6 @@ namespace EHM_API.Models
         public Dish()
         {
             OrderDetails = new HashSet<OrderDetail>();
-            Combos = new HashSet<Combo>();
         }
 
         public int DishId { get; set; }
@@ -23,7 +22,5 @@ namespace EHM_API.Models
         public virtual Category? Category { get; set; }
         public virtual Discount? Discount { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-
-        public virtual ICollection<Combo> Combos { get; set; }
     }
 }
