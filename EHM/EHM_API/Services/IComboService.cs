@@ -23,7 +23,7 @@ namespace EHM_API.Services
 		Task<List<ComboDTO>> SearchComboByNameAsync(string name);
 		Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO);
 
-		Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);
+		Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder);
 		Task<PagedResult<ComboDTO>> GetComboAsync(string search, int page, int pageSize);
 		Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive);
 

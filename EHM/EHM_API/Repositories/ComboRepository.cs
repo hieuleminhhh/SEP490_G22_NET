@@ -154,7 +154,7 @@ namespace EHM_API.Repositories
 			return combo != null;
 		}
 
-		public async Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+		public async Task<IEnumerable<Combo>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder)
 		{
 			IQueryable<Combo> query = _context.Combos;
 
