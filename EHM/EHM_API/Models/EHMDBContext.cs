@@ -38,8 +38,8 @@ namespace EHM_API.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-
-                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=sa;TrustServerCertificate=true");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=123;TrustServerCertificate=true");
             }
         }
 
@@ -83,13 +83,9 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.AddressId).HasColumnName("AddressID");
 
-                entity.Property(e => e.ConsigneeName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.ConsigneeName).HasMaxLength(50);
 
-                entity.Property(e => e.GuestAddress)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.GuestAddress).HasMaxLength(50);
 
                 entity.Property(e => e.GuestPhone)
                     .HasMaxLength(15)
@@ -128,29 +124,28 @@ namespace EHM_API.Models
                 entity.Property(e => e.Price).HasColumnType("money");
             });
 
-			modelBuilder.Entity<ComboDetail>(entity =>
-			{
-				entity.HasKey(e => new { e.ComboId, e.DishId });
+            modelBuilder.Entity<ComboDetail>(entity =>
+            {
+                entity.HasNoKey();
 
-				entity.Property(e => e.ComboId).HasColumnName("ComboID");
+                entity.Property(e => e.ComboId).HasColumnName("ComboID");
 
-				entity.Property(e => e.DishId).HasColumnName("DishID");
+                entity.Property(e => e.DishId).HasColumnName("DishID");
 
-				entity.HasOne(d => d.Combo)
-					.WithMany()
-					.HasForeignKey(d => d.ComboId)
-					.OnDelete(DeleteBehavior.ClientSetNull)
-					.HasConstraintName("FK_ComboDetails_Combo");
+                entity.HasOne(d => d.Combo)
+                    .WithMany()
+                    .HasForeignKey(d => d.ComboId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ComboDetails_Combo");
 
-				entity.HasOne(d => d.Dish)
-					.WithMany()
-					.HasForeignKey(d => d.DishId)
-					.OnDelete(DeleteBehavior.ClientSetNull)
-					.HasConstraintName("FK_ComboDetails_Dish");
-			});
+                entity.HasOne(d => d.Dish)
+                    .WithMany()
+                    .HasForeignKey(d => d.DishId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ComboDetails_Dish");
+            });
 
-
-			modelBuilder.Entity<Discount>(entity =>
+            modelBuilder.Entity<Discount>(entity =>
             {
                 entity.ToTable("Discount");
 
@@ -321,7 +316,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.AccountId).HasColumnName("AccountID");
 
-                entity.Property(e => e.Address).HasMaxLength(100);
+                entity.Property(e => e.AddressId).HasColumnName("AddressID");
 
                 entity.Property(e => e.Deposits).HasColumnType("money");
 
@@ -331,7 +326,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.InvoiceId).HasColumnName("InvoiceID");
 
-                entity.Property(e => e.OrderDate).HasColumnType("date");
+                entity.Property(e => e.OrderDate).HasColumnType("datetime");
 
                 entity.Property(e => e.RecevingOrder).HasColumnType("datetime");
 
@@ -343,6 +338,11 @@ namespace EHM_API.Models
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.AccountId)
                     .HasConstraintName("FK_Order_Staff");
+
+                entity.HasOne(d => d.Address)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.AddressId)
+                    .HasConstraintName("FK_Order_Address");
 
                 entity.HasOne(d => d.GuestPhoneNavigation)
                     .WithMany(p => p.Orders)
