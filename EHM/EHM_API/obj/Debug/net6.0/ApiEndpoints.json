@@ -252,17 +252,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "EHM_API.DTOs.ComboDTO.CreateComboDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.ComboController",
@@ -292,6 +282,27 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.ComboController",
+    "Method": "UpdateDishStatus",
+    "RelativePath": "api/Combo/{comboId}/status",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "comboId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updateCombo",
+        "Type": "EHM_API.DTOs.ComboDTO.UpdateComboDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ComboController",
     "Method": "UpdateCombo",
     "RelativePath": "api/Combo/{id}",
     "HttpMethod": "PUT",
@@ -313,9 +324,25 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.ComboController",
-    "Method": "DeleteCombo",
-    "RelativePath": "api/Combo/{id}",
-    "HttpMethod": "DELETE",
+    "Method": "CancelCombo",
+    "RelativePath": "api/Combo/{id}/cancel",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ComboController",
+    "Method": "ReactivateCombo",
+    "RelativePath": "api/Combo/{id}/reactivate",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -344,6 +371,68 @@
     "ReturnTypes": [
       {
         "Type": "EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ComboController",
+    "Method": "GetCombo",
+    "RelativePath": "api/Combo/GetComboById/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.ComboDTO.ComboDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ComboController",
+    "Method": "GetListCombo",
+    "RelativePath": "api/Combo/ListCombo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.HomeDTO.PagedResult\u00601[[EHM_API.DTOs.ComboDTO.ComboDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -667,6 +756,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EHM_API.Controllers.MoMoQRController",
+    "Method": "GenerateQRCode",
+    "RelativePath": "api/MoMoQR/{orderId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "CreateOrder",
     "RelativePath": "api/orders",
@@ -786,42 +891,6 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "EHM_API.Controllers.VnpayController",
-    "Method": "SimulatePayment",
-    "RelativePath": "api/Vnpay/simulate-payment",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "vnp_TxnRef",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "vnp_Amount",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "vnp_TransactionNo",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "vnp_ResponseCode",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "vnp_TransactionStatus",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.WeatherForecastController",
