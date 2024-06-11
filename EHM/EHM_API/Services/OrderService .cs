@@ -30,8 +30,14 @@
                 return orderDtos;
             }
 
+		public async Task<IEnumerable<SearchPhoneOrderDTO>> GetAllOrdersToSearchAsync()
+		{
+			var orders = await _orderRepository.GetAllAsync();
+			var orderDtos = _mapper.Map<IEnumerable<SearchPhoneOrderDTO>>(orders);
+			return orderDtos;
+		}
 
-            public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
+		public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
             {
 
                  var order = await _orderRepository.GetByIdAsync(id);
@@ -42,21 +48,23 @@
                 return _mapper.Map<OrderDTOAll>(order);
             }
 
-            public async Task<IEnumerable<OrderDTOAll>> SearchOrdersAsync(string guestPhone = null)
-            {
-                if (string.IsNullOrWhiteSpace(guestPhone))
-                {
-                    return await GetAllOrdersAsync();
-                }
+		public async Task<IEnumerable<SearchPhoneOrderDTO>> SearchOrdersAsync(string guestPhone = null)
+		{
+			if (string.IsNullOrWhiteSpace(guestPhone))
+			{
+				return await GetAllOrdersToSearchAsync();
+			}
 
-                var orders = await _orderRepository.SearchAsync(guestPhone);
-                var orderDtos = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
-                return orderDtos;
-            }
+			var orders = await _orderRepository.SearchAsync(guestPhone);
+			var orderDtos = _mapper.Map<IEnumerable<SearchPhoneOrderDTO>>(orders);
+			return orderDtos;
+		}
 
 
 
-            public async Task<OrderDTOAll> CreateOrderAsync(CreateOrderDTO createOrderDto)
+
+
+		public async Task<OrderDTOAll> CreateOrderAsync(CreateOrderDTO createOrderDto)
             {
 
                 var order = _mapper.Map<Order>(createOrderDto);

@@ -504,12 +504,12 @@
     "Parameters": [
       {
         "Name": "sortField",
-        "Type": "EHM_API.Enums.EHM_API.Models.SortField",
+        "Type": "System.Nullable\u00601[[EHM_API.Enums.EHM_API.Models.SortField, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": false
       },
       {
         "Name": "sortOrder",
-        "Type": "EHM_API.Enums.EHM_API.Models.SortOrder",
+        "Type": "System.Nullable\u00601[[EHM_API.Enums.EHM_API.Models.SortOrder, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": false
       }
     ],
@@ -696,12 +696,12 @@
       },
       {
         "Name": "sortField",
-        "Type": "EHM_API.Enums.EHM_API.Models.SortField",
+        "Type": "System.Nullable\u00601[[EHM_API.Enums.EHM_API.Models.SortField, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": false
       },
       {
         "Name": "sortOrder",
-        "Type": "EHM_API.Enums.EHM_API.Models.SortOrder",
+        "Type": "System.Nullable\u00601[[EHM_API.Enums.EHM_API.Models.SortOrder, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": false
       }
     ],
@@ -750,22 +750,6 @@
       {
         "Name": "model",
         "Type": "EHM_API.DTOs.HomeDTO.LoginDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "EHM_API.Controllers.MoMoQRController",
-    "Method": "GenerateQRCode",
-    "RelativePath": "api/MoMoQR/{orderId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "orderId",
-        "Type": "System.Int32",
         "IsRequired": true
       }
     ],
@@ -868,21 +852,151 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
-    "Method": "SearchOrdersAsync",
+    "Method": "SearchOrdersByGuestPhone",
     "RelativePath": "api/orders/search",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "GuestPhone",
+        "Name": "guestPhone",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.TablesController",
+    "Method": "GetTables",
+    "RelativePath": "api/Tables",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.Models.Table, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.TablesController",
+    "Method": "PostTable",
+    "RelativePath": "api/Tables",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "table",
+        "Type": "EHM_API.Models.Table",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.Models.Table",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.TablesController",
+    "Method": "GetTable",
+    "RelativePath": "api/Tables/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.Models.Table",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.TablesController",
+    "Method": "PutTable",
+    "RelativePath": "api/Tables/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "table",
+        "Type": "EHM_API.Models.Table",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.TablesController",
+    "Method": "ChangeTableStatus",
+    "RelativePath": "api/Tables/{id}/status",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.TablesController",
+    "Method": "SearchTables",
+    "RelativePath": "api/Tables/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "keyword",
         "Type": "System.String",
         "IsRequired": false
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.OrderDTO.OrderDTOAll, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.Models.Table, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
