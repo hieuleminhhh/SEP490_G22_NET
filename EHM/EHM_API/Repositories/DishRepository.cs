@@ -88,7 +88,7 @@ namespace EHM_API.Repositories
         {
             IQueryable<Dish> query = _context.Dishes
                 .Include(d => d.Category)
-                .Include(d => d.OrderDetails);
+                .Include(d => d.Discount);
 
             if (sortField.HasValue && sortOrder.HasValue)
             {
@@ -102,7 +102,7 @@ namespace EHM_API.Repositories
         {
             IQueryable<Dish> query = _context.Dishes
                 .Include(d => d.Category)
-                .Include(d => d.OrderDetails);
+                .Include(d => d.Discount);
 
             if (!string.IsNullOrEmpty(categoryName))
             {
