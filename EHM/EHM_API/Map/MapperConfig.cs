@@ -29,7 +29,9 @@ namespace EHM_API.Map
 
             CreateMap<Order, OrderDTOAll>()
                  .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Account != null ? src.Account.FirstName : null))
-                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Account != null ? src.Account.LastName : null));
+                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Account != null ? src.Account.LastName : null))
+                 .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address != null ? src.Address.GuestAddress : null))
+                 .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address != null ? src.Address.ConsigneeName : null));
 
 
             CreateMap<CreateOrderDTO, Order>();
