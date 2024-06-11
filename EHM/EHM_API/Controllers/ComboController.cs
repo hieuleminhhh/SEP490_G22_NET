@@ -300,9 +300,15 @@ namespace EHM_API.Controllers
 
 
 		[HttpGet("sorted-combos")]
-		public async Task<IActionResult> GetSortedCombosAsync(SortField sortField, SortOrder sortOrder)
+		public async Task<IActionResult> GetSortedCombosAsync(SortField? sortField, SortOrder? sortOrder)
 		{
-			var combos = await _comboService.GetAllSortedAsync(sortField, sortOrder);
+            if (!sortField.HasValue && !sortOrder.HasValue)
+            {
+                var allDishes = await _comboService.GetAllCombosAsync();
+                return Ok(allDishes);
+            }
+
+            var combos = await _comboService.GetAllSortedAsync(sortField, sortOrder);
 			return Ok(combos);
 		}
 		[HttpGet("ListCombo")]

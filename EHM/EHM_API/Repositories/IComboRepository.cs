@@ -27,7 +27,7 @@ namespace EHM_API.Repositories
 		Task<bool> CanActivateComboAsync(int comboId);
 
 		Task<List<Combo>> SearchComboByNameAsync(string name);
-		Task<IEnumerable<Combo>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);
+		Task<IEnumerable<Combo>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder);
 		Task<PagedResult<ComboDTO>> GetComboAsync(string search, int page, int pageSize);
 		Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive);
 
