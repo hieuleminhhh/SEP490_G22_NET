@@ -200,4 +200,3 @@ C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\obj\Debug\net
 C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\obj\Debug\net6.0\ref\EHM_API.dll
 C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\QRCoder.dll
 C:\GIT\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\QRCoder.dll
-C:\Users\hp\Desktop\GIT\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\EHM_API.dll
