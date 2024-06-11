@@ -241,22 +241,33 @@ namespace EHM_API.Controllers
             var dishes = await _dishService.SearchDishesAsync(name);
             return Ok(dishes);
         }
+
+
         [HttpGet("sorted-dishes")]
-        public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder)
+        public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
         {
+            if (string.IsNullOrEmpty(categoryName) && !sortField.HasValue && !sortOrder.HasValue)
+            {
+                var allDishes = await _dishService.GetAllDishesAsync();
+                return Ok(allDishes);
+            }
+
             if (string.IsNullOrEmpty(categoryName))
             {
-                
-                var dishes = await _dishService.GetAllSortedAsync(sortField, sortOrder);
+                var dishes = await _dishService.GetAllSortedAsync(sortField.Value, sortOrder.Value);
                 return Ok(dishes);
             }
-            else
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryName == categoryName);
+            if (category == null)
             {
-                
-                var sortedDishes = await _dishService.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
-                return Ok(sortedDishes);
+                return NotFound("Category not found.");
             }
+
+            var sortedDishes = await _dishService.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
+            return Ok(sortedDishes);
         }
+
+
 
         [HttpPatch("{dishId}/status")]
         public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
