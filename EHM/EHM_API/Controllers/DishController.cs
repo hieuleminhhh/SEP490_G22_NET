@@ -33,14 +33,14 @@ namespace EHM_API.Controllers
 
         [HttpGet("ListDishes")]
         public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishes(
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10,
-        [FromQuery] string? search = null)
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? search = null)
         {
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;
 
-            var result = await _dishService.GetDishesAsync(search, page, pageSize);
+            var result = await _dishService.GetDishesAsync(search?.Trim(), page, pageSize);
 
             return Ok(result);
         }
@@ -61,7 +61,10 @@ namespace EHM_API.Controllers
         {
             var errors = new Dictionary<string, string>();
 
-           
+            createDishDTO.ItemName = createDishDTO.ItemName?.Trim();
+            createDishDTO.ItemDescription = createDishDTO.ItemDescription?.Trim();
+            createDishDTO.ImageUrl = createDishDTO.ImageUrl?.Trim();
+
             if (string.IsNullOrEmpty(createDishDTO.ItemName))
             {
                 errors["itemName"] = "Item name is required";
@@ -78,7 +81,7 @@ namespace EHM_API.Controllers
                     errors["itemName"] = "The dish name already exists";
                 }
             }
-        
+
             if (!createDishDTO.Price.HasValue)
             {
                 errors["price"] = "Price is required";
@@ -88,7 +91,6 @@ namespace EHM_API.Controllers
                 errors["price"] = "Price must be between 0 and 1,000,000,000";
             }
 
-         
             if (string.IsNullOrEmpty(createDishDTO.ItemDescription))
             {
                 errors["itemDescription"] = "Item description is required";
@@ -97,7 +99,6 @@ namespace EHM_API.Controllers
             {
                 errors["itemDescription"] = "Food description must not exceed 500 characters";
             }
-
 
             if (!createDishDTO.CategoryId.HasValue)
             {
@@ -112,18 +113,15 @@ namespace EHM_API.Controllers
                 }
             }
 
-            
             if (string.IsNullOrEmpty(createDishDTO.ImageUrl))
             {
                 errors["image"] = "Image is required";
             }
 
-         
             if (errors.Any())
             {
                 return BadRequest(errors);
             }
-
 
             var createdDish = await _dishService.CreateDishAsync(createDishDTO);
 
@@ -133,9 +131,6 @@ namespace EHM_API.Controllers
                 createdDish
             });
         }
-
-
-
 
         [HttpPut("{dishId}")]
         public async Task<IActionResult> PutDish(int dishId, UpdateDishDTO updateDishDTO)
@@ -148,7 +143,10 @@ namespace EHM_API.Controllers
                 return NotFound(new { message = "Dish not found" });
             }
 
-           
+            updateDishDTO.ItemName = updateDishDTO.ItemName?.Trim();
+            updateDishDTO.ItemDescription = updateDishDTO.ItemDescription?.Trim();
+            updateDishDTO.ImageUrl = updateDishDTO.ImageUrl?.Trim();
+
             if (string.IsNullOrEmpty(updateDishDTO.ItemName))
             {
                 errors["itemName"] = "Item name is required";
@@ -166,7 +164,6 @@ namespace EHM_API.Controllers
                 }
             }
 
-        
             if (!updateDishDTO.Price.HasValue)
             {
                 errors["price"] = "Price is required";
@@ -176,7 +173,6 @@ namespace EHM_API.Controllers
                 errors["price"] = "Price must be between 0 and 1,000,000,000";
             }
 
-         
             if (string.IsNullOrEmpty(updateDishDTO.ItemDescription))
             {
                 errors["itemDescription"] = "Item description is required";
@@ -186,7 +182,6 @@ namespace EHM_API.Controllers
                 errors["itemDescription"] = "Food description must not exceed 500 characters";
             }
 
-            
             if (!updateDishDTO.CategoryId.HasValue)
             {
                 errors["categoryId"] = "Category is required";
@@ -200,19 +195,16 @@ namespace EHM_API.Controllers
                 }
             }
 
-           
             if (string.IsNullOrEmpty(updateDishDTO.ImageUrl))
             {
                 errors["image"] = "Image is required";
             }
 
-          
             if (errors.Any())
             {
                 return BadRequest(errors);
             }
 
-            
             var updatedDish = await _dishService.UpdateDishAsync(dishId, updateDishDTO);
             if (updatedDish == null)
             {
@@ -227,36 +219,43 @@ namespace EHM_API.Controllers
             });
         }
 
-
-
-
-
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<DishDTOAll>>> SearchDishes([FromQuery] string? name)
         {
-            if (name == null)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                return BadRequest("Not empty");
+                return BadRequest("Search term cannot be empty");
             }
-            var dishes = await _dishService.SearchDishesAsync(name);
+            var dishes = await _dishService.SearchDishesAsync(name.Trim());
             return Ok(dishes);
         }
+
+
         [HttpGet("sorted-dishes")]
-        public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder)
+        public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
         {
+            if (string.IsNullOrEmpty(categoryName) && !sortField.HasValue && !sortOrder.HasValue)
+            {
+                var allDishes = await _dishService.GetAllDishesAsync();
+                return Ok(allDishes);
+            }
+
             if (string.IsNullOrEmpty(categoryName))
             {
-                
-                var dishes = await _dishService.GetAllSortedAsync(sortField, sortOrder);
+                var dishes = await _dishService.GetAllSortedAsync(sortField.Value, sortOrder.Value);
                 return Ok(dishes);
             }
-            else
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryName == categoryName);
+            if (category == null)
             {
-                
-                var sortedDishes = await _dishService.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
-                return Ok(sortedDishes);
+                return NotFound("Category not found.");
             }
+
+            var sortedDishes = await _dishService.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
+            return Ok(sortedDishes);
         }
+
+
 
         [HttpPatch("{dishId}/status")]
         public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)

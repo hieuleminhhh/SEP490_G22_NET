@@ -11,5 +11,6 @@
         public decimal? TotalAmount { get; set; }
         public string? GuestPhone { get; set; }
         public decimal Deposits { get; set; }
+        public int AddressId { get; set; }
     }
 }
