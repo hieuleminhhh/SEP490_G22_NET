@@ -15,14 +15,16 @@ public class OrderRepository : IOrderRepository
 
     public async Task<IEnumerable<Order>> GetAllAsync()
     {
-        return await _context.Orders.Include(o => o.Account).ToListAsync();
+        return await _context.Orders.Include(o => o.Account)
+                                    .Include(o => o.Address).
+                                     ToListAsync();
     }
 
 
     public async Task<Order> GetByIdAsync(int id)
     {
         return await _context.Orders
-                             .Include(o => o.Account)
+                             .Include(o => o.Account).Include(o => o.Address)
                              .FirstOrDefaultAsync(o => o.OrderId == id);
     }
 
