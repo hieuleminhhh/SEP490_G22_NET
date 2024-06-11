@@ -13,12 +13,12 @@ namespace EHM_API.Services
         Task<DishDTOAll> GetDishByIdAsync(int id);
         Task<DishDTOAll> CreateDishAsync(CreateDishDTO createDishDTO);
         Task<DishDTOAll> UpdateDishAsync(int id, UpdateDishDTO updateDishDTO);
-      
+
         Task<IEnumerable<DishDTOAll>> SearchDishesAsync(string name);
         Task<IEnumerable<DishDTOAll>> GetAllDishesAsync();
-        Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);
-        Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder);
-        Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize);       
+        Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder);
+        Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder);
+        Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize);
         Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive);
 
     }

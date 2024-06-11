@@ -14,8 +14,8 @@ namespace EHM_API.Repositories
         Task<Dish> UpdateAsync(Dish dish);
 
         Task<IEnumerable<Dish>> SearchAsync(string name);
-        Task<IEnumerable<Dish>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder);
-        Task<IEnumerable<Dish>> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder);
+        Task<IEnumerable<Dish>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder);
+        Task<IEnumerable<Dish>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder);
         Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize);
         Task<Dish> GetDishByIdAsync(int dishId);
         Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive);
