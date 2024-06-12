@@ -4,6 +4,7 @@ using EHM_API.DTOs.CategoryDTO;
 using EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.GuestDTO;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO;
 using EHM_API.Models;
@@ -64,6 +65,20 @@ namespace EHM_API.Map
 						src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
 				))
 				.ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Price));
+
+					CreateMap<Combo, OrderDetailsDTO>()
+			.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+			.ForMember(dest => dest.DiscountedPrice, opt => opt.Ignore()) 
+			.ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Price));
+
+
+			//Guest DTO
+			CreateMap<Address, GuestAddressInfoDTO>()
+		   .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.GuestAddress))
+		   .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.ConsigneeName))
+		   .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+		   .ForMember(dest => dest.Email, opt => opt.Ignore()); 
+
 
 
 			CreateMap<Category, CategoryDTO>().ReverseMap();
