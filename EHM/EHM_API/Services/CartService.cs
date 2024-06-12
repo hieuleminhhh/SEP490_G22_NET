@@ -143,7 +143,7 @@ namespace EHM_API.Services
 					ItemName = od.Dish?.ItemName,
 					DishId = od.DishId ?? 0,
 					ComboId = od.ComboId ?? 0,
-					Price = od.Dish?.Price,
+					Price = od.Dish?.Price ?? od.Combo?.Price,
 					DiscountedPrice = od.Dish?.Discount != null ? (od.Dish.Price - (od.Dish.Price * od.Dish.Discount.DiscountAmount / 100)) : od.Dish?.Price,
 					UnitPrice = od.UnitPrice,
 					Quantity = od.Quantity,
