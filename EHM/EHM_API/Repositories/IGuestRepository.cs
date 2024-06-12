@@ -6,5 +6,8 @@ namespace EHM_API.Repositories
     {
         Task<Guest> GetGuestByPhoneAsync(string guestPhone);
         Task<Guest> AddAsync(Guest guest);
-    }
+
+		Task<Address> GetAddressByIdAsync(int addressId);
+
+	}
 }

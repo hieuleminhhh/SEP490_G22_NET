@@ -23,5 +23,13 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
             return guest;
         }
-    }
+
+
+		public async Task<Address> GetAddressByIdAsync(int addressId)
+		{
+			return await _context.Addresses
+				.Include(a => a.GuestPhoneNavigation)
+				.FirstOrDefaultAsync(a => a.AddressId == addressId);
+		}
+	}
     }
