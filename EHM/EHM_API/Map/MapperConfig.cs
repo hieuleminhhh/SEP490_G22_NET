@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EHM_API.DTOs.CartDTO;
 using EHM_API.DTOs.CategoryDTO;
 using EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
@@ -54,6 +55,15 @@ namespace EHM_API.Map
 				.ReverseMap();
 
 
+
+			CreateMap<Dish, OrderDetailsDTO>()
+				.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
+					src => src.DiscountId == null ? (decimal?)null :
+						src.DiscountId == 0 ? src.Price :
+						src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
+				))
+				.ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Price));
 
 
 			CreateMap<Category, CategoryDTO>().ReverseMap();
