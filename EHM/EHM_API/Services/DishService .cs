@@ -42,6 +42,10 @@ namespace EHM_API.Services
         public async Task<DishDTOAll> CreateDishAsync(CreateDishDTO createDishDTO)
         {
             var dish = _mapper.Map<Dish>(createDishDTO);
+            if (dish.Price.HasValue)
+            {
+                dish.Price = Math.Round(dish.Price.Value, 2); 
+            }
             var createdDish = await _dishRepository.AddAsync(dish);
             return _mapper.Map<DishDTOAll>(createdDish);
         }
@@ -55,6 +59,11 @@ namespace EHM_API.Services
             }
 
             _mapper.Map(updateDishDTO, existingDish);
+            _mapper.Map(updateDishDTO, existingDish);
+            if (existingDish.Price.HasValue)
+            {
+                existingDish.Price = Math.Round(existingDish.Price.Value, 2);
+            }
             var updatedDish = await _dishRepository.UpdateAsync(existingDish);
             return _mapper.Map<DishDTOAll>(updatedDish);
         }
@@ -67,19 +76,19 @@ namespace EHM_API.Services
             return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
         }
 
-        public async Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+        public async Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder)
         {
             var dishes = await _dishRepository.GetAllSortedAsync(sortField, sortOrder);
             return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
         }
-        public async Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder)
+        public async Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
         {
             var dishes = await _dishRepository.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
             return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
         }
-       
 
-       
+
+
 
         public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize)
         {

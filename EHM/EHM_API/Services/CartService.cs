@@ -89,7 +89,7 @@ namespace EHM_API.Services
 					
 					existingOrderDetail.Quantity += item.Quantity;
 					existingOrderDetail.UnitPrice += item.UnitPrice; 
-					totalAmount += (item.UnitPrice ?? 0m) * (item.Quantity ?? 0);
+					totalAmount += (item.UnitPrice ?? 0m);
 				}
 				else
 				{
@@ -104,7 +104,7 @@ namespace EHM_API.Services
 					};
 
 					orderDetails.Add(orderDetail);
-					totalAmount += (item.UnitPrice ?? 0m) * (item.Quantity ?? 0);
+					totalAmount += (item.UnitPrice ?? 0m);
 				}
 			}
 
@@ -116,7 +116,9 @@ namespace EHM_API.Services
 				GuestPhone = guest.GuestPhone,
 				TotalAmount = totalAmount,
 				OrderDetails = orderDetails,
-				Deposits = checkoutDTO.Deposits
+				Deposits = checkoutDTO.Deposits,
+				AddressId = checkoutDTO.AddressId
+				
 			};
 
 			await _cartRepository.CreateOrder(order);
@@ -125,7 +127,6 @@ namespace EHM_API.Services
 
 		public async Task<CheckoutSuccessDTO> GetCheckoutSuccessInfoAsync(string guestPhone)
 		{
-
 			var order = await _cartRepository.GetOrderByGuestPhoneAsync(guestPhone);
 
 			if (order == null)
@@ -135,17 +136,21 @@ namespace EHM_API.Services
 
 			var guestAddress = order.GuestPhoneNavigation?.Addresses?.FirstOrDefault();
 
-
 			var orderDetails = order.OrderDetails
-				.Select(od => new OrderDetailDTO
+				.Select(od => new OrderDetailsDTO
 				{
 					NameCombo = od.Combo?.NameCombo,
 					ItemName = od.Dish?.ItemName,
+					DishId = od.DishId ?? 0,
+					ComboId = od.ComboId ?? 0,
+					Price = od.Dish?.Price ?? od.Combo?.Price,
+					DiscountedPrice = od.Dish?.Discount != null ? (od.Dish.Price - (od.Dish.Price * od.Dish.Discount.DiscountAmount / 100)) : od.Dish?.Price,
 					UnitPrice = od.UnitPrice,
 					Quantity = od.Quantity,
 					Note = od.Note,
 					ImageUrl = od.Dish?.ImageUrl ?? od.Combo?.ImageUrl
-				}).ToList();
+				})
+				.ToList(); 
 
 			var totalAmount = orderDetails.Sum(od => (od.UnitPrice ?? 0));
 
@@ -156,6 +161,7 @@ namespace EHM_API.Services
 				AddressId = guestAddress?.AddressId ?? 0,
 				GuestAddress = guestAddress?.GuestAddress,
 				ConsigneeName = guestAddress?.ConsigneeName,
+				OrderId = order.OrderId,
 				OrderDate = order.OrderDate,
 				Status = order.Status ?? 0,
 				ReceivingTime = order.RecevingOrder,
@@ -166,6 +172,7 @@ namespace EHM_API.Services
 
 			return checkoutSuccessDTO;
 		}
+
 
 
 

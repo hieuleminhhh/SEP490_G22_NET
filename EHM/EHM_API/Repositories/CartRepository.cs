@@ -184,17 +184,21 @@ namespace EHM_API.Repositories
 			}
 
 			return await _context.Orders
-	   .Where(o => o.GuestPhone == guestPhone)
-	   .Include(o => o.GuestPhoneNavigation)
-	   .ThenInclude(g => g.Addresses)
-	   .Include(o => o.OrderDetails)
-	   .ThenInclude(od => od.Dish)
-	   .ThenInclude(d => d.Category)
-	   .Include(o => o.OrderDetails)
-	   .ThenInclude(od => od.Combo)
-	   .OrderByDescending(o => o.OrderId)
-	   .FirstOrDefaultAsync();
+				.Where(o => o.GuestPhone == guestPhone)
+				.Include(o => o.GuestPhoneNavigation)
+					.ThenInclude(g => g.Addresses)
+				.Include(o => o.OrderDetails)
+					.ThenInclude(od => od.Dish)
+						.ThenInclude(d => d.Category)
+				.Include(o => o.OrderDetails)
+					.ThenInclude(od => od.Combo)
+				.Include(o => o.OrderDetails)
+					.ThenInclude(od => od.Dish)
+						.ThenInclude(d => d.Discount)
+				.OrderByDescending(o => o.OrderId)
+				.FirstOrDefaultAsync();
 		}
+
 
 	}
 }

@@ -8,8 +8,10 @@ namespace EHM_API.Services
     {
         Task<OrderDTOAll> CreateOrderAsync(CreateOrderDTO createOrderDto);
         Task<IEnumerable<OrderDTOAll>> GetAllOrdersAsync();
-        Task<OrderDTOAll> GetOrderByIdAsync(int id);
-        Task<IEnumerable<OrderDTOAll>> SearchOrdersAsync(string guestPhone = null);
+
+		Task<IEnumerable<SearchPhoneOrderDTO>> GetAllOrdersToSearchAsync();
+		Task<OrderDTOAll> GetOrderByIdAsync(int id);
+        Task<IEnumerable<SearchPhoneOrderDTO>> SearchOrdersAsync(string guestPhone = null);
         Task<OrderDTOAll> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto);
         Task<bool> DeleteOrderAsync(int id);
 

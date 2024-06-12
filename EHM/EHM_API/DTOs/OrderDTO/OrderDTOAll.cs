@@ -13,5 +13,7 @@
         public decimal? TotalAmount { get; set; }
         public string? GuestPhone { get; set; }
         public decimal Deposits { get; set; }
+        public string? GuestAddress { get; set; }
+        public string? ConsigneeName { get; set; }
     }
 }

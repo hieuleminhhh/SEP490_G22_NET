@@ -35,6 +35,7 @@ namespace EHM_API.Repositories
 
         public async Task<Dish> AddAsync(Dish dish)
         {
+          
             _context.Dishes.Add(dish);
             await _context.SaveChangesAsync();
             return dish;
@@ -84,47 +85,45 @@ namespace EHM_API.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Dish>> GetAllSortedAsync(SortField sortField, SortOrder sortOrder)
+        public async Task<IEnumerable<Dish>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder)
         {
-            IQueryable<Dish> query = _context.Dishes;
+            IQueryable<Dish> query = _context.Dishes
+                .Include(d => d.Category)
+                .Include(d => d.Discount);
 
-            switch (sortField)
+            if (sortField.HasValue && sortOrder.HasValue)
             {
-                case SortField.Name:
-                    query = sortOrder == SortOrder.Ascending ? query.OrderBy(d => d.ItemName) : query.OrderByDescending(d => d.ItemName);
-                    break;
-                case SortField.Price:
-                    query = sortOrder == SortOrder.Ascending ? query.OrderBy(d => d.Price) : query.OrderByDescending(d => d.Price);
-                    break;
-                case SortField.OrderQuantity:
-                    query = sortOrder == SortOrder.Ascending ? query.OrderBy(d => d.OrderDetails.Sum(od => od.Quantity)) : query.OrderByDescending(d => d.OrderDetails.Sum(od => od.Quantity));
-                    break;
-                default:
-                    throw new ArgumentException("Invalid sort field.");
+                query = ApplySorting(query, sortField.Value, sortOrder.Value);
             }
 
             return await query.ToListAsync();
         }
-        public async Task<IEnumerable<Dish>> GetSortedDishesByCategoryAsync(string? categoryName, SortField sortField, SortOrder sortOrder)
+
+        public async Task<IEnumerable<Dish>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
         {
-            IQueryable<Dish> query = _context.Dishes.Include(d => d.Category).Include(d => d.OrderDetails);
+            IQueryable<Dish> query = _context.Dishes
+                .Include(d => d.Category)
+                .Include(d => d.Discount);
 
             if (!string.IsNullOrEmpty(categoryName))
             {
-                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryName == categoryName);
-
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryName.Equals(categoryName));
                 if (category != null)
                 {
                     query = query.Where(d => d.CategoryId == category.CategoryId);
                 }
             }
 
-           
-            if (string.IsNullOrEmpty(categoryName))
+            if (sortField.HasValue && sortOrder.HasValue)
             {
-                query = query.Where(d => d.CategoryId != null);
+                query = ApplySorting(query, sortField.Value, sortOrder.Value);
             }
 
+            return await query.ToListAsync();
+        }
+
+        private IQueryable<Dish> ApplySorting(IQueryable<Dish> query, SortField sortField, SortOrder sortOrder)
+        {
             switch (sortField)
             {
                 case SortField.Name:
@@ -139,9 +138,9 @@ namespace EHM_API.Repositories
                 default:
                     throw new ArgumentException("Invalid sort field.");
             }
-
-            return await query.ToListAsync();
+            return query;
         }
+
         public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize)
         {
             /*if (!string.IsNullOrEmpty(search) && page != 1)
