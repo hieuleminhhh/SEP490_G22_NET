@@ -1,4 +1,4 @@
-﻿using EHM_API.DTOs.CartDTO;
+﻿using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-	public class CartService : ICartService
+    public class CartService : ICartService
 	{
 		private readonly ICartRepository _cartRepository;
 		private readonly IComboRepository _comboRepository;
@@ -158,9 +158,9 @@ namespace EHM_API.Services
 			{
 				GuestPhone = order.GuestPhone,
 				Email = order.GuestPhoneNavigation?.Email,
-				AddressId = guestAddress?.AddressId ?? 0,
-				GuestAddress = guestAddress?.GuestAddress,
-				ConsigneeName = guestAddress?.ConsigneeName,
+				AddressId = order?.Address.AddressId ?? 0,
+				GuestAddress = order?.Address.GuestAddress,
+				ConsigneeName = order?.Address.ConsigneeName,
 				OrderId = order.OrderId,
 				OrderDate = order.OrderDate,
 				Status = order.Status ?? 0,

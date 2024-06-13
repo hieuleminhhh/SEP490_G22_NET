@@ -1,9 +1,9 @@
-﻿using EHM_API.DTOs.CartDTO;
+﻿using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.Models;
 
 namespace EHM_API.Repositories
 {
-	public interface ICartRepository
+    public interface ICartRepository
 	{
 		List<Cart2DTO> GetCart();
 		Task AddToCart(Cart2DTO orderDTO);

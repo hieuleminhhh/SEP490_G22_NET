@@ -1,5 +1,6 @@
 ﻿using EHM_API.DTOs;
-using EHM_API.DTOs.CategoryDTO;
+using EHM_API.DTOs.CategoryDTO.Guest;
+using EHM_API.DTOs.CategoryDTO.Manager;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class CategoryController : ControllerBase
 	{

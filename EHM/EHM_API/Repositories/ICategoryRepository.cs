@@ -1,11 +1,11 @@
-﻿using EHM_API.DTOs.CategoryDTO;
+﻿using EHM_API.DTOs.CategoryDTO.Guest;
 using EHM_API.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EHM_API.Repositories
 {
-	public interface ICategoryRepository
+    public interface ICategoryRepository
 	{
 		Task<IEnumerable<Category>> GetAllAsync();
 		Task<Category> GetByIdAsync(int id);
