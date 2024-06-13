@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums;
 using EHM_API.Enums.EHM_API.Models;

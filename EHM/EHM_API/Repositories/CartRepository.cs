@@ -1,5 +1,5 @@
 ﻿using EHM_API.Controllers;
-using EHM_API.DTOs.CartDTO;
+using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.Models;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Repositories
 {
-	public class CartRepository : ICartRepository
+    public class CartRepository : ICartRepository
 	{
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly IDishService _dishService;

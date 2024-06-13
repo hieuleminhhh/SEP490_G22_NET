@@ -1,5 +1,5 @@
-﻿using EHM_API.DTOs.ComboDTO;
-using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+﻿using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDTO.Guest;
 using EHM_API.DTOs.DishDTO;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
@@ -9,11 +9,11 @@ using System.Linq;
 
 namespace EHM_API.Repositories
 {
-	public class ComboRepository : IComboRepository
+    public class ComboRepository : IComboRepository
 	{
 		private readonly EHMDBContext _context;
-
-		public ComboRepository(EHMDBContext context)
+        private static SemaphoreSlim _lockObject = new SemaphoreSlim(1);
+        public ComboRepository(EHMDBContext context)
 		{
 			_context = context;
 		}
@@ -67,7 +67,7 @@ namespace EHM_API.Repositories
 		public async Task<List<Combo>> SearchComboByNameAsync(string name)
 		{
 			return await _context.Combos
-				.Where(c => c.NameCombo.Contains(name))
+				.Where(c => c.NameCombo.Equals(name))
 				.ToListAsync();
 		}
 
@@ -104,38 +104,6 @@ namespace EHM_API.Repositories
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO)
-		{
-
-			var combo = new Combo
-			{
-				NameCombo = createComboDishDTO.NameCombo,
-				Price = createComboDishDTO.Price,
-				Note = createComboDishDTO.Note,
-				ImageUrl = createComboDishDTO.ImageUrl,
-				IsActive = true
-			};
-
-			_context.Combos.Add(combo);
-			await _context.SaveChangesAsync();
-
-			foreach (var dishDto in createComboDishDTO.Dishes)
-			{
-				var comboDetail = new ComboDetail
-				{
-					ComboId = combo.ComboId,
-					DishId = dishDto.DishId
-				};
-
-
-				_context.ComboDetails.Add(comboDetail);
-			}
-
-			await _context.SaveChangesAsync();
-
-
-			return createComboDishDTO;
-		}
 		public async Task UpdateStatusAsync(int comboId, bool isActive)
 		{
 			var combo = await _context.Combos.FindAsync(comboId);
@@ -172,7 +140,7 @@ namespace EHM_API.Repositories
 
 			return await query.ToListAsync();
 		}
-        public async Task<PagedResult<ComboDTO>> GetComboAsync(string search, int page, int pageSize)
+        public async Task<PagedResult<ViewComboDTO>> GetComboAsync(string search, int page, int pageSize)
         {
             var query = _context.Combos.AsQueryable();
 
@@ -182,26 +150,33 @@ namespace EHM_API.Repositories
                 query = query.Where(d => d.NameCombo.ToLower().Contains(search));
             }
 
-            var totalDishes = await query.CountAsync();
+            var totalCombos = await query.CountAsync();
 
-            var dishes = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            var combos = await query.Include(c => c.ComboDetails)
+                                    .ThenInclude(cd => cd.Dish)
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
 
-            var comboDTO = dishes.Select(d => new ComboDTO
+            var comboDTOs = combos.Select(c => new ViewComboDTO
             {
-				ComboId = d.ComboId,
-                NameCombo = d.NameCombo,
-				Price = d.Price,
-				Note = d.Note,
-				ImageUrl = d.ImageUrl,
-				IsActive = d.IsActive,
-
+                ComboId = c.ComboId,
+                NameCombo = c.NameCombo,
+                Price = c.Price,
+                Note = c.Note,
+                ImageUrl = c.ImageUrl,
+                IsActive = c.IsActive,
+                Dishes = c.ComboDetails.Select(cd => new DishDTO
+                {
+                    DishId = cd.Dish.DishId,
+                    ItemName = cd.Dish.ItemName,
+                    Price = cd.Dish.Price
+                }).ToList()
             }).ToList();
 
-            return new PagedResult<ComboDTO>(comboDTO, totalDishes, page, pageSize);
+            return new PagedResult<ViewComboDTO>(comboDTOs, totalCombos, page, pageSize);
         }
+
         public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
         {
             var cb = await _context.Combos.FindAsync(comboId);
@@ -215,6 +190,11 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
 
             return cb;
+        }
+        public async Task ClearComboDetailsAsync(int comboId)
+        {
+            var sql = $"DELETE FROM [EHMDB].[dbo].[ComboDetails] WHERE [ComboID] = '{comboId}';";
+            await _context.Database.ExecuteSqlRawAsync(sql);
         }
     }
 }

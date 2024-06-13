@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using EHM_API.DTOs.OrderDTO;
+using EHM_API.DTOs.OrderDTO.Guest;
+using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;

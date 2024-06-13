@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
@@ -81,7 +81,7 @@ namespace EHM_API.Repositories
             return await _context.Dishes
                 .Include(d => d.Category)
                 .Include(d => d.Discount)
-                .Where(d => d.ItemName.Contains(name))
+                .Where(d => d.ItemName.Equals(name))
                 .ToListAsync();
         }
 
@@ -184,7 +184,10 @@ namespace EHM_API.Repositories
         {
             return await _context.Dishes.FindAsync(dishId);
         }
-
+        public async Task<List<Dish>> GetDishesByIdsAsync(List<int> dishIds)
+        {
+            return await _context.Dishes.Where(d => dishIds.Contains(d.DishId)).ToListAsync();
+        }
         public async Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive)
         {
             var dish = await _context.Dishes.FindAsync(dishId);
@@ -199,7 +202,7 @@ namespace EHM_API.Repositories
 
             return dish;
         }
-
+       
 
     }
 

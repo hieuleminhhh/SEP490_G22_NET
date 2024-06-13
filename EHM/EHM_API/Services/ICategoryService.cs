@@ -1,11 +1,12 @@
 ﻿using EHM_API.DTOs;
-using EHM_API.DTOs.CategoryDTO;
+using EHM_API.DTOs.CategoryDTO.Guest;
+using EHM_API.DTOs.CategoryDTO.Manager;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-	public interface ICategoryService
+    public interface ICategoryService
 	{
 		Task<IEnumerable<CategoryDTO>> GetAllCategoriesAsync();
 		Task<CategoryDTO> GetCategoryByIdAsync(int id);

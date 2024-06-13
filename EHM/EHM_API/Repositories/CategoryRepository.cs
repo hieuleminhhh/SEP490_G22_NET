@@ -1,4 +1,4 @@
-﻿using EHM_API.DTOs.CategoryDTO;
+﻿using EHM_API.DTOs.CategoryDTO.Guest;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Repositories
 {
-	public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : ICategoryRepository
 	{
 		private readonly EHMDBContext _context;
 

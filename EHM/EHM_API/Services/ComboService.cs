@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
-using EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDetailsDTO;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDTO.Guest;
+using EHM_API.DTOs.ComboDTO.Manager;
 using EHM_API.DTOs.DishDTO;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
@@ -12,14 +14,16 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-	public class ComboService : IComboService
+    public class ComboService : IComboService
 	{
 		private readonly IComboRepository _comboRepository;
+		private readonly IDishRepository _dishRepository;
 		private readonly IMapper _mapper;
 
-		public ComboService(IComboRepository comboRepository, IMapper mapper)
+		public ComboService(IComboRepository comboRepository, IMapper mapper, IDishRepository dishRepository)
 		{
 			_comboRepository = comboRepository;
+			_dishRepository = dishRepository;
 			_mapper = mapper;
 		}
 
@@ -85,27 +89,106 @@ namespace EHM_API.Services
 			return false;
 		}
 
-		public async Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO)
-		{
-			var result = await _comboRepository.CreateComboWithDishesAsync(createComboDishDTO);
-			return result;
-		}
-
+		/*		public async Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO)
+				{
+					var result = await _comboRepository.CreateComboWithDishesAsync(createComboDishDTO);
+					return result;
+				}
+		*/
 
 		public async Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder)
 		{
 			var combos = await _comboRepository.GetAllSortedAsync(sortField, sortOrder);
 			return _mapper.Map<IEnumerable<ComboDTO>>(combos);
 		}
-        public async Task<PagedResult<ComboDTO>> GetComboAsync(string search, int page, int pageSize)
+		public async Task<PagedResult<ViewComboDTO>> GetComboAsync(string search, int page, int pageSize)
+		{
+			var pagedDishes = await _comboRepository.GetComboAsync(search, page, pageSize);
+			var comboDTO = _mapper.Map<IEnumerable<ViewComboDTO>>(pagedDishes.Items);
+			return new PagedResult<ViewComboDTO>(comboDTO, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+		}
+		public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
+		{
+			return await _comboRepository.UpdateComboStatusAsync(comboId, isActive);
+		}
+		public async Task<ComboDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboWithDishesDTO)
+		{
+			var dishes = await _dishRepository.GetDishesByIdsAsync(createComboWithDishesDTO.DishIds);
+			if (dishes.Count != createComboWithDishesDTO.DishIds.Count)
+			{
+				throw new Exception("Some dishes were not found.");
+			}
+
+			var combo = new Combo
+			{
+				NameCombo = createComboWithDishesDTO.NameCombo,
+				Price = createComboWithDishesDTO.Price,
+				Note = createComboWithDishesDTO.Note,
+				ImageUrl = createComboWithDishesDTO.ImageUrl,
+				ComboDetails = createComboWithDishesDTO.DishIds.Select(dishId => new ComboDetail
+				{
+					DishId = dishId,
+				}).ToList() 
+			};
+
+			await _comboRepository.AddAsync(combo);
+
+			var comboDTO = new ComboDTO
+			{
+				ComboId = combo.ComboId,
+				NameCombo = combo.NameCombo,
+				Price = combo.Price,
+				Note = combo.Note,
+				ImageUrl = combo.ImageUrl,
+				DishIds = combo.ComboDetails.Select(cd => cd.DishId).ToList()
+			};
+
+			return comboDTO;
+		}
+        public async Task<ComboDTO> UpdateComboWithDishesAsync(int comboId, UpdateComboDishDTO updateComboWithDishesDTO)
         {
-            var pagedDishes = await _comboRepository.GetComboAsync(search, page, pageSize);
-            var comboDTO = _mapper.Map<IEnumerable<ComboDTO>>(pagedDishes.Items);
-            return new PagedResult<ComboDTO>(comboDTO, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+            var dishes = await _dishRepository.GetDishesByIdsAsync(updateComboWithDishesDTO.DishIds);
+            if (dishes.Count != updateComboWithDishesDTO.DishIds.Count)
+            {
+                throw new Exception("Some dishes were not found.");
+            }
+
+            var combo = await _comboRepository.GetByIdAsync(comboId);
+            if (combo == null)
+            {
+                throw new Exception("Combo not found");
+            }
+
+            combo.NameCombo = updateComboWithDishesDTO.NameCombo;
+            combo.Price = updateComboWithDishesDTO.Price;
+            combo.Note = updateComboWithDishesDTO.Note;
+            combo.ImageUrl = updateComboWithDishesDTO.ImageUrl;
+
+            await _comboRepository.ClearComboDetailsAsync(comboId);
+
+            foreach (var dishId in updateComboWithDishesDTO.DishIds)
+            {
+                combo.ComboDetails.Add(new ComboDetail
+                {
+                    ComboId = comboId,
+                    DishId = dishId
+                });
+            }
+
+            await _comboRepository.UpdateAsync(combo);
+
+            var comboDTO = new ComboDTO
+            {
+                ComboId = combo.ComboId,
+                NameCombo = combo.NameCombo,
+                Price = combo.Price,
+                Note = combo.Note,
+                ImageUrl = combo.ImageUrl,
+                DishIds = combo.ComboDetails.Select(cd => cd.DishId).ToList()
+            };
+            return comboDTO;
         }
-        public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
-        {
-            return await _comboRepository.UpdateComboStatusAsync(comboId, isActive);
-        }
+       
+
     }
 }

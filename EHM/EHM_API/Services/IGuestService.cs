@@ -1,4 +1,4 @@
-﻿using EHM_API.DTOs.GuestDTO;
+﻿using EHM_API.DTOs.GuestDTO.Guest;
 using EHM_API.Models;
 
 namespace EHM_API.Services

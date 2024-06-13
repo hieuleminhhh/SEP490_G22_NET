@@ -124,26 +124,18 @@ namespace EHM_API.Models
                 entity.Property(e => e.Price).HasColumnType("money");
             });
 
-            modelBuilder.Entity<ComboDetail>(entity =>
-            {
-                entity.HasNoKey();
+            modelBuilder.Entity<ComboDetail>()
+           .HasKey(cd => new { cd.ComboId, cd.DishId });
 
-                entity.Property(e => e.ComboId).HasColumnName("ComboID");
+            modelBuilder.Entity<ComboDetail>()
+                .HasOne(cd => cd.Combo)
+                .WithMany(c => c.ComboDetails)
+                .HasForeignKey(cd => cd.ComboId);
 
-                entity.Property(e => e.DishId).HasColumnName("DishID");
-
-                entity.HasOne(d => d.Combo)
-                    .WithMany()
-                    .HasForeignKey(d => d.ComboId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ComboDetails_Combo");
-
-                entity.HasOne(d => d.Dish)
-                    .WithMany()
-                    .HasForeignKey(d => d.DishId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ComboDetails_Dish");
-            });
+            modelBuilder.Entity<ComboDetail>()
+                .HasOne(cd => cd.Dish)
+                .WithMany(d => d.ComboDetails)
+                .HasForeignKey(cd => cd.DishId);
 
             modelBuilder.Entity<Discount>(entity =>
             {
@@ -432,3 +424,5 @@ namespace EHM_API.Models
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
+
+

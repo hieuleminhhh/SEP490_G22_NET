@@ -1,4 +1,4 @@
-﻿using EHM_API.DTOs.CartDTO;
+﻿using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-	public class CartService : ICartService
+    public class CartService : ICartService
 	{
 		private readonly ICartRepository _cartRepository;
 		private readonly IComboRepository _comboRepository;

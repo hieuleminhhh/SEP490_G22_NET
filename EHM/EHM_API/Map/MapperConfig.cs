@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
-using EHM_API.DTOs.CartDTO;
+using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.CategoryDTO;
-using EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.CategoryDTO.Guest;
+using EHM_API.DTOs.CategoryDTO.Manager;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
-using EHM_API.DTOs.DishDTO;
-using EHM_API.DTOs.GuestDTO;
+using EHM_API.DTOs.ComboDTO.Guest;
+using EHM_API.DTOs.ComboDTO.Manager;
+using EHM_API.DTOs.DishDTO.Manager;
+using EHM_API.DTOs.GuestDTO.Guest;
 using EHM_API.DTOs.HomeDTO;
-using EHM_API.DTOs.OrderDTO;
+using EHM_API.DTOs.OrderDTO.Guest;
+using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 
 namespace EHM_API.Map
@@ -87,9 +91,6 @@ namespace EHM_API.Map
 
 		      CreateMap<Combo, ComboDTO>().ReverseMap();
 
-			/*CreateMap<CreateComboDishDTO, Combo>()
-				.ForMember(dest => dest., opt => opt.MapFrom(src => src.Dishes.Select(d => new ComboDetail { DishId = d.DishId })));*/
-
 			CreateMap<ComboDetail, Dish>().ReverseMap();
 
 
@@ -97,7 +98,15 @@ namespace EHM_API.Map
 			CreateMap<CreateComboDTO, Combo>().ReverseMap();
 
 
-			CreateMap(typeof(PagedResult<>), typeof(PagedResult<>));
+            CreateMap(typeof(PagedResult<>), typeof(PagedResult<>));
+            CreateMap<Combo, ViewComboDTO>()
+             .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.ComboDetails.Select(cd => cd.Dish)));
+
+            CreateMap<ComboDetail, DishDTO>()
+                .ForMember(dest => dest.DishId, opt => opt.MapFrom(src => src.Dish.DishId))
+                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish.Price));
+
         }
     }
 }
