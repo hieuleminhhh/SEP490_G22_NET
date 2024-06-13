@@ -9,7 +9,7 @@
     "Parameters": [
       {
         "Name": "orderDTO",
-        "Type": "EHM_API.DTOs.CartDTO.Cart2DTO",
+        "Type": "EHM_API.DTOs.CartDTO.Guest.Cart2DTO",
         "IsRequired": true
       }
     ],
@@ -25,7 +25,7 @@
     "Parameters": [
       {
         "Name": "checkoutDTO",
-        "Type": "EHM_API.DTOs.CartDTO.CheckoutDTO",
+        "Type": "EHM_API.DTOs.CartDTO.Guest.CheckoutDTO",
         "IsRequired": true
       }
     ],
@@ -67,7 +67,7 @@
     "Parameters": [
       {
         "Name": "updateCartDTO",
-        "Type": "EHM_API.DTOs.CartDTO.UpdateCartDTO",
+        "Type": "EHM_API.DTOs.CartDTO.Guest.UpdateCartDTO",
         "IsRequired": true
       }
     ],
@@ -93,7 +93,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.CategoryDTO.CategoryDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.CategoryDTO.Guest.CategoryDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -113,13 +113,13 @@
     "Parameters": [
       {
         "Name": "categoryDTO",
-        "Type": "EHM_API.DTOs.CategoryDTO.CreateCategory",
+        "Type": "EHM_API.DTOs.CategoryDTO.Manager.CreateCategory",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.CategoryDTO.CategoryDTO",
+        "Type": "EHM_API.DTOs.CategoryDTO.Guest.CategoryDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -145,7 +145,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.CategoryDTO.CategoryDTO",
+        "Type": "EHM_API.DTOs.CategoryDTO.Guest.CategoryDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -170,7 +170,7 @@
       },
       {
         "Name": "categoryDTO",
-        "Type": "EHM_API.DTOs.CategoryDTO.CategoryDTO",
+        "Type": "EHM_API.DTOs.CategoryDTO.Guest.CategoryDTO",
         "IsRequired": true
       }
     ],
@@ -208,7 +208,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.CategoryDTO.ViewCategoryDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.CategoryDTO.Guest.ViewCategoryDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -228,7 +228,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.ComboDTO.ComboDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.ComboDTO.Manager.ComboDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -248,7 +248,7 @@
     "Parameters": [
       {
         "Name": "comboDTO",
-        "Type": "EHM_API.DTOs.ComboDTO.CreateComboDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.Manager.CreateComboDTO",
         "IsRequired": true
       }
     ],
@@ -270,7 +270,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.ComboDTO.ViewComboDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.Guest.ViewComboDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -295,7 +295,7 @@
       },
       {
         "Name": "updateCombo",
-        "Type": "EHM_API.DTOs.ComboDTO.UpdateComboDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.Manager.UpdateComboDTO",
         "IsRequired": true
       }
     ],
@@ -316,7 +316,7 @@
       },
       {
         "Name": "comboDTO",
-        "Type": "EHM_API.DTOs.ComboDTO.ComboDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.Manager.ComboDTO",
         "IsRequired": true
       }
     ],
@@ -363,14 +363,14 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "createComboDishDTO",
+        "Name": "createComboWithDishesDTO",
         "Type": "EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO.CreateComboDishDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.Manager.ComboDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -396,7 +396,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.ComboDTO.ComboDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.Manager.ComboDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -432,7 +432,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.HomeDTO.PagedResult\u00601[[EHM_API.DTOs.ComboDTO.ComboDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "EHM_API.DTOs.HomeDTO.PagedResult\u00601[[EHM_API.DTOs.ComboDTO.Guest.ViewComboDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -458,7 +458,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.ComboDTO.ComboDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.ComboDTO.Manager.ComboDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -484,7 +484,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.ComboDTO.ComboDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.Manager.ComboDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -516,6 +516,37 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EHM_API.Controllers.ComboController",
+    "Method": "UpdateComboWithDishes",
+    "RelativePath": "api/Combo/UpdateComboWithDishes/{comboId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "comboId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updateComboWithDishesDTO",
+        "Type": "EHM_API.DTOs.ComboDTO.Manager.UpdateComboDishDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.ComboDTO.Manager.ComboDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "EHM_API.Controllers.DishController",
     "Method": "GetDishes",
     "RelativePath": "api/Dish",
@@ -525,7 +556,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.DishDTO.DishDTOAll, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.DishDTO.Manager.DishDTOAll, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -545,7 +576,7 @@
     "Parameters": [
       {
         "Name": "createDishDTO",
-        "Type": "EHM_API.DTOs.DishDTO.CreateDishDTO",
+        "Type": "EHM_API.DTOs.DishDTO.Manager.CreateDishDTO",
         "IsRequired": true
       }
     ],
@@ -566,7 +597,7 @@
       },
       {
         "Name": "updateDishDTO",
-        "Type": "EHM_API.DTOs.DishDTO.UpdateDishDTO",
+        "Type": "EHM_API.DTOs.DishDTO.Manager.UpdateDishDTO",
         "IsRequired": true
       }
     ],
@@ -587,7 +618,7 @@
       },
       {
         "Name": "updateDishStatusDTO",
-        "Type": "EHM_API.DTOs.DishDTO.UpdateDishStatusDTO",
+        "Type": "EHM_API.DTOs.DishDTO.Manager.UpdateDishStatusDTO",
         "IsRequired": true
       }
     ],
@@ -609,7 +640,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.DishDTO.DishDTOAll",
+        "Type": "EHM_API.DTOs.DishDTO.Manager.DishDTOAll",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -645,7 +676,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.HomeDTO.PagedResult\u00601[[EHM_API.DTOs.DishDTO.DishDTOAll, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "EHM_API.DTOs.HomeDTO.PagedResult\u00601[[EHM_API.DTOs.DishDTO.Manager.DishDTOAll, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -671,7 +702,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.DishDTO.DishDTOAll, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.DishDTO.Manager.DishDTOAll, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -781,7 +812,7 @@
     "Parameters": [
       {
         "Name": "createOrderDTO",
-        "Type": "EHM_API.DTOs.OrderDTO.CreateOrderDTO",
+        "Type": "EHM_API.DTOs.OrderDTO.Guest.CreateOrderDTO",
         "IsRequired": true
       }
     ],
@@ -828,7 +859,7 @@
       },
       {
         "Name": "updateOrderDTO",
-        "Type": "EHM_API.DTOs.OrderDTO.UpdateOrderDTO",
+        "Type": "EHM_API.DTOs.OrderDTO.Manager.UpdateOrderDTO",
         "IsRequired": true
       }
     ],

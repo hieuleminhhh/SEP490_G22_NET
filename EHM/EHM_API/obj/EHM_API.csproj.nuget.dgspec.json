@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj": {}
+    "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj": {}
   },
   "projects": {
-    "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj": {
+    "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
+        "projectUniqueName": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
         "projectName": "EHM_API",
-        "projectPath": "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
-        "packagesPath": "C:\\Users\\lenovo\\.nuget\\packages\\",
-        "outputPath": "C:\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\obj\\",
+        "projectPath": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
+        "packagesPath": "C:\\Users\\nhant\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\nhant\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -34,6 +34,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -94,7 +99,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200\\RuntimeIdentifierGraph.json"
         }
       }
     }
