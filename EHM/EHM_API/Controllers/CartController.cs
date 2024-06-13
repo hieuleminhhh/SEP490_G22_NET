@@ -1,4 +1,4 @@
-﻿using EHM_API.DTOs.CartDTO;
+﻿using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class CartController : ControllerBase
 	{

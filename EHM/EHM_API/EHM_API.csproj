@@ -31,6 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DTOs\CartDTO\Manager\" />
+    <Folder Include="DTOs\DishDTO\Guest\" />
+    <Folder Include="DTOs\GuestDTO\Manager\" />
     <Folder Include="uploads\" />
   </ItemGroup>
 

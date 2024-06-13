@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EHM_API.DTOs.GuestDTO;
+using EHM_API.DTOs.GuestDTO.Guest;
 using EHM_API.Models;
 using EHM_API.Repositories;
 
