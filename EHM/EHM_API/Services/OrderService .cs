@@ -1,16 +1,17 @@
-﻿    using AutoMapper;
-    using EHM_API.DTOs.DishDTO;
-    using EHM_API.DTOs.OrderDTO;
-    using EHM_API.Models;
-    using EHM_API.Repositories;
-    using Microsoft.EntityFrameworkCore;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+﻿using AutoMapper;
+using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.OrderDTO.Guest;
+using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.Models;
+using EHM_API.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-    namespace EHM_API.Services
-    {
-        public class OrderService : IOrderService
+namespace EHM_API.Services
+{
+    public class OrderService : IOrderService
         {
             private readonly IOrderRepository _orderRepository;
             private readonly IMapper _mapper;

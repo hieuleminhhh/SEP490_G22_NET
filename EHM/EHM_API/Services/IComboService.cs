@@ -1,12 +1,13 @@
-﻿using EHM_API.DTOs.ComboDTO;
-using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+﻿using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDTO.Guest;
+using EHM_API.DTOs.ComboDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 
 namespace EHM_API.Services
 {
-	public interface IComboService
+    public interface IComboService
 	{
 		Task<IEnumerable<ComboDTO>> GetAllCombosAsync();
 
@@ -21,12 +22,12 @@ namespace EHM_API.Services
 		Task<bool> ReactivateComboAsync(int comboId);
 
 		Task<List<ComboDTO>> SearchComboByNameAsync(string name);
-		Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO);
+		Task<ComboDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboWithDishesDTO);
+        Task<ComboDTO> UpdateComboWithDishesAsync(int comboId, UpdateComboDishDTO updateComboWithDishesDTO);
+        Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder);
+		Task<PagedResult<ViewComboDTO>> GetComboAsync(string search, int page, int pageSize);
 
-		Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder);
-		Task<PagedResult<ComboDTO>> GetComboAsync(string search, int page, int pageSize);
-		Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive);
-
+        Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive);
 
     }
 }

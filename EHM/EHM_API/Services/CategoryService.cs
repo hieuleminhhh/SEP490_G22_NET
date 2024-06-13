@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs;
-using EHM_API.DTOs.CategoryDTO;
+using EHM_API.DTOs.CategoryDTO.Guest;
+using EHM_API.DTOs.CategoryDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-	public class CategoryService : ICategoryService
+    public class CategoryService : ICategoryService
 	{
 		private readonly ICategoryRepository _categoryRepository;
 		private readonly IMapper _mapper;
