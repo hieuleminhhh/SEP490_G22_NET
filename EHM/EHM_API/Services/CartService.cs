@@ -158,9 +158,9 @@ namespace EHM_API.Services
 			{
 				GuestPhone = order.GuestPhone,
 				Email = order.GuestPhoneNavigation?.Email,
-				AddressId = guestAddress?.AddressId ?? 0,
-				GuestAddress = guestAddress?.GuestAddress,
-				ConsigneeName = guestAddress?.ConsigneeName,
+				AddressId = order?.Address.AddressId ?? 0,
+				GuestAddress = order?.Address.GuestAddress,
+				ConsigneeName = order?.Address.ConsigneeName,
 				OrderId = order.OrderId,
 				OrderDate = order.OrderDate,
 				Status = order.Status ?? 0,
