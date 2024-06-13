@@ -1,8 +1,8 @@
-﻿using EHM_API.DTOs.CartDTO;
+﻿using EHM_API.DTOs.CartDTO.Guest;
 
 namespace EHM_API.Services
 {
-	public interface ICartService
+    public interface ICartService
 	{
 		List<Cart2DTO> GetCart();
 		Task AddToCart(Cart2DTO orderDTO);

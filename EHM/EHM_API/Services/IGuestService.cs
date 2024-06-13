@@ -1,4 +1,5 @@
-﻿using EHM_API.Models;
+﻿using EHM_API.DTOs.GuestDTO.Guest;
+using EHM_API.Models;
 
 namespace EHM_API.Services
 {
@@ -6,5 +7,7 @@ namespace EHM_API.Services
     {
         Task<Guest> GetGuestByPhoneAsync(string guestPhone);
         Task<Guest> AddGuestAsync(Guest guest);
-    }
+
+		Task<GuestAddressInfoDTO> GetGuestAddressInfoAsync(int addressId);
+	}
 }

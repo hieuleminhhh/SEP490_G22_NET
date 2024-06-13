@@ -1,4 +1,5 @@
-﻿using EHM_API.DTOs.OrderDTO;
+﻿using EHM_API.DTOs.OrderDTO.Guest;
+using EHM_API.DTOs.OrderDTO.Manager;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

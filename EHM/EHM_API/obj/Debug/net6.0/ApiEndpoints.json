@@ -708,6 +708,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EHM_API.Controllers.GuestController",
+    "Method": "GetGuestAddressInfo",
+    "RelativePath": "api/Guest/{addressId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "addressId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ImageController",
     "Method": "GetImage",
     "RelativePath": "api/Image/getImage/{fileName}",

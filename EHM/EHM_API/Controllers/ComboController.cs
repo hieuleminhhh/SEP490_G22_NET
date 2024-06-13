@@ -1,5 +1,6 @@
-﻿using EHM_API.DTOs.ComboDTO;
-using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+﻿using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
+using EHM_API.DTOs.ComboDTO.Guest;
+using EHM_API.DTOs.ComboDTO.Manager;
 using EHM_API.DTOs.DishDTO;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class ComboController : ControllerBase
 	{
@@ -188,11 +189,6 @@ namespace EHM_API.Controllers
 			{
 				errors["imageUrl"] = "Image URL is required";
 			}
-			else if (!Uri.IsWellFormedUriString(comboDTO.ImageUrl, UriKind.Absolute))
-			{
-				errors["imageUrl"] = "Invalid Image URL";
-			}
-
 			if (errors.Any())
 			{
 				return BadRequest(errors);
@@ -212,58 +208,6 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = ex.Message });
 			}
 		}
-
-
-		[HttpPost("CreateComboWithDishes")]
-		public async Task<ActionResult<CreateComboDishDTO>> CreateComboWithDishes([FromBody] CreateComboDishDTO createComboDishDTO)
-		{
-			var errors = new Dictionary<string, string>();
-
-			if (string.IsNullOrEmpty(createComboDishDTO.NameCombo))
-			{
-				errors["nameCombo"] = "Combo name is required";
-			}
-			else if (createComboDishDTO.NameCombo.Length > 100)
-			{
-				errors["nameCombo"] = "The combo name cannot exceed 100 characters";
-			}
-
-			if (createComboDishDTO.Price < 0)
-			{
-				errors["price"] = "Price cannot be negative";
-			}
-
-			if (createComboDishDTO.Note?.Length > 500)
-			{
-				errors["note"] = "Combo description must not exceed 500 characters";
-			}
-
-			var existingCombos = await _comboService.SearchComboByNameAsync(createComboDishDTO.NameCombo);
-			if (existingCombos.Any())
-			{
-				errors["nameCombo"] = "The combo name already exists";
-			}
-
-			if (errors.Any())
-			{
-				return BadRequest(errors);
-			}
-
-			try
-			{
-				var result = await _comboService.CreateComboWithDishesAsync(createComboDishDTO);
-				return Ok(new
-				{
-					message = "The combo with dishes has been created successfully",
-					result
-				});
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, new { message = ex.Message });
-			}
-		}
-
 
 		[HttpPut("{id}/cancel")]
 		public async Task<IActionResult> CancelCombo(int id)
@@ -312,7 +256,7 @@ namespace EHM_API.Controllers
 			return Ok(combos);
 		}
 		[HttpGet("ListCombo")]
-		public async Task<ActionResult<PagedResult<ComboDTO>>> GetListCombo(
+		public async Task<ActionResult<PagedResult<ViewComboDTO>>> GetListCombo(
 		[FromQuery] int page = 1,
 		[FromQuery] int pageSize = 10,
 		[FromQuery] string? search = null)
@@ -349,15 +293,152 @@ namespace EHM_API.Controllers
 				message = "Combo status updated successfully",
 			});
 		}
-        [HttpGet("GetComboById/{id}")]
-        public async Task<ActionResult<ComboDTO>> GetCombo(int id)
+		[HttpGet("GetComboById/{id}")]
+		public async Task<ActionResult<ComboDTO>> GetCombo(int id)
+		{
+			var combo = await _comboService.GetComboByIdAsync(id);
+			if (combo == null)
+			{
+				return NotFound();
+			}
+			return Ok(combo);
+		}
+		[HttpPost("CreateComboWithDishes")]
+		public async Task<ActionResult<ComboDTO>> CreateComboWithDishes([FromBody] CreateComboDishDTO createComboWithDishesDTO)
+		{
+			var errors = new Dictionary<string, string>();
+
+			if (string.IsNullOrEmpty(createComboWithDishesDTO.NameCombo))
+			{
+				errors["nameCombo"] = "Combo name is required";
+			}
+			else if (createComboWithDishesDTO.NameCombo.Length > 100)
+			{
+				errors["nameCombo"] = "The combo name cannot exceed 100 characters";
+			}
+
+			if (!createComboWithDishesDTO.Price.HasValue)
+			{
+				errors["price"] = "Price is required";
+			}
+			else if (createComboWithDishesDTO.Price < 0 || createComboWithDishesDTO.Price > 1000000000)
+			{
+				errors["price"] = "Price must be between 0 and 1,000,000,000";
+			}
+
+			if (string.IsNullOrEmpty(createComboWithDishesDTO.Note))
+			{
+				errors["note"] = "Note is required";
+			}
+			else if (createComboWithDishesDTO.Note?.Length > 500)
+			{
+				errors["note"] = "Combo note must not exceed 500 characters";
+			}
+			if (string.IsNullOrEmpty(createComboWithDishesDTO.ImageUrl))
+			{
+				errors["image"] = "Image is required";
+			}
+
+			var existingCombos = await _comboService.SearchComboByNameAsync(createComboWithDishesDTO.NameCombo);
+			if (existingCombos.Any())
+			{
+				errors["nameCombo"] = "The combo name already exists";
+			}
+			if (createComboWithDishesDTO.DishIds == null || createComboWithDishesDTO.DishIds.Count == 0)
+			{
+				errors["dish"] = "Dish information is required";
+			}
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+			try
+			{
+				var result = await _comboService.CreateComboWithDishesAsync(createComboWithDishesDTO);
+				return Ok(new
+				{
+					message = "The combo with dishes has been created successfully",
+					result
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = ex.Message });
+			}
+		}
+        [HttpPut("UpdateComboWithDishes/{comboId}")]
+        public async Task<ActionResult<ComboDTO>> UpdateComboWithDishes(int comboId, [FromBody] UpdateComboDishDTO updateComboWithDishesDTO)
         {
-            var combo = await _comboService.GetComboByIdAsync(id);
-            if (combo == null)
+            var errors = new Dictionary<string, string>();
+
+            if (comboId <= 0)
             {
-                return NotFound();
+                errors["comboId"] = "Invalid combo ID";
+                return BadRequest(errors);
             }
-            return Ok(combo);
+
+            if (string.IsNullOrEmpty(updateComboWithDishesDTO.NameCombo))
+            {
+                errors["nameCombo"] = "Combo name is required";
+            }
+            else if (updateComboWithDishesDTO.NameCombo.Length > 100)
+            {
+                errors["nameCombo"] = "The combo name cannot exceed 100 characters";
+            }
+
+            if (!updateComboWithDishesDTO.Price.HasValue)
+            {
+                errors["price"] = "Price is required";
+            }
+            else if (updateComboWithDishesDTO.Price < 0 || updateComboWithDishesDTO.Price > 1000000000)
+            {
+                errors["price"] = "Price must be between 0 and 1,000,000,000";
+            }
+
+            if (string.IsNullOrEmpty(updateComboWithDishesDTO.Note))
+            {
+                errors["note"] = "Note is required";
+            }
+            else if (updateComboWithDishesDTO.Note?.Length > 500)
+            {
+                errors["note"] = "Combo note must not exceed 500 characters";
+            }
+
+            if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
+            {
+                errors["image"] = "Image is required";
+            }
+
+            var existingCombos = await _comboService.SearchComboByNameAsync(updateComboWithDishesDTO.NameCombo);
+            if (existingCombos.Any(c => c.ComboId != comboId))
+            {
+                errors["nameCombo"] = "The combo name already exists";
+            }
+
+            if (updateComboWithDishesDTO.DishIds == null || updateComboWithDishesDTO.DishIds.Count == 0)
+            {
+                errors["dish"] = "Dish information is required";
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+
+            try
+            {
+                var result = await _comboService.UpdateComboWithDishesAsync(comboId, updateComboWithDishesDTO);
+                return Ok(new
+                {
+                    message = "The combo with dishes has been updated successfully",
+                    result
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
+
     }
 }

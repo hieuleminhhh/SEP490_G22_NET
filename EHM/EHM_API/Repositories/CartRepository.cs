@@ -1,5 +1,5 @@
 ﻿using EHM_API.Controllers;
-using EHM_API.DTOs.CartDTO;
+using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.Models;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Repositories
 {
-	public class CartRepository : ICartRepository
+    public class CartRepository : ICartRepository
 	{
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly IDishService _dishService;
@@ -184,17 +184,21 @@ namespace EHM_API.Repositories
 			}
 
 			return await _context.Orders
-	   .Where(o => o.GuestPhone == guestPhone)
-	   .Include(o => o.GuestPhoneNavigation)
-	   .ThenInclude(g => g.Addresses)
-	   .Include(o => o.OrderDetails)
-	   .ThenInclude(od => od.Dish)
-	   .ThenInclude(d => d.Category)
-	   .Include(o => o.OrderDetails)
-	   .ThenInclude(od => od.Combo)
-	   .OrderByDescending(o => o.OrderId)
-	   .FirstOrDefaultAsync();
+				.Where(o => o.GuestPhone == guestPhone)
+				.Include(o => o.GuestPhoneNavigation)
+					.ThenInclude(g => g.Addresses)
+				.Include(o => o.OrderDetails)
+					.ThenInclude(od => od.Dish)
+						.ThenInclude(d => d.Category)
+				.Include(o => o.OrderDetails)
+					.ThenInclude(od => od.Combo)
+				.Include(o => o.OrderDetails)
+					.ThenInclude(od => od.Dish)
+						.ThenInclude(d => d.Discount)
+				.OrderByDescending(o => o.OrderId)
+				.FirstOrDefaultAsync();
 		}
+
 
 	}
 }
