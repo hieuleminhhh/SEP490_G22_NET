@@ -46,6 +46,11 @@ namespace EHM_API.Services
 			return dto;
 		}
 
+		public async Task<bool> GuestPhoneExistsAsync(string guestPhone)
+		{
+			return await _guestRepository.GuestPhoneExistsAsync(guestPhone);
+		}
+
 
 	} 
 }
