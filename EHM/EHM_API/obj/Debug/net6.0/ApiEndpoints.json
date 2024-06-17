@@ -755,6 +755,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EHM_API.Controllers.GuestController",
+    "Method": "GuestPhoneExists",
+    "RelativePath": "api/Guest/exists/{guestPhone}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "guestPhone",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ImageController",
     "Method": "GetImage",
     "RelativePath": "api/Image/getImage/{fileName}",

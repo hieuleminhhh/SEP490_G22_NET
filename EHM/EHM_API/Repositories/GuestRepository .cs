@@ -31,5 +31,10 @@ namespace EHM_API.Repositories
 				.Include(a => a.GuestPhoneNavigation)
 				.FirstOrDefaultAsync(a => a.AddressId == addressId);
 		}
+
+		public async Task<bool> GuestPhoneExistsAsync(string guestPhone)
+		{
+			return await _context.Guests.AnyAsync(g => g.GuestPhone == guestPhone);
+		}
 	}
     }
