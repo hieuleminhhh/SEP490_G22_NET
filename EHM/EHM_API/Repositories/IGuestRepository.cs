@@ -9,5 +9,7 @@ namespace EHM_API.Repositories
 
 		Task<Address> GetAddressByIdAsync(int addressId);
 
+		Task<bool> GuestPhoneExistsAsync(string guestPhone);
+
 	}
 }
