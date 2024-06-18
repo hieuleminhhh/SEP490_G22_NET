@@ -757,7 +757,7 @@
   {
     "ContainingType": "EHM_API.Controllers.GuestController",
     "Method": "GuestPhoneExists",
-    "RelativePath": "api/Guest/exists/{guestPhone}",
+    "RelativePath": "api/Guest/phoneExists/{guestPhone}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
