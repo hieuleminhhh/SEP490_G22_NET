@@ -110,7 +110,7 @@ namespace EHM_API.Services
 
 			var order = new Order
 			{
-				OrderDate = checkoutDTO.OrderDate ?? DateTime.Now,
+				OrderDate = DateTime.Now,
 				Status = checkoutDTO.Status ?? 0,
 				RecevingOrder = checkoutDTO.RecevingOrder,
 				GuestPhone = guest.GuestPhone,

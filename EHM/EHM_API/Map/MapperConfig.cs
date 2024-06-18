@@ -45,9 +45,15 @@ namespace EHM_API.Map
             CreateMap<SearchOrdersRequestDTO, Order>();
 
 			CreateMap<OrderDetail, OrderDetailDTO>()
-		  .ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo.NameCombo))
-		  .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
-		  .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.ImageUrl : src.Dish.ImageUrl));
+					   .ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo.NameCombo))
+					   .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+					   .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.ImageUrl : src.Dish.ImageUrl))
+					   .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish.Price))
+					   .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
+						   src.Dish.DiscountId == null ? (decimal?)null :
+						   src.Dish.DiscountId == 0 ? src.Dish.Price :
+						   src.Dish.Price.HasValue && src.Dish.Discount != null ? src.Dish.Price.Value - (src.Dish.Price.Value * src.Dish.Discount.DiscountAmount / 100) : (decimal?)null
+					   ));
 
 			CreateMap<Order, SearchPhoneOrderDTO>()
 				.ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
@@ -74,6 +80,7 @@ namespace EHM_API.Map
 			.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
 			.ForMember(dest => dest.DiscountedPrice, opt => opt.Ignore()) 
 			.ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Price));
+
 
 
 			//Guest DTO
