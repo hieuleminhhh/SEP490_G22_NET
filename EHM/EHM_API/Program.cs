@@ -111,6 +111,12 @@ namespace EHM_API
             builder.Services.AddScoped<IGuestRepository, GuestRepository>();
             builder.Services.AddScoped<IGuestService, GuestService>();
 
+            builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+            builder.Services.AddScoped<IIngredientService, IngredientService>();
+
+            builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+            builder.Services.AddScoped<IMaterialService, MaterialService>();
+
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {

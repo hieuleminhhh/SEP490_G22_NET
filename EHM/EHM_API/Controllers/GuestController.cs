@@ -27,5 +27,14 @@ namespace EHM_API.Controllers
 
 			return Ok(guestAddressInfo);
 		}
+
+
+		[HttpGet("phoneExists/{guestPhone}")]
+		public async Task<IActionResult> GuestPhoneExists(string guestPhone)
+		{
+			var exists = await _guestService.GuestPhoneExistsAsync(guestPhone);
+
+			return Ok(new { Exists = exists });
+		}
 	}
 }

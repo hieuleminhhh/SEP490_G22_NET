@@ -24,9 +24,16 @@ public class OrderRepository : IOrderRepository
     public async Task<Order> GetByIdAsync(int id)
     {
         return await _context.Orders
-                             .Include(o => o.Account).Include(o => o.Address)
-                             .FirstOrDefaultAsync(o => o.OrderId == id);
+            .Include(o => o.Account)
+            .Include(o => o.Address)
+            .Include(o => o.OrderDetails)
+            .ThenInclude(od => od.Combo)
+            .Include(o => o.OrderDetails)
+            .ThenInclude(od => od.Dish)
+            .ThenInclude(d => d.Discount)
+            .FirstOrDefaultAsync(o => o.OrderId == id);
     }
+
 
 
     public async Task<Order> AddAsync(Order order)
@@ -43,14 +50,16 @@ public class OrderRepository : IOrderRepository
 	public async Task<IEnumerable<Order>> SearchAsync(string guestPhone)
 	{
 		return await _context.Orders
-							 .Include(o => o.Account)
-                             .Include(a => a.Address)
-							 .Include(o => o.OrderDetails)
-							.ThenInclude(od => od.Combo)
-							 .Include(o => o.OrderDetails)
-							.ThenInclude(od => od.Dish)
-							 .Where(o => o.GuestPhone == guestPhone)
-							 .ToListAsync();
+								.Include(o => o.Account)
+								.Include(o => o.Address)
+								.Include(o => o.OrderDetails)
+								.ThenInclude(od => od.Combo)
+								.Include(o => o.OrderDetails)
+								.ThenInclude(od => od.Dish)
+						    	.ThenInclude(d => d.Discount) 
+								.Where(o => o.GuestPhone == guestPhone)
+						         .OrderByDescending(o => o.OrderDate)
+								.ToListAsync();
 	}
 
 
