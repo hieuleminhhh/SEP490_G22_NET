@@ -39,7 +39,7 @@ namespace EHM_API.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=123;TrustServerCertificate=true");
+                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=sa;TrustServerCertificate=true");
             }
         }
 
@@ -83,9 +83,13 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.AddressId).HasColumnName("AddressID");
 
-                entity.Property(e => e.ConsigneeName).HasMaxLength(50);
+                entity.Property(e => e.ConsigneeName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
-                entity.Property(e => e.GuestAddress).HasMaxLength(50);
+                entity.Property(e => e.GuestAddress)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.GuestPhone)
                     .HasMaxLength(15)
@@ -125,7 +129,7 @@ namespace EHM_API.Models
             });
 
             modelBuilder.Entity<ComboDetail>()
-           .HasKey(cd => new { cd.ComboId, cd.DishId });
+            .HasKey(cd => new { cd.ComboId, cd.DishId });
 
             modelBuilder.Entity<ComboDetail>()
                 .HasOne(cd => cd.Combo)
@@ -136,6 +140,7 @@ namespace EHM_API.Models
                 .HasOne(cd => cd.Dish)
                 .WithMany(d => d.ComboDetails)
                 .HasForeignKey(cd => cd.DishId);
+
 
             modelBuilder.Entity<Discount>(entity =>
             {
@@ -318,7 +323,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.InvoiceId).HasColumnName("InvoiceID");
 
-                entity.Property(e => e.OrderDate).HasColumnType("datetime");
+                entity.Property(e => e.OrderDate).HasColumnType("date");
 
                 entity.Property(e => e.RecevingOrder).HasColumnType("datetime");
 
@@ -424,5 +429,3 @@ namespace EHM_API.Models
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
-
-
