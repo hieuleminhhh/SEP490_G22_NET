@@ -8,7 +8,6 @@ namespace EHM_API.Models
         public int DishId { get; set; }
         public int MaterialId { get; set; }
         public int? Quantitative { get; set; }
-        public int? Unit { get; set; }
 
         public virtual Dish Dish { get; set; } = null!;
         public virtual Material Material { get; set; } = null!;

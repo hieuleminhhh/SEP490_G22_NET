@@ -38,18 +38,23 @@ namespace EHM_API.Services
 			return orderDtos;
 		}
 
-		public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
+        public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
+        {
+            var order = await _orderRepository.GetByIdAsync(id);
+            if (order == null)
             {
-
-                 var order = await _orderRepository.GetByIdAsync(id);
-                if (order == null)
-                {
-                    return null;
-                }
-                return _mapper.Map<OrderDTOAll>(order);
+                return null;
             }
 
-		public async Task<IEnumerable<SearchPhoneOrderDTO>> SearchOrdersAsync(string guestPhone = null)
+            var orderDto = _mapper.Map<OrderDTOAll>(order);
+            orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(order.OrderDetails);
+
+            return orderDto;
+        }
+
+
+
+        public async Task<IEnumerable<SearchPhoneOrderDTO>> SearchOrdersAsync(string guestPhone = null)
 		{
 			if (string.IsNullOrWhiteSpace(guestPhone))
 			{

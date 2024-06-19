@@ -9,6 +9,8 @@ using EHM_API.DTOs.ComboDTO.Manager;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.GuestDTO.Guest;
 using EHM_API.DTOs.HomeDTO;
+using EHM_API.DTOs.IngredientDTO.Manager;
+using EHM_API.DTOs.MaterialDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
@@ -34,8 +36,6 @@ namespace EHM_API.Map
             CreateMap<UpdateDishDTO, Dish>();
 
             CreateMap<Order, OrderDTOAll>()
-                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Account != null ? src.Account.FirstName : null))
-                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Account != null ? src.Account.LastName : null))
                  .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address != null ? src.Address.GuestAddress : null))
                  .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address != null ? src.Address.ConsigneeName : null));
 
@@ -110,6 +110,21 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.DishId, opt => opt.MapFrom(src => src.Dish.DishId))
                 .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish.Price));
+
+            CreateMap<Ingredient, IngredientAllDTO>()
+               .ForMember(dest => dest.DishItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+               .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material.Name))
+               .ForMember(dest => dest.MaterialUnit, opt => opt.MapFrom(src => src.Material.Unit));
+
+            CreateMap<CreateIngredientDTO, Ingredient>();
+            CreateMap<UpdateIngredientDTO, Ingredient>()
+                .ForMember(dest => dest.MaterialId, opt => opt.Ignore());
+
+			CreateMap<Material, MaterialAllDTO>();
+			CreateMap<CreateMaterialDTO, Material>().ReverseMap();
+			CreateMap<UpdateMaterialDTO, Material>().ReverseMap();
+
+				
 
         }
     }
