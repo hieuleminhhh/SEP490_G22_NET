@@ -279,7 +279,7 @@ namespace EHM_API.Controllers
 			var existingCombo = await _comboService.GetComboByIdAsync(comboId);
 			if (existingCombo == null)
 			{
-				return NotFound(new { message = "Dish not found" });
+				return NotFound(new { message = "Combo not found" });
 			}
 
 			var updatedCombo = await _comboService.UpdateComboStatusAsync(comboId, (bool)updateCombo.IsActive);
