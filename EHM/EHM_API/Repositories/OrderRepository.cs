@@ -1,4 +1,7 @@
-﻿using EHM_API.Models;
+﻿using EHM_API.DTOs.DishDTO.Manager;
+using EHM_API.DTOs.HomeDTO;
+using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,6 +86,56 @@ public class OrderRepository : IOrderRepository
         await _context.SaveChangesAsync();
         return true;
     }
+    public async Task<PagedResult<OrderDTO>> GetOrderAsync(string search, int page, int pageSize)
+    {
+        var query = _context.Orders.AsQueryable();
 
+        if (!string.IsNullOrEmpty(search))
+        {
+            search = search.ToLower();
+            query = query.Where(d => d.GuestPhone.ToLower().Contains(search));
+        }
 
+        var totalDishes = await query.CountAsync();
+
+        var order = await query
+            .Include(a => a.Address)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var orderDTOs = order.Select(o => new OrderDTO
+        {
+            OrderId = o.OrderId,
+            OrderDate = (DateTime)o.OrderDate,
+            Status = (int)o.Status,
+            RecevingOrder = o.RecevingOrder,
+            AccountId = o.AccountId,
+            TableId = o.TableId,
+            InvoiceId = o.InvoiceId,
+            TotalAmount = o.TotalAmount,
+            GuestPhone = o.GuestPhone,
+            Deposits = o.Deposits,
+            AddressId = (int)o.AddressId,
+            GuestAddress = o.Address?.GuestAddress,
+            ConsigneeName = o.Address?.ConsigneeName
+
+        }).ToList();
+
+        return new PagedResult<OrderDTO>(orderDTOs, totalDishes, page, pageSize);
+    }
+    public async Task<Order> UpdateOrderStatusAsync(int orderId, int status)
+    {
+        var od = await _context.Orders.FindAsync(orderId);
+        if (od == null)
+        {
+            return null;
+        }
+
+        od.Status = status;
+        _context.Orders.Update(od);
+        await _context.SaveChangesAsync();
+
+        return od;
+    }
 }

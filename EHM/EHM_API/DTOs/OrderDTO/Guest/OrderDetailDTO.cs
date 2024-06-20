@@ -2,6 +2,7 @@
 {
         public class OrderDetailDTO
         {
+            public int OrderDetailId { get; set; }
             public int DishId { get; set; }
             public int ComboId { get; set; }
             public string? NameCombo { get; set; }
@@ -12,8 +13,8 @@
             public int? Quantity { get; set; }
             public string? Note { get; set; }
             public string ImageUrl { get; set; }
-
-        }
+            public int? DishesServed { get; set; }
+    }
 
 
     }
