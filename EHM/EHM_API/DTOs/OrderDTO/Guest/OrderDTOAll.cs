@@ -2,7 +2,7 @@
 {
     public class OrderDTOAll
     {
-        public int OrderID { get; set; }
+        public int OrderId { get; set; }
         public DateTime OrderDate { get; set; }
         public int Status { get; set; }
         public DateTime? RecevingOrder { get; set; }

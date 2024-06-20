@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using EHM_API.DTOs.ComboDTO.Manager;
+using EHM_API.DTOs.DishDTO.Manager;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Services;
@@ -34,7 +37,7 @@ namespace EHM_API.Controllers
             }
 
             var orderDTO = _mapper.Map<OrderDTOAll>(order);
-            return CreatedAtAction(nameof(GetOrderById), new { id = orderDTO.OrderID }, orderDTO);
+            return CreatedAtAction(nameof(GetOrderById), new { id = orderDTO.OrderId }, orderDTO);
         }
 
         [HttpGet("{id}")]
@@ -142,8 +145,44 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "A problem happened while handling your request." });
 			}
 		}
+        [HttpGet("GetListOrder")]
+        public async Task<ActionResult<PagedResult<OrderDTO>>> GetListOrders(
+           [FromQuery] int page = 1,
+           [FromQuery] int pageSize = 10,
+           [FromQuery] string? search = null)
+        {
+            if (page <= 0) page = 1;
+            if (pageSize <= 0) pageSize = 10;
 
+            var result = await _orderService.GetOrderAsync(search?.Trim(), page, pageSize);
 
+            return Ok(result);
+        }
+        [HttpPatch("{orderId}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateOrderDTO updateOrder)
+        {
+            if (updateOrder == null)
+            {
+                return BadRequest(new { message = "Invalid data" });
+            }
 
-	}
+            var existingOrder = await _orderService.GetOrderByIdAsync(orderId);
+            if (existingOrder == null)
+            {
+                return NotFound(new { message = "Dish not found" });
+            }
+
+            var updatedOrder = await _orderService.UpdateOrderStatusAsync(orderId, updateOrder.Status);
+            if (updatedOrder == null)
+            {
+                return StatusCode(500, new { message = "An error occurred while updating the dish status" });
+            }
+
+            return Ok(new
+            {
+                message = "Order status updated successfully",
+            });
+        }
+
+    }
 }
