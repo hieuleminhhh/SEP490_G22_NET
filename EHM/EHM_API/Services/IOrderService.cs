@@ -1,5 +1,7 @@
-﻿using EHM_API.DTOs.OrderDTO.Guest;
+﻿using EHM_API.DTOs.HomeDTO;
+using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,6 +19,7 @@ namespace EHM_API.Services
         Task<bool> DeleteOrderAsync(int id);
 
 		Task<bool> CancelOrderAsync(int orderId);
-
-	}
+        Task<PagedResult<OrderDTO>> GetOrderAsync(string search, int page, int pageSize);
+        Task<Order> UpdateOrderStatusAsync(int comboId, int status);
+    }
 }

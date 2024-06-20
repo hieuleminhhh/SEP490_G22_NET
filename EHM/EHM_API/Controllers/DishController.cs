@@ -117,6 +117,17 @@ namespace EHM_API.Controllers
             {
                 errors["image"] = "Image is required";
             }
+            else
+            {
+                string extension = Path.GetExtension(createDishDTO.ImageUrl).ToLower();
+                string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    errors["image"] = "Invalid image file. Only JPG, JPEG, PNG, GIF files are allowed.";
+                }
+            }
+
 
             if (errors.Any())
             {
