@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.DishDTO.Manager;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
@@ -38,18 +40,23 @@ namespace EHM_API.Services
 			return orderDtos;
 		}
 
-		public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
+        public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
+        {
+            var order = await _orderRepository.GetByIdAsync(id);
+            if (order == null)
             {
-
-                 var order = await _orderRepository.GetByIdAsync(id);
-                if (order == null)
-                {
-                    return null;
-                }
-                return _mapper.Map<OrderDTOAll>(order);
+                return null;
             }
 
-		public async Task<IEnumerable<SearchPhoneOrderDTO>> SearchOrdersAsync(string guestPhone = null)
+            var orderDto = _mapper.Map<OrderDTOAll>(order);
+            orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(order.OrderDetails);
+
+            return orderDto;
+        }
+
+
+
+        public async Task<IEnumerable<SearchPhoneOrderDTO>> SearchOrdersAsync(string guestPhone = null)
 		{
 			if (string.IsNullOrWhiteSpace(guestPhone))
 			{
@@ -105,25 +112,47 @@ namespace EHM_API.Services
                 await _context.SaveChangesAsync();
 
                 return result;
+        }
+
+        public async Task<bool> CancelOrderAsync(int orderId)
+        {
+            var existingOrder = await _orderRepository.GetByIdAsync(orderId);
+            if (existingOrder == null)
+            {
+                return false;
             }
 
-		public async Task<bool> CancelOrderAsync(int orderId)
-		{
-			var existingOrder = await _orderRepository.GetByIdAsync(orderId);
-			if (existingOrder == null)
-			{
-				return false;
-			}
+            if (existingOrder.Status != 0)
+            {
+                return false;
+            }
 
-			if (existingOrder.Status != 0)
-			{
-				return false;
-			}
+            existingOrder.Status = 4;
+            await _orderRepository.UpdateAsync(existingOrder);
+            return true;
+        }
+        public async Task<PagedResult<OrderDTO>> GetOrderAsync(string search, int page, int pageSize)
+        {
+            var pagedDishes = await _orderRepository.GetOrderAsync(search, page, pageSize);
+            var orderDTOs = _mapper.Map<IEnumerable<OrderDTO>>(pagedDishes.Items);
 
-			existingOrder.Status = 4; 
-			await _orderRepository.UpdateAsync(existingOrder);
-			return true;
-		}
+            foreach (var odDTO in orderDTOs)
+            {
+                if (odDTO.AccountId.HasValue)
+                {
+                    var address = await _context.Addresses.FindAsync(odDTO.AccountId.Value);
+                    if (address != null)
+                    {
+                        odDTO.GuestAddress = address.GuestAddress;
+                    }
+                }
+            }
 
-	}
+            return new PagedResult<OrderDTO>(orderDTOs, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+        }
+        public async Task<Order> UpdateOrderStatusAsync(int comboId, int status)
+        {
+            return await _orderRepository.UpdateOrderStatusAsync(comboId, status);
+        }
     }
+}
