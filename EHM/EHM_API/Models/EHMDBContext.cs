@@ -402,9 +402,9 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ReservationTime).HasColumnType("datetime");
 
-                entity.Property(e => e.Status).HasMaxLength(50);
+                entity.Property(e => e.Status).HasDefaultValueSql("((0))");
 
-                entity.HasOne(d => d.GuestPhoneNavigation)
+				entity.HasOne(d => d.GuestPhoneNavigation)
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.GuestPhone)
                     .HasConstraintName("FK_Reservation_Guest");

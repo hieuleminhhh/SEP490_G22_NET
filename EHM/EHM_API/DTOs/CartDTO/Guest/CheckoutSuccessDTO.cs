@@ -13,7 +13,8 @@
         public DateTime? ReceivingTime { get; set; }
         public decimal TotalAmount { get; set; }
         public decimal Deposits { get; set; }
-        public List<OrderDetailsDTO> OrderDetails { get; set; }
+		public string? Note { get; set; }
+		public List<OrderDetailsDTO> OrderDetails { get; set; }
     }
 
     public class OrderDetailsDTO
@@ -26,7 +27,7 @@
         public decimal? DiscountedPrice { get; set; }
         public decimal? UnitPrice { get; set; }
         public int? Quantity { get; set; }
-        public string? Note { get; set; }
+
         public string ImageUrl { get; set; }
 
     }
