@@ -39,7 +39,7 @@ namespace EHM_API.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=sa;TrustServerCertificate=true");
+                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=123;TrustServerCertificate=true");
             }
         }
 
@@ -123,20 +123,21 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.Price).HasColumnType("money");
             });
-            modelBuilder.Entity<ComboDetail>()
-                        .HasKey(cd => new { cd.ComboId, cd.DishId });
 
-            modelBuilder.Entity<ComboDetail>()
-                .HasOne(cd => cd.Combo)
-                .WithMany(c => c.ComboDetails)
-                .HasForeignKey(cd => cd.ComboId);
+			modelBuilder.Entity<ComboDetail>()
+						.HasKey(cd => new { cd.ComboId, cd.DishId });
 
-            modelBuilder.Entity<ComboDetail>()
-                .HasOne(cd => cd.Dish)
-                .WithMany(d => d.ComboDetails)
-                .HasForeignKey(cd => cd.DishId);
+			modelBuilder.Entity<ComboDetail>()
+				.HasOne(cd => cd.Combo)
+				.WithMany(c => c.ComboDetails)
+				.HasForeignKey(cd => cd.ComboId);
 
-            modelBuilder.Entity<Discount>(entity =>
+			modelBuilder.Entity<ComboDetail>()
+				.HasOne(cd => cd.Dish)
+				.WithMany(d => d.ComboDetails)
+				.HasForeignKey(cd => cd.DishId);
+
+			modelBuilder.Entity<Discount>(entity =>
             {
                 entity.ToTable("Discount");
 
@@ -402,9 +403,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ReservationTime).HasColumnType("datetime");
 
-                entity.Property(e => e.Status).HasDefaultValueSql("((0))");
-
-				entity.HasOne(d => d.GuestPhoneNavigation)
+                entity.HasOne(d => d.GuestPhoneNavigation)
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.GuestPhone)
                     .HasConstraintName("FK_Reservation_Guest");
