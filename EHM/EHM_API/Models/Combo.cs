@@ -8,7 +8,6 @@ namespace EHM_API.Models
         public Combo()
         {
             OrderDetails = new HashSet<OrderDetail>();
-            ComboDetails = new List<ComboDetail>();
         }
 
         public int ComboId { get; set; }

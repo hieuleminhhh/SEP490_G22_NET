@@ -97,7 +97,7 @@ namespace EHM_API
             builder.Services.AddScoped<IDishRepository, DishRepository>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-            builder.Services.AddScoped<ITableRepository, TableRepository>();
+           /* builder.Services.AddScoped<ITableRepository, TableRepository>();*/
             builder.Services.AddScoped<ITableService, TableService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
