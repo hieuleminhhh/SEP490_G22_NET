@@ -9,7 +9,7 @@ namespace EHM_API.Models
         public DateTime? ReservationTime { get; set; }
         public int? GuestNumber { get; set; }
         public string? Note { get; set; }
-        public string? Status { get; set; }
+        public int? Status { get; set; }
         public int? TableId { get; set; }
         public string? GuestPhone { get; set; }
         public int? OrderId { get; set; }
