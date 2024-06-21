@@ -100,7 +100,7 @@ namespace EHM_API.Services
 						ComboId = combo != null ? (int?)combo.ComboId : null,
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
-						Note = item.Note
+						
 					};
 
 					orderDetails.Add(orderDetail);
@@ -117,7 +117,8 @@ namespace EHM_API.Services
 				TotalAmount = totalAmount,
 				OrderDetails = orderDetails,
 				Deposits = checkoutDTO.Deposits,
-				AddressId = checkoutDTO.AddressId
+				AddressId = checkoutDTO.AddressId,
+				Note = checkoutDTO.Note
 				
 			};
 
@@ -147,7 +148,7 @@ namespace EHM_API.Services
 					DiscountedPrice = od.Dish?.Discount != null ? (od.Dish.Price - (od.Dish.Price * od.Dish.Discount.DiscountAmount / 100)) : od.Dish?.Price,
 					UnitPrice = od.UnitPrice,
 					Quantity = od.Quantity,
-					Note = od.Note,
+		
 					ImageUrl = od.Dish?.ImageUrl ?? od.Combo?.ImageUrl
 				})
 				.ToList(); 

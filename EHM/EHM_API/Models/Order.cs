@@ -21,12 +21,14 @@ namespace EHM_API.Models
         public string? GuestPhone { get; set; }
         public decimal Deposits { get; set; }
         public int? AddressId { get; set; }
+        public string? Note { get; set; }
 
         public virtual Account? Account { get; set; }
         public virtual Address? Address { get; set; }
         public virtual Guest? GuestPhoneNavigation { get; set; }
         public virtual Invoice? Invoice { get; set; }
         public virtual Table? Table { get; set; }
+        public virtual Reservation? Reservation { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

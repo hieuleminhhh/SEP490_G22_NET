@@ -43,9 +43,16 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
             return material;
         }
+        public async Task DeleteIngredientsByMaterialIDAsync(int materialId)
+        {
+            var sql = "DELETE FROM Ingredient WHERE MaterialID = @p0";
+            await _context.Database.ExecuteSqlRawAsync(sql, materialId);
+        }
 
         public async Task DeleteAsync(int id)
         {
+            await DeleteIngredientsByMaterialIDAsync(id);
+
             var material = await _context.Materials.FindAsync(id);
             if (material != null)
             {

@@ -12,5 +12,6 @@ namespace EHM_API.Repositories
         Task<Material> CreateAsync(Material material);
         Task<Material> UpdateAsync(Material material);
         Task DeleteAsync(int id);
+        Task DeleteIngredientsByMaterialIDAsync(int materialId);
     }
 }

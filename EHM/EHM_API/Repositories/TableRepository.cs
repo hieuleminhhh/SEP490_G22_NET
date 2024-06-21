@@ -1,4 +1,4 @@
-﻿using EHM_API.Models;
+﻿/*using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +39,7 @@ namespace EHM_API.Repositories
             return table;
         }
 
-        public async Task<bool> ChangeStatusAsync(int id, string status)
+        public async Task<bool> ChangeStatusAsync(int id, int status)
         {
             var table = await _context.Tables.FindAsync(id);
             if (table == null)
@@ -60,3 +60,4 @@ namespace EHM_API.Repositories
         }
     }
 }
+*/
