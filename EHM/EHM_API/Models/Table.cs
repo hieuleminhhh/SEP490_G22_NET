@@ -12,8 +12,9 @@ namespace EHM_API.Models
         }
 
         public int TableId { get; set; }
-        public string? Status { get; set; }
+        public int? Status { get; set; }
         public int? Capacity { get; set; }
+        public int? Floor { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Reservation> Reservations { get; set; }

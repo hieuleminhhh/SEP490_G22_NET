@@ -67,18 +67,9 @@ namespace EHM_API.Repositories
 
         public async Task<bool> DeleteIngredientAsync(int dishId, int materialId)
         {
-            var ingredient = await _context.Ingredients
-                .FirstOrDefaultAsync(i => i.DishId == dishId && i.MaterialId == materialId);
-
-            if (ingredient == null)
-            {
-                return false;
-            }
-
-            _context.Ingredients.Remove(ingredient);
-            await _context.SaveChangesAsync();
-
-            return true;
+            var sqlQuery = "DELETE FROM Ingredient WHERE DishId = {0} AND MaterialId = {1}";
+            var result = await _context.Database.ExecuteSqlRawAsync(sqlQuery, dishId, materialId);
+            return result > 0;
         }
 
         public async Task<IEnumerable<Ingredient>> SearchIngredientsByDishIdAsync(int dishId)
