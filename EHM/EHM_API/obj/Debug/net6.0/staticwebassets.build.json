@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "eGx2VUSRkUcLvIJ6qdtAy23W+mEgIw2FF0Qtt1pR3AA=",
+  "Source": "EHM_API",
+  "BasePath": "_content/EHM_API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

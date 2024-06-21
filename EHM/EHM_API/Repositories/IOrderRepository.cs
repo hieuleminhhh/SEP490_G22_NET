@@ -1,4 +1,6 @@
-﻿using EHM_API.Models;
+﻿using EHM_API.DTOs.HomeDTO;
+using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,4 +12,6 @@ public interface IOrderRepository
     Task<Order> UpdateAsync(Order order);
     Task<bool> DeleteAsync(int id);
     Task<IEnumerable<Order>> SearchAsync(string guestPhone);
+    Task<PagedResult<OrderDTO>> GetOrderAsync(string search, int page, int pageSize);
+    Task<Order> UpdateOrderStatusAsync(int orderId, int status);
 }
