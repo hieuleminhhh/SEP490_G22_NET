@@ -13,6 +13,7 @@ using EHM_API.DTOs.IngredientDTO.Manager;
 using EHM_API.DTOs.MaterialDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.Models;
 
 namespace EHM_API.Map
@@ -124,8 +125,78 @@ namespace EHM_API.Map
 			CreateMap<CreateMaterialDTO, Material>().ReverseMap();
 			CreateMap<UpdateMaterialDTO, Material>().ReverseMap();
 
-				
 
-        }
+			// Reservation to ReservationRequestDTO
+			CreateMap<Reservation, ReservationRequestDTO>()
+			  .ForMember(dest => dest.ConsigneeName,
+						 opt => opt.MapFrom(src => src.Table.Orders.FirstOrDefault().Address.ConsigneeName))
+			  .ForMember(dest => dest.GuestPhone,
+						 opt => opt.MapFrom(src => src.GuestPhone))
+			  .ForMember(dest => dest.ReservationTime,
+						 opt => opt.MapFrom(src => src.ReservationTime))
+			  .ForMember(dest => dest.Status,
+						 opt => opt.MapFrom(src => src.Status))
+			  .ForMember(dest => dest.StatusOrder,
+						 opt => opt.MapFrom(src => src.Order.Status))
+			  .ForMember(dest => dest.GuestNumber,
+						 opt => opt.MapFrom(src => src.GuestNumber))
+			  .ForMember(dest => dest.Deposits,
+						 opt => opt.MapFrom(src => src.Order.Deposits));
+
+
+			// Map Reservation to ReservationDetailDTO
+			CreateMap<Reservation, ReservationDetailDTO>()
+				.ForMember(dest => dest.Guest,
+						   opt => opt.MapFrom(src => src.GuestPhoneNavigation))
+				.ForMember(dest => dest.Order,
+						   opt => opt.MapFrom(src => src.Order));
+
+			// Map Order to OrderDetailDTO
+			CreateMap<Order, OrderDetailDTO1>()
+				.ForMember(dest => dest.Address,
+						   opt => opt.MapFrom(src => src.Address))
+				.ForMember(dest => dest.OrderDetails,
+						   opt => opt.MapFrom(src => src.OrderDetails));
+
+			// Map OrderDetail to OrderItemDTO1 with conditional mapping
+			CreateMap<OrderDetail, OrderItemDTO1>()
+				.ForMember(dest => dest.DishId,
+						   opt => opt.MapFrom(src => src.DishId))
+				.ForMember(dest => dest.ItemName,
+						   opt => opt.MapFrom(src => src.DishId != null ? src.Dish.ItemName : null))
+				.ForMember(dest => dest.ComboId,
+						   opt => opt.MapFrom(src => src.ComboId))
+				.ForMember(dest => dest.NameCombo,
+						   opt => opt.MapFrom(src => src.ComboId != null ? src.Combo.NameCombo : null))
+				.ForMember(dest => dest.UnitPrice,
+						   opt => opt.MapFrom(src => src.UnitPrice))
+				.ForMember(dest => dest.Quantity,
+						   opt => opt.MapFrom(src => src.Quantity));
+
+			// Map Address to AddressDTO
+			CreateMap<Address, AddressDTO1>()
+				.ForMember(dest => dest.GuestAddress,
+						   opt => opt.MapFrom(src => src.GuestAddress))
+				.ForMember(dest => dest.ConsigneeName,
+						   opt => opt.MapFrom(src => src.ConsigneeName))
+				.ForMember(dest => dest.GuestPhone,
+						   opt => opt.MapFrom(src => src.GuestPhone));
+
+			// Map Guest to GuestDTO
+			CreateMap<Guest, GuestDTO1>()
+				.ForMember(dest => dest.Email,
+						   opt => opt.MapFrom(src => src.Email))
+				.ForMember(dest => dest.GuestPhone,
+						   opt => opt.MapFrom(src => src.GuestPhone));
+
+			// Map Combo to OrderItemDTO1 for Combo properties
+			CreateMap<Combo, OrderItemDTO1>()
+				.ForMember(dest => dest.ComboId,
+						   opt => opt.MapFrom(src => src.ComboId))
+				.ForMember(dest => dest.NameCombo,
+						   opt => opt.MapFrom(src => src.NameCombo));
+
+
+		}
     }
 }
