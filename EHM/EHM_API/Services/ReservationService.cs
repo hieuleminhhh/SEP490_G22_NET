@@ -31,8 +31,6 @@ namespace EHM_API.Services
 		public async Task<IEnumerable<ReservationRequestDTO>> GetReservationsByStatusAsync(int? status)
 		{
 			var reservations = await _repository.GetReservationsByStatusAsync(status);
-
-			// Filter out reservations that are marked as full (status = -1)
 			reservations = reservations.Where(r => r.Status != -1).ToList();
 
 			return _mapper.Map<IEnumerable<ReservationRequestDTO>>(reservations);

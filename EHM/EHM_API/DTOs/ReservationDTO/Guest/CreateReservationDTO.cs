@@ -13,7 +13,7 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 		public int? GuestNumber { get; set; }
 		public string? Note { get; set; }
 		public int TableId { get; set; }
-		public List<ReservationOrderDetailsDTO> OrderDetails { get; set; }
+		public List<ReservationOrderDetailsDTO>? OrderDetails { get; set; }
 	}
 
 	public class ReservationOrderDetailsDTO

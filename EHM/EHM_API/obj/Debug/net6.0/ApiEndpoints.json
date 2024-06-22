@@ -105,7 +105,7 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.CategoryController",
-    "Method": "PostCategory",
+    "Method": "CreateNewCategory",
     "RelativePath": "api/Category",
     "HttpMethod": "POST",
     "IsController": true,
@@ -157,7 +157,7 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.CategoryController",
-    "Method": "PutCategory",
+    "Method": "UpdateCategory",
     "RelativePath": "api/Category/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
@@ -568,7 +568,7 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.DishController",
-    "Method": "PostDish",
+    "Method": "CreateNewDish",
     "RelativePath": "api/Dish",
     "HttpMethod": "POST",
     "IsController": true,
@@ -584,7 +584,7 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.DishController",
-    "Method": "PutDish",
+    "Method": "UpdateDish",
     "RelativePath": "api/Dish/{dishId}",
     "HttpMethod": "PUT",
     "IsController": true,
