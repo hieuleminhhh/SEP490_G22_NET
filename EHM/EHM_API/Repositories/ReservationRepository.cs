@@ -91,12 +91,10 @@ namespace EHM_API.Repositories
 
 			if (guest != null)
 			{
-				// Update guest information if necessary
 				guest.Email = email;
 			}
 			else
 			{
-				// Create new guest
 				guest = new Guest
 				{
 					GuestPhone = guestPhone,

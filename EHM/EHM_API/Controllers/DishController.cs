@@ -57,7 +57,7 @@ namespace EHM_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostDish(CreateDishDTO createDishDTO)
+        public async Task<ActionResult> CreateNewDish(CreateDishDTO createDishDTO)
         {
             var errors = new Dictionary<string, string>();
 
@@ -67,55 +67,55 @@ namespace EHM_API.Controllers
 
             if (string.IsNullOrEmpty(createDishDTO.ItemName))
             {
-                errors["itemName"] = "Item name is required";
+                errors["itemName"] = "Tên món ăn không được để trống";
             }
             else if (createDishDTO.ItemName.Length > 100)
             {
-                errors["itemName"] = "The dish name cannot exceed 100 characters";
+                errors["itemName"] = "Tên món ăn không được vượt quá 100 ký tự";
             }
             else
             {
                 var existingDishes = await _dishService.SearchDishesAsync(createDishDTO.ItemName);
                 if (existingDishes.Any())
                 {
-                    errors["itemName"] = "The dish name already exists";
+                    errors["itemName"] = "Tên món ăn đã tồn tại";
                 }
             }
 
             if (!createDishDTO.Price.HasValue)
             {
-                errors["price"] = "Price is required";
+                errors["price"] = "Giá của món ăn không được để trống";
             }
             else if (createDishDTO.Price < 0 || createDishDTO.Price > 1000000000)
             {
-                errors["price"] = "Price must be between 0 and 1,000,000,000";
+                errors["price"] = "Giá phải nằm trong khoảng từ 0 đến 1.000.000.000";
             }
 
             if (string.IsNullOrEmpty(createDishDTO.ItemDescription))
             {
-                errors["itemDescription"] = "Item description is required";
+                errors["itemDescription"] = "Mô tả không được để trống";
             }
             else if (createDishDTO.ItemDescription.Length > 500)
             {
-                errors["itemDescription"] = "Food description must not exceed 500 characters";
+                errors["itemDescription"] = "Mô tả món ăn không được vượt quá 500 ký tự";
             }
 
             if (!createDishDTO.CategoryId.HasValue)
             {
-                errors["categoryId"] = "Category is required";
+                errors["categoryId"] = "Danh mục món ăn không được để trống";
             }
             else
             {
                 var category = await _context.Categories.FindAsync(createDishDTO.CategoryId.Value);
                 if (category == null)
                 {
-                    errors["categoryId"] = "Invalid category";
+                    errors["categoryId"] = "Danh mục món ăn không tồn tại";
                 }
             }
 
             if (string.IsNullOrEmpty(createDishDTO.ImageUrl))
             {
-                errors["image"] = "Image is required";
+                errors["image"] = "Hình ảnh không được để trống";
             }
             else
             {
@@ -124,7 +124,7 @@ namespace EHM_API.Controllers
 
                 if (!allowedExtensions.Contains(extension))
                 {
-                    errors["image"] = "Invalid image file. Only JPG, JPEG, PNG, GIF files are allowed.";
+                    errors["image"] = "Hình ảnh không hợp lệ. Chỉ cho phép các tệp JPG, JPEG, PNG, GIF.";
                 }
             }
 
@@ -144,7 +144,7 @@ namespace EHM_API.Controllers
         }
 
         [HttpPut("{dishId}")]
-        public async Task<IActionResult> PutDish(int dishId, UpdateDishDTO updateDishDTO)
+        public async Task<IActionResult> UpdateDish(int dishId, UpdateDishDTO updateDishDTO)
         {
             var errors = new Dictionary<string, string>();
 

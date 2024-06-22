@@ -129,7 +129,7 @@ namespace EHM_API.Map
 			// Reservation to ReservationRequestDTO
 			CreateMap<Reservation, ReservationRequestDTO>()
 			  .ForMember(dest => dest.ConsigneeName,
-						 opt => opt.MapFrom(src => src.Table.Orders.FirstOrDefault().Address.ConsigneeName))
+						 opt => opt.MapFrom(src => src.Order.Address.ConsigneeName))
 			  .ForMember(dest => dest.GuestPhone,
 						 opt => opt.MapFrom(src => src.GuestPhone))
 			  .ForMember(dest => dest.ReservationTime,

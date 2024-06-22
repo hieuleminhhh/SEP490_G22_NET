@@ -55,7 +55,7 @@ namespace EHM_API.Services
 				if ((item.DishId.HasValue && item.DishId.Value > 0) && (item.ComboId.HasValue && item.ComboId.Value > 0) ||
 					(!item.DishId.HasValue || item.DishId.Value <= 0) && (!item.ComboId.HasValue || item.ComboId.Value <= 0))
 				{
-					throw new InvalidOperationException("Each CartItem must have either DishId or ComboId, but not both or neither.");
+					throw new InvalidOperationException("Mỗi giỏ hàng phải có một món hoặc Combo, không được có cả hai hoặc không có món nào.");
 				}
 
 				Dish dish = null;
@@ -66,7 +66,7 @@ namespace EHM_API.Services
 					dish = await _cartRepository.GetDishByIdAsync(item.DishId.Value);
 					if (dish == null)
 					{
-						throw new KeyNotFoundException($"Dish with ID {item.DishId} not found.");
+						throw new KeyNotFoundException($"Món ăn với ID {item.DishId} không tồn tại.");
 					}
 				}
 
@@ -75,7 +75,7 @@ namespace EHM_API.Services
 					combo = await _comboRepository.GetComboByIdAsync(item.ComboId.Value);
 					if (combo == null)
 					{
-						throw new KeyNotFoundException($"Combo with ID {item.ComboId} not found.");
+						throw new KeyNotFoundException($"Combo với ID {item.ComboId} không tồn tại.");
 					}
 				}
 

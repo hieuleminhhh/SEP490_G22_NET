@@ -77,37 +77,58 @@ namespace EHM_API.Controllers
 		[HttpPost("checkout")]
 		public async Task<IActionResult> Checkout([FromBody] CheckoutDTO checkoutDTO)
 		{
+			var errors = new Dictionary<string, string>();
+
 			if (checkoutDTO == null)
 			{
-				return BadRequest("Checkout data is null.");
+				errors["checkoutData"] = "Dữ liệu thanh toán là bắt buộc.";
 			}
 
 			if (string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone))
 			{
-				return BadRequest("GuestPhone is required.");
+				errors["guestPhone"] = "Số điện thoại khách hàng là bắt buộc.";
+			}
+
+			if (string.IsNullOrWhiteSpace(checkoutDTO.GuestAddress))
+			{
+				errors["guestAddress"] = "Địa chỉ khách hàng là bắt buộc.";
+			}
+
+			if (string.IsNullOrWhiteSpace(checkoutDTO.ConsigneeName))
+			{
+				errors["consigneeName"] = "Tên người nhận là bắt buộc.";
 			}
 
 			if (checkoutDTO.CartItems == null || !checkoutDTO.CartItems.Any())
 			{
-				return BadRequest("Cart items are required.");
+				errors["cartItems"] = "Giỏ hàng không được để trống.";
 			}
 
 			if (checkoutDTO.OrderDate == null)
 			{
-				return BadRequest("Order date is required.");
+				errors["orderDate"] = "Ngày đặt hàng là bắt buộc.";
+			}
+
+			if (errors.Any())
+			{
+				return BadRequest(errors);
 			}
 
 			try
 			{
 				await _cartService.Checkout(checkoutDTO);
 				_cartService.ClearCart();
-				return Ok(new { message = "Checkout successful." });
+				return Ok(new { message = "Thanh toán thành công." });
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return BadRequest(new Dictionary<string, string>
+				{
+					["error"] = ex.Message
+				});
 			}
 		}
+
 
 
 		[HttpGet("checkoutsuccess/{guestPhone}")]
@@ -117,7 +138,7 @@ namespace EHM_API.Controllers
 
 			if (checkoutSuccessInfo == null || string.IsNullOrWhiteSpace(checkoutSuccessInfo.GuestPhone))
 			{
-				return NotFound("No order information found for this customer phone number.");
+				return NotFound("Không tìm thấy thông tin đặt hàng cho số điện thoại của khách hàng.");
 			}
 
 			return Ok(checkoutSuccessInfo);
