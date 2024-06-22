@@ -803,6 +803,182 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EHM_API.Controllers.IngredientController",
+    "Method": "GetAllIngredients",
+    "RelativePath": "api/Ingredient",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.IngredientDTO.Manager.IngredientAllDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.IngredientController",
+    "Method": "CreateIngredient",
+    "RelativePath": "api/Ingredient",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createIngredientDTO",
+        "Type": "EHM_API.DTOs.IngredientDTO.Manager.CreateIngredientDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.IngredientDTO.Manager.IngredientAllDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.IngredientController",
+    "Method": "GetIngredientById",
+    "RelativePath": "api/Ingredient/{dishId}/{materialId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dishId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "materialId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.IngredientDTO.Manager.IngredientAllDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.IngredientController",
+    "Method": "UpdateIngredient",
+    "RelativePath": "api/Ingredient/{dishId}/{materialId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dishId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "materialId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updateIngredientDTO",
+        "Type": "EHM_API.DTOs.IngredientDTO.Manager.UpdateIngredientDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.IngredientController",
+    "Method": "DeleteIngredient",
+    "RelativePath": "api/Ingredient/{dishId}/{materialId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dishId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "materialId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.IngredientController",
+    "Method": "SearchIngredientsByDishId",
+    "RelativePath": "api/Ingredient/search-by-dish-id/{dishId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dishId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.IngredientDTO.Manager.IngredientAllDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.IngredientController",
+    "Method": "SearchIngredientsByDishItemName",
+    "RelativePath": "api/Ingredient/search-by-dish-item-name",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "itemName",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.IngredientDTO.Manager.IngredientAllDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "EHM_API.Controllers.HomeController",
     "Method": "Login",
     "RelativePath": "api/Login",
@@ -817,6 +993,141 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.MaterialController",
+    "Method": "GetMaterials",
+    "RelativePath": "api/Material",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.MaterialDTO.MaterialAllDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.MaterialController",
+    "Method": "CreateMaterial",
+    "RelativePath": "api/Material",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createMaterialDTO",
+        "Type": "EHM_API.DTOs.MaterialDTO.CreateMaterialDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.MaterialDTO.MaterialAllDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.MaterialController",
+    "Method": "GetMaterialById",
+    "RelativePath": "api/Material/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.MaterialDTO.MaterialAllDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.MaterialController",
+    "Method": "UpdateMaterial",
+    "RelativePath": "api/Material/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updateMaterialDTO",
+        "Type": "EHM_API.DTOs.MaterialDTO.UpdateMaterialDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.MaterialController",
+    "Method": "DeleteMaterial",
+    "RelativePath": "api/Material/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.MaterialController",
+    "Method": "SearchMaterials",
+    "RelativePath": "api/Material/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.MaterialDTO.MaterialAllDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
@@ -912,6 +1223,63 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "UpdateOrderStatus",
+    "RelativePath": "api/orders/{orderId}/status",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updateOrder",
+        "Type": "EHM_API.DTOs.OrderDTO.Manager.UpdateOrderDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "GetListOrders",
+    "RelativePath": "api/orders/GetListOrder",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.HomeDTO.PagedResult\u00601[[EHM_API.DTOs.OrderDTO.Manager.OrderDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
