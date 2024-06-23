@@ -15,5 +15,6 @@
         public int AddressId { get; set; }
         public string? GuestAddress { get; set; }
         public string? ConsigneeName { get; set; }
+        public string? Note { get; set; }
     }
 }

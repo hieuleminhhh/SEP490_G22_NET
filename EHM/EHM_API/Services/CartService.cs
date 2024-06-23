@@ -50,12 +50,12 @@ namespace EHM_API.Services
 
 			var orderDetails = new List<OrderDetail>();
 
-			foreach (var item in checkoutDTO.CartItems)
+			foreach (var item in checkoutDTO.OrderDetails)
 			{
 				if ((item.DishId.HasValue && item.DishId.Value > 0) && (item.ComboId.HasValue && item.ComboId.Value > 0) ||
 					(!item.DishId.HasValue || item.DishId.Value <= 0) && (!item.ComboId.HasValue || item.ComboId.Value <= 0))
 				{
-					throw new InvalidOperationException("Each CartItem must have either DishId or ComboId, but not both or neither.");
+					throw new InvalidOperationException("Mỗi giỏ hàng phải có một món hoặc Combo, không được có cả hai hoặc không có món nào.");
 				}
 
 				Dish dish = null;
@@ -66,7 +66,7 @@ namespace EHM_API.Services
 					dish = await _cartRepository.GetDishByIdAsync(item.DishId.Value);
 					if (dish == null)
 					{
-						throw new KeyNotFoundException($"Dish with ID {item.DishId} not found.");
+						throw new KeyNotFoundException($"Món ăn với ID {item.DishId} không tồn tại.");
 					}
 				}
 
@@ -75,7 +75,7 @@ namespace EHM_API.Services
 					combo = await _comboRepository.GetComboByIdAsync(item.ComboId.Value);
 					if (combo == null)
 					{
-						throw new KeyNotFoundException($"Combo with ID {item.ComboId} not found.");
+						throw new KeyNotFoundException($"Combo với ID {item.ComboId} không tồn tại.");
 					}
 				}
 
@@ -100,7 +100,7 @@ namespace EHM_API.Services
 						ComboId = combo != null ? (int?)combo.ComboId : null,
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
-						Note = item.Note
+						
 					};
 
 					orderDetails.Add(orderDetail);
@@ -117,7 +117,8 @@ namespace EHM_API.Services
 				TotalAmount = totalAmount,
 				OrderDetails = orderDetails,
 				Deposits = checkoutDTO.Deposits,
-				AddressId = checkoutDTO.AddressId
+				AddressId = checkoutDTO.AddressId,
+				Note = checkoutDTO.Note
 				
 			};
 
@@ -147,7 +148,7 @@ namespace EHM_API.Services
 					DiscountedPrice = od.Dish?.Discount != null ? (od.Dish.Price - (od.Dish.Price * od.Dish.Discount.DiscountAmount / 100)) : od.Dish?.Price,
 					UnitPrice = od.UnitPrice,
 					Quantity = od.Quantity,
-					Note = od.Note,
+		
 					ImageUrl = od.Dish?.ImageUrl ?? od.Combo?.ImageUrl
 				})
 				.ToList(); 
@@ -166,6 +167,7 @@ namespace EHM_API.Services
 				Status = order.Status ?? 0,
 				ReceivingTime = order.RecevingOrder,
 				TotalAmount = totalAmount,
+				Note = order.Note,
 				Deposits = order.Deposits,
 				OrderDetails = orderDetails,
 			};

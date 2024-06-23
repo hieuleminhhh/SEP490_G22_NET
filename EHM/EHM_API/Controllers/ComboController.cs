@@ -73,51 +73,48 @@ namespace EHM_API.Controllers
 
 			if (string.IsNullOrEmpty(comboDTO.NameCombo))
 			{
-				errors["nameCombo"] = "Combo name is required";
+				errors["nameCombo"] = "Tên combo là bắt buộc.";
 			}
 			else if (comboDTO.NameCombo.Length > 100)
 			{
-				errors["nameCombo"] = "The combo name cannot exceed 100 characters";
+				errors["nameCombo"] = "Tên combo không được vượt quá 100 ký tự.";
 			}
 			else
 			{
 				var existingCombos = await _comboService.SearchComboByNameAsync(comboDTO.NameCombo);
 				if (existingCombos.Any())
 				{
-					errors["nameCombo"] = "The combo name already exists";
+					errors["nameCombo"] = "Tên combo đã tồn tại.";
 				}
 			}
 
 			if (!comboDTO.Price.HasValue)
 			{
-				errors["price"] = "Price is required";
+				errors["price"] = "Giá là bắt buộc.";
 			}
 			else if (comboDTO.Price < 0 || comboDTO.Price > 1000000000)
 			{
-				errors["price"] = "Price must be between 0 and 1,000,000,000";
+				errors["price"] = "Giá phải nằm trong khoảng từ 0 đến 1,000,000,000.";
 			}
 
-			
 			if (string.IsNullOrEmpty(comboDTO.Note))
 			{
-				errors["note"] = "Combo description is required";
+				errors["note"] = "Mô tả combo là bắt buộc.";
 			}
 			else if (comboDTO.Note.Length > 500)
 			{
-				errors["note"] = "Combo description must not exceed 500 characters";
+				errors["note"] = "Mô tả combo không được vượt quá 500 ký tự.";
 			}
 
-			
 			if (string.IsNullOrEmpty(comboDTO.ImageUrl))
 			{
-				errors["imageUrl"] = "Image URL is required";
+				errors["imageUrl"] = "URL hình ảnh là bắt buộc.";
 			}
 			else if (!Uri.IsWellFormedUriString(comboDTO.ImageUrl, UriKind.Absolute))
 			{
-				errors["imageUrl"] = "Invalid Image URL";
+				errors["imageUrl"] = "URL hình ảnh không hợp lệ.";
 			}
 
-			
 			if (errors.Any())
 			{
 				return BadRequest(errors);
@@ -128,7 +125,7 @@ namespace EHM_API.Controllers
 				var createdCombo = await _comboService.CreateComboAsync(comboDTO);
 				return Ok(new
 				{
-					message = "The combo has been created successfully",
+					message = "Combo đã được tạo thành công.",
 					createdCombo
 				});
 			}
@@ -139,6 +136,7 @@ namespace EHM_API.Controllers
 		}
 
 
+
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateCombo(int id, [FromBody] ComboDTO comboDTO)
 		{
@@ -147,48 +145,49 @@ namespace EHM_API.Controllers
 			var existingCombo = await _comboService.GetComboByIdAsync(id);
 			if (existingCombo == null)
 			{
-				return NotFound(new { message = "Combo not found" });
+				return NotFound(new { message = "Không tìm thấy combo" });
 			}
 
 			if (string.IsNullOrEmpty(comboDTO.NameCombo))
 			{
-				errors["nameCombo"] = "Combo name is required";
+				errors["nameCombo"] = "Tên combo là bắt buộc";
 			}
 			else if (comboDTO.NameCombo.Length > 100)
 			{
-				errors["nameCombo"] = "The combo name cannot exceed 100 characters";
+				errors["nameCombo"] = "Tên combo không được vượt quá 100 ký tự";
 			}
 			else
 			{
 				var existingCombos = await _comboService.SearchComboByNameAsync(comboDTO.NameCombo);
 				if (existingCombos.Any(c => c.ComboId != id))
 				{
-					errors["nameCombo"] = "The combo name already exists";
+					errors["nameCombo"] = "Tên combo đã tồn tại";
 				}
 			}
 
 			if (!comboDTO.Price.HasValue)
 			{
-				errors["price"] = "Price is required";
+				errors["price"] = "Giá là bắt buộc";
 			}
 			else if (comboDTO.Price < 0 || comboDTO.Price > 1000000000)
 			{
-				errors["price"] = "Price must be between 0 and 1,000,000,000";
+				errors["price"] = "Giá phải nằm trong khoảng từ 0 đến 1,000,000,000";
 			}
 
 			if (string.IsNullOrEmpty(comboDTO.Note))
 			{
-				errors["note"] = "Combo description is required";
+				errors["note"] = "Mô tả combo là bắt buộc";
 			}
 			else if (comboDTO.Note.Length > 500)
 			{
-				errors["note"] = "Combo description must not exceed 500 characters";
+				errors["note"] = "Mô tả combo không được vượt quá 500 ký tự";
 			}
 
 			if (string.IsNullOrEmpty(comboDTO.ImageUrl))
 			{
-				errors["imageUrl"] = "Image URL is required";
+				errors["imageUrl"] = "URL hình ảnh là bắt buộc";
 			}
+
 			if (errors.Any())
 			{
 				return BadRequest(errors);
@@ -199,7 +198,7 @@ namespace EHM_API.Controllers
 				await _comboService.UpdateComboAsync(id, comboDTO);
 				return Ok(new
 				{
-					message = "The combo has been successfully updated",
+					message = "Combo đã được cập nhật thành công",
 					comboDTO
 				});
 			}
@@ -209,13 +208,14 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
 		[HttpPut("{id}/cancel")]
 		public async Task<IActionResult> CancelCombo(int id)
 		{
 			try
 			{
 				await _comboService.CancelComboAsync(id);
-				return Ok(new { message = "The combo has been successfully canceled" });
+				return Ok(new { message = "Combo đã được hủy thành công" });
 			}
 			catch (Exception ex)
 			{
@@ -231,9 +231,9 @@ namespace EHM_API.Controllers
 				var result = await _comboService.ReactivateComboAsync(id);
 				if (result)
 				{
-					return Ok(new { message = "The combo has been successfully reactivated" });
+					return Ok(new { message = "Combo đã được kích hoạt thành công" });
 				}
-				return BadRequest(new { message = "The combo cannot be reactivated" });
+				return BadRequest(new { message = "Combo không thể kích hoạt lại" });
 			}
 			catch (Exception ex)
 			{
@@ -273,24 +273,24 @@ namespace EHM_API.Controllers
 		{
 			if (updateCombo == null)
 			{
-				return BadRequest(new { message = "Invalid data" });
+				return BadRequest(new { message = "Dữ liệu không hợp lệ" });
 			}
 
 			var existingCombo = await _comboService.GetComboByIdAsync(comboId);
 			if (existingCombo == null)
 			{
-				return NotFound(new { message = "Combo not found" });
+				return NotFound(new { message = "Không tìm thấy Combo" });
 			}
 
 			var updatedCombo = await _comboService.UpdateComboStatusAsync(comboId, (bool)updateCombo.IsActive);
 			if (updatedCombo == null)
 			{
-				return StatusCode(500, new { message = "An error occurred while updating the dish status" });
+				return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật trạng thái Combo" });
 			}
 
 			return Ok(new
 			{
-				message = "Combo status updated successfully",
+				message = "Trạng thái Combo được cập nhật thành công",
 			});
 		}
 		[HttpGet("GetComboById/{id}")]
@@ -303,6 +303,7 @@ namespace EHM_API.Controllers
 			}
 			return Ok(combo);
 		}
+
 		[HttpPost("CreateComboWithDishes")]
 		public async Task<ActionResult<ComboDTO>> CreateComboWithDishes([FromBody] CreateComboDishDTO createComboWithDishesDTO)
 		{
@@ -310,43 +311,43 @@ namespace EHM_API.Controllers
 
 			if (string.IsNullOrEmpty(createComboWithDishesDTO.NameCombo))
 			{
-				errors["nameCombo"] = "Combo name is required";
+				errors["nameCombo"] = "Tên Combo không được để trống";
 			}
 			else if (createComboWithDishesDTO.NameCombo.Length > 100)
 			{
-				errors["nameCombo"] = "The combo name cannot exceed 100 characters";
+				errors["nameCombo"] = "Tên Combo không được vượt quá 100 ký tự";
 			}
 
 			if (!createComboWithDishesDTO.Price.HasValue)
 			{
-				errors["price"] = "Price is required";
+				errors["price"] = "Giá của Combo không được để trống";
 			}
 			else if (createComboWithDishesDTO.Price < 0 || createComboWithDishesDTO.Price > 1000000000)
 			{
-				errors["price"] = "Price must be between 0 and 1,000,000,000";
+				errors["price"] = "Giá của Combo phải nằm trong khoảng từ 0 đến 1,000,000,000";
 			}
 
 			if (string.IsNullOrEmpty(createComboWithDishesDTO.Note))
 			{
-				errors["note"] = "Note is required";
+				errors["note"] = "Mô tả không được để trống";
 			}
 			else if (createComboWithDishesDTO.Note?.Length > 500)
 			{
-				errors["note"] = "Combo note must not exceed 500 characters";
+				errors["note"] = "Mô tả combo không được vượt quá 500 ký tự";
 			}
 			if (string.IsNullOrEmpty(createComboWithDishesDTO.ImageUrl))
 			{
-				errors["image"] = "Image is required";
+				errors["image"] = "Hình ảnh không được để trống";
 			}
 
 			var existingCombos = await _comboService.SearchComboByNameAsync(createComboWithDishesDTO.NameCombo);
 			if (existingCombos.Any())
 			{
-				errors["nameCombo"] = "The combo name already exists";
+				errors["nameCombo"] = "Tên combo đã tồn tại";
 			}
 			if (createComboWithDishesDTO.DishIds == null || createComboWithDishesDTO.DishIds.Count == 0)
 			{
-				errors["dish"] = "Dish information is required";
+				errors["dish"] = "Món ăn không tồn tại";
 			}
 			if (errors.Any())
 			{
@@ -357,7 +358,7 @@ namespace EHM_API.Controllers
 				var result = await _comboService.CreateComboWithDishesAsync(createComboWithDishesDTO);
 				return Ok(new
 				{
-					message = "The combo with dishes has been created successfully",
+					message = "Combo với món ăn đã được tạo thành công",
 					result
 				});
 			}
@@ -369,76 +370,76 @@ namespace EHM_API.Controllers
         [HttpPut("UpdateComboWithDishes/{comboId}")]
         public async Task<ActionResult<ComboDTO>> UpdateComboWithDishes(int comboId, [FromBody] UpdateComboDishDTO updateComboWithDishesDTO)
         {
-            var errors = new Dictionary<string, string>();
+			var errors = new Dictionary<string, string>();
 
-            if (comboId <= 0)
-            {
-                errors["comboId"] = "Invalid combo ID";
-                return BadRequest(errors);
-            }
+			if (comboId <= 0)
+			{
+				errors["comboId"] = "ID combo không hợp lệ";
+				return BadRequest(errors);
+			}
 
-            if (string.IsNullOrEmpty(updateComboWithDishesDTO.NameCombo))
-            {
-                errors["nameCombo"] = "Combo name is required";
-            }
-            else if (updateComboWithDishesDTO.NameCombo.Length > 100)
-            {
-                errors["nameCombo"] = "The combo name cannot exceed 100 characters";
-            }
+			if (string.IsNullOrEmpty(updateComboWithDishesDTO.NameCombo))
+			{
+				errors["nameCombo"] = "Tên combo là bắt buộc";
+			}
+			else if (updateComboWithDishesDTO.NameCombo.Length > 100)
+			{
+				errors["nameCombo"] = "Tên combo không được vượt quá 100 ký tự";
+			}
 
-            if (!updateComboWithDishesDTO.Price.HasValue)
-            {
-                errors["price"] = "Price is required";
-            }
-            else if (updateComboWithDishesDTO.Price < 0 || updateComboWithDishesDTO.Price > 1000000000)
-            {
-                errors["price"] = "Price must be between 0 and 1,000,000,000";
-            }
+			if (!updateComboWithDishesDTO.Price.HasValue)
+			{
+				errors["price"] = "Giá của Combo là bắt buộc";
+			}
+			else if (updateComboWithDishesDTO.Price < 0 || updateComboWithDishesDTO.Price > 1000000000)
+			{
+				errors["price"] = "Giá của Combo phải nằm trong khoảng từ 0 đến 1,000,000,000";
+			}
 
-            if (string.IsNullOrEmpty(updateComboWithDishesDTO.Note))
-            {
-                errors["note"] = "Note is required";
-            }
-            else if (updateComboWithDishesDTO.Note?.Length > 500)
-            {
-                errors["note"] = "Combo note must not exceed 500 characters";
-            }
+			if (string.IsNullOrEmpty(updateComboWithDishesDTO.Note))
+			{
+				errors["note"] = "Mô tả Combo là bắt buộc";
+			}
+			else if (updateComboWithDishesDTO.Note?.Length > 500)
+			{
+				errors["note"] = "Mô tả Combo không được vượt quá 500 ký tự";
+			}
 
-            if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
-            {
-                errors["image"] = "Image is required";
-            }
+			if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
+			{
+				errors["image"] = "Hình ảnh là bắt buộc";
+			}
 
-            var existingCombos = await _comboService.SearchComboByNameAsync(updateComboWithDishesDTO.NameCombo);
-            if (existingCombos.Any(c => c.ComboId != comboId))
-            {
-                errors["nameCombo"] = "The combo name already exists";
-            }
+			var existingCombos = await _comboService.SearchComboByNameAsync(updateComboWithDishesDTO.NameCombo);
+			if (existingCombos.Any(c => c.ComboId != comboId))
+			{
+				errors["nameCombo"] = "Tên combo đã tồn tại";
+			}
 
-            if (updateComboWithDishesDTO.DishIds == null || updateComboWithDishesDTO.DishIds.Count == 0)
-            {
-                errors["dish"] = "Dish information is required";
-            }
+			if (updateComboWithDishesDTO.DishIds == null || updateComboWithDishesDTO.DishIds.Count == 0)
+			{
+				errors["dish"] = "Thông tin món ăn là bắt buộc";
+			}
 
-            if (errors.Any())
-            {
-                return BadRequest(errors);
-            }
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
 
-            try
-            {
-                var result = await _comboService.UpdateComboWithDishesAsync(comboId, updateComboWithDishesDTO);
-                return Ok(new
-                {
-                    message = "The combo with dishes has been updated successfully",
-                    result
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
-        }
+			try
+			{
+				var result = await _comboService.UpdateComboWithDishesAsync(comboId, updateComboWithDishesDTO);
+				return Ok(new
+				{
+					message = "Combo với món ăn đã được cập nhật thành công",
+					result
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = ex.Message });
+			}
+		}
 
     }
 }
