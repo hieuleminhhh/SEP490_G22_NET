@@ -133,5 +133,10 @@ namespace EHM_API.Services
 			await _repository.CreateReservationAsync(reservation);
 		}
 
+		public async Task<IEnumerable<ReservationByStatus>> GetReservationsByStatus(int? status)
+		{
+			var reservations = await _repository.GetReservationsByStatus(status);
+			return _mapper.Map<IEnumerable<ReservationByStatus>>(reservations);
+		}
 	}
 }

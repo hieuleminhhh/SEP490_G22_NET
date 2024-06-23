@@ -19,10 +19,18 @@ namespace EHM_API.Controllers
 			_service = service;
 		}
 
-		[HttpGet]
+/*		[HttpGet]
 		public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations(int? status)
 		{
 			var reservations = await _service.GetReservationsByStatusAsync(status);
+			return Ok(reservations);
+		}
+*/
+
+		[HttpGet]
+		public async Task<ActionResult<IEnumerable<ReservationByStatus>>> GetReservationsByStatus([FromQuery] int? status)
+		{
+			var reservations = await _service.GetReservationsByStatus(status);
 			return Ok(reservations);
 		}
 
@@ -83,21 +91,6 @@ namespace EHM_API.Controllers
 			}
 
 			return Ok(reservationDetail);
-		}
-
-
-		[HttpPut("updateTableId")]
-		public async Task<IActionResult> UpdateTableId(UpdateTableIdDTO updateTableIdDTO)
-		{
-			var result = await _service.UpdateTableIdAsync(updateTableIdDTO);
-			if (result)
-			{
-				return Ok(new { Message = "TableId updated successfully." });
-			}
-			else
-			{
-				return NotFound(new { Message = "Reservation not found or could not update TableId." });
-			}
 		}
 
 		[HttpPut("{id}/updateTableId")]
