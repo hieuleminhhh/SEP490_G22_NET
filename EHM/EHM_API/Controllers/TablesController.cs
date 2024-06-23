@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using EHM_API.Models;
 using EHM_API.Services;
+using EHM_API.DTOs.TableDTO;
 
 namespace EHM_API.Controllers
 {
@@ -18,7 +19,12 @@ namespace EHM_API.Controllers
         }
 
 
+		[HttpGet]
+		public async Task<ActionResult<IEnumerable<TableAllDTO>>> GetAllTables()
+		{
+			var tables = await _service.GetAllTablesAsync();
+			return Ok(tables);
+		}
 
-
-    }
+	}
 }
