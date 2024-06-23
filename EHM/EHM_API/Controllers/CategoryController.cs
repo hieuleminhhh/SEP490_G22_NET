@@ -39,35 +39,35 @@ namespace EHM_API.Controllers
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<CategoryDTO>> PostCategory([FromBody] CreateCategory categoryDTO)
+		public async Task<ActionResult<CategoryDTO>> CreateNewCategory([FromBody] CreateCategory categoryDTO)
 		{
 			if (categoryDTO == null || string.IsNullOrWhiteSpace(categoryDTO.CategoryName))
 			{
-				return BadRequest("Category name is required.");
+				return BadRequest("Tên danh mục món ăn là bắt buộc.");
 			}
 
 			var categoryName = categoryDTO.CategoryName.Trim();
 
 			if (categoryName.Length > 100)
 			{
-				return BadRequest("Category name must be less than 100 characters.");
+				return BadRequest("Tên danh mục phải ít hơn 100 ký tự.");
 			}
 
 			if (!categoryName.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_'))
 			{
-				return BadRequest("Category name contains invalid characters.");
+				return BadRequest("Tên danh mục chứa các ký tự không hợp lệ.");
 			}
 
 			var existingCategory = await _categoryService.GetCategoryByNameAsync(categoryName);
 			if (existingCategory != null)
 			{
-				return Conflict("Category name already exists.");
+				return Conflict("Tên danh mục đã tồn tại.");
 			}
 
 			try
 			{
 				var createdCategory = await _categoryService.CreateCategoryAsync(categoryDTO);
-				return CreatedAtAction(nameof(GetCategory), new { id = createdCategory.CategoryId }, createdCategory);
+				return Ok(new { message = "Danh mục đã được tạo thành công.", createdCategory });
 			}
 			catch (ArgumentException ex)
 			{
@@ -79,37 +79,37 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutCategory(int id, [FromBody] CategoryDTO categoryDTO)
+		public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
 		{
 			if (categoryDTO == null || string.IsNullOrWhiteSpace(categoryDTO.CategoryName))
 			{
-				return BadRequest("Category name is required.");
+				return BadRequest("Tên danh mục món ăn là bắt buộc.");
 			}
 
 			var categoryName = categoryDTO.CategoryName.Trim();
 
 			if (categoryName.Length > 100)
 			{
-				return BadRequest("Category name must be less than 100 characters.");
+				return BadRequest("Tên danh mục phải ít hơn 100 ký tự.");
 			}
 
 			if (!categoryName.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_'))
 			{
-				return BadRequest("Category name contains invalid characters.");
+				return BadRequest("Tên danh mục chứa các ký tự không hợp lệ.");
 			}
 
 			var existingCategory = await _categoryService.GetCategoryByIdAsync(id);
 			if (existingCategory == null)
 			{
-				return NotFound();
+				return NotFound("Không tìm thấy danh mục.");
 			}
-
 
 			var duplicateCategory = await _categoryService.GetCategoryByNameAsync(categoryName);
 			if (duplicateCategory != null && duplicateCategory.CategoryId != id)
 			{
-				return Conflict("Category name already exists.");
+				return Conflict("Tên danh mục đã tồn tại.");
 			}
 
 			try
@@ -117,10 +117,10 @@ namespace EHM_API.Controllers
 				var updatedCategory = await _categoryService.UpdateCategoryAsync(id, categoryDTO);
 				if (updatedCategory == null)
 				{
-					return NotFound();
+					return NotFound("Không tìm thấy danh mục sau khi cập nhật.");
 				}
 
-				return NoContent();
+				return Ok("Tên danh mục món ăn được cập nhật thành công");
 			}
 			catch (ArgumentException ex)
 			{
@@ -138,7 +138,7 @@ namespace EHM_API.Controllers
 			var dishes = await _categoryService.GetDishesByCategoryNameAsync(categoryName);
 			if (dishes == null || !dishes.Any())
 			{
-				return NotFound("No dishes found for the specified category.");
+				return NotFound("Không tìm thấy món ăn nào cho danh mục này.");
 			}
 			return Ok(dishes);
 		}

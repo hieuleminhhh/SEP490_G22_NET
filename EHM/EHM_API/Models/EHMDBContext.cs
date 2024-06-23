@@ -39,7 +39,7 @@ namespace EHM_API.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=sa;TrustServerCertificate=true");
+                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=123;TrustServerCertificate=true");
             }
         }
 
@@ -83,13 +83,9 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.AddressId).HasColumnName("AddressID");
 
-                entity.Property(e => e.ConsigneeName)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.ConsigneeName).HasMaxLength(50);
 
-                entity.Property(e => e.GuestAddress)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                entity.Property(e => e.GuestAddress).HasMaxLength(50);
 
                 entity.Property(e => e.GuestPhone)
                     .HasMaxLength(15)
@@ -128,21 +124,20 @@ namespace EHM_API.Models
                 entity.Property(e => e.Price).HasColumnType("money");
             });
 
-            modelBuilder.Entity<ComboDetail>()
-            .HasKey(cd => new { cd.ComboId, cd.DishId });
+			modelBuilder.Entity<ComboDetail>()
+						.HasKey(cd => new { cd.ComboId, cd.DishId });
 
-            modelBuilder.Entity<ComboDetail>()
-                .HasOne(cd => cd.Combo)
-                .WithMany(c => c.ComboDetails)
-                .HasForeignKey(cd => cd.ComboId);
+			modelBuilder.Entity<ComboDetail>()
+				.HasOne(cd => cd.Combo)
+				.WithMany(c => c.ComboDetails)
+				.HasForeignKey(cd => cd.ComboId);
 
-            modelBuilder.Entity<ComboDetail>()
-                .HasOne(cd => cd.Dish)
-                .WithMany(d => d.ComboDetails)
-                .HasForeignKey(cd => cd.DishId);
+			modelBuilder.Entity<ComboDetail>()
+				.HasOne(cd => cd.Dish)
+				.WithMany(d => d.ComboDetails)
+				.HasForeignKey(cd => cd.DishId);
 
-
-            modelBuilder.Entity<Discount>(entity =>
+			modelBuilder.Entity<Discount>(entity =>
             {
                 entity.ToTable("Discount");
 
@@ -323,7 +318,9 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.InvoiceId).HasColumnName("InvoiceID");
 
-                entity.Property(e => e.OrderDate).HasColumnType("date");
+                entity.Property(e => e.Note).HasMaxLength(200);
+
+                entity.Property(e => e.OrderDate).HasColumnType("datetime");
 
                 entity.Property(e => e.RecevingOrder).HasColumnType("datetime");
 
@@ -367,8 +364,6 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.DishId).HasColumnName("DishID");
 
-                entity.Property(e => e.Note).HasMaxLength(50);
-
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
                 entity.Property(e => e.UnitPrice).HasColumnType("money");
@@ -393,6 +388,9 @@ namespace EHM_API.Models
             {
                 entity.ToTable("Reservation");
 
+                entity.HasIndex(e => e.OrderId, "UQ_Reservation_OrderID")
+                    .IsUnique();
+
                 entity.Property(e => e.ReservationId).HasColumnName("ReservationID");
 
                 entity.Property(e => e.GuestPhone)
@@ -401,14 +399,19 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.Note).HasMaxLength(200);
 
-                entity.Property(e => e.ReservationTime).HasColumnType("datetime");
+                entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
-                entity.Property(e => e.Status).HasMaxLength(50);
+                entity.Property(e => e.ReservationTime).HasColumnType("datetime");
 
                 entity.HasOne(d => d.GuestPhoneNavigation)
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.GuestPhone)
                     .HasConstraintName("FK_Reservation_Guest");
+
+                entity.HasOne(d => d.Order)
+                    .WithOne(p => p.Reservation)
+                    .HasForeignKey<Reservation>(d => d.OrderId)
+                    .HasConstraintName("FK_Reservation_Order");
 
                 entity.HasOne(d => d.Table)
                     .WithMany(p => p.Reservations)
@@ -419,8 +422,6 @@ namespace EHM_API.Models
             modelBuilder.Entity<Table>(entity =>
             {
                 entity.ToTable("Table");
-
-                entity.Property(e => e.Status).HasMaxLength(50);
             });
 
             OnModelCreatingPartial(modelBuilder);

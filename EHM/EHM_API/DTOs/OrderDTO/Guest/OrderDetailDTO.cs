@@ -11,7 +11,6 @@
             public decimal? Price { get; set; }
             public decimal? DiscountedPrice { get; set; }
             public int? Quantity { get; set; }
-            public string? Note { get; set; }
             public string ImageUrl { get; set; }
             public int? DishesServed { get; set; }
     }
