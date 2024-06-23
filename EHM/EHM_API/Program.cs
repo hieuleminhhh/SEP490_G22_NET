@@ -120,8 +120,11 @@ namespace EHM_API
 			builder.Services.AddScoped<ITableService, TableService>();
 			builder.Services.AddScoped<ITableRepository, TableRepository>();
 
+			builder.Services.AddScoped<IReservationService, ReservationService>();
+			builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
-            builder.Services.AddDistributedMemoryCache();
+
+			builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
