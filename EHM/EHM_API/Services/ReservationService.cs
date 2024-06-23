@@ -54,82 +54,77 @@ namespace EHM_API.Services
 
 		public async Task CreateReservationAsync(CreateReservationDTO reservationDTO)
 		{
-			// Step 1: Get or create Guest
 			var guest = await _repository.GetOrCreateGuest(reservationDTO.GuestPhone, reservationDTO.Email);
 
-			// Step 2: Get or create Address
-			var address = await _repository.GetOrCreateAddress(reservationDTO.GuestPhone, reservationDTO.GuestAddress, reservationDTO.ConsigneeName);
+			var address = await _repository.GetOrCreateAddress(reservationDTO.GuestPhone,null, reservationDTO.ConsigneeName);
 
-			// Step 3: Create Reservation
 			var reservation = new Reservation
 			{
 				GuestPhone = guest.GuestPhone,
 				ReservationTime = reservationDTO.ReservationTime,
 				GuestNumber = reservationDTO.GuestNumber,
 				Note = reservationDTO.Note,
-				Status = 0, // Assuming default status for new reservations
+				Status = 0, 
 				TableId = reservationDTO.TableId,
-				Order = null, // Initialize Order later if needed
-				GuestPhoneNavigation = guest,
-				OrderId = null // Initialize Order ID later if needed
+				GuestPhoneNavigation = guest
 			};
 
 			// Step 4: Create Order if there are OrderDetails
 			if (reservationDTO.OrderDetails != null && reservationDTO.OrderDetails.Any())
 			{
 				var orderDetails = new List<OrderDetail>();
+				decimal totalAmount = 0;
 
 				foreach (var item in reservationDTO.OrderDetails)
 				{
+					Dish dish = null;
+					Combo combo = null;
+
 					if (item.DishId.HasValue && item.DishId > 0)
 					{
-						var dish = await _Dishrepository.GetDishByIdAsync(item.DishId.Value);
+						dish = await _Dishrepository.GetDishByIdAsync(item.DishId.Value);
 						if (dish == null)
 						{
 							throw new KeyNotFoundException($"Dish with ID {item.DishId} not found.");
 						}
-
-						var orderDetail = new OrderDetail
-						{
-							DishId = dish.DishId,
-							Quantity = item.Quantity,
-							UnitPrice = dish.Price // Or calculate based on business logic
-						};
-
-						orderDetails.Add(orderDetail);
 					}
 					else if (item.ComboId.HasValue && item.ComboId > 0)
 					{
-						var combo = await _Comborepository.GetComboByIdAsync(item.ComboId.Value);
+						combo = await _Comborepository.GetComboByIdAsync(item.ComboId.Value);
 						if (combo == null)
 						{
 							throw new KeyNotFoundException($"Combo with ID {item.ComboId} not found.");
 						}
-
-						var orderDetail = new OrderDetail
-						{
-							ComboId = combo.ComboId,
-							Quantity = item.Quantity,
-							UnitPrice = combo.Price // Or calculate based on business logic
-						};
-
-						orderDetails.Add(orderDetail);
 					}
 					else
 					{
 						throw new InvalidOperationException("Each OrderDetail must have either DishId or ComboId.");
 					}
+
+					var unitPrice = dish != null ? dish.Price : combo?.Price;
+					totalAmount += (unitPrice ?? 0) * item.Quantity;
+
+					var orderDetail = new OrderDetail
+					{
+						DishId = dish?.DishId,
+						ComboId = combo?.ComboId,
+						Quantity = item.Quantity,
+						UnitPrice = unitPrice
+					};
+
+					orderDetails.Add(orderDetail);
 				}
 
 				var order = new Order
 				{
 					OrderDate = DateTime.UtcNow,
-					Status = 0, // Assuming default status for new orders
-					TotalAmount = orderDetails.Sum(od => od.UnitPrice * od.Quantity),
+					Status = 0, 
+					TotalAmount = totalAmount,
 					OrderDetails = orderDetails,
 					GuestPhone = guest.GuestPhone,
 					AddressId = address.AddressId,
-					Note = reservationDTO.Note
+					Note = reservationDTO.Note,
+					Deposits = reservationDTO.Deposits
 				};
 
 				reservation.Order = order;
@@ -137,5 +132,6 @@ namespace EHM_API.Services
 
 			await _repository.CreateReservationAsync(reservation);
 		}
+
 	}
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Repositories
 {
-    public class TableRepository : ITableRepository
+	public class TableRepository : ITableRepository
     {
         private readonly EHMDBContext _context;
 
@@ -15,7 +15,10 @@ namespace EHM_API.Repositories
             _context = context;
         }
 
-
+		public async Task<IEnumerable<Table>> GetAllTablesAsync()
+		{
+			return await _context.Tables.ToListAsync();
+		}
 
 	}
 }

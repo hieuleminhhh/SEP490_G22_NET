@@ -13,7 +13,7 @@
         public decimal? TotalAmount { get; set; }
         public decimal Deposits { get; set; }
         public string? Note { get; set; }
-        public List<CartOrderDetailsDTO> CartItems { get; set; }
+        public List<CartOrderDetailsDTO> OrderDetails { get; set; }
 
     }
 }

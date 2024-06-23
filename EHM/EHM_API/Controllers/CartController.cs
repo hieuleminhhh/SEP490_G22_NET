@@ -99,7 +99,7 @@ namespace EHM_API.Controllers
 				errors["consigneeName"] = "Tên người nhận là bắt buộc.";
 			}
 
-			if (checkoutDTO.CartItems == null || !checkoutDTO.CartItems.Any())
+			if (checkoutDTO.OrderDetails == null || !checkoutDTO.OrderDetails.Any())
 			{
 				errors["cartItems"] = "Giỏ hàng không được để trống.";
 			}

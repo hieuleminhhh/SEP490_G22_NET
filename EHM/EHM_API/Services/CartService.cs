@@ -50,7 +50,7 @@ namespace EHM_API.Services
 
 			var orderDetails = new List<OrderDetail>();
 
-			foreach (var item in checkoutDTO.CartItems)
+			foreach (var item in checkoutDTO.OrderDetails)
 			{
 				if ((item.DishId.HasValue && item.DishId.Value > 0) && (item.ComboId.HasValue && item.ComboId.Value > 0) ||
 					(!item.DishId.HasValue || item.DishId.Value <= 0) && (!item.ComboId.HasValue || item.ComboId.Value <= 0))

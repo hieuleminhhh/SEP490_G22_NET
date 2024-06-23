@@ -4,7 +4,7 @@ namespace EHM_API.Repositories
 {
     public interface ITableRepository
     {
+		Task<IEnumerable<Table>> GetAllTablesAsync();
 
-
-    }
+	}
 }
