@@ -143,5 +143,24 @@ namespace EHM_API.Repositories
 			_context.Reservations.Add(reservation);
 			await _context.SaveChangesAsync();
 		}
+
+		public async Task<IEnumerable<Reservation>> GetReservationsByStatus(int? status)
+		{
+			return await _context.Reservations
+				.Include(r => r.GuestPhoneNavigation)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Dish)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Combo)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.Address)
+				.Include(r => r.Table)
+				.Where(r => !status.HasValue || r.Status == status)
+				.ToListAsync();
+		}
+
+
 	}
 }

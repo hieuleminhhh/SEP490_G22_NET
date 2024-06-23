@@ -7,6 +7,7 @@ namespace EHM_API.Services
 {
 	public interface IReservationService
 	{
+		Task<IEnumerable<ReservationByStatus>> GetReservationsByStatus(int? status);
 		Task<IEnumerable<ReservationRequestDTO>> GetReservationsByStatusAsync(int? status);
 		Task<bool> UpdateStatusAsync(UpdateStatusReservationDTO updateStatusDto);
 		Task<ReservationDetailDTO> GetReservationDetailAsync(int reservationId);
