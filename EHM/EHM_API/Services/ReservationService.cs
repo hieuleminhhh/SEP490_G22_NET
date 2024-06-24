@@ -28,13 +28,6 @@ namespace EHM_API.Services
 			_Comborepository = comborepository;
 		}
 
-		public async Task<IEnumerable<ReservationRequestDTO>> GetReservationsByStatusAsync(int? status)
-		{
-			var reservations = await _repository.GetReservationsByStatusAsync(status);
-			reservations = reservations.Where(r => r.Status != -1).ToList();
-
-			return _mapper.Map<IEnumerable<ReservationRequestDTO>>(reservations);
-		}
 
 		public async Task<bool> UpdateStatusAsync(UpdateStatusReservationDTO updateStatusDto)
 		{
@@ -131,6 +124,12 @@ namespace EHM_API.Services
 			}
 
 			await _repository.CreateReservationAsync(reservation);
+		}
+
+		public async Task<IEnumerable<ReservationByStatus>> GetReservationsByStatus(int? status)
+		{
+			var reservations = await _repository.GetReservationsByStatus(status);
+			return _mapper.Map<IEnumerable<ReservationByStatus>>(reservations);
 		}
 
 	}

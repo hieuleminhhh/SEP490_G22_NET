@@ -16,25 +16,6 @@ namespace EHM_API.Repositories
 			_context = context;
 		}
 
-		public async Task<IEnumerable<Reservation>> GetReservationsByStatusAsync(int? status)
-		{
-			if (status.HasValue)
-			{
-				return await _context.Reservations
-					.Include(r => r.Order)
-					.ThenInclude(o => o.Address)
-					.Where(r => r.Status == status)
-					.ToListAsync();
-			}
-			else
-			{
-				return await _context.Reservations
-					.Include(r => r.Order)
-					.ThenInclude(o => o.Address)
-					.ToListAsync();
-			}
-		}
-
 		public async Task<bool> UpdateStatusAsync(UpdateStatusReservationDTO updateStatusDto)
 		{
 			var reservation = await _context.Reservations.FindAsync(updateStatusDto.ReservationId);
@@ -143,5 +124,24 @@ namespace EHM_API.Repositories
 			_context.Reservations.Add(reservation);
 			await _context.SaveChangesAsync();
 		}
+
+		public async Task<IEnumerable<Reservation>> GetReservationsByStatus(int? status)
+		{
+			return await _context.Reservations
+				.Include(r => r.GuestPhoneNavigation)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Dish)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Combo)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.Address)
+				.Include(r => r.Table)
+				.Where(r => !status.HasValue || r.Status == status)
+				.ToListAsync();
+		}
+
+
 	}
 }
