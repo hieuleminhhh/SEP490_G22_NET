@@ -16,6 +16,7 @@ using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.TableDTO;
 using EHM_API.Models;
+using EHM_API.Services;
 
 namespace EHM_API.Map
 {
@@ -129,7 +130,8 @@ namespace EHM_API.Map
 
 			// Reservation to ReservationDetailDTO
 			CreateMap<Reservation, ReservationDetailDTO>()
-			.ForMember(dest => dest.ConsigneeName, opt => {
+			.ForMember(dest => dest.ConsigneeName, opt =>
+			{
 				opt.MapFrom(src =>
 						src.Order != null && src.Order.Address != null ? src.Order.Address.ConsigneeName :
 						src.Address != null ? src.Address.ConsigneeName :
@@ -141,8 +143,12 @@ namespace EHM_API.Map
 						   opt => opt.MapFrom(src => src.ReservationTime))
 				.ForMember(dest => dest.Status,
 						   opt => opt.MapFrom(src => src.Status))
-				.ForMember(dest => dest.TableId,
-						   opt => opt.MapFrom(src => src.TableId))
+					.ForMember(dest => dest.TableOfReservation, opt => opt.MapFrom(src => src.TableReservations.Select(tr => new TabledetailDTO
+					{
+						TableId = tr.Table.TableId,
+						Capacity = tr.Table.Capacity,
+						Floor = tr.Table.Floor
+					})))
 				.ForMember(dest => dest.GuestNumber,
 						   opt => opt.MapFrom(src => src.GuestNumber))
 				.ForMember(dest => dest.Note,
@@ -197,41 +203,45 @@ namespace EHM_API.Map
 			//Table
 			CreateMap<Table, TableAllDTO>();
 
-
-
-			// Reservation to ReservationDetailDTO
+			//kiem tra dat ban
 			CreateMap<Reservation, ReservationByStatus>()
-				.ForMember(dest => dest.ConsigneeName, opt =>{opt.MapFrom(src =>
-						src.Order != null && src.Order.Address != null ? src.Order.Address.ConsigneeName :
-						src.Address != null ? src.Address.ConsigneeName :
-						null);	})
-				.ForMember(dest => dest.GuestPhone,
-						   opt => opt.MapFrom(src => src.Address.GuestPhone))
-				.ForMember(dest => dest.ReservationTime,
-						   opt => opt.MapFrom(src => src.ReservationTime))
-				.ForMember(dest => dest.Status,
-						   opt => opt.MapFrom(src => src.Status))
-				.ForMember(dest => dest.TableId,
-						   opt => opt.MapFrom(src => src.TableId))
-				.ForMember(dest => dest.GuestNumber,
-						   opt => opt.MapFrom(src => src.GuestNumber))
-				.ForMember(dest => dest.Note,
-						   opt => opt.MapFrom(src => src.Note));
+					   .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src =>
+						   src.Order != null && src.Order.Address != null ? src.Order.Address.ConsigneeName :
+						   src.Address != null ? src.Address.ConsigneeName : null))
+					   .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.Address.GuestPhone))
+					   .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Address != null && src.Address.GuestPhoneNavigation != null
+		? src.Address.GuestPhoneNavigation.Email
+		: null))
+						.ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+					   .ForMember(dest => dest.ReservationTime, opt => opt.MapFrom(src => src.ReservationTime))
+					   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+			// Map TableReservations
+			.ForMember(dest => dest.TableOfReservation, opt => opt.MapFrom(src => src.TableReservations.Select(tr => new TableReservationDTO
+			{
+				TableId = tr.Table.TableId,
+				Capacity = tr.Table.Capacity,
+				Floor = tr.Table.Floor
+			})))
+					   .ForMember(dest => dest.GuestNumber, opt => opt.MapFrom(src => src.GuestNumber))
+					   .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+					   .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Order != null ? src.Order.Deposits : 0))
+					   .ForMember(dest => dest.StatusOfTable, opt => opt.MapFrom<StatusOfTableConverter>());
+
 
 			// Map Order to OrderDetailDTO1
 			CreateMap<Order, OrderDetailDTO3>()
-				.ForMember(dest => dest.OrderId,
-						   opt => opt.MapFrom(src => src.OrderId))
-				.ForMember(dest => dest.OrderDate,
-						   opt => opt.MapFrom(src => src.OrderDate))
-				.ForMember(dest => dest.Status,
-						   opt => opt.MapFrom(src => src.Status))
-				.ForMember(dest => dest.TotalAmount,
-						   opt => opt.MapFrom(src => src.TotalAmount))
-				.ForMember(dest => dest.Note,
-						   opt => opt.MapFrom(src => src.Note))
-				.ForMember(dest => dest.OrderDetails,
-						   opt => opt.MapFrom(src => src.OrderDetails));
+					.ForMember(dest => dest.OrderId,
+							   opt => opt.MapFrom(src => src.OrderId))
+					.ForMember(dest => dest.OrderDate,
+							   opt => opt.MapFrom(src => src.OrderDate))
+					.ForMember(dest => dest.Status,
+							   opt => opt.MapFrom(src => src.Status))
+					.ForMember(dest => dest.TotalAmount,
+							   opt => opt.MapFrom(src => src.TotalAmount))
+					.ForMember(dest => dest.Note,
+							   opt => opt.MapFrom(src => src.Note))
+					.ForMember(dest => dest.OrderDetails,
+							   opt => opt.MapFrom(src => src.OrderDetails));
 
 			// Map OrderDetail to OrderItemDTO1 with conditional mapping
 			CreateMap<OrderDetail, OrderItemDTO3>()
@@ -286,6 +296,28 @@ namespace EHM_API.Map
 			return null;
 		}
 
+		public class StatusOfTableConverter : IValueResolver<Reservation, ReservationByStatus, int?>
+		{
+			private readonly IReservationService _reservationService;
+
+			public StatusOfTableConverter(IReservationService reservationService)
+			{
+				_reservationService = reservationService;
+			}
+
+			public int? Resolve(Reservation source, ReservationByStatus destination, int? destMember, ResolutionContext context)
+			{
+				if (source.ReservationTime == null)
+				{
+					return null;
+				}
+
+				var date = source.ReservationTime.Value.Date;
+
+				var statusOfTable = _reservationService.CalculateStatusOfTable(source).Result;
+				return statusOfTable;
+			}
+		}
 
 
 

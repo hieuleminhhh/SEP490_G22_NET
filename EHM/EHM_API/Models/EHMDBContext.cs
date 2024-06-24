@@ -34,6 +34,7 @@ namespace EHM_API.Models
         public virtual DbSet<OrderTable> OrderTables { get; set; } = null!;
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
+        public virtual DbSet<TableReservation> TableReservations { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -137,7 +138,6 @@ namespace EHM_API.Models
 				.HasOne(cd => cd.Dish)
 				.WithMany(d => d.ComboDetails)
 				.HasForeignKey(cd => cd.DishId);
-
 
 
 			modelBuilder.Entity<Discount>(entity =>
@@ -421,8 +421,6 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ReservationTime).HasColumnType("datetime");
 
-                entity.Property(e => e.TableId).HasColumnName("TableID");
-
                 entity.HasOne(d => d.Address)
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.AddressId)
@@ -433,11 +431,6 @@ namespace EHM_API.Models
                     .WithOne(p => p.Reservation)
                     .HasForeignKey<Reservation>(d => d.OrderId)
                     .HasConstraintName("FK__Reservati__Order__52593CB8");
-
-                entity.HasOne(d => d.Table)
-                    .WithMany(p => p.Reservations)
-                    .HasForeignKey(d => d.TableId)
-                    .HasConstraintName("FK_Reservation_Table");
             });
 
             modelBuilder.Entity<Table>(entity =>
@@ -447,7 +440,21 @@ namespace EHM_API.Models
                 entity.Property(e => e.TableId).HasColumnName("TableID");
             });
 
-            OnModelCreatingPartial(modelBuilder);
+            modelBuilder.Entity<TableReservation>(entity =>
+            {
+				entity.ToTable("TableReservation");
+				entity.HasKey(tr => new { tr.ReservationId, tr.TableId });
+
+				entity.HasOne(tr => tr.Reservation)
+					.WithMany(r => r.TableReservations) 
+					.HasForeignKey(tr => tr.ReservationId);
+
+				entity.HasOne(tr => tr.Table)
+					.WithMany(t => t.TableReservations) 
+					.HasForeignKey(tr => tr.TableId);
+			});
+
+			OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

@@ -10,12 +10,12 @@ namespace EHM_API.Models
         public int? GuestNumber { get; set; }
         public string? Note { get; set; }
         public int? Status { get; set; }
-        public int? TableId { get; set; }
         public int AddressId { get; set; }
         public int? OrderId { get; set; }
 
         public virtual Address Address { get; set; } = null!;
         public virtual Order? Order { get; set; }
-        public virtual Table? Table { get; set; }
-    }
+
+		public virtual ICollection<TableReservation> TableReservations { get; set; }
+	}
 }

@@ -14,5 +14,9 @@ namespace EHM_API.Repositories
 		Task<Reservation> GetReservationDetailAsync(int reservationId);
 		Task<bool> UpdateStatusAsync(UpdateStatusReservationDTO updateStatusDto);
 		Task<bool> UpdateTableIdAsync(UpdateTableIdDTO updateTableIdDTO);
+
+		Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status);
+		Task<int> GetTotalTablesAsync();
+
 	}
 }

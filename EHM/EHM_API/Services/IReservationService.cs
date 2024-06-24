@@ -12,5 +12,8 @@ namespace EHM_API.Services
 		Task<bool> UpdateStatusAsync(UpdateStatusReservationDTO updateStatusDto);
 		Task<bool> UpdateTableIdAsync(UpdateTableIdDTO updateTableIdDTO);
 		Task CreateReservationAsync(CreateReservationDTO createDto);
+
+		Task<int?> CalculateStatusOfTable(Reservation reservation);
+
 	}
 }
