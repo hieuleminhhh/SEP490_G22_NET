@@ -9,7 +9,6 @@ namespace EHM_API.Models
         {
             Addresses = new HashSet<Address>();
             Orders = new HashSet<Order>();
-            Reservations = new HashSet<Reservation>();
         }
 
         public string GuestPhone { get; set; } = null!;
@@ -17,6 +16,5 @@ namespace EHM_API.Models
 
         public virtual ICollection<Address> Addresses { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
-        public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }

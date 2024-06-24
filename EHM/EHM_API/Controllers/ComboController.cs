@@ -358,7 +358,7 @@ namespace EHM_API.Controllers
 				var result = await _comboService.CreateComboWithDishesAsync(createComboWithDishesDTO);
 				return Ok(new
 				{
-					message = "Combo với món ăn đã được tạo thành công",
+					message = "Combo đã được tạo thành công",
 					result
 				});
 			}
@@ -370,76 +370,77 @@ namespace EHM_API.Controllers
         [HttpPut("UpdateComboWithDishes/{comboId}")]
         public async Task<ActionResult<ComboDTO>> UpdateComboWithDishes(int comboId, [FromBody] UpdateComboDishDTO updateComboWithDishesDTO)
         {
-			var errors = new Dictionary<string, string>();
+            var errors = new Dictionary<string, string>();
 
-			if (comboId <= 0)
-			{
-				errors["comboId"] = "ID combo không hợp lệ";
-				return BadRequest(errors);
-			}
+            if (comboId <= 0)
+            {
+                errors["comboId"] = "ID combo không hợp lệ";
+                return BadRequest(errors);
+            }
 
-			if (string.IsNullOrEmpty(updateComboWithDishesDTO.NameCombo))
-			{
-				errors["nameCombo"] = "Tên combo là bắt buộc";
-			}
-			else if (updateComboWithDishesDTO.NameCombo.Length > 100)
-			{
-				errors["nameCombo"] = "Tên combo không được vượt quá 100 ký tự";
-			}
+            if (string.IsNullOrEmpty(updateComboWithDishesDTO.NameCombo))
+            {
+                errors["nameCombo"] = "Tên combo là bắt buộc";
+            }
+            else if (updateComboWithDishesDTO.NameCombo.Length > 100)
+            {
+                errors["nameCombo"] = "Tên combo không được vượt quá 100 ký tự";
+            }
 
-			if (!updateComboWithDishesDTO.Price.HasValue)
-			{
-				errors["price"] = "Giá của Combo là bắt buộc";
-			}
-			else if (updateComboWithDishesDTO.Price < 0 || updateComboWithDishesDTO.Price > 1000000000)
-			{
-				errors["price"] = "Giá của Combo phải nằm trong khoảng từ 0 đến 1,000,000,000";
-			}
+            if (!updateComboWithDishesDTO.Price.HasValue)
+            {
+                errors["price"] = "Giá của Combo là bắt buộc";
+            }
+            else if (updateComboWithDishesDTO.Price < 0 || updateComboWithDishesDTO.Price > 1000000000)
+            {
+                errors["price"] = "Giá của Combo phải nằm trong khoảng từ 0 đến 1,000,000,000";
+            }
 
-			if (string.IsNullOrEmpty(updateComboWithDishesDTO.Note))
-			{
-				errors["note"] = "Mô tả Combo là bắt buộc";
-			}
-			else if (updateComboWithDishesDTO.Note?.Length > 500)
-			{
-				errors["note"] = "Mô tả Combo không được vượt quá 500 ký tự";
-			}
+            if (string.IsNullOrEmpty(updateComboWithDishesDTO.Note))
+            {
+                errors["note"] = "Mô tả Combo là bắt buộc";
+            }
+            else if (updateComboWithDishesDTO.Note?.Length > 500)
+            {
+                errors["note"] = "Mô tả Combo không được vượt quá 500 ký tự";
+            }
 
-			if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
-			{
-				errors["image"] = "Hình ảnh là bắt buộc";
-			}
+            if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
+            {
+                errors["image"] = "Hình ảnh là bắt buộc";
+            }
 
-			var existingCombos = await _comboService.SearchComboByNameAsync(updateComboWithDishesDTO.NameCombo);
-			if (existingCombos.Any(c => c.ComboId != comboId))
-			{
-				errors["nameCombo"] = "Tên combo đã tồn tại";
-			}
+            var existingCombos = await _comboService.SearchComboByNameAsync(updateComboWithDishesDTO.NameCombo);
+            if (existingCombos.Any(c => c.ComboId != comboId))
+            {
+                errors["nameCombo"] = "Tên combo đã tồn tại";
+            }
 
-			if (updateComboWithDishesDTO.DishIds == null || updateComboWithDishesDTO.DishIds.Count == 0)
-			{
-				errors["dish"] = "Thông tin món ăn là bắt buộc";
-			}
+            if (updateComboWithDishesDTO.DishIds == null || updateComboWithDishesDTO.DishIds.Count == 0)
+            {
+                errors["dish"] = "Thông tin món ăn là bắt buộc";
+            }
 
-			if (errors.Any())
-			{
-				return BadRequest(errors);
-			}
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
 
-			try
-			{
-				var result = await _comboService.UpdateComboWithDishesAsync(comboId, updateComboWithDishesDTO);
-				return Ok(new
-				{
-					message = "Combo với món ăn đã được cập nhật thành công",
-					result
-				});
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, new { message = ex.Message });
-			}
-		}
+            try
+            {
+                var result = await _comboService.UpdateComboWithDishesAsync(comboId, updateComboWithDishesDTO);
+                return Ok(new
+                {
+                    message = "Combo đã được cập nhật thành công",
+                    result
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message, stackTrace = ex.StackTrace });
+            }
+        }
+
 
     }
 }

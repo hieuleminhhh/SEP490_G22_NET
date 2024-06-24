@@ -31,6 +31,7 @@ namespace EHM_API.Models
         public virtual DbSet<News> News { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
+        public virtual DbSet<OrderTable> OrderTables { get; set; } = null!;
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
 
@@ -136,6 +137,8 @@ namespace EHM_API.Models
 				.HasOne(cd => cd.Dish)
 				.WithMany(d => d.ComboDetails)
 				.HasForeignKey(cd => cd.DishId);
+
+
 
 			modelBuilder.Entity<Discount>(entity =>
             {
@@ -347,11 +350,6 @@ namespace EHM_API.Models
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.InvoiceId)
                     .HasConstraintName("FK_Order_Invoice");
-
-                entity.HasOne(d => d.Table)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.TableId)
-                    .HasConstraintName("FK_Order_Table");
             });
 
             modelBuilder.Entity<OrderDetail>(entity =>
@@ -384,34 +382,57 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_OrderDetail_Order");
             });
 
+            modelBuilder.Entity<OrderTable>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("OrderTable");
+
+                entity.Property(e => e.OrderId).HasColumnName("OrderID");
+
+                entity.Property(e => e.TableId).HasColumnName("TableID");
+
+                entity.HasOne(d => d.Order)
+                    .WithMany()
+                    .HasForeignKey(d => d.OrderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderTable_Order");
+
+                entity.HasOne(d => d.Table)
+                    .WithMany()
+                    .HasForeignKey(d => d.TableId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderTable_Table");
+            });
+
             modelBuilder.Entity<Reservation>(entity =>
             {
                 entity.ToTable("Reservation");
 
                 entity.HasIndex(e => e.OrderId, "UQ_Reservation_OrderID")
-                    .IsUnique();
+                    .IsUnique()
+                    .HasFilter("([OrderID] IS NOT NULL)");
 
                 entity.Property(e => e.ReservationId).HasColumnName("ReservationID");
 
-                entity.Property(e => e.GuestPhone)
-                    .HasMaxLength(15)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Note).HasMaxLength(200);
+                entity.Property(e => e.Note).HasMaxLength(255);
 
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
                 entity.Property(e => e.ReservationTime).HasColumnType("datetime");
 
-                entity.HasOne(d => d.GuestPhoneNavigation)
+                entity.Property(e => e.TableId).HasColumnName("TableID");
+
+                entity.HasOne(d => d.Address)
                     .WithMany(p => p.Reservations)
-                    .HasForeignKey(d => d.GuestPhone)
-                    .HasConstraintName("FK_Reservation_Guest");
+                    .HasForeignKey(d => d.AddressId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Reservation_Address");
 
                 entity.HasOne(d => d.Order)
                     .WithOne(p => p.Reservation)
                     .HasForeignKey<Reservation>(d => d.OrderId)
-                    .HasConstraintName("FK_Reservation_Order");
+                    .HasConstraintName("FK__Reservati__Order__52593CB8");
 
                 entity.HasOne(d => d.Table)
                     .WithMany(p => p.Reservations)
@@ -422,6 +443,8 @@ namespace EHM_API.Models
             modelBuilder.Entity<Table>(entity =>
             {
                 entity.ToTable("Table");
+
+                entity.Property(e => e.TableId).HasColumnName("TableID");
             });
 
             OnModelCreatingPartial(modelBuilder);
