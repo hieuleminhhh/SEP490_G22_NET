@@ -431,7 +431,7 @@ namespace EHM_API.Controllers
                 var result = await _comboService.UpdateComboWithDishesAsync(comboId, updateComboWithDishesDTO);
                 return Ok(new
                 {
-                    message = "Combo với món ăn đã được cập nhật thành công",
+                    message = "Combo đã được cập nhật thành công",
                     result
                 });
             }
