@@ -107,19 +107,18 @@ public class OrderRepository : IOrderRepository
         var orderDTOs = order.Select(o => new OrderDTO
         {
             OrderId = o.OrderId,
-            OrderDate = (DateTime)o.OrderDate,
+            OrderDate = (DateTime)o.OrderDate,  // Assuming OrderDate in OrderDTO is DateTime?
             Status = (int)o.Status,
             RecevingOrder = o.RecevingOrder,
             AccountId = o.AccountId,
-           // TableId = o.TableId,
+            // TableId = o.TableId,  // Uncomment and handle if TableId is nullable
             InvoiceId = o.InvoiceId,
             TotalAmount = o.TotalAmount,
             GuestPhone = o.GuestPhone,
             Deposits = o.Deposits,
-            AddressId = (int)o.AddressId,
+            AddressId = o.AddressId.HasValue ? o.AddressId.Value : 0,  // Handle nullable AddressId
             GuestAddress = o.Address?.GuestAddress,
             ConsigneeName = o.Address?.ConsigneeName
-
         }).ToList();
 
         return new PagedResult<OrderDTO>(orderDTOs, totalDishes, page, pageSize);
