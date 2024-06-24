@@ -1299,7 +1299,7 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.ReservationsController",
-    "Method": "GetReservations",
+    "Method": "GetReservationsByStatus",
     "RelativePath": "api/Reservations",
     "HttpMethod": "GET",
     "IsController": true,
@@ -1313,7 +1313,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.Models.Reservation, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.ReservationDTO.Guest.ReservationByStatus, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1402,22 +1402,6 @@
       {
         "Name": "createDto",
         "Type": "EHM_API.DTOs.ReservationDTO.Guest.CreateReservationDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "EHM_API.Controllers.ReservationsController",
-    "Method": "UpdateTableId",
-    "RelativePath": "api/Reservations/updateTableId",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "updateTableIdDTO",
-        "Type": "EHM_API.DTOs.ReservationDTO.Guest.UpdateTableIdDTO",
         "IsRequired": true
       }
     ],

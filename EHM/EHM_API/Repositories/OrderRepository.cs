@@ -111,7 +111,7 @@ public class OrderRepository : IOrderRepository
             Status = (int)o.Status,
             RecevingOrder = o.RecevingOrder,
             AccountId = o.AccountId,
-            TableId = o.TableId,
+           // TableId = o.TableId,
             InvoiceId = o.InvoiceId,
             TotalAmount = o.TotalAmount,
             GuestPhone = o.GuestPhone,

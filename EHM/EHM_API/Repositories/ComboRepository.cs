@@ -62,7 +62,7 @@ namespace EHM_API.Repositories
 
 		public async Task<IEnumerable<Combo>> GetAllAsync()
 		{
-			return await _context.Combos.ToListAsync();
+			return await _context.Combos.Include(d => d.ComboDetails).ThenInclude(d => d.Dish).ToListAsync();
 		}
 		public async Task<List<Combo>> SearchComboByNameAsync(string name)
 		{
