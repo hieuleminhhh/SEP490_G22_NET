@@ -129,10 +129,14 @@ namespace EHM_API.Map
 
 			// Reservation to ReservationDetailDTO
 			CreateMap<Reservation, ReservationDetailDTO>()
-				.ForMember(dest => dest.ConsigneeName,
-						   opt => opt.MapFrom(src => src.Order != null ? src.Order.Address.ConsigneeName : null))
+			.ForMember(dest => dest.ConsigneeName, opt => {
+				opt.MapFrom(src =>
+						src.Order != null && src.Order.Address != null ? src.Order.Address.ConsigneeName :
+						src.Address != null ? src.Address.ConsigneeName :
+						null);
+			})
 				.ForMember(dest => dest.GuestPhone,
-						   opt => opt.MapFrom(src => src.GuestPhone))
+						   opt => opt.MapFrom(src => src.Address.GuestPhone))
 				.ForMember(dest => dest.ReservationTime,
 						   opt => opt.MapFrom(src => src.ReservationTime))
 				.ForMember(dest => dest.Status,
@@ -197,10 +201,12 @@ namespace EHM_API.Map
 
 			// Reservation to ReservationDetailDTO
 			CreateMap<Reservation, ReservationByStatus>()
-				.ForMember(dest => dest.ConsigneeName,
-						   opt => opt.MapFrom(src => src.Order != null ? src.Order.Address.ConsigneeName : null))
+				.ForMember(dest => dest.ConsigneeName, opt =>{opt.MapFrom(src =>
+						src.Order != null && src.Order.Address != null ? src.Order.Address.ConsigneeName :
+						src.Address != null ? src.Address.ConsigneeName :
+						null);	})
 				.ForMember(dest => dest.GuestPhone,
-						   opt => opt.MapFrom(src => src.GuestPhone))
+						   opt => opt.MapFrom(src => src.Address.GuestPhone))
 				.ForMember(dest => dest.ReservationTime,
 						   opt => opt.MapFrom(src => src.ReservationTime))
 				.ForMember(dest => dest.Status,

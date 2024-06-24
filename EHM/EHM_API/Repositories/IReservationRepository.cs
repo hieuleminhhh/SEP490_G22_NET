@@ -9,6 +9,7 @@ namespace EHM_API.Repositories
 
 		Task CreateReservationAsync(Reservation reservation);
 		Task<Guest> GetOrCreateGuest(string guestPhone, string email);
+		Task<Address> GetAddressByGuestPhoneAsync(string guestPhone);
 		Task<Address> GetOrCreateAddress(string guestPhone, string? guestAddress, string? consigneeName);
 		Task<Reservation> GetReservationDetailAsync(int reservationId);
 		Task<bool> UpdateStatusAsync(UpdateStatusReservationDTO updateStatusDto);

@@ -12,7 +12,6 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 		public DateTime? ReservationTime { get; set; }
 		public int? GuestNumber { get; set; }
 		public string? Note { get; set; }
-		public int TableId { get; set; }
 		public DateTime? OrderDate { get; set; }
 		public int? Status { get; set; }
 		public DateTime? RecevingOrder { get; set; }
