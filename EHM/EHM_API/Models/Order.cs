@@ -15,7 +15,6 @@ namespace EHM_API.Models
         public int? Status { get; set; }
         public DateTime? RecevingOrder { get; set; }
         public int? AccountId { get; set; }
-        public int? TableId { get; set; }
         public int? InvoiceId { get; set; }
         public decimal? TotalAmount { get; set; }
         public string? GuestPhone { get; set; }
@@ -27,7 +26,6 @@ namespace EHM_API.Models
         public virtual Address? Address { get; set; }
         public virtual Guest? GuestPhoneNavigation { get; set; }
         public virtual Invoice? Invoice { get; set; }
-        public virtual Table? Table { get; set; }
         public virtual Reservation? Reservation { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
