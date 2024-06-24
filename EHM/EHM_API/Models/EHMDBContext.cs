@@ -126,7 +126,7 @@ namespace EHM_API.Models
             });
 
 			modelBuilder.Entity<ComboDetail>()
-			  .HasKey(cd => new { cd.ComboId, cd.DishId });
+						.HasKey(cd => new { cd.ComboId, cd.DishId });
 
 			modelBuilder.Entity<ComboDetail>()
 				.HasOne(cd => cd.Combo)
@@ -415,10 +415,6 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ReservationId).HasColumnName("ReservationID");
 
-                entity.Property(e => e.GuestPhone)
-                    .HasMaxLength(15)
-                    .IsUnicode(false);
-
                 entity.Property(e => e.Note).HasMaxLength(255);
 
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
@@ -427,11 +423,11 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.TableId).HasColumnName("TableID");
 
-                entity.HasOne(d => d.GuestPhoneNavigation)
+                entity.HasOne(d => d.Address)
                     .WithMany(p => p.Reservations)
-                    .HasForeignKey(d => d.GuestPhone)
+                    .HasForeignKey(d => d.AddressId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Reservation_Guest");
+                    .HasConstraintName("FK_Reservation_Address");
 
                 entity.HasOne(d => d.Order)
                     .WithOne(p => p.Reservation)
