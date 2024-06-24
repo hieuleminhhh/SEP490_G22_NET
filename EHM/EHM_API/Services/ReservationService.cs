@@ -130,11 +130,44 @@ namespace EHM_API.Services
 			await _repository.CreateReservationAsync(reservation);
 		}
 
+		public async Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status)
+		{
+			return await _repository.CountOrdersWithStatusOnDateAsync(date, status);
+		}
+
+		public async Task<int> GetTotalTablesAsync()
+		{
+			return await _repository.GetTotalTablesAsync();
+		}
+
 		public async Task<IEnumerable<ReservationByStatus>> GetReservationsByStatus(int? status)
 		{
 			var reservations = await _repository.GetReservationsByStatus(status);
-			return _mapper.Map<IEnumerable<ReservationByStatus>>(reservations);
+			var result = new List<ReservationByStatus>();
+
+			foreach (var reservation in reservations)
+			{
+				var mappedReservation = _mapper.Map<ReservationByStatus>(reservation);
+				mappedReservation.StatusOfTable = await CalculateStatusOfTable(reservation);
+				result.Add(mappedReservation);
+			}
+
+			return result;
 		}
 
+		public async Task<int?> CalculateStatusOfTable(Reservation reservation)
+		{
+			if (reservation.ReservationTime == null)
+			{
+				return null;
+			}
+
+			var date = reservation.ReservationTime.Value.Date;
+
+			var orderCountWithStatus1 = await _repository.CountOrdersWithStatusOnDateAsync(date, 1);
+			var totalTables = await _repository.GetTotalTablesAsync();
+
+			return orderCountWithStatus1 >= totalTables ? 1 : 0;
+		}
 	}
 }

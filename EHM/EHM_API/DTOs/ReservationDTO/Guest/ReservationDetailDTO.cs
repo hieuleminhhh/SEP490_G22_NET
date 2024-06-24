@@ -9,14 +9,22 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 		public int? GuestNumber { get; set; }
 		public string? Note { get; set; }
 		public int? Status { get; set; }
-		public int? TableId { get; set; }
+	
 		public string? GuestPhone { get; set; }
 		public string? ConsigneeName { get; set; }
 		public OrderDetailDTO1 Order { get; set; }
-		
 
 
+		public ICollection<TabledetailDTO> TableOfReservation { get; set; }
 	}
+
+	public class TabledetailDTO
+	{
+		public int? TableId { get; set; }
+		public int? Capacity { get; set; }
+		public int? Floor { get; set; }
+	}
+
 	public class OrderDetailDTO1
 	{
 		public int OrderId { get; set; }

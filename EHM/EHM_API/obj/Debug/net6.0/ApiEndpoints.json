@@ -17,6 +17,22 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.CartController",
+    "Method": "AddNewOder",
+    "RelativePath": "api/Cart/AddNewOrder",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "checkoutDTO",
+        "Type": "EHM_API.DTOs.CartDTO.Guest.CheckoutDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.CartController",
     "Method": "Checkout",
     "RelativePath": "api/Cart/checkout",
     "HttpMethod": "POST",
