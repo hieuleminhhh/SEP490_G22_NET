@@ -23,7 +23,7 @@ namespace EHM_API.Controllers
         {
             if (model == null || string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
             {
-                return BadRequest(new { Message = "Invalid request. Username and password must be provided." });
+                return BadRequest(new { Message = "Không được để trống, người dùng cần nhập đầy đủ username và password" });
             }
             var st = await _context.Accounts
                 .Where(t => t.Username == model.Username && t.Password == model.Password)
@@ -31,14 +31,14 @@ namespace EHM_API.Controllers
 
             if (st == null)
             {
-                return Unauthorized(new { Message = "Invalid username or password." });
+                return Unauthorized(new { Message = "Username và password không hợp lệ" });
             }
 
             var token = _jwtTokenGenerator.GenerateJwtToken(st);
 
             return Ok(new
             {
-                Message = "Login successful",
+                Message = "Đăng nhập thành công",
                 token,
                 st.AccountId,
                 st.Username,
