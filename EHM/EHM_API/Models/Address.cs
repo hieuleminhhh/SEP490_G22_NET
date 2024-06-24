@@ -8,6 +8,7 @@ namespace EHM_API.Models
         public Address()
         {
             Orders = new HashSet<Order>();
+            Reservations = new HashSet<Reservation>();
         }
 
         public int AddressId { get; set; }
@@ -17,5 +18,6 @@ namespace EHM_API.Models
 
         public virtual Guest? GuestPhoneNavigation { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }

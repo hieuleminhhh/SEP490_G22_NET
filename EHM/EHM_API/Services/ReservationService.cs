@@ -49,27 +49,32 @@ namespace EHM_API.Services
 		{
 			var guest = await _repository.GetOrCreateGuest(reservationDTO.GuestPhone, reservationDTO.Email);
 
-			var address = await _repository.GetOrCreateAddress(reservationDTO.GuestPhone,null, reservationDTO.ConsigneeName);
+			var address = await _repository.GetOrCreateAddress(reservationDTO.GuestPhone, reservationDTO.GuestAddress, reservationDTO.ConsigneeName);
 
 			var reservation = new Reservation
 			{
-				GuestPhone = guest.GuestPhone,
+				AddressId = address.AddressId,
 				ReservationTime = reservationDTO.ReservationTime,
 				GuestNumber = reservationDTO.GuestNumber,
 				Note = reservationDTO.Note,
-				Status = 0, 
-				TableId = reservationDTO.TableId,
-				GuestPhoneNavigation = guest
+				Status = reservationDTO.Status ?? 0
 			};
 
-			// Step 4: Create Order if there are OrderDetails
-			if (reservationDTO.OrderDetails != null && reservationDTO.OrderDetails.Any())
+			if (reservationDTO.OrderDetails != null)
 			{
 				var orderDetails = new List<OrderDetail>();
 				decimal totalAmount = 0;
 
 				foreach (var item in reservationDTO.OrderDetails)
 				{
+					if (!item.DishId.HasValue || item.DishId == 0)
+					{
+						if (!item.ComboId.HasValue || item.ComboId == 0)
+						{
+							continue;
+						}
+					}
+
 					Dish dish = null;
 					Combo combo = null;
 
@@ -89,10 +94,6 @@ namespace EHM_API.Services
 							throw new KeyNotFoundException($"Combo with ID {item.ComboId} not found.");
 						}
 					}
-					else
-					{
-						throw new InvalidOperationException("Each OrderDetail must have either DishId or ComboId.");
-					}
 
 					var unitPrice = dish != null ? dish.Price : combo?.Price;
 					totalAmount += (unitPrice ?? 0) * item.Quantity;
@@ -108,19 +109,22 @@ namespace EHM_API.Services
 					orderDetails.Add(orderDetail);
 				}
 
-				var order = new Order
+				if (orderDetails.Any())
 				{
-					OrderDate = DateTime.UtcNow,
-					Status = 0, 
-					TotalAmount = totalAmount,
-					OrderDetails = orderDetails,
-					GuestPhone = guest.GuestPhone,
-					AddressId = address.AddressId,
-					Note = reservationDTO.Note,
-					Deposits = reservationDTO.Deposits
-				};
+					var order = new Order
+					{
+						OrderDate = reservationDTO.OrderDate ?? DateTime.UtcNow,
+						Status = reservationDTO.Status ?? 0, 
+						TotalAmount = totalAmount,
+						OrderDetails = orderDetails,
+						GuestPhone = guest.GuestPhone,
+						AddressId = address.AddressId,
+						Note = reservationDTO.Note,
+						Deposits = reservationDTO.Deposits
+					};
 
-				reservation.Order = order;
+					reservation.Order = order;
+				}
 			}
 
 			await _repository.CreateReservationAsync(reservation);
