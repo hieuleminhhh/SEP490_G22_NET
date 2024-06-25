@@ -143,9 +143,28 @@ namespace EHM_API.Controllers
 
 			return Ok(checkoutSuccessInfo);
 		}
+		//staff order
+		[HttpPost("AddNewOrder")]
+        public async Task<IActionResult> AddNewOder([FromBody] CheckoutDTO checkoutDTO)
+        {
+            var errors = new Dictionary<string, string>();
+            try
+            {
+                await _cartService.Checkout(checkoutDTO);
+                _cartService.ClearCart();
+                return Ok(new { message = "Tạo đơn thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Dictionary<string, string>
+                {
+                    ["error"] = ex.Message
+                });
+            }
+        }
 
 
-	}
+    }
 
 	public static class SessionExtensions
 	{
@@ -160,4 +179,6 @@ namespace EHM_API.Controllers
 			return value == null ? default : System.Text.Json.JsonSerializer.Deserialize<T>(value);
 		}
 	}
+    
+
 }

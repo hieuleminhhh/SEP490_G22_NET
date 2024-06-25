@@ -125,7 +125,8 @@ namespace EHM_API.Services
 				Price = createComboWithDishesDTO.Price,
 				Note = createComboWithDishesDTO.Note,
 				ImageUrl = createComboWithDishesDTO.ImageUrl,
-				ComboDetails = createComboWithDishesDTO.DishIds.Select(dishId => new ComboDetail
+                IsActive = createComboWithDishesDTO.IsActive ?? true,
+                ComboDetails = createComboWithDishesDTO.DishIds.Select(dishId => new ComboDetail
 				{
 					DishId = dishId,
 				}).ToList() 
@@ -140,6 +141,7 @@ namespace EHM_API.Services
 				Price = combo.Price,
 				Note = combo.Note,
 				ImageUrl = combo.ImageUrl,
+				IsActive = combo.IsActive,
 				DishIds = combo.ComboDetails.Select(cd => cd.DishId).ToList()
 			};
 
@@ -147,25 +149,38 @@ namespace EHM_API.Services
 		}
         public async Task<ComboDTO> UpdateComboWithDishesAsync(int comboId, UpdateComboDishDTO updateComboWithDishesDTO)
         {
+            // Fetch the dishes by IDs
             var dishes = await _dishRepository.GetDishesByIdsAsync(updateComboWithDishesDTO.DishIds);
-            if (dishes.Count != updateComboWithDishesDTO.DishIds.Count)
+            if (dishes == null || dishes.Count != updateComboWithDishesDTO.DishIds.Count)
             {
                 throw new Exception("Some dishes were not found.");
             }
 
+            // Fetch the combo by ID
             var combo = await _comboRepository.GetByIdAsync(comboId);
             if (combo == null)
             {
                 throw new Exception("Combo not found");
             }
 
+            // Update combo properties
             combo.NameCombo = updateComboWithDishesDTO.NameCombo;
             combo.Price = updateComboWithDishesDTO.Price;
             combo.Note = updateComboWithDishesDTO.Note;
-            combo.ImageUrl = updateComboWithDishesDTO.ImageUrl;
+			combo.ImageUrl = updateComboWithDishesDTO.ImageUrl;
 
-            await _comboRepository.ClearComboDetailsAsync(comboId);
 
+			// Ensure ComboDetails is initialized
+			if (combo.ComboDetails == null)
+            {
+                combo.ComboDetails = new List<ComboDetail>();
+            }
+            else
+            {
+                combo.ComboDetails.Clear(); // Clear existing combo details
+            }
+
+            // Add new combo details
             foreach (var dishId in updateComboWithDishesDTO.DishIds)
             {
                 combo.ComboDetails.Add(new ComboDetail
@@ -175,8 +190,10 @@ namespace EHM_API.Services
                 });
             }
 
+            // Update combo in the repository
             await _comboRepository.UpdateAsync(combo);
 
+            // Prepare and return the ComboDTO
             var comboDTO = new ComboDTO
             {
                 ComboId = combo.ComboId,
@@ -186,9 +203,10 @@ namespace EHM_API.Services
                 ImageUrl = combo.ImageUrl,
                 DishIds = combo.ComboDetails.Select(cd => cd.DishId).ToList()
             };
+
             return comboDTO;
         }
-       
+
 
     }
 }

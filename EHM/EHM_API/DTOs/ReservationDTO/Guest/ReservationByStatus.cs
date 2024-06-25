@@ -1,4 +1,6 @@
-﻿namespace EHM_API.DTOs.ReservationDTO.Guest
+﻿using EHM_API.Models;
+
+namespace EHM_API.DTOs.ReservationDTO.Guest
 {
 	public class ReservationByStatus
 	{
@@ -6,18 +8,27 @@
 
 		public string? ConsigneeName { get; set; }
 		public string? GuestPhone { get; set; }
+
+		public string? Email { get; set; }
 		public DateTime? ReservationTime { get; set; }
 		public int? GuestNumber { get; set; }
+		public string? GuestAddress { get; set; }
 		public decimal Deposits { get; set; }
 		public string? Note { get; set; }
 		public int? StatusOfTable { get; set; }
 		public int? Status { get; set; }
-		public int? TableId { get; set; }
 		public OrderDetailDTO3 Order { get; set; }
-
-
+		public ICollection<TableReservationDTO> TableOfReservation { get; set; }
 
 	}
+
+	public class TableReservationDTO
+	{
+		public int? TableId { get; set; }
+		public int? Capacity { get; set; }
+		public int? Floor { get; set; }
+	}
+
 	public class OrderDetailDTO3
 	{
 		public int OrderId { get; set; }

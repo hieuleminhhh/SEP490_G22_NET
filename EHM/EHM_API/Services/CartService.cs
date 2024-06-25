@@ -1,8 +1,10 @@
 ﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace EHM_API.Services
@@ -107,22 +109,21 @@ namespace EHM_API.Services
 					totalAmount += (item.UnitPrice ?? 0m);
 				}
 			}
+            var order = new Order
+            {
+                OrderDate = DateTime.Now,
+                Status = checkoutDTO.Status ?? 0,
+                RecevingOrder = checkoutDTO.RecevingOrder,
+                GuestPhone = guest.GuestPhone,
+                TotalAmount = totalAmount,
+                OrderDetails = orderDetails,
+                Deposits = checkoutDTO.Deposits,
+                AddressId = checkoutDTO.AddressId,
+                Note = checkoutDTO.Note
+            };
 
-			var order = new Order
-			{
-				OrderDate = DateTime.Now,
-				Status = checkoutDTO.Status ?? 0,
-				RecevingOrder = checkoutDTO.RecevingOrder,
-				GuestPhone = guest.GuestPhone,
-				TotalAmount = totalAmount,
-				OrderDetails = orderDetails,
-				Deposits = checkoutDTO.Deposits,
-				AddressId = checkoutDTO.AddressId,
-				Note = checkoutDTO.Note
-				
-			};
 
-			await _cartRepository.CreateOrder(order);
+            await _cartRepository.CreateOrder(order);
 		}
 
 
@@ -174,10 +175,5 @@ namespace EHM_API.Services
 
 			return checkoutSuccessDTO;
 		}
-
-
-
-
-
 	}
 }
