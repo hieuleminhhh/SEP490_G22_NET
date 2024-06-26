@@ -202,6 +202,12 @@ namespace EHM_API.Map
 
 			//Table
 			CreateMap<Table, TableAllDTO>();
+			CreateMap<Table, FindTableDTO>()
+			   .ForMember(dest => dest.CombinedTables, opt => opt.Ignore());
+
+			// Nếu bạn có các ánh xạ bổ sung
+			CreateMap<Table, TableAllDTO>();
+
 
 			//kiem tra dat ban
 			CreateMap<Reservation, ReservationByStatus>()
