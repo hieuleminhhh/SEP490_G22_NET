@@ -48,27 +48,30 @@ namespace EHM_API.Repositories
 						.ThenInclude(od => od.Combo)
 				.Include(r => r.Order)
 					.ThenInclude(o => o.Address)
+					.Include(r => r.TableReservations)
+					.ThenInclude(tr => tr.Table)
 				.FirstOrDefaultAsync(r => r.ReservationId == reservationId);
 		}
 
 
 		public async Task<bool> UpdateTableIdAsync(UpdateTableIdDTO updateTableIdDTO)
 		{
-			var reservation = await _context.Reservations.FindAsync(updateTableIdDTO.ReservationId);
-			if (reservation == null) return false;
+			/*		var reservation = await _context.Reservations.FindAsync(updateTableIdDTO.ReservationId);
+					if (reservation == null) return false;
 
-			reservation.TableId = updateTableIdDTO.TableId;
-			_context.Entry(reservation).State = EntityState.Modified;
+					reservation.TableId = updateTableIdDTO.TableId;
+					_context.Entry(reservation).State = EntityState.Modified;
 
-			try
-			{
-				await _context.SaveChangesAsync();
-				return true;
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				return false;
-			}
+					try
+					{
+						await _context.SaveChangesAsync();
+						return true;
+					}
+					catch (DbUpdateConcurrencyException)
+					{
+						return false;
+					}*/
+			return false;
 		}
 
 		public async Task<Guest> GetOrCreateGuest(string guestPhone, string email)
@@ -136,6 +139,7 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Reservations
 				.Include(r => r.Address)
+					.ThenInclude(a => a.GuestPhoneNavigation)
 				.Include(r => r.Order)
 					.ThenInclude(o => o.OrderDetails)
 						.ThenInclude(od => od.Dish)
@@ -144,11 +148,22 @@ namespace EHM_API.Repositories
 						.ThenInclude(od => od.Combo)
 				.Include(r => r.Order)
 					.ThenInclude(o => o.Address)
-				.Include(r => r.Table)
+				.Include(r => r.TableReservations)
+					.ThenInclude(tr => tr.Table)
 				.Where(r => !status.HasValue || r.Status == status)
 				.ToListAsync();
 		}
 
 
+		public async Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status)
+		{
+			return await _context.Reservations
+				.CountAsync(o => o.ReservationTime.Value.Date == date.Date && o.Status == status);
+		}
+
+		public async Task<int> GetTotalTablesAsync()
+		{
+			return await _context.Tables.CountAsync();
+		}
 	}
 }

@@ -147,24 +147,41 @@ namespace EHM_API.Controllers
 		[HttpPost("AddNewOrder")]
         public async Task<IActionResult> AddNewOder([FromBody] CheckoutDTO checkoutDTO)
         {
-            var errors = new Dictionary<string, string>();
-            try
-            {
-                await _cartService.Checkout(checkoutDTO);
-                _cartService.ClearCart();
-                return Ok(new { message = "Tạo đơn thành công" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new Dictionary<string, string>
-                {
-                    ["error"] = ex.Message
-                });
-            }
-        }
+			var errors = new Dictionary<string, string>();
+
+			if (checkoutDTO == null)
+			{
+				errors["checkoutData"] = "Dữ liệu thanh toán là bắt buộc.";
+			}
+
+			if (checkoutDTO.OrderDetails == null || !checkoutDTO.OrderDetails.Any())
+			{
+				errors["cartItems"] = "Giỏ hàng không được để trống.";
+			}
 
 
-    }
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+
+			try
+			{
+				await _cartService.Checkout(checkoutDTO);
+				_cartService.ClearCart();
+				return Ok(new { message = "Tạo đơn hàng thành công." });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new Dictionary<string, string>
+				{
+					["error"] = ex.Message
+				});
+			}
+		}
+
+
+	}
 
 	public static class SessionExtensions
 	{

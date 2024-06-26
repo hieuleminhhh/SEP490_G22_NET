@@ -117,6 +117,13 @@ namespace EHM_API.Repositories
 		}
 		public async Task<Guest> GetOrCreateGuest(CheckoutDTO checkoutDTO)
 		{
+
+			if (string.IsNullOrWhiteSpace(checkoutDTO.Email) ||
+				string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone))
+			{
+				return null;
+			}
+
 			var guest = await _context.Guests
 				.FirstOrDefaultAsync(g => g.GuestPhone == checkoutDTO.GuestPhone);
 
@@ -141,8 +148,17 @@ namespace EHM_API.Repositories
 		}
 
 
-		public async Task<Address> GetOrCreateAddress(CheckoutDTO checkoutDTO)
+		public async Task<Address?> GetOrCreateAddress(CheckoutDTO checkoutDTO)
 		{
+
+			if (string.IsNullOrWhiteSpace(checkoutDTO.GuestAddress) ||
+				string.IsNullOrWhiteSpace(checkoutDTO.Email) ||
+				string.IsNullOrWhiteSpace(checkoutDTO.ConsigneeName) ||
+				string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone))
+			{
+				return null;
+			}
+
 			var address = await _context.Addresses
 				.FirstOrDefaultAsync(a =>
 					a.GuestAddress == checkoutDTO.GuestAddress &&
@@ -151,7 +167,7 @@ namespace EHM_API.Repositories
 
 			if (address == null)
 			{
-				// Tạo mới Address
+
 				address = new Address
 				{
 					GuestAddress = checkoutDTO.GuestAddress,
