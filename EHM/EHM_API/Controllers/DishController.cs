@@ -138,7 +138,7 @@ namespace EHM_API.Controllers
 
             return Ok(new
             {
-                message = "The dish has been created successfully",
+                message = "Món ăn đã được tạo thành công",
                 createdDish
             });
         }
@@ -151,7 +151,7 @@ namespace EHM_API.Controllers
             var existingDish = await _dishService.GetDishByIdAsync(dishId);
             if (existingDish == null)
             {
-                return NotFound(new { message = "Dish not found" });
+                return NotFound(new { message = "Không tìm thấy món ăn" });
             }
 
             updateDishDTO.ItemName = updateDishDTO.ItemName?.Trim();
@@ -160,58 +160,68 @@ namespace EHM_API.Controllers
 
             if (string.IsNullOrEmpty(updateDishDTO.ItemName))
             {
-                errors["itemName"] = "Item name is required";
-            }
+				errors["itemName"] = "Tên món ăn không được để trống";
+			}
             else if (updateDishDTO.ItemName.Length > 100)
             {
-                errors["itemName"] = "The dish name cannot exceed 100 characters";
-            }
+				errors["itemName"] = "Tên món ăn không được vượt quá 100 ký tự";
+			}
             else
             {
                 var existingDishes = await _dishService.SearchDishesAsync(updateDishDTO.ItemName);
                 if (existingDishes.Any(d => d.DishId != dishId))
                 {
-                    errors["itemName"] = "The dish name already exists";
-                }
+					errors["itemName"] = "Tên món ăn đã tồn tại";
+				}
             }
 
             if (!updateDishDTO.Price.HasValue)
             {
-                errors["price"] = "Price is required";
-            }
+				errors["price"] = "Giá của món ăn không được để trống";
+			}
             else if (updateDishDTO.Price < 0 || updateDishDTO.Price > 1000000000)
             {
-                errors["price"] = "Price must be between 0 and 1,000,000,000";
-            }
+				errors["price"] = "Giá phải nằm trong khoảng từ 0 đến 1.000.000.000";
+			}
 
             if (string.IsNullOrEmpty(updateDishDTO.ItemDescription))
             {
-                errors["itemDescription"] = "Item description is required";
-            }
+				errors["itemDescription"] = "Mô tả không được để trống";
+			}
             else if (updateDishDTO.ItemDescription.Length > 500)
             {
-                errors["itemDescription"] = "Food description must not exceed 500 characters";
-            }
+				errors["itemDescription"] = "Mô tả món ăn không được vượt quá 500 ký tự";
+			}
 
             if (!updateDishDTO.CategoryId.HasValue)
             {
-                errors["categoryId"] = "Category is required";
-            }
+				errors["categoryId"] = "Danh mục món ăn không được để trống";
+			}
             else
             {
                 var category = await _context.Categories.FindAsync(updateDishDTO.CategoryId.Value);
                 if (category == null)
                 {
-                    errors["categoryId"] = "Invalid category";
-                }
+					errors["categoryId"] = "Danh mục món ăn không tồn tại";
+				}
             }
 
             if (string.IsNullOrEmpty(updateDishDTO.ImageUrl))
             {
-                errors["image"] = "Image is required";
-            }
+				errors["image"] = "Hình ảnh không được để trống";
+			}
+			else
+			{
+				string extension = Path.GetExtension(updateDishDTO.ImageUrl).ToLower();
+				string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
 
-            if (errors.Any())
+				if (!allowedExtensions.Contains(extension))
+				{
+					errors["image"] = "Hình ảnh không hợp lệ. Chỉ cho phép các tệp JPG, JPEG, PNG, GIF.";
+				}
+			}
+
+			if (errors.Any())
             {
                 return BadRequest(errors);
             }
@@ -219,10 +229,10 @@ namespace EHM_API.Controllers
             var updatedDish = await _dishService.UpdateDishAsync(dishId, updateDishDTO);
             if (updatedDish == null)
             {
-                return StatusCode(500, new { message = "An error occurred while updating the dish" });
+                return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật món ăn" });
             }
 
-            var message = "The dish has been successfully updated";
+            var message = "Món ăn đã được cập nhật thành công";
             return Ok(new
             {
                 message,
@@ -230,69 +240,103 @@ namespace EHM_API.Controllers
             });
         }
 
-        [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<DishDTOAll>>> SearchDishes([FromQuery] string? name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return BadRequest("Search term cannot be empty");
-            }
-            var dishes = await _dishService.SearchDishesAsync(name.Trim());
-            return Ok(dishes);
-        }
+		[HttpGet("search")]
+		public async Task<ActionResult<IEnumerable<DishDTOAll>>> SearchDishes([FromQuery] string? name)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(name))
+				{
+					return BadRequest(new { message = "Từ khóa tìm kiếm không được để trống." });
+				}
+
+				var dishes = await _dishService.SearchDishesAsync(name.Trim());
+
+				if (dishes == null || !dishes.Any())
+				{
+					return NotFound(new { message = "Không tìm thấy món ăn nào phù hợp với từ khóa." });
+				}
+
+				return Ok(new { message = "Tìm kiếm thành công.", data = dishes });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình tìm kiếm. Vui lòng thử lại sau." });
+			}
+		}
 
 
-        [HttpGet("sorted-dishes")]
-        public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
-        {
-            if (string.IsNullOrEmpty(categoryName) && !sortField.HasValue && !sortOrder.HasValue)
-            {
-                var allDishes = await _dishService.GetAllDishesAsync();
-                return Ok(allDishes);
-            }
+		[HttpGet("sorted-dishes")]
+		public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
+		{
+			try
+			{
+				if (string.IsNullOrEmpty(categoryName) && !sortField.HasValue && !sortOrder.HasValue)
+				{
+					var allDishes = await _dishService.GetAllDishesAsync();
+					return Ok(new { message = "Lấy danh sách tất cả món ăn thành công.", data = allDishes });
+				}
 
-            if (string.IsNullOrEmpty(categoryName))
-            {
-                var dishes = await _dishService.GetAllSortedAsync(sortField.Value, sortOrder.Value);
-                return Ok(dishes);
-            }
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryName == categoryName);
-            if (category == null)
-            {
-                return NotFound("Category not found.");
-            }
+				if (string.IsNullOrEmpty(categoryName))
+				{
+					if (!sortField.HasValue || !sortOrder.HasValue)
+					{
+						return BadRequest(new { message = "Cần cung cấp cả sortField và sortOrder khi không có categoryName." });
+					}
+					var dishes = await _dishService.GetAllSortedAsync(sortField.Value, sortOrder.Value);
+					return Ok(new { message = "Lấy danh sách món ăn đã sắp xếp thành công.", data = dishes });
+				}
 
-            var sortedDishes = await _dishService.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
-            return Ok(sortedDishes);
-        }
+				var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryName == categoryName);
+				if (category == null)
+				{
+					return NotFound(new { message = $"Không tìm thấy danh mục '{categoryName}'." });
+				}
+
+				var sortedDishes = await _dishService.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
+				return Ok(new { message = $"Lấy danh sách món ăn đã sắp xếp theo danh mục '{categoryName}' thành công.", data = sortedDishes });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình xử lý yêu cầu. Vui lòng thử lại sau." });
+			}
+		}
 
 
+		[HttpPatch("{dishId}/status")]
+		public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
+		{
+			try
+			{
+				if (updateDishStatusDTO == null)
+				{
+					return BadRequest(new { message = "Dữ liệu cập nhật không hợp lệ." });
+				}
 
-        [HttpPatch("{dishId}/status")]
-        public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
-        {
-            if (updateDishStatusDTO == null)
-            {
-                return BadRequest(new { message = "Invalid data" });
-            }
+				var existingDish = await _dishService.GetDishByIdAsync(dishId);
+				if (existingDish == null)
+				{
+					return NotFound(new { message = $"Không tìm thấy món ăn với ID {dishId}." });
+				}
 
-            var existingDish = await _dishService.GetDishByIdAsync(dishId);
-            if (existingDish == null)
-            {
-                return NotFound(new { message = "Dish not found" });
-            }
+				var updatedDish = await _dishService.UpdateDishStatusAsync(dishId, updateDishStatusDTO.IsActive);
+				if (updatedDish == null)
+				{
+					return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật trạng thái món ăn. Vui lòng thử lại sau." });
+				}
 
-            var updatedDish = await _dishService.UpdateDishStatusAsync(dishId, updateDishStatusDTO.IsActive);
-            if (updatedDish == null)
-            {
-                return StatusCode(500, new { message = "An error occurred while updating the dish status" });
-            }
+				string statusMessage = updateDishStatusDTO.IsActive ? "Kích hoạt" : "Không kích hoạt";
+				return Ok(new
+				{
+					message = $"Trạng thái món ăn đã được {statusMessage} thành công.",
+					data = updatedDish
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau." });
+			}
+		}
 
-            return Ok(new
-            {
-                message = "Dish status updated successfully",                
-            });
-        }
-
-    }
+	}
 }

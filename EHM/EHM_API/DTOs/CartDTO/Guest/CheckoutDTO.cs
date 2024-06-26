@@ -2,7 +2,7 @@
 {
     public class CheckoutDTO
     {
-        public string GuestPhone { get; set; } = null!;
+        public string? GuestPhone { get; set; } = null!;
         public string? Email { get; set; }
         public int? AddressId { get; set; }
         public string? GuestAddress { get; set; }
