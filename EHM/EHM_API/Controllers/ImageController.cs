@@ -16,7 +16,7 @@ public class ImageController : ControllerBase
     {
         if (image == null || image.Length == 0)
         {
-            return BadRequest("No file was uploaded.");
+            return BadRequest("Không có tập tin nào được tải lên.");
         }
 
         var uploads = Path.Combine(_hostEnvironment.ContentRootPath, "uploads");

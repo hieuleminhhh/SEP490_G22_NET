@@ -42,11 +42,19 @@ namespace EHM_API.Services
 
 		public async Task Checkout(CheckoutDTO checkoutDTO)
 		{
-			Guest guest = await _cartRepository.GetOrCreateGuest(checkoutDTO);
+			Guest guest = null;
+			Address address = null;
 
-			Address address = await _cartRepository.GetOrCreateAddress(checkoutDTO);
+			if (!string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone) && !string.IsNullOrWhiteSpace(checkoutDTO.Email))
+			{
+				guest = await _cartRepository.GetOrCreateGuest(checkoutDTO);
+			}
 
-			checkoutDTO.AddressId = address.AddressId;
+			if (!string.IsNullOrWhiteSpace(checkoutDTO.GuestAddress) && !string.IsNullOrWhiteSpace(checkoutDTO.ConsigneeName))
+			{
+				address = await _cartRepository.GetOrCreateAddress(checkoutDTO);
+				checkoutDTO.AddressId = address?.AddressId;
+			}
 
 			decimal totalAmount = 0;
 
@@ -114,11 +122,11 @@ namespace EHM_API.Services
                 OrderDate = DateTime.Now,
                 Status = checkoutDTO.Status ?? 0,
                 RecevingOrder = checkoutDTO.RecevingOrder,
-                GuestPhone = guest.GuestPhone,
+                GuestPhone = guest?.GuestPhone,
                 TotalAmount = totalAmount,
                 OrderDetails = orderDetails,
                 Deposits = checkoutDTO.Deposits,
-                AddressId = checkoutDTO.AddressId,
+                AddressId = address?.AddressId,
                 Note = checkoutDTO.Note
             };
 
