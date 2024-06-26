@@ -1341,27 +1341,6 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.ReservationsController",
-    "Method": "UpdateReservationStatus",
-    "RelativePath": "api/Reservations/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "updateStatusDto",
-        "Type": "EHM_API.DTOs.ReservationDTO.Guest.UpdateStatusReservationDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "EHM_API.Controllers.ReservationsController",
     "Method": "GetReservationDetail",
     "RelativePath": "api/Reservations/{id}",
     "HttpMethod": "GET",
@@ -1442,6 +1421,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.TablesController",
+    "Method": "GetAvailableTables",
+    "RelativePath": "api/Tables/available",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "guestNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.WeatherForecastController",

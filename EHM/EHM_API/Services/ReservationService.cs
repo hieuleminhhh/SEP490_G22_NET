@@ -63,7 +63,6 @@ namespace EHM_API.Services
 			if (reservationDTO.OrderDetails != null)
 			{
 				var orderDetails = new List<OrderDetail>();
-				decimal totalAmount = 0;
 
 				foreach (var item in reservationDTO.OrderDetails)
 				{
@@ -95,15 +94,12 @@ namespace EHM_API.Services
 						}
 					}
 
-					var unitPrice = dish != null ? dish.Price : combo?.Price;
-					totalAmount += (unitPrice ?? 0) * item.Quantity;
-
 					var orderDetail = new OrderDetail
 					{
 						DishId = dish?.DishId,
 						ComboId = combo?.ComboId,
 						Quantity = item.Quantity,
-						UnitPrice = unitPrice
+						UnitPrice = item.UnitPrice
 					};
 
 					orderDetails.Add(orderDetail);
@@ -113,9 +109,10 @@ namespace EHM_API.Services
 				{
 					var order = new Order
 					{
-						OrderDate = reservationDTO.OrderDate ?? DateTime.UtcNow,
-						Status = reservationDTO.Status ?? 0, 
-						TotalAmount = totalAmount,
+						OrderDate = reservationDTO.OrderDate,
+						Status = reservationDTO.Status ?? 0,
+						RecevingOrder = reservationDTO.RecevingOrder,
+						TotalAmount = reservationDTO.TotalAmount,
 						OrderDetails = orderDetails,
 						GuestPhone = guest.GuestPhone,
 						AddressId = address.AddressId,
