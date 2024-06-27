@@ -11,5 +11,7 @@ namespace EHM_API.Models
         public int? Floor { get; set; }
 
 		public virtual ICollection<TableReservation> TableReservations { get; set; }
+
+		public virtual ICollection<OrderTable> OrderTables { get; set; }
 	}
 }

@@ -27,7 +27,14 @@ namespace EHM_API.Repositories
 				.ToListAsync();
 		}
 
-
+		//danh sach ban cua order
+		public async Task<IEnumerable<Order>> GetOrdersWithTablesAsync()
+		{
+			return await _context.Orders
+				.Include(o => o.OrderTables)
+				.ThenInclude(ot => ot.Table)
+				.ToListAsync();
+		}
 
 	}
 }

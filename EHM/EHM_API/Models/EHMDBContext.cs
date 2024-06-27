@@ -384,26 +384,26 @@ namespace EHM_API.Models
 
             modelBuilder.Entity<OrderTable>(entity =>
             {
-                entity.HasNoKey();
+				entity.HasKey(e => new { e.OrderId, e.TableId });
 
-                entity.ToTable("OrderTable");
+				entity.ToTable("OrderTable");
 
-                entity.Property(e => e.OrderId).HasColumnName("OrderID");
+				entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
                 entity.Property(e => e.TableId).HasColumnName("TableID");
 
-                entity.HasOne(d => d.Order)
-                    .WithMany()
-                    .HasForeignKey(d => d.OrderId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderTable_Order");
+				entity.HasOne(d => d.Order)
+	   .WithMany(o => o.OrderTables)
+	   .HasForeignKey(d => d.OrderId)
+	   .OnDelete(DeleteBehavior.ClientSetNull)
+	   .HasConstraintName("FK_OrderTable_Order");
 
-                entity.HasOne(d => d.Table)
-                    .WithMany()
-                    .HasForeignKey(d => d.TableId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderTable_Table");
-            });
+				entity.HasOne(d => d.Table)
+					.WithMany(t => t.OrderTables) 
+					.HasForeignKey(d => d.TableId)
+					.OnDelete(DeleteBehavior.ClientSetNull)
+					.HasConstraintName("FK_OrderTable_Table");
+			});
 
             modelBuilder.Entity<Reservation>(entity =>
             {
