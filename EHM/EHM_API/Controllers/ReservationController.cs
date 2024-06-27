@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.ReservationDTO.Guest;
+using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class ReservationsController : ControllerBase
 	{
@@ -84,24 +85,40 @@ namespace EHM_API.Controllers
 			}
 		}
 
-		[HttpPut("{id}/updateTableId")]
-		public async Task<IActionResult> UpdateReservationTable(int id, UpdateTableIdDTO updateTableIdDto)
-		{
-			if (id != updateTableIdDto.ReservationId)
-			{
-				return BadRequest(new { Message = "Reservation ID mismatch." });
-			}
+        [HttpPut("{reservationId}/update-status")]
+        public async Task<IActionResult> UpdateStatus(int reservationId, [FromBody] UpdateStatusReservationDTO updateStatusReservationDTO)
+        {
+            try
+            {
+                await _service.UpdateStatusAsync(reservationId, updateStatusReservationDTO);
+                return Ok(new { Message = "Status updated successfully." });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Message = "Reservation not found." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = $"Failed to update Status. Error: {ex.Message}" });
+            }
+        }
 
-			var result = await _service.UpdateTableIdAsync(updateTableIdDto);
-			if (result)
-			{
-				return Ok(new { Message = "TableId updated successfully." });
-			}
-			else
-			{
-				return NotFound(new { Message = "Reservation not found or could not update TableId." });
-			}
-		}
-
-	}
+        [HttpPost("register-tables")]
+        public async Task<IActionResult> RegisterTables([FromBody] RegisterTablesDTO registerTablesDTO)
+        {
+            try
+            {
+                await _service.RegisterTablesAsync(registerTablesDTO);
+                return Ok(new { Message = "Tables registered successfully." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = $"Failed to register tables. Error: {ex.Message}" });
+            }
+        }
+    }
 }
