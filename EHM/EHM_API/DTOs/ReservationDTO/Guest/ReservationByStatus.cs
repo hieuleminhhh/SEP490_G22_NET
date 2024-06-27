@@ -15,7 +15,6 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 		public string? GuestAddress { get; set; }
 		public decimal Deposits { get; set; }
 		public string? Note { get; set; }
-		public int? StatusOfTable { get; set; }
 		public int? Status { get; set; }
 		public OrderDetailDTO3 Order { get; set; }
 		public ICollection<TableReservationDTO> TableOfReservation { get; set; }
