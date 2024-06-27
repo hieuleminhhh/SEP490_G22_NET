@@ -143,6 +143,7 @@ public class OrderRepository : IOrderRepository
 		return await _context.Orders
 			.Include(o => o.OrderTables)
 			.ThenInclude(ot => ot.Table)
+			.Include(o => o.Address) 
 			.ToListAsync();
 	}
 

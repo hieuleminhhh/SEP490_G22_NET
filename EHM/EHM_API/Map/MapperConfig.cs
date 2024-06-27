@@ -210,7 +210,9 @@ namespace EHM_API.Map
 
 			//danh sach ban cua orer
 			CreateMap<Order, ListTableOrderDTO>()
-			.ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.OrderTables.Select(ot => ot.Table).ToList()));
+			.ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.OrderTables.Select(ot => ot.Table).ToList()))
+			.ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+			.ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName)); ;
 
 			CreateMap<Table, TableOrderDTO>();
 
