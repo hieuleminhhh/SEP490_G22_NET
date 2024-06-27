@@ -145,7 +145,6 @@ namespace EHM_API.Services
 			foreach (var reservation in reservations)
 			{
 				var mappedReservation = _mapper.Map<ReservationByStatus>(reservation);
-				mappedReservation.StatusOfTable = await CalculateStatusOfTable(reservation);
 				result.Add(mappedReservation);
 			}
 
