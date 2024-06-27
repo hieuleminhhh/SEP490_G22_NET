@@ -16,25 +16,7 @@ namespace EHM_API.Repositories
 			_context = context;
 		}
 
-		public async Task<bool> UpdateStatusAsync(UpdateStatusReservationDTO updateStatusDto)
-		{
-			var reservation = await _context.Reservations.FindAsync(updateStatusDto.ReservationId);
-			if (reservation == null) return false;
-
-			reservation.Status = updateStatusDto.Status;
-			_context.Entry(reservation).State = EntityState.Modified;
-
-			try
-			{
-				await _context.SaveChangesAsync();
-				return true;
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				return false;
-			}
-		}
-
+		
 		public async Task<Reservation> GetReservationDetailAsync(int reservationId)
 		{
 			return await _context.Reservations
@@ -165,5 +147,16 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Tables.CountAsync();
 		}
-	}
+        public async Task UpdateReservationAsync(Reservation reservation)
+        {
+            _context.Reservations.Update(reservation);
+
+            if (reservation.Order != null)
+            {
+                _context.Orders.Update(reservation.Order);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+    }
 }
