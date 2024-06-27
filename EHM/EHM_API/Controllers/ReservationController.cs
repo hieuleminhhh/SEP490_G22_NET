@@ -19,14 +19,6 @@ namespace EHM_API.Controllers
 			_service = service;
 		}
 
-/*		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations(int? status)
-		{
-			var reservations = await _service.GetReservationsByStatusAsync(status);
-			return Ok(reservations);
-		}
-*/
-
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ReservationByStatus>>> GetReservationsByStatus([FromQuery] int? status)
 		{
@@ -39,58 +31,57 @@ namespace EHM_API.Controllers
 		{
 			if (createDto == null)
 			{
-				return BadRequest("Reservation data is null.");
+				return BadRequest(new { message = "Dữ liệu đặt bàn không hợp lệ." });
 			}
 
 			if (string.IsNullOrWhiteSpace(createDto.GuestPhone))
 			{
-				return BadRequest("GuestPhone is required.");
+				return BadRequest(new { message = "Số điện thoại khách hàng là bắt buộc." });
+			}
+			if (createDto.GuestNumber <= 0)
+			{
+				return BadRequest(new { message = "Số lượng khách phải lớn hơn 0." });
 			}
 
 			try
 			{
 				await _service.CreateReservationAsync(createDto);
 
-				return Ok(new { Message = "Reservation created successfully." });
+				return Ok(new { Message = "Đặt bàn thành công." });
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(500, new { Message = $"Failed to create reservation. Error: {ex.Message}" });
+				return StatusCode(500, new { message = "Đã xảy ra lỗi khi tạo đặt bàn. Vui lòng thử lại sau." });
 			}
 		}
 
-
-
-		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateReservationStatus(int id, UpdateStatusReservationDTO updateStatusDto)
-		{
-			if (id != updateStatusDto.ReservationId)
-			{
-				return BadRequest(new { Message = "Reservation ID mismatch." });
-			}
-
-			var result = await _service.UpdateStatusAsync(updateStatusDto);
-			if (result)
-			{
-				return Ok(new { Message = "Reservation status updated successfully." });
-			}
-			else
-			{
-				return NotFound(new { Message = "Reservation not found or could not be updated." });
-			}
-		}
-
-		// New API to get reservation detail
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ReservationDetailDTO>> GetReservationDetail(int id)
 		{
-			var reservationDetail = await _service.GetReservationDetailAsync(id);
-			if (reservationDetail == null)
+			try
 			{
-				return NotFound(new { Message = "Reservation not found." });
-			}
+				if (id <= 0)
+				{
+					return BadRequest(new { message = "ID đặt bàn không hợp lệ." });
+				}
 
-			return Ok(reservationDetail);
+				var reservationDetail = await _service.GetReservationDetailAsync(id);
+
+				if (reservationDetail == null)
+				{
+					return NotFound(new { message = $"Không tìm thấy thông tin đặt bàn với ID {id}." });
+				}
+
+				return Ok(new
+				{
+					message = "Lấy thông tin đặt bàn thành công.",
+					data = reservationDetail
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra lỗi khi lấy thông tin đặt bàn. Vui lòng thử lại sau." });
+			}
 		}
 
 		[HttpPut("{id}/updateTableId")]
