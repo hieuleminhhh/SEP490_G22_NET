@@ -38,12 +38,6 @@ namespace EHM_API.Controllers
 			{
 				return BadRequest(new { message = "Số điện thoại khách hàng là bắt buộc." });
 			}
-
-			if (createDto.OrderDate < DateTime.Now)
-			{
-				return BadRequest(new { message = "Ngày đặt bàn không thể là ngày trong quá khứ." });
-			}
-
 			if (createDto.GuestNumber <= 0)
 			{
 				return BadRequest(new { message = "Số lượng khách phải lớn hơn 0." });

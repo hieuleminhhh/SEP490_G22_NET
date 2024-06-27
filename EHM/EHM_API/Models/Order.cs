@@ -28,5 +28,6 @@ namespace EHM_API.Models
         public virtual Invoice? Invoice { get; set; }
         public virtual Reservation? Reservation { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-    }
+		public virtual ICollection<OrderTable> OrderTables { get; set; }
+	}
 }

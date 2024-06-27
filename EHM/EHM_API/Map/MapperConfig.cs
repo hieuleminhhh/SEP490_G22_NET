@@ -202,6 +202,20 @@ namespace EHM_API.Map
 
 			//Table
 			CreateMap<Table, TableAllDTO>();
+			CreateMap<Table, FindTableDTO>()
+			   .ForMember(dest => dest.CombinedTables, opt => opt.Ignore());
+
+			// 
+			CreateMap<Table, TableAllDTO>();
+
+			//danh sach ban cua orer
+			CreateMap<Order, ListTableOrderDTO>()
+			.ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.OrderTables.Select(ot => ot.Table).ToList()))
+			.ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+			.ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName)); ;
+
+			CreateMap<Table, TableOrderDTO>();
+
 
 			//kiem tra dat ban
 			CreateMap<Reservation, ReservationByStatus>()
@@ -224,8 +238,8 @@ namespace EHM_API.Map
 			})))
 					   .ForMember(dest => dest.GuestNumber, opt => opt.MapFrom(src => src.GuestNumber))
 					   .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
-					   .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Order != null ? src.Order.Deposits : 0))
-					   .ForMember(dest => dest.StatusOfTable, opt => opt.MapFrom<StatusOfTableConverter>());
+					   .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Order != null ? src.Order.Deposits : 0));
+				
 
 
 			// Map Order to OrderDetailDTO1
@@ -295,32 +309,6 @@ namespace EHM_API.Map
 
 			return null;
 		}
-
-		public class StatusOfTableConverter : IValueResolver<Reservation, ReservationByStatus, int?>
-		{
-			private readonly IReservationService _reservationService;
-
-			public StatusOfTableConverter(IReservationService reservationService)
-			{
-				_reservationService = reservationService;
-			}
-
-			public int? Resolve(Reservation source, ReservationByStatus destination, int? destMember, ResolutionContext context)
-			{
-				if (source.ReservationTime == null)
-				{
-					return null;
-				}
-
-				var date = source.ReservationTime.Value.Date;
-
-				var statusOfTable = _reservationService.CalculateStatusOfTable(source).Result;
-				return statusOfTable;
-			}
-		}
-
-
-
 
 	}
 }

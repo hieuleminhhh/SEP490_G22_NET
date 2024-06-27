@@ -20,5 +20,21 @@ namespace EHM_API.Repositories
 			return await _context.Tables.ToListAsync();
 		}
 
+		public async Task<List<Table>> GetAvailableTablesByCapacityAsync(int capacity)
+		{
+			return await _context.Tables
+				.OrderBy(t => t.Capacity)
+				.ToListAsync();
+		}
+
+		//danh sach ban cua order
+		public async Task<IEnumerable<Order>> GetOrdersWithTablesAsync()
+		{
+			return await _context.Orders
+				.Include(o => o.OrderTables)
+				.ThenInclude(ot => ot.Table)
+				.ToListAsync();
+		}
+
 	}
 }
