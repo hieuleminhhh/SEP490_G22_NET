@@ -13,5 +13,7 @@
         public decimal Deposits { get; set; }
         public int AddressId { get; set; }
         public string? Note { get; set; }
-    }
+
+		public int? Type { get; set; }
+	}
 }

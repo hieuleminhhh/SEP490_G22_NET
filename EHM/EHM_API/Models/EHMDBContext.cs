@@ -139,7 +139,6 @@ namespace EHM_API.Models
 				.WithMany(d => d.ComboDetails)
 				.HasForeignKey(cd => cd.DishId);
 
-
 			modelBuilder.Entity<Discount>(entity =>
             {
                 entity.ToTable("Discount");
@@ -382,30 +381,30 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_OrderDetail_Order");
             });
 
-            modelBuilder.Entity<OrderTable>(entity =>
-            {
+			modelBuilder.Entity<OrderTable>(entity =>
+			{
 				entity.HasKey(e => new { e.OrderId, e.TableId });
 
 				entity.ToTable("OrderTable");
 
 				entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
-                entity.Property(e => e.TableId).HasColumnName("TableID");
+				entity.Property(e => e.TableId).HasColumnName("TableID");
 
 				entity.HasOne(d => d.Order)
-	   .WithMany(o => o.OrderTables)
-	   .HasForeignKey(d => d.OrderId)
-	   .OnDelete(DeleteBehavior.ClientSetNull)
-	   .HasConstraintName("FK_OrderTable_Order");
+	               .WithMany(o => o.OrderTables)
+	               .HasForeignKey(d => d.OrderId)
+	               .OnDelete(DeleteBehavior.ClientSetNull)
+	               .HasConstraintName("FK_OrderTable_Order");
 
 				entity.HasOne(d => d.Table)
-					.WithMany(t => t.OrderTables) 
+					.WithMany(t => t.OrderTables)
 					.HasForeignKey(d => d.TableId)
 					.OnDelete(DeleteBehavior.ClientSetNull)
 					.HasConstraintName("FK_OrderTable_Table");
 			});
 
-            modelBuilder.Entity<Reservation>(entity =>
+			modelBuilder.Entity<Reservation>(entity =>
             {
                 entity.ToTable("Reservation");
 
@@ -440,17 +439,17 @@ namespace EHM_API.Models
                 entity.Property(e => e.TableId).HasColumnName("TableID");
             });
 
-            modelBuilder.Entity<TableReservation>(entity =>
-            {
+			modelBuilder.Entity<TableReservation>(entity =>
+			{
 				entity.ToTable("TableReservation");
 				entity.HasKey(tr => new { tr.ReservationId, tr.TableId });
 
 				entity.HasOne(tr => tr.Reservation)
-					.WithMany(r => r.TableReservations) 
+					.WithMany(r => r.TableReservations)
 					.HasForeignKey(tr => tr.ReservationId);
 
 				entity.HasOne(tr => tr.Table)
-					.WithMany(t => t.TableReservations) 
+					.WithMany(t => t.TableReservations)
 					.HasForeignKey(tr => tr.TableId);
 			});
 

@@ -36,5 +36,9 @@ namespace EHM_API.Repositories
 				.ToListAsync();
 		}
 
+		public Task<Table> GetTableByIdAsync(int tableId)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
