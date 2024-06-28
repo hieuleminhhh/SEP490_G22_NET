@@ -16,5 +16,7 @@
         public string? GuestAddress { get; set; }
         public string? ConsigneeName { get; set; }
         public string? Note { get; set; }
-    }
+
+		public int? Type { get; set; }
+	}
 }
