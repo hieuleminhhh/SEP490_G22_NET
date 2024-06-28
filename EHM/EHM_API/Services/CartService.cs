@@ -127,7 +127,9 @@ namespace EHM_API.Services
                 OrderDetails = orderDetails,
                 Deposits = checkoutDTO.Deposits,
                 AddressId = address?.AddressId,
-                Note = checkoutDTO.Note
+                Note = checkoutDTO.Note,
+				Type = checkoutDTO.Type
+				
             };
 
 
