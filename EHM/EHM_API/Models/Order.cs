@@ -21,6 +21,7 @@ namespace EHM_API.Models
         public decimal Deposits { get; set; }
         public int? AddressId { get; set; }
         public string? Note { get; set; }
+        public int? Type { get; set; }
 
         public virtual Account? Account { get; set; }
         public virtual Address? Address { get; set; }
@@ -28,6 +29,6 @@ namespace EHM_API.Models
         public virtual Invoice? Invoice { get; set; }
         public virtual Reservation? Reservation { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-        public virtual ICollection<OrderTable> OrderTables { get; set; }
-    }
+		public virtual ICollection<OrderTable> OrderTables { get; set; }
+	}
 }

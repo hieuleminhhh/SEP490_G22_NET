@@ -7,6 +7,6 @@ namespace EHM_API.Repositories
 		Task<IEnumerable<Table>> GetAllTablesAsync();
 
 		Task<List<Table>> GetAvailableTablesByCapacityAsync(int capacity);
-
-	}
+        Task<Table> GetTableByIdAsync(int tableId);
+    }
 }

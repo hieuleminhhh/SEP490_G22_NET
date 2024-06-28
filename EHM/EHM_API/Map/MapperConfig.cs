@@ -14,6 +14,7 @@ using EHM_API.DTOs.MaterialDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.ReservationDTO.Guest;
+using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.DTOs.TableDTO;
 using EHM_API.Models;
 using EHM_API.Services;
@@ -285,8 +286,11 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.NameCombo,
 						   opt => opt.MapFrom(src => src.NameCombo));
 
+            CreateMap<RegisterTablesDTO, Reservation>()
+                 .ForMember(dest => dest.TableReservations, opt => opt.Ignore());
 
-		}
+
+        }
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)
 		{
