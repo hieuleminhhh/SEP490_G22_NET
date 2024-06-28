@@ -12,11 +12,12 @@ namespace EHM_API.Repositories
 		Task<Address> GetAddressByGuestPhoneAsync(string guestPhone);
 		Task<Address> GetOrCreateAddress(string guestPhone, string? guestAddress, string? consigneeName);
 		Task<Reservation> GetReservationDetailAsync(int reservationId);
-		Task<bool> UpdateStatusAsync(UpdateStatusReservationDTO updateStatusDto);
-		Task<bool> UpdateTableIdAsync(UpdateTableIdDTO updateTableIdDTO);
+        Task UpdateReservationAsync(Reservation reservation);
+        Task<bool> UpdateTableIdAsync(UpdateTableIdDTO updateTableIdDTO);
 
 		Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status);
 		Task<int> GetTotalTablesAsync();
+
 
 	}
 }

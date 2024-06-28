@@ -100,6 +100,7 @@ public class OrderRepository : IOrderRepository
 
         var order = await query
             .Include(a => a.Address)
+             .Include(o => o.OrderTables)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
