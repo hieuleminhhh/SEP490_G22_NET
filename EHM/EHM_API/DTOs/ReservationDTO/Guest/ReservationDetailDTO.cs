@@ -12,6 +12,8 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 	
 		public string? GuestPhone { get; set; }
 		public string? ConsigneeName { get; set; }
+		public string? GuestAddress { get; set; }
+		public string? Email { get; set; }
 		public OrderDetailDTO1 Order { get; set; }
 
 
@@ -32,6 +34,7 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 		public int? Status { get; set; }
 		public decimal? TotalAmount { get; set; }
 		public string? Note { get; set; }
+		public int? Type { get; set; }
 		public ICollection<OrderItemDTO1> OrderDetails { get; set; }
 	}
 
