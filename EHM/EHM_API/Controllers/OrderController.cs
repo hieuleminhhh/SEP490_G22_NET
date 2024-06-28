@@ -35,7 +35,7 @@ namespace EHM_API.Controllers
             var order = await _orderService.CreateOrderAsync(createOrderDTO);
             if (order == null)
             {
-                return StatusCode(500, new { message = "A problem happened while handling your request." });
+                return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
             }
 
             var orderDTO = _mapper.Map<OrderDTOAll>(order);
@@ -62,13 +62,13 @@ namespace EHM_API.Controllers
             var existingOrder = await _orderService.GetOrderByIdAsync(id);
             if (existingOrder == null)
             {
-                return NotFound(new { message = "Order not found." });
+                return NotFound(new { message = "Đơn đặt hàng không được tìm thấy." });
             }
 
             var updatedOrder = await _orderService.UpdateOrderAsync(id, updateOrderDTO);
             if (updatedOrder == null)
             {
-                return StatusCode(500, new { message = "A problem happened while handling your request." });
+                return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
             }
 
             return NoContent();
@@ -82,14 +82,14 @@ namespace EHM_API.Controllers
 				var isCancelled = await _orderService.CancelOrderAsync(id);
 				if (!isCancelled)
 				{
-					return NotFound(new { message = "Order not found." });
+					return NotFound(new { message = "Đơn đặt hàng không được tìm thấy." });
 				}
 
 				return NoContent();
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(500, new { message = "A problem happened while handling your request." });
+				return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace EHM_API.Controllers
             var result = await _orderService.DeleteOrderAsync(id);
             if (!result)
             {
-                return StatusCode(500, "A problem happened while handling your request.");
+                return StatusCode(500, "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.");
             }
 
             return NoContent();
@@ -121,7 +121,7 @@ namespace EHM_API.Controllers
             var orders = await _orderService.GetAllOrdersAsync();
             if (orders == null)
             {
-                return StatusCode(500, "A problem happened while handling your request.");
+                return StatusCode(500, "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.");
             }
 
             var orderDTOs = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
@@ -137,14 +137,14 @@ namespace EHM_API.Controllers
 				var orders = await _orderService.SearchOrdersAsync(guestPhone);
 				if (orders == null || !orders.Any())
 				{
-					return NotFound(new { message = "No orders found for the provided guest phone number." });
+					return NotFound(new { message = "Không tìm thấy đơn hàng nào theo số điện thoại của khách được cung cấp." });
 				}
 
 				return Ok(orders);
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(500, new { message = "A problem happened while handling your request." });
+				return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
 			}
 		}
         [HttpGet("GetListOrder")]
@@ -171,18 +171,18 @@ namespace EHM_API.Controllers
             var existingOrder = await _orderService.GetOrderByIdAsync(orderId);
             if (existingOrder == null)
             {
-                return NotFound(new { message = "Dish not found" });
+                return NotFound(new { message = "Không tìm thấy món ăn" });
             }
 
             var updatedOrder = await _orderService.UpdateOrderStatusAsync(orderId, updateOrder.Status);
             if (updatedOrder == null)
             {
-                return StatusCode(500, new { message = "An error occurred while updating the dish status" });
+                return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật trạng thái món ăn" });
             }
 
             return Ok(new
             {
-                message = "Order status updated successfully",
+                message = "Trạng thái đơn hàng được cập nhật thành công",
             });
         }
 
