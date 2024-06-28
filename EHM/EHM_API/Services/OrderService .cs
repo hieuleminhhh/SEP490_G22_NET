@@ -4,6 +4,7 @@ using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.DTOs.TableDTO;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -154,5 +155,13 @@ namespace EHM_API.Services
         {
             return await _orderRepository.UpdateOrderStatusAsync(comboId, status);
         }
-    }
+
+
+        //danh sách banh
+		public async Task<IEnumerable<ListTableOrderDTO>> GetOrdersWithTablesAsync()
+		{
+			var orders = await _orderRepository.GetOrdersWithTablesAsync();
+			return _mapper.Map<IEnumerable<ListTableOrderDTO>>(orders);
+		}
+	}
 }

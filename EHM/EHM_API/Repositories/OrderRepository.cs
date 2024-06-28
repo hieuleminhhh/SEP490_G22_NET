@@ -100,6 +100,7 @@ public class OrderRepository : IOrderRepository
 
         var order = await query
             .Include(a => a.Address)
+             .Include(o => o.OrderTables)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -107,16 +108,16 @@ public class OrderRepository : IOrderRepository
         var orderDTOs = order.Select(o => new OrderDTO
         {
             OrderId = o.OrderId,
-            OrderDate = (DateTime)o.OrderDate,  // Assuming OrderDate in OrderDTO is DateTime?
+            OrderDate = (DateTime)o.OrderDate, 
             Status = (int)o.Status,
             RecevingOrder = o.RecevingOrder,
             AccountId = o.AccountId,
-            // TableId = o.TableId,  // Uncomment and handle if TableId is nullable
+            // TableId = o.TableId,  
             InvoiceId = o.InvoiceId,
             TotalAmount = o.TotalAmount,
             GuestPhone = o.GuestPhone,
             Deposits = o.Deposits,
-            AddressId = o.AddressId.HasValue ? o.AddressId.Value : 0,  // Handle nullable AddressId
+            AddressId = o.AddressId.HasValue ? o.AddressId.Value : 0,
             GuestAddress = o.Address?.GuestAddress,
             ConsigneeName = o.Address?.ConsigneeName
         }).ToList();
@@ -137,4 +138,14 @@ public class OrderRepository : IOrderRepository
 
         return od;
     }
+
+	public async Task<IEnumerable<Order>> GetOrdersWithTablesAsync()
+	{
+		return await _context.Orders
+			.Include(o => o.OrderTables)
+			.ThenInclude(ot => ot.Table)
+			.Include(o => o.Address) 
+			.ToListAsync();
+	}
+
 }

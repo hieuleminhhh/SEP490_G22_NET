@@ -5,6 +5,7 @@ using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.DTOs.TableDTO;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -184,5 +185,14 @@ namespace EHM_API.Controllers
                 message = "Order status updated successfully",
             });
         }
-    }
+
+
+
+		[HttpGet("with-tables")]
+		public async Task<ActionResult<IEnumerable<ListTableOrderDTO>>> GetOrdersWithTables()
+		{
+			var ordersWithTables = await _orderService.GetOrdersWithTablesAsync();
+			return Ok(ordersWithTables);
+		}
+	}
 }

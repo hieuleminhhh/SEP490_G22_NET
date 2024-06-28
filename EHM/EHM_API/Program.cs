@@ -95,10 +95,10 @@ namespace EHM_API
             // Register necessary services
             builder.Services.AddScoped<IDishService, DishService>();
             builder.Services.AddScoped<IDishRepository, DishRepository>();
+
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-           /* builder.Services.AddScoped<ITableRepository, TableRepository>();*/
-            builder.Services.AddScoped<ITableService, TableService>();
+          
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
@@ -123,8 +123,10 @@ namespace EHM_API
 			builder.Services.AddScoped<IReservationService, ReservationService>();
 			builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
+            builder.Services.AddScoped<ITableReservationRepository, TableReservationRepository>();
+            builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
-			builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);

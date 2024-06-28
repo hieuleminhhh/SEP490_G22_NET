@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.ReservationDTO.Guest;
+using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using System;
@@ -9,40 +10,52 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-	public class ReservationService : IReservationService
+    public class ReservationService : IReservationService
 	{
 		private readonly IReservationRepository _repository;
 		private readonly IDishRepository _Dishrepository;
 		private readonly IComboRepository _Comborepository;
-		private readonly IMapper _mapper;
+        private readonly ITableRepository _tableRepository;
+        private readonly ITableReservationRepository _tableReservationRepository;
+        private readonly IMapper _mapper;
 
-		public ReservationService(
-			IReservationRepository repository,
-			IMapper mapper,
+        public ReservationService(IReservationRepository repository,
 			IDishRepository dishrepository,
-			IComboRepository comborepository)
-		{
-			_repository = repository;
-			_mapper = mapper;
-			_Dishrepository = dishrepository;
-			_Comborepository = comborepository;
-		}
+			IComboRepository comborepository,
+			ITableRepository tableRepository,
+			ITableReservationRepository tableReservationRepository,
+			IMapper mapper)
+        {
+            _repository = repository;
+            _Dishrepository = dishrepository;
+            _Comborepository = comborepository;
+            _tableRepository = tableRepository;
+            _tableReservationRepository = tableReservationRepository;
+            _mapper = mapper;
+        }
 
+        public async Task UpdateStatusAsync(int reservationId, UpdateStatusReservationDTO updateStatusReservationDTO)
+        {
+            var reservation = await _repository.GetReservationDetailAsync(reservationId);
+            if (reservation == null)
+            {
+                throw new KeyNotFoundException("Reservation not found.");
+            }
 
-		public async Task<bool> UpdateStatusAsync(UpdateStatusReservationDTO updateStatusDto)
-		{
-			return await _repository.UpdateStatusAsync(updateStatusDto);
-		}
+            reservation.Status = updateStatusReservationDTO.Status;
 
-		public async Task<ReservationDetailDTO> GetReservationDetailAsync(int reservationId)
+            if (reservation.Order != null && updateStatusReservationDTO.Status == 2)
+            {
+                reservation.Order.Status = 2;
+            }
+
+            await _repository.UpdateReservationAsync(reservation);
+        }
+
+        public async Task<ReservationDetailDTO> GetReservationDetailAsync(int reservationId)
 		{
 			var reservation = await _repository.GetReservationDetailAsync(reservationId);
 			return _mapper.Map<ReservationDetailDTO>(reservation);
-		}
-
-		public async Task<bool> UpdateTableIdAsync(UpdateTableIdDTO updateTableIdDTO)
-		{
-			return await _repository.UpdateTableIdAsync(updateTableIdDTO);
 		}
 
 		public async Task CreateReservationAsync(CreateReservationDTO reservationDTO)
@@ -145,7 +158,6 @@ namespace EHM_API.Services
 			foreach (var reservation in reservations)
 			{
 				var mappedReservation = _mapper.Map<ReservationByStatus>(reservation);
-				mappedReservation.StatusOfTable = await CalculateStatusOfTable(reservation);
 				result.Add(mappedReservation);
 			}
 
@@ -166,5 +178,34 @@ namespace EHM_API.Services
 
 			return orderCountWithStatus1 >= totalTables ? 1 : 0;
 		}
-	}
+        public async Task RegisterTablesAsync(RegisterTablesDTO registerTablesDTO)
+        {
+            var reservation = await _repository.GetReservationDetailAsync(registerTablesDTO.ReservationId);
+
+            if (reservation == null)
+            {
+                throw new KeyNotFoundException("Reservation not found.");
+            }
+
+            foreach (var tableId in registerTablesDTO.TableIds)
+            {
+                var table = await _tableRepository.GetTableByIdAsync(tableId);
+
+                if (table == null)
+                {
+                    throw new KeyNotFoundException($"Table with ID {tableId} not found.");
+                }
+
+                var tableReservation = new TableReservation
+                {
+                    ReservationId = reservation.ReservationId,
+                    TableId = table.TableId
+                };
+
+                await _tableReservationRepository.AddTableReservationAsync(tableReservation);
+            }
+
+            await _repository.UpdateReservationAsync(reservation);
+        }
+    }
 }

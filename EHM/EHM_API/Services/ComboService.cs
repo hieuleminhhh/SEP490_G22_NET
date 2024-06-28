@@ -167,20 +167,13 @@ namespace EHM_API.Services
             combo.NameCombo = updateComboWithDishesDTO.NameCombo;
             combo.Price = updateComboWithDishesDTO.Price;
             combo.Note = updateComboWithDishesDTO.Note;
-			combo.ImageUrl = updateComboWithDishesDTO.ImageUrl;
+            combo.ImageUrl = updateComboWithDishesDTO.ImageUrl;
 
-
-			// Ensure ComboDetails is initialized
-			if (combo.ComboDetails == null)
-            {
-                combo.ComboDetails = new List<ComboDetail>();
-            }
-            else
-            {
-                combo.ComboDetails.Clear(); // Clear existing combo details
-            }
+            // Clear old combo details
+            await ClearComboDetailsAsync(comboId);
 
             // Add new combo details
+            combo.ComboDetails = new List<ComboDetail>();
             foreach (var dishId in updateComboWithDishesDTO.DishIds)
             {
                 combo.ComboDetails.Add(new ComboDetail
@@ -206,7 +199,9 @@ namespace EHM_API.Services
 
             return comboDTO;
         }
-
-
+        public async Task ClearComboDetailsAsync(int comboId)
+        {
+            await _comboRepository.ClearComboDetailsAsync(comboId);
+        }
     }
 }
