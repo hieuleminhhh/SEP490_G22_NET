@@ -17,6 +17,8 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 		public DateTime? RecevingOrder { get; set; }
 		public decimal? TotalAmount { get; set; }
 		public decimal Deposits { get; set; }
+		public int? Type { get; set; }
+
 
 		public List<ReservationOrderDetailsDTO>? OrderDetails { get; set; }
 	}
