@@ -17,7 +17,7 @@ namespace EHM_API.Models
         public string? ImageUrl { get; set; }
         public bool? IsActive { get; set; }
 
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+		public virtual ICollection<OrderDetail> OrderDetails { get; set; }
 		public virtual ICollection<ComboDetail> ComboDetails { get; set; }
 	}
 }

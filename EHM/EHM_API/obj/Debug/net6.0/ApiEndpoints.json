@@ -1387,20 +1387,20 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.ReservationsController",
-    "Method": "UpdateReservationTable",
-    "RelativePath": "api/Reservations/{id}/updateTableId",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/Reservations/{reservationId}/update-status",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "id",
+        "Name": "reservationId",
         "Type": "System.Int32",
         "IsRequired": true
       },
       {
-        "Name": "updateTableIdDto",
-        "Type": "EHM_API.DTOs.ReservationDTO.Guest.UpdateTableIdDTO",
+        "Name": "updateStatusReservationDTO",
+        "Type": "EHM_API.DTOs.ReservationDTO.Manager.UpdateStatusReservationDTO",
         "IsRequired": true
       }
     ],
@@ -1417,6 +1417,22 @@
       {
         "Name": "createDto",
         "Type": "EHM_API.DTOs.ReservationDTO.Guest.CreateReservationDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ReservationsController",
+    "Method": "RegisterTables",
+    "RelativePath": "api/Reservations/register-tables",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "registerTablesDTO",
+        "Type": "EHM_API.DTOs.ReservationDTO.Manager.RegisterTablesDTO",
         "IsRequired": true
       }
     ],
