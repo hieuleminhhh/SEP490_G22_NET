@@ -15,7 +15,6 @@ namespace EHM_API.Models
 
         public virtual Address Address { get; set; } = null!;
         public virtual Order? Order { get; set; }
-
-		public virtual ICollection<TableReservation> TableReservations { get; set; }
-	}
+        public virtual ICollection<TableReservation> TableReservations { get; set; }
+    }
 }
