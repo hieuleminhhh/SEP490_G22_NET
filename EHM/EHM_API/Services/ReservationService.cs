@@ -130,7 +130,8 @@ namespace EHM_API.Services
 						GuestPhone = guest.GuestPhone,
 						AddressId = address.AddressId,
 						Note = reservationDTO.Note,
-						Deposits = reservationDTO.Deposits
+						Deposits = reservationDTO.Deposits,
+						Type = reservationDTO.Type
 					};
 
 					reservation.Order = order;
