@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EHM_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d82700f08e90d5d52ada8eb295168051083112b3")]
 [assembly: System.Reflection.AssemblyProductAttribute("EHM_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EHM_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

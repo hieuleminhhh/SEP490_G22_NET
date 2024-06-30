@@ -39,10 +39,5 @@ namespace EHM_API.Repositories
         {
             return await _context.Tables.FindAsync(tableId);
         }
-
-		public Task<Table> GetTableByIdAsync(int tableId)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }
