@@ -8,6 +8,7 @@ namespace EHM_API.Services
         Task<Guest> GetGuestByPhoneAsync(string guestPhone);
         Task<Guest> AddGuestAsync(Guest guest);
 		Task<GuestAddressInfoDTO> GetGuestAddressInfoAsync(int addressId);
-		Task<bool> GuestPhoneExistsAsync(string guestPhone);
-	}
+        Task<bool> GuestPhoneExistsAsync(string guestPhone);
+        Task<IEnumerable<GuestAddressInfoDTO>> GetAllAddress();
+    }
 }

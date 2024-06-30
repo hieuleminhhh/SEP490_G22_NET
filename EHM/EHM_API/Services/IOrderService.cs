@@ -20,7 +20,7 @@ namespace EHM_API.Services
         Task<bool> DeleteOrderAsync(int id);
 
 		Task<bool> CancelOrderAsync(int orderId);
-        Task<PagedResult<OrderDTO>> GetOrderAsync(string search, int page, int pageSize);
+        Task<PagedResult<OrderDTO>> GetOrderAsync(string search, DateTime? dateFrom, DateTime? dateTo, int status, int page, int pageSize, string filterByDate, int type);
         Task<Order> UpdateOrderStatusAsync(int comboId, int status);
 
 		Task<IEnumerable<ListTableOrderDTO>> GetOrdersWithTablesAsync();
