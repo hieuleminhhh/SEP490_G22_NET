@@ -132,10 +132,10 @@ namespace EHM_API.Services
             await _orderRepository.UpdateAsync(existingOrder);
             return true;
         }
-        public async Task<PagedResult<OrderDTO>> GetOrderAsync(string search, int page, int pageSize)
+        public async Task<PagedResult<OrderDTO>> GetOrderAsync(string search, DateTime? dateFrom, DateTime? dateTo, int status, int page, int pageSize, string filterByDate, int type)
         {
-            var pagedDishes = await _orderRepository.GetOrderAsync(search, page, pageSize);
-            var orderDTOs = _mapper.Map<IEnumerable<OrderDTO>>(pagedDishes.Items);
+            var pagedOrders = await _orderRepository.GetOrderAsync(search, dateFrom, dateTo, status, page, pageSize, filterByDate, type);
+            var orderDTOs = _mapper.Map<IEnumerable<OrderDTO>>(pagedOrders.Items);
 
             foreach (var odDTO in orderDTOs)
             {
@@ -148,8 +148,7 @@ namespace EHM_API.Services
                     }
                 }
             }
-
-            return new PagedResult<OrderDTO>(orderDTOs, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+                return new PagedResult<OrderDTO>(orderDTOs, pagedOrders.TotalCount, pagedOrders.Page, pagedOrders.PageSize);
         }
         public async Task<Order> UpdateOrderStatusAsync(int comboId, int status)
         {

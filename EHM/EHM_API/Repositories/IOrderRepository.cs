@@ -12,8 +12,8 @@ public interface IOrderRepository
     Task<Order> UpdateAsync(Order order);
     Task<bool> DeleteAsync(int id);
     Task<IEnumerable<Order>> SearchAsync(string guestPhone);
-    Task<PagedResult<OrderDTO>> GetOrderAsync(string search, int page, int pageSize);
     Task<Order> UpdateOrderStatusAsync(int orderId, int status);
 
-	Task<IEnumerable<Order>> GetOrdersWithTablesAsync();
+    Task<IEnumerable<Order>> GetOrdersWithTablesAsync();
+    Task<PagedResult<OrderDTO>> GetOrderAsync(string search, DateTime? dateFrom, DateTime? dateTo, int status, int page, int pageSize, string filterByDate, int type);
 }
