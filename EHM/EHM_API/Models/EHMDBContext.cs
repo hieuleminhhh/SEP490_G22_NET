@@ -41,7 +41,7 @@ namespace EHM_API.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=123;TrustServerCertificate=true");
+                optionsBuilder.UseSqlServer("server =localhost; database = EHMDB;uid=sa;pwd=sa;TrustServerCertificate=true");
             }
         }
 
@@ -126,20 +126,20 @@ namespace EHM_API.Models
                 entity.Property(e => e.Price).HasColumnType("money");
             });
 
-			modelBuilder.Entity<ComboDetail>()
-						.HasKey(cd => new { cd.ComboId, cd.DishId });
+            modelBuilder.Entity<ComboDetail>()
+                         .HasKey(cd => new { cd.ComboId, cd.DishId });
 
-			modelBuilder.Entity<ComboDetail>()
-				.HasOne(cd => cd.Combo)
-				.WithMany(c => c.ComboDetails)
-				.HasForeignKey(cd => cd.ComboId);
+            modelBuilder.Entity<ComboDetail>()
+                .HasOne(cd => cd.Combo)
+                .WithMany(c => c.ComboDetails)
+                .HasForeignKey(cd => cd.ComboId);
 
-			modelBuilder.Entity<ComboDetail>()
-				.HasOne(cd => cd.Dish)
-				.WithMany(d => d.ComboDetails)
-				.HasForeignKey(cd => cd.DishId);
+            modelBuilder.Entity<ComboDetail>()
+                .HasOne(cd => cd.Dish)
+                .WithMany(d => d.ComboDetails)
+                .HasForeignKey(cd => cd.DishId);
 
-			modelBuilder.Entity<Discount>(entity =>
+            modelBuilder.Entity<Discount>(entity =>
             {
                 entity.ToTable("Discount");
 
@@ -381,36 +381,32 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_OrderDetail_Order");
             });
 
-			modelBuilder.Entity<OrderTable>(entity =>
-			{
-				entity.HasKey(e => new { e.OrderId, e.TableId });
+            modelBuilder.Entity<OrderTable>(entity =>
+            {
+                entity.HasKey(e => new { e.OrderId, e.TableId });
 
-				entity.ToTable("OrderTable");
+                entity.ToTable("OrderTable");
 
-				entity.Property(e => e.OrderId).HasColumnName("OrderID");
+                entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
-				entity.Property(e => e.TableId).HasColumnName("TableID");
+                entity.Property(e => e.TableId).HasColumnName("TableID");
 
-				entity.HasOne(d => d.Order)
-	               .WithMany(o => o.OrderTables)
-	               .HasForeignKey(d => d.OrderId)
-	               .OnDelete(DeleteBehavior.ClientSetNull)
-	               .HasConstraintName("FK_OrderTable_Order");
+                entity.HasOne(d => d.Order)
+                   .WithMany(o => o.OrderTables)
+                   .HasForeignKey(d => d.OrderId)
+                   .OnDelete(DeleteBehavior.ClientSetNull)
+                   .HasConstraintName("FK_OrderTable_Order");
 
-				entity.HasOne(d => d.Table)
-					.WithMany(t => t.OrderTables)
-					.HasForeignKey(d => d.TableId)
-					.OnDelete(DeleteBehavior.ClientSetNull)
-					.HasConstraintName("FK_OrderTable_Table");
-			});
+                entity.HasOne(d => d.Table)
+                    .WithMany(t => t.OrderTables)
+                    .HasForeignKey(d => d.TableId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderTable_Table");
+            });
 
-			modelBuilder.Entity<Reservation>(entity =>
+            modelBuilder.Entity<Reservation>(entity =>
             {
                 entity.ToTable("Reservation");
-
-                entity.HasIndex(e => e.OrderId, "UQ_Reservation_OrderID")
-                    .IsUnique()
-                    .HasFilter("([OrderID] IS NOT NULL)");
 
                 entity.Property(e => e.ReservationId).HasColumnName("ReservationID");
 
@@ -427,8 +423,8 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_Reservation_Address");
 
                 entity.HasOne(d => d.Order)
-                    .WithOne(p => p.Reservation)
-                    .HasForeignKey<Reservation>(d => d.OrderId)
+                    .WithMany(p => p.Reservations)
+                    .HasForeignKey(d => d.OrderId)
                     .HasConstraintName("FK__Reservati__Order__52593CB8");
             });
 
@@ -439,21 +435,20 @@ namespace EHM_API.Models
                 entity.Property(e => e.TableId).HasColumnName("TableID");
             });
 
-			modelBuilder.Entity<TableReservation>(entity =>
-			{
-				entity.ToTable("TableReservation");
-				entity.HasKey(tr => new { tr.ReservationId, tr.TableId });
+            modelBuilder.Entity<TableReservation>(entity =>
+            {
+                entity.ToTable("TableReservation");
+                entity.HasKey(tr => new { tr.ReservationId, tr.TableId });
 
-				entity.HasOne(tr => tr.Reservation)
-					.WithMany(r => r.TableReservations)
-					.HasForeignKey(tr => tr.ReservationId);
+                entity.HasOne(tr => tr.Reservation)
+                    .WithMany(r => r.TableReservations)
+                    .HasForeignKey(tr => tr.ReservationId);
 
-				entity.HasOne(tr => tr.Table)
-					.WithMany(t => t.TableReservations)
-					.HasForeignKey(tr => tr.TableId);
-			});
-
-			OnModelCreatingPartial(modelBuilder);
+                entity.HasOne(tr => tr.Table)
+                    .WithMany(t => t.TableReservations)
+                    .HasForeignKey(tr => tr.TableId);
+            });
+            OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
