@@ -3,19 +3,123 @@
   "WorkspaceRootPath": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\cartdto\\guest\\checkoutsuccessdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\cartdto\\guest\\checkoutsuccessdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\map\\mapperconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\map\\mapperconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\nhant\\onedrive\\desktop\\ehm_api\\sep490_g22_net\\ehm\\ehm_api\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\services\\reservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\services\\reservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\repositories\\tablerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\tablerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\repositories\\reservationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\reservationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\nhant\\onedrive\\desktop\\ehm_api\\sep490_g22_net\\ehm\\ehm_api\\dtos\\cartdto\\guest\\updatecartdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\cartdto\\guest\\updatecartdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\nhant\\onedrive\\desktop\\ehm_api\\sep490_g22_net\\ehm\\ehm_api\\dtos\\cartdto\\guest\\cart2dto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\cartdto\\guest\\cart2dto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\cartdto\\guest\\checkoutdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\cartdto\\guest\\checkoutdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\cartdto\\guest\\checkoutsuccessdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\cartdto\\guest\\checkoutsuccessdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\reservationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\reservationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\tablescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\tablescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\ingredientcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\ingredientcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\imagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\imagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\guestcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\guestcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\dishcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\dishcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\combocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\combocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\reservationdetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\reservationdetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\guest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\guest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\reservationbystatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\reservationbystatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\reservationrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\reservationrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\createreservationdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\createreservationdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\updatetableiddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\updatetableiddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\cartdto\\guest\\cartorderdetailsdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\cartdto\\guest\\cartorderdetailsdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\nhant\\onedrive\\desktop\\ehm_api\\sep490_g22_net\\ehm\\ehm_api\\dtos\\orderdto\\manager\\updateorderdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\orderdto\\manager\\updateorderdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\orderdto\\manager\\updateorderdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -41,10 +145,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\orderdto\\guest\\orderdetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\orderdto\\guest\\orderdetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -78,40 +178,12 @@
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\EHM\\EHM\\EHM_API\\Models\\Order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\repositories\\tablerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\tablerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\guestcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\guestcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\reservationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\reservationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\map\\mapperconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\map\\mapperconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\repositories\\orderrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\orderrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\repositories\\reservationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\reservationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\tabledto\\listtableorderdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -142,20 +214,12 @@
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\services\\tableservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\services\\reservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\services\\reservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\ordertable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\ordertable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\combodetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\combodetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\repositories\\ireservationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -166,80 +230,24 @@
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\itablerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\reservationrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\reservationrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\reservationbystatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\reservationbystatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\reservationdetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\reservationdetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\updatetableiddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\updatetableiddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\services\\ireservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\services\\ireservationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\dtos\\reservationdto\\guest\\createreservationdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\reservationdto\\guest\\createreservationdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\account.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\tablescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\tablescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\services\\itableservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\services\\itableservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\dishcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\dishcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\repositories\\cartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\cartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\ingredientcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\ingredientcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\materialcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\materialcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\imagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\imagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\controllers\\combocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\combocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\models\\guest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\models\\guest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\ehm_api\\services\\comboservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -261,36 +269,375 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "UpdateOrderDTO.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Manager\\UpdateOrderDTO.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\OrderDTO\\Manager\\UpdateOrderDTO.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Manager\\UpdateOrderDTO.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\OrderDTO\\Manager\\UpdateOrderDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
+              "DocumentIndex": 5,
+              "Title": "UpdateCartDTO.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\UpdateCartDTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\CartDTO\\Guest\\UpdateCartDTO.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\UpdateCartDTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\CartDTO\\Guest\\UpdateCartDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-28T06:55:02.476Z",
+              "WhenOpened": "2024-06-28T16:36:02.808Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ReservationService.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\ReservationService.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Services\\ReservationService.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\ReservationService.cs",
+              "RelativeToolTip": "EHM_API\\Services\\ReservationService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAIcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T05:26:11.257Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ReservationRepository.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\ReservationRepository.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Repositories\\ReservationRepository.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\ReservationRepository.cs",
+              "RelativeToolTip": "EHM_API\\Repositories\\ReservationRepository.cs",
+              "ViewState": "AQIAAJcAAAAAAAAAAAAAAEAAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T05:26:24.426Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TableRepository.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\TableRepository.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Repositories\\TableRepository.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\TableRepository.cs",
+              "RelativeToolTip": "EHM_API\\Repositories\\TableRepository.cs",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAAAB0AAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T08:55:12.16Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CartService.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\CartService.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Services\\CartService.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\CartService.cs",
+              "RelativeToolTip": "EHM_API\\Services\\CartService.cs",
+              "ViewState": "AQIAAI8AAAAAAAAAAAAAAKQAAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T08:17:33.905Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MapperConfig.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Map\\MapperConfig.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Map\\MapperConfig.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Map\\MapperConfig.cs",
+              "RelativeToolTip": "EHM_API\\Map\\MapperConfig.cs",
+              "ViewState": "AQIAABoAAAAAAAAAAAAAAP4AAAA1AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T09:03:19.986Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Cart2DTO.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\Cart2DTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\CartDTO\\Guest\\Cart2DTO.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\Cart2DTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\CartDTO\\Guest\\Cart2DTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-28T16:36:01.673Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "OrderDTOAll.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDTOAll.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDTOAll.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDTOAll.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDTOAll.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAApAAAA",
+              "Title": "CheckoutSuccessDTO.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutSuccessDTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutSuccessDTO.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutSuccessDTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutSuccessDTO.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAxwBAAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-28T06:54:06.743Z"
+              "WhenOpened": "2024-06-24T08:10:19.511Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 10,
+              "Title": "ReservationController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ReservationController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\ReservationController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ReservationController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\ReservationController.cs",
+              "ViewState": "AQIAAGwAAAAAAAAAAAAAAHIAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T06:47:51.721Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "TablesController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\TablesController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\TablesController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\TablesController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\TablesController.cs",
+              "ViewState": "AQIAADgAAAAAAAAAAAAAABIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T10:26:53.009Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Order.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Order.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Models\\Order.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Order.cs",
+              "RelativeToolTip": "EHM_API\\Models\\Order.cs",
+              "ViewState": "AQIAAA8AAAAAAAAAAAA5wBcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T06:45:55.508Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "CheckoutDTO.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutDTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutDTO.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutDTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwA0AAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T08:10:20.094Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "OrderController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\OrderController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\OrderController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\OrderController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\OrderController.cs",
+              "ViewState": "AQIAAKwAAAAAAAAAAAAIwLwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T01:20:50.121Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "IngredientController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\IngredientController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\IngredientController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\IngredientController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\IngredientController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T01:20:47.059Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ImageController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ImageController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\ImageController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ImageController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\ImageController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T01:20:24.288Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\HomeController.cs",
+              "ViewState": "AQIAABQAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T01:20:21.046Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "GuestController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\GuestController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\GuestController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\GuestController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\GuestController.cs",
+              "ViewState": "AQIAACAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T01:20:17.085Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "DishController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\DishController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\DishController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\DishController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\DishController.cs",
+              "ViewState": "AQIAADoAAAAAAAAAAAAAAEABAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T01:10:55.433Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ComboController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ComboController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\ComboController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ComboController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\ComboController.cs",
+              "ViewState": "AQIAAKoBAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T01:10:35.587Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "CartController.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\CartController.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Controllers\\CartController.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\CartController.cs",
+              "RelativeToolTip": "EHM_API\\Controllers\\CartController.cs",
+              "ViewState": "AQIAADAAAAAAAAAAAAAqwJcAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T00:47:25.821Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "ReservationDetailDTO.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationDetailDTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationDetailDTO.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationDetailDTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationDetailDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAQAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T11:35:10.745Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Guest.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Guest.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Models\\Guest.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Guest.cs",
+              "RelativeToolTip": "EHM_API\\Models\\Guest.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwA4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T09:04:26.178Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "ReservationByStatus.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationByStatus.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationByStatus.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationByStatus.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationByStatus.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T10:23:08.69Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "ReservationRequestDTO.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationRequestDTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationRequestDTO.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationRequestDTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationRequestDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T18:53:04.572Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Address.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Address.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Models\\Address.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Address.cs",
+              "RelativeToolTip": "EHM_API\\Models\\Address.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T09:06:33.879Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Account.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Account.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Models\\Account.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Account.cs",
+              "RelativeToolTip": "EHM_API\\Models\\Account.cs",
+              "ViewState": "AQIAAAEAAAAAAAAAAAAAAA8AAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T18:28:36.176Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "CreateReservationDTO.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\CreateReservationDTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\CreateReservationDTO.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\CreateReservationDTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\CreateReservationDTO.cs",
+              "ViewState": "AQIAAAEAAAAAAAAAAAAAABQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T08:27:15.346Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "UpdateTableIdDTO.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateTableIdDTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateTableIdDTO.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateTableIdDTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateTableIdDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-26T18:12:30.68Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
               "Title": "CartOrderDetailsDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\CartOrderDetailsDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\CartDTO\\Guest\\CartOrderDetailsDTO.cs",
@@ -303,33 +650,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CheckoutDTO.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutDTO.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutDTO.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutDTO.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwA8AAAAgAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T08:10:20.094Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CheckoutSuccessDTO.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutSuccessDTO.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutSuccessDTO.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutSuccessDTO.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\CartDTO\\Guest\\CheckoutSuccessDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAA0AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T08:10:19.511Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 33,
               "Title": "SearchOrdersRequestDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Guest\\SearchOrdersRequestDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\OrderDTO\\Guest\\SearchOrdersRequestDTO.cs",
@@ -341,7 +662,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 34,
+              "Title": "OrderDTOAll.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDTOAll.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDTOAll.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDTOAll.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDTOAll.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-28T06:54:06.743Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "UpdateOrderDTO.cs",
+              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Manager\\UpdateOrderDTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\OrderDTO\\Manager\\UpdateOrderDTO.cs",
+              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Manager\\UpdateOrderDTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\OrderDTO\\Manager\\UpdateOrderDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-28T06:55:02.476Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
               "Title": "SearchPhoneOrderDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Guest\\SearchPhoneOrderDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\OrderDTO\\Guest\\SearchPhoneOrderDTO.cs",
@@ -353,7 +698,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 31,
               "Title": "CreateOrderDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Guest\\CreateOrderDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\OrderDTO\\Guest\\CreateOrderDTO.cs",
@@ -365,7 +710,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 30,
               "Title": "OrderDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Manager\\OrderDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\OrderDTO\\Manager\\OrderDTO.cs",
@@ -377,7 +722,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 35,
               "Title": "OrderDetailDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDetailDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\OrderDTO\\Guest\\OrderDetailDTO.cs",
@@ -389,7 +734,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 41,
               "Title": "Table.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Table.cs",
               "RelativeDocumentMoniker": "EHM_API\\Models\\Table.cs",
@@ -401,7 +746,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 42,
               "Title": "TableReservation.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\TableReservation.cs",
               "RelativeDocumentMoniker": "EHM_API\\Models\\TableReservation.cs",
@@ -413,19 +758,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Order.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Order.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Models\\Order.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Order.cs",
-              "RelativeToolTip": "EHM_API\\Models\\Order.cs",
-              "ViewState": "AQIAAA4AAAAAAAAAAAA9wBcAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T06:45:55.508Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 37,
               "Title": "EHMDBContext.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\EHMDBContext.cs",
               "RelativeDocumentMoniker": "EHM_API\\Models\\EHMDBContext.cs",
@@ -437,7 +770,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 40,
               "Title": "Reservation.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Reservation.cs",
               "RelativeDocumentMoniker": "EHM_API\\Models\\Reservation.cs",
@@ -449,7 +782,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 39,
               "Title": "Dish.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Dish.cs",
               "RelativeDocumentMoniker": "EHM_API\\Models\\Dish.cs",
@@ -461,7 +794,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 38,
               "Title": "Combo.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Combo.cs",
               "RelativeDocumentMoniker": "EHM_API\\Models\\Combo.cs",
@@ -473,7 +806,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 36,
               "Title": "OrderDetail.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\OrderDetail.cs",
               "RelativeDocumentMoniker": "EHM_API\\Models\\OrderDetail.cs",
@@ -485,31 +818,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "TableRepository.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\TableRepository.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Repositories\\TableRepository.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\TableRepository.cs",
-              "RelativeToolTip": "EHM_API\\Repositories\\TableRepository.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAADwvx0AAAAGAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T08:55:12.16Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "OrderController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\OrderController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\OrderController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\OrderController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\OrderController.cs",
-              "ViewState": "AQIAAKgAAAAAAAAAAAAAALsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T01:20:50.121Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 43,
               "Title": "Order.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\EHM\\EHM\\EHM_API\\Models\\Order.cs",
               "RelativeDocumentMoniker": "..\\..\\EHM\\EHM\\EHM_API\\Models\\Order.cs",
@@ -521,7 +830,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 44,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\appsettings.json",
               "RelativeDocumentMoniker": "EHM_API\\appsettings.json",
@@ -533,55 +842,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "GuestController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\GuestController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\GuestController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\GuestController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\GuestController.cs",
-              "ViewState": "AQIAAAEAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T01:20:17.085Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "ReservationController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ReservationController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\ReservationController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ReservationController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\ReservationController.cs",
-              "ViewState": "AQIAAE8AAAAAAAAAAAAAAF8AAAAoAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T06:47:51.721Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "ReservationRepository.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\ReservationRepository.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Repositories\\ReservationRepository.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\ReservationRepository.cs",
-              "RelativeToolTip": "EHM_API\\Repositories\\ReservationRepository.cs",
-              "ViewState": "AQIAAA0AAAAAAAAAAAA6wEAAAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T05:26:24.426Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "Address.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Address.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Models\\Address.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Address.cs",
-              "RelativeToolTip": "EHM_API\\Models\\Address.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAyAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T09:06:33.879Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 47,
               "Title": "OrderService .cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\OrderService .cs",
               "RelativeDocumentMoniker": "EHM_API\\Services\\OrderService .cs",
@@ -593,7 +854,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 45,
               "Title": "OrderRepository.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\OrderRepository.cs",
               "RelativeDocumentMoniker": "EHM_API\\Repositories\\OrderRepository.cs",
@@ -605,7 +866,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 46,
               "Title": "ListTableOrderDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\TableDTO\\ListTableOrderDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\TableDTO\\ListTableOrderDTO.cs",
@@ -617,19 +878,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "MapperConfig.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Map\\MapperConfig.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Map\\MapperConfig.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Map\\MapperConfig.cs",
-              "RelativeToolTip": "EHM_API\\Map\\MapperConfig.cs",
-              "ViewState": "AQIAABMBAAAAAAAAAAAAAMsAAAAKAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T09:03:19.986Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 48,
               "Title": "FindTableDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\TableDTO\\FindTableDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\TableDTO\\FindTableDTO.cs",
@@ -641,7 +890,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 49,
               "Title": "TableAllDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\TableDTO\\TableAllDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\TableDTO\\TableAllDTO.cs",
@@ -653,7 +902,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 50,
               "Title": "IOrderRepository.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IOrderRepository.cs",
               "RelativeDocumentMoniker": "EHM_API\\Repositories\\IOrderRepository.cs",
@@ -665,7 +914,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 51,
               "Title": "IOrderService.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\IOrderService.cs",
               "RelativeDocumentMoniker": "EHM_API\\Services\\IOrderService.cs",
@@ -677,7 +926,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 52,
               "Title": "TableService.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\TableService.cs",
               "RelativeDocumentMoniker": "EHM_API\\Services\\TableService.cs",
@@ -689,19 +938,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "ReservationService.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\ReservationService.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Services\\ReservationService.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\ReservationService.cs",
-              "RelativeToolTip": "EHM_API\\Services\\ReservationService.cs",
-              "ViewState": "AQIAAIoAAAAAAAAAAAAAAJ4AAAAEAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T05:26:11.257Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 53,
               "Title": "OrderTable.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\OrderTable.cs",
               "RelativeDocumentMoniker": "EHM_API\\Models\\OrderTable.cs",
@@ -713,7 +950,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 54,
               "Title": "ComboDetail.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\ComboDetail.cs",
               "RelativeDocumentMoniker": "EHM_API\\Models\\ComboDetail.cs",
@@ -725,19 +962,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
-              "Title": "CartService.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\CartService.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Services\\CartService.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\CartService.cs",
-              "RelativeToolTip": "EHM_API\\Services\\CartService.cs",
-              "ViewState": "AQIAAIYAAAAAAAAAAAAAAC8AAABBAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T08:17:33.905Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 55,
               "Title": "IReservationRepository.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IReservationRepository.cs",
               "RelativeDocumentMoniker": "EHM_API\\Repositories\\IReservationRepository.cs",
@@ -749,7 +974,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 56,
               "Title": "ITableRepository.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\ITableRepository.cs",
               "RelativeDocumentMoniker": "EHM_API\\Repositories\\ITableRepository.cs",
@@ -761,55 +986,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
-              "Title": "ReservationRequestDTO.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationRequestDTO.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationRequestDTO.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationRequestDTO.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationRequestDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T18:53:04.572Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 42,
-              "Title": "ReservationByStatus.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationByStatus.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationByStatus.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationByStatus.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationByStatus.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAjAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T10:23:08.69Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 43,
-              "Title": "ReservationDetailDTO.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationDetailDTO.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationDetailDTO.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationDetailDTO.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\ReservationDetailDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAjAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T11:35:10.745Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 44,
-              "Title": "UpdateTableIdDTO.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateTableIdDTO.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateTableIdDTO.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateTableIdDTO.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateTableIdDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T18:12:30.68Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 64,
               "Title": "UpdateStatusReservationDTO.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateStatusReservationDTO.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\UpdateStatusReservationDTO.cs",
@@ -821,7 +998,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 57,
               "Title": "IReservationService.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\IReservationService.cs",
               "RelativeDocumentMoniker": "EHM_API\\Services\\IReservationService.cs",
@@ -833,55 +1010,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
-              "Title": "CreateReservationDTO.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\CreateReservationDTO.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\ReservationDTO\\Guest\\CreateReservationDTO.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\ReservationDTO\\Guest\\CreateReservationDTO.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\ReservationDTO\\Guest\\CreateReservationDTO.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAIwA4AAAAqAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T08:27:15.346Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 47,
-              "Title": "HomeController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\HomeController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\HomeController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\HomeController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\HomeController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T01:20:21.046Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 48,
-              "Title": "Account.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Account.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Models\\Account.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Account.cs",
-              "RelativeToolTip": "EHM_API\\Models\\Account.cs",
-              "ViewState": "AQIAAAEAAAAAAAAAAAAAAA8AAAAuAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T18:28:36.176Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 49,
-              "Title": "TablesController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\TablesController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\TablesController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\TablesController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\TablesController.cs",
-              "ViewState": "AQIAABcAAAAAAAAAAAAAABIAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T10:26:53.009Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 58,
               "Title": "ITableService.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\ITableService.cs",
               "RelativeDocumentMoniker": "EHM_API\\Services\\ITableService.cs",
@@ -893,31 +1022,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
-              "Title": "CartController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\CartController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\CartController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\CartController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\CartController.cs",
-              "ViewState": "AQIAADAAAAAAAAAAAAAAAJcAAAAbAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T00:47:25.821Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 53,
-              "Title": "DishController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\DishController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\DishController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\DishController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\DishController.cs",
-              "ViewState": "AQIAAC4BAAAAAAAAAAAowEABAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T01:10:55.433Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 60,
               "Title": "CartRepository.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\CartRepository.cs",
               "RelativeDocumentMoniker": "EHM_API\\Repositories\\CartRepository.cs",
@@ -929,7 +1034,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 59,
               "Title": "CategoryController.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\CategoryController.cs",
               "RelativeDocumentMoniker": "EHM_API\\Controllers\\CategoryController.cs",
@@ -941,19 +1046,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
-              "Title": "IngredientController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\IngredientController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\IngredientController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\IngredientController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\IngredientController.cs",
-              "ViewState": "AQIAAEAAAAAAAAAAAAA0wAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T01:20:47.059Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 61,
               "Title": "MaterialController.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\MaterialController.cs",
               "RelativeDocumentMoniker": "EHM_API\\Controllers\\MaterialController.cs",
@@ -965,43 +1058,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
-              "Title": "ImageController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ImageController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\ImageController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ImageController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\ImageController.cs",
-              "ViewState": "AQIAACkAAAAAAAAAAAAwwBQAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T01:20:24.288Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 58,
-              "Title": "ComboController.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ComboController.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Controllers\\ComboController.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\ComboController.cs",
-              "RelativeToolTip": "EHM_API\\Controllers\\ComboController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-26T01:10:35.587Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 59,
-              "Title": "Guest.cs",
-              "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Guest.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Models\\Guest.cs",
-              "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Models\\Guest.cs",
-              "RelativeToolTip": "EHM_API\\Models\\Guest.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAUAAAAeAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T09:04:26.178Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 62,
               "Title": "ComboService.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\ComboService.cs",
               "RelativeDocumentMoniker": "EHM_API\\Services\\ComboService.cs",
@@ -1013,7 +1070,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 63,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Program.cs",
               "RelativeDocumentMoniker": "EHM_API\\Program.cs",

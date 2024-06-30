@@ -91,15 +91,15 @@ namespace EHM_API.Controllers
             try
             {
                 await _service.UpdateStatusAsync(reservationId, updateStatusReservationDTO);
-                return Ok(new { Message = "Status updated successfully." });
+                return Ok(new { Message = "Trạng thái đặt bàn được cập nhật thành công." });
             }
             catch (KeyNotFoundException)
             {
-                return NotFound(new { Message = "Reservation not found." });
+                return NotFound(new { Message = "Không tìm thấy đặt chỗ." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = $"Failed to update Status. Error: {ex.Message}" });
+                return StatusCode(500, new { Message = $"Không thể cập nhật Trạng thái. Lỗi: {ex.Message}" });
             }
         }
 
@@ -109,7 +109,7 @@ namespace EHM_API.Controllers
             try
             {
                 await _service.RegisterTablesAsync(registerTablesDTO);
-                return Ok(new { Message = "Tables registered successfully." });
+                return Ok(new { Message = "Bàn đã đăng ký thành công." });
             }
             catch (KeyNotFoundException ex)
             {
@@ -117,7 +117,7 @@ namespace EHM_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Message = $"Failed to register tables. Error: {ex.Message}" });
+                return StatusCode(500, new { Message = $"Không thể đăng ký bàn. Lỗi: {ex.Message}" });
             }
         }
     }

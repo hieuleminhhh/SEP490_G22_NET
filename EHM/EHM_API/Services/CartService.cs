@@ -127,7 +127,9 @@ namespace EHM_API.Services
                 OrderDetails = orderDetails,
                 Deposits = checkoutDTO.Deposits,
                 AddressId = address?.AddressId,
-                Note = checkoutDTO.Note
+                Note = checkoutDTO.Note,
+				Type = checkoutDTO.Type
+				
             };
 
 
@@ -176,6 +178,7 @@ namespace EHM_API.Services
 				Status = order.Status ?? 0,
 				ReceivingTime = order.RecevingOrder,
 				TotalAmount = totalAmount,
+				Type = order.Type,
 				Note = order.Note,
 				Deposits = order.Deposits,
 				OrderDetails = orderDetails,

@@ -35,10 +35,9 @@ namespace EHM_API.Repositories
 				.ThenInclude(ot => ot.Table)
 				.ToListAsync();
 		}
-
-		public Task<Table> GetTableByIdAsync(int tableId)
-		{
-			throw new NotImplementedException();
-		}
+        public async Task<Table> GetTableByIdAsync(int tableId)
+        {
+            return await _context.Tables.FindAsync(tableId);
+        }
 	}
 }
