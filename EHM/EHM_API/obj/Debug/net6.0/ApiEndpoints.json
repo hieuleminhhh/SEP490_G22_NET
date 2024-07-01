@@ -1474,6 +1474,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EHM_API.Controllers.ReservationsController",
+    "Method": "SearchReservations",
+    "RelativePath": "api/Reservations/searchNameOrPhone",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "guestNameOrguestPhone",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EHM_API.Controllers.TablesController",
     "Method": "GetAllTables",
     "RelativePath": "api/Tables",

@@ -15,5 +15,8 @@ namespace EHM_API.Services
         Task<int?> CalculateStatusOfTable(Reservation reservation);
         Task RegisterTablesAsync(RegisterTablesDTO registerTablesDTO);
 
-    }
+
+		Task<IEnumerable<ReservationSearchDTO>> SearchReservationsAsync(string? guestNameOrPhone);
+
+	}
 }
