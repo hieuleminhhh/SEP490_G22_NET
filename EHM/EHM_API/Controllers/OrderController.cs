@@ -167,25 +167,25 @@ namespace EHM_API.Controllers
 
             if (!string.IsNullOrEmpty(dateFrom))
             {
-                if (DateTime.TryParseExact(dateFrom, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtFrom))
+                if (DateTime.TryParseExact(dateFrom, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtFrom))
                 {
                     parsedDateFrom = dtFrom;
                 }
                 else
                 {
-                    return BadRequest("Invalid date format for dateFrom. Please use dd/MM/yyyy.");
+                    return BadRequest("Invalid date format for dateFrom. Please use yyyy-MM-dd.");
                 }
             }
 
             if (!string.IsNullOrEmpty(dateTo))
             {
-                if (DateTime.TryParseExact(dateTo, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtTo))
+                if (DateTime.TryParseExact(dateTo, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtTo))
                 {
                     parsedDateTo = dtTo;
                 }
                 else
                 {
-                    return BadRequest("Invalid date format for dateTo. Please use dd/MM/yyyy.");
+                    return BadRequest("Invalid date format for dateTo. Please use yyyy-MM-dd.");
                 }
             }
 
@@ -202,6 +202,7 @@ namespace EHM_API.Controllers
 
             return Ok(result);
         }
+
 
 
         [HttpPatch("{orderId}/status")]
