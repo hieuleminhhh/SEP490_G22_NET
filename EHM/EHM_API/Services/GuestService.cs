@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.GuestDTO.Guest;
+using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.Models;
 using EHM_API.Repositories;
 
@@ -50,7 +51,12 @@ namespace EHM_API.Services
 		{
 			return await _guestRepository.GuestPhoneExistsAsync(guestPhone);
 		}
+        public async Task<IEnumerable<GuestAddressInfoDTO>> GetAllAddress()
+        {
+            var address = await _guestRepository.GetListAddress();
+            var addressDtos = _mapper.Map<IEnumerable<GuestAddressInfoDTO>>(address);
+            return addressDtos;
+        }
 
-
-	} 
+    } 
 }

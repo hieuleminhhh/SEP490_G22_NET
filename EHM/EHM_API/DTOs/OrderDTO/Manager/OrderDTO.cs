@@ -1,4 +1,6 @@
-﻿namespace EHM_API.DTOs.OrderDTO.Manager
+﻿using EHM_API.DTOs.TableDTO;
+
+namespace EHM_API.DTOs.OrderDTO.Manager
 {
     public class OrderDTO
     {
@@ -7,7 +9,7 @@
         public int Status { get; set; }
         public DateTime? RecevingOrder { get; set; }
         public int? AccountId { get; set; }
-        public int? TableId { get; set; }
+        public List<TableAllDTO> TableIds { get; set; }
         public int? InvoiceId { get; set; }
         public decimal? TotalAmount { get; set; }
         public string? GuestPhone { get; set; }

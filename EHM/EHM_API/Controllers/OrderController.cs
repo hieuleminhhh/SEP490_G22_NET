@@ -9,6 +9,7 @@ using EHM_API.DTOs.TableDTO;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
@@ -149,17 +150,60 @@ namespace EHM_API.Controllers
 		}
         [HttpGet("GetListOrder")]
         public async Task<ActionResult<PagedResult<OrderDTO>>> GetListOrders(
-           [FromQuery] int page = 1,
-           [FromQuery] int pageSize = 10,
-           [FromQuery] string? search = null)
+     [FromQuery] int page = 1,
+     [FromQuery] int pageSize = 10,
+     [FromQuery] string? search = null,
+     [FromQuery] string? dateFrom = null,
+     [FromQuery] string? dateTo = null,
+     [FromQuery] int status = 0,
+     [FromQuery] string filterByDate = null,
+     [FromQuery] int type = 0)
         {
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;
 
-            var result = await _orderService.GetOrderAsync(search?.Trim(), page, pageSize);
+            DateTime? parsedDateFrom = null;
+            DateTime? parsedDateTo = null;
+
+            if (!string.IsNullOrEmpty(dateFrom))
+            {
+                if (DateTime.TryParseExact(dateFrom, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtFrom))
+                {
+                    parsedDateFrom = dtFrom;
+                }
+                else
+                {
+                    return BadRequest("Invalid date format for dateFrom. Please use dd/MM/yyyy.");
+                }
+            }
+
+            if (!string.IsNullOrEmpty(dateTo))
+            {
+                if (DateTime.TryParseExact(dateTo, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dtTo))
+                {
+                    parsedDateTo = dtTo;
+                }
+                else
+                {
+                    return BadRequest("Invalid date format for dateTo. Please use dd/MM/yyyy.");
+                }
+            }
+
+            var result = await _orderService.GetOrderAsync(
+                search?.Trim(),
+                parsedDateFrom,
+                parsedDateTo,
+                status,
+                page,
+                pageSize,
+                filterByDate,
+                type
+            );
 
             return Ok(result);
         }
+
+
         [HttpPatch("{orderId}/status")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateOrderDTO updateOrder)
         {
