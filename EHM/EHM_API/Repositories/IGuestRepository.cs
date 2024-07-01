@@ -9,7 +9,8 @@ namespace EHM_API.Repositories
 
 		Task<Address> GetAddressByIdAsync(int addressId);
 
-		Task<bool> GuestPhoneExistsAsync(string guestPhone);
+        Task<bool> GuestPhoneExistsAsync(string guestPhone);
+        Task<IEnumerable<Address>> GetListAddress();
 
-	}
+    }
 }
