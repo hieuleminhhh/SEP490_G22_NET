@@ -48,13 +48,6 @@ namespace EHM_API.Map
 			CreateMap<UpdateOrderDTO, Order>();
 			CreateMap<SearchOrdersRequestDTO, Order>();
 
-			//Check order guestphone
-			CreateMap<OrderDetail, OrderDetailDTO>()
-			.ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
-			.ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
-			.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.ImageUrl : (src.Dish != null ? src.Dish.ImageUrl : null)))
-			.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Combo != null && src.Combo.Price.HasValue ? src.Combo.Price : (src.Dish != null ? src.Dish.Price : (decimal?)null)))
-			.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src => src.Dish != null && src.Dish.DiscountId != null ? (src.Dish.DiscountId == 0 ? src.Dish.Price : (src.Dish.Price.HasValue && src.Dish.Discount != null ? src.Dish.Price.Value - (src.Dish.Price.Value * src.Dish.Discount.DiscountAmount / 100) : (decimal?)null)) : (decimal?)null));
 
 			CreateMap<Order, SearchPhoneOrderDTO>()
 				.ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
@@ -68,19 +61,51 @@ namespace EHM_API.Map
 
 
 
+			// Mapping OrderDetail to OrderDetailsDTO
+			CreateMap<OrderDetail, OrderDetailsDTO>()
+				.ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
+				.ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
+				.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.ImageUrl : (src.Dish != null ? src.Dish.ImageUrl : null)))
+				.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Combo != null && src.Combo.Price.HasValue ? src.Combo.Price : (src.Dish != null ? src.Dish.Price : (decimal?)null)))
+				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
+					src.Dish != null && src.Dish.Price.HasValue && src.Dish.Discount != null
+					? src.Dish.Price.Value - (src.Dish.Price.Value * src.Dish.Discount.DiscountAmount / 100)
+					: src.Combo != null && src.Combo.Price.HasValue
+					? src.Combo.Price.Value
+					: src.Dish != null ? src.Dish.Price.Value : (decimal?)null))
+				.ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
+				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
+			// Mapping Order to CheckoutSuccessDTO
+			CreateMap<Order, CheckoutSuccessDTO>()
+				.ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.GuestPhoneNavigation.Email))
+				.ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.Address.AddressId))
+				.ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+				.ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
+				.ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
+				.ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
+				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status ?? 0))
+				.ForMember(dest => dest.ReceivingTime, opt => opt.MapFrom(src => src.RecevingOrder))
+				.ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
+				.ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
+				.ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+				.ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Deposits))
+				.ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
+			// Mapping Dish to OrderDetailsDTO
 			CreateMap<Dish, OrderDetailsDTO>()
 				.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
-					src => src.DiscountId == null ? (decimal?)null :
-						src.DiscountId == 0 ? src.Price :
-						src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
-				))
+				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
+					src.DiscountId == null ? src.Price :
+					src.DiscountId == 0 ? src.Price :
+					src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : src.Price))
 				.ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Price));
 
+			// Mapping Combo to OrderDetailsDTO
 			CreateMap<Combo, OrderDetailsDTO>()
-	.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-	.ForMember(dest => dest.DiscountedPrice, opt => opt.Ignore())
-	.ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Price));
+				.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+				.ForMember(dest => dest.DiscountedPrice, opt => opt.Ignore())
+				.ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Price));
 
 
 
