@@ -217,9 +217,16 @@ namespace EHM_API.Map
 
 			CreateMap<Table, TableOrderDTO>();
 
-
-			//kiem tra dat ban
-			CreateMap<Reservation, ReservationByStatus>()
+            CreateMap<RegisterTablesDTO, Reservation>()
+               .ForMember(dest => dest.TableReservations, opt => opt.Ignore());
+            //map address
+            CreateMap<Address, GuestAddressInfoDTO>()
+        .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.GuestAddress))
+        .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.ConsigneeName))
+        .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+        .ForMember(dest => dest.Email, opt => opt.Ignore());
+            //kiem tra dat ban
+            CreateMap<Reservation, ReservationByStatus>()
 					   .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src =>
 						   src.Order != null && src.Order.Address != null ? src.Order.Address.ConsigneeName :
 						   src.Address != null ? src.Address.ConsigneeName : null))
@@ -285,11 +292,14 @@ namespace EHM_API.Map
 						   opt => opt.MapFrom(src => src.ComboId))
 				.ForMember(dest => dest.NameCombo,
 						   opt => opt.MapFrom(src => src.NameCombo));
-
             CreateMap<RegisterTablesDTO, Reservation>()
-                 .ForMember(dest => dest.TableReservations, opt => opt.Ignore());
-
-
+              .ForMember(dest => dest.TableReservations, opt => opt.Ignore());
+            //map address
+            CreateMap<Address, GuestAddressInfoDTO>()
+        .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.GuestAddress))
+        .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.ConsigneeName))
+        .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+        .ForMember(dest => dest.Email, opt => opt.Ignore());
         }
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)
@@ -313,6 +323,8 @@ namespace EHM_API.Map
 
 			return null;
 		}
+        
 
-	}
+
+    }
 }
