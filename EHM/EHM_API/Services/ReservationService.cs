@@ -208,5 +208,13 @@ namespace EHM_API.Services
 
             await _repository.UpdateReservationAsync(reservation);
         }
-    }
+
+
+		public async Task<IEnumerable<ReservationSearchDTO>> SearchReservationsAsync(string? guestNameOrPhone)
+		{
+			var reservations = await _repository.SearchReservationsAsync(guestNameOrPhone);
+			return _mapper.Map<IEnumerable<ReservationSearchDTO>>(reservations);
+		}
+
+	}
 }
