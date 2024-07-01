@@ -158,5 +158,21 @@ namespace EHM_API.Repositories
 
             await _context.SaveChangesAsync();
         }
-    }
+
+		public async Task<IEnumerable<Reservation>> SearchReservationsAsync(string? guestNameOrPhone)
+		{
+			var query = _context.Reservations.AsQueryable();
+
+			if (!string.IsNullOrWhiteSpace(guestNameOrPhone))
+			{
+				query = query.Where(r => r.Address.GuestPhone.Contains(guestNameOrPhone) || r.Address.ConsigneeName.Contains(guestNameOrPhone));
+			}
+
+			return await query
+				.Include(r => r.Address)
+				.Include(r => r.TableReservations)
+					.ThenInclude(tr => tr.Table)
+				.ToListAsync();
+		}
+	}
 }
