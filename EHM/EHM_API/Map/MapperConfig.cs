@@ -325,7 +325,22 @@ namespace EHM_API.Map
         .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.ConsigneeName))
         .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
         .ForMember(dest => dest.Email, opt => opt.Ignore());
-        }
+
+			//Search guest Name or Guest PHone to Reservation
+			CreateMap<Reservation, ReservationSearchDTO>()
+			  .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
+			  .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.Address.GuestPhone))
+			  .ForMember(dest => dest.ReservationTime, opt => opt.MapFrom(src => src.ReservationTime))
+			  .ForMember(dest => dest.GuestNumber, opt => opt.MapFrom(src => src.GuestNumber))
+			  .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Order != null ? src.Order.Deposits : 0))
+			  .ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.TableReservations.Select(tr => tr.Table)));
+
+			CreateMap<Table, TableDTO>()
+				.ForMember(dest => dest.Capacity, opt => opt.MapFrom(src => src.Capacity))
+				.ForMember(dest => dest.Floor, opt => opt.MapFrom(src => src.Floor));
+
+
+		}
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)
 		{

@@ -120,5 +120,32 @@ namespace EHM_API.Controllers
                 return StatusCode(500, new { Message = $"Không thể đăng ký bàn. Lỗi: {ex.Message}" });
             }
         }
-    }
+
+
+
+		[HttpGet("searchNameOrPhone")]
+		public async Task<IActionResult> SearchReservations([FromQuery] string? guestNameOrguestPhone)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(guestNameOrguestPhone))
+				{
+					return BadRequest(new { message = "Tên khách hoặc số điện thoại không được bỏ trống." });
+				}
+
+				var results = await _service.SearchReservationsAsync(guestNameOrguestPhone);
+
+				if (results == null || !results.Any())
+				{
+					return NotFound(new { message = "Không tìm thấy đặt chỗ nào theo thông tin đã cung cấp." });
+				}
+
+				return Ok(results);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
+			}
+		}
+	}
 }
