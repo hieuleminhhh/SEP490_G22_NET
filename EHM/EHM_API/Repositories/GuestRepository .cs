@@ -43,5 +43,19 @@ namespace EHM_API.Repositories
             return addresses;
         }
 
-    }
+		public async Task<Address> GetAddressAsync(string guestAddress, string consigneeName, string guestPhone)
+		{
+			return await _context.Addresses.FirstOrDefaultAsync(a =>
+				a.GuestAddress == guestAddress &&
+				a.ConsigneeName == consigneeName &&
+				a.GuestPhone == guestPhone);
+		}
+
+		//Create Guest
+		public async Task AddAddressAsync(Address address)
+		{
+			_context.Addresses.Add(address);
+			await _context.SaveChangesAsync();
+		}
+	}
 }
