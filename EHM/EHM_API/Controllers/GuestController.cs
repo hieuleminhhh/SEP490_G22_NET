@@ -1,4 +1,5 @@
-﻿using EHM_API.Services;
+﻿using EHM_API.DTOs.GuestDTO.Manager;
+using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,5 +47,27 @@ namespace EHM_API.Controllers
 
             return Ok(address);
         }
-    }
+
+		[HttpPost("CreateGuest")]
+		public async Task<IActionResult> CreateGuest(CreateGuestDTO createGuestDTO)
+		{
+			try
+			{
+				var guestAddressInfoDTO = await _guestService.CreateGuestAndAddressAsync(createGuestDTO);
+
+				if (guestAddressInfoDTO == null)
+				{
+					return BadRequest(new { message = "Thông tin khách hàng đã tồn tại." });
+				}
+
+				return Ok(new { message = "Thông tin khách hàng đã được tạo thành công." });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu của bạn." });
+			}
+		}
+
+
+	}
 }

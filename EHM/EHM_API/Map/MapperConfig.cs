@@ -8,6 +8,7 @@ using EHM_API.DTOs.ComboDTO.Guest;
 using EHM_API.DTOs.ComboDTO.Manager;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.GuestDTO.Guest;
+using EHM_API.DTOs.GuestDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.IngredientDTO.Manager;
 using EHM_API.DTOs.MaterialDTO;
@@ -25,6 +26,17 @@ namespace EHM_API.Map
 	{
 		public MapperConfig()
 		{
+			CreateMap<CreateGuestDTO, Guest>()
+							.ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+							.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+							.ForMember(dest => dest.Addresses, opt => opt.Ignore());
+
+			CreateMap<CreateGuestDTO, Address>()
+				.ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.GuestAddress))
+				.ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.ConsigneeName))
+				.ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+				.ForMember(dest => dest.GuestPhoneNavigation, opt => opt.Ignore());
+
 			CreateMap<Dish, DishDTOAll>()
 				.ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.CategoryName : null))
 				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
