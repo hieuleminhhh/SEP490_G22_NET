@@ -169,7 +169,16 @@ namespace EHM_API.Repositories
 			}
 
 			return await query
-				.Include(r => r.Address)
+					.Include(r => r.Address)
+					.ThenInclude(a => a.GuestPhoneNavigation)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Dish)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Combo)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.Address)
 				.Include(r => r.TableReservations)
 					.ThenInclude(tr => tr.Table)
 				.ToListAsync();

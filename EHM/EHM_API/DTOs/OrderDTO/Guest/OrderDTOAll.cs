@@ -6,7 +6,6 @@
         public DateTime OrderDate { get; set; }
         public int Status { get; set; }
         public DateTime? RecevingOrder { get; set; }
-        public int? TableId { get; set; }
         public int? InvoiceId { get; set; }
         public decimal? TotalAmount { get; set; }
         public string? GuestPhone { get; set; }
@@ -16,6 +15,15 @@
         public string? Note { get; set; }
 		public int? Type { get; set; }
 		public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
+		public IEnumerable<TableOfOrderDTO> Tables { get; set; }
 
-    }
+	}
+	public class TableOfOrderDTO
+	{
+		public int TableId { get; set; }
+		public int? Status { get; set; }
+		public int? Capacity { get; set; }
+		public int? Floor { get; set; }
+	}
+
 }
