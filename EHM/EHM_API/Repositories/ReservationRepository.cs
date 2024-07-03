@@ -162,29 +162,30 @@ namespace EHM_API.Repositories
 		public async Task<IEnumerable<Reservation>> SearchReservationsAsync(string? guestNameOrPhone)
 		{
 			var query = _context.Reservations.AsQueryable();
+
 			if (!string.IsNullOrWhiteSpace(guestNameOrPhone))
 			{
 				var searchValue = guestNameOrPhone.ToLower();
 
 				query = query.Where(r =>
-					EF.Functions.Like(r.Address.GuestPhone.ToLower(), $"%{searchValue}%") ||
-					EF.Functions.Like(r.Address.ConsigneeName.ToLower(), $"%{searchValue}%")
+					r.Address.GuestPhone.ToLower().Contains(searchValue) ||
+					r.Address.ConsigneeName.ToLower().Contains(searchValue)
 				);
 			}
+
 			return await query
-				.Include(r => r.Address)
-					.ThenInclude(a => a.GuestPhoneNavigation)
+				.Include(r => r.Address.GuestPhoneNavigation)
 				.Include(r => r.Order)
 					.ThenInclude(o => o.OrderDetails)
 						.ThenInclude(od => od.Dish)
 				.Include(r => r.Order)
 					.ThenInclude(o => o.OrderDetails)
 						.ThenInclude(od => od.Combo)
-				.Include(r => r.Order)
-					.ThenInclude(o => o.Address)
+				.Include(r => r.Order.Address)
 				.Include(r => r.TableReservations)
 					.ThenInclude(tr => tr.Table)
 				.ToListAsync();
 		}
+
 	}
 }
