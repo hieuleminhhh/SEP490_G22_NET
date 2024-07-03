@@ -33,7 +33,13 @@ namespace EHM_API.Repositories
                 .FirstOrDefaultAsync(d => d.DishId == id);
         }
 
-        public async Task<Dish> AddAsync(Dish dish)
+		public async Task<bool> DishExistsAsync(int dishId)
+		{
+			return await _context.Dishes.AnyAsync(d => d.DishId == dishId);
+		}
+
+
+		public async Task<Dish> AddAsync(Dish dish)
         {
           
             _context.Dishes.Add(dish);
@@ -202,8 +208,13 @@ namespace EHM_API.Repositories
 
             return dish;
         }
-       
 
-    }
+		public async Task<bool> DiscountExistsAsync(int discountId)
+		{
+			return await _context.Discounts.AnyAsync(d => d.DiscountId == discountId);
+		}
+
+
+	}
 
 }

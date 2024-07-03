@@ -5,6 +5,7 @@ using EHM_API.Enums;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using EHM_API.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -39,7 +40,12 @@ namespace EHM_API.Services
             return _mapper.Map<DishDTOAll>(dish);
         }
 
-        public async Task<DishDTOAll> CreateDishAsync(CreateDishDTO createDishDTO)
+		public async Task<bool> DishExistsAsync(int dishId)
+		{
+			return await _dishRepository.DishExistsAsync(dishId);
+		}
+
+		public async Task<DishDTOAll> CreateDishAsync(CreateDishDTO createDishDTO)
         {
             var dish = _mapper.Map<Dish>(createDishDTO);
             if (dish.Price.HasValue)
@@ -114,5 +120,11 @@ namespace EHM_API.Services
             return await _dishRepository.UpdateDishStatusAsync(dishId, isActive);
         }
 
-    }
+		public async Task<bool> DiscountExistsAsync(int discountId)
+		{
+			return await _dishRepository.DiscountExistsAsync(discountId);
+		}
+
+
+	}
 }

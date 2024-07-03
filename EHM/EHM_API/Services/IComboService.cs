@@ -28,6 +28,7 @@ namespace EHM_API.Services
 		Task<PagedResult<ViewComboDTO>> GetComboAsync(string search, int page, int pageSize);
 
         Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive);
+		Task<bool> ComboExistsAsync(int comboId);
 
-    }
+	}
 }

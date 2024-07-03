@@ -165,23 +165,27 @@ namespace EHM_API.Repositories
 
 			if (!string.IsNullOrWhiteSpace(guestNameOrPhone))
 			{
-				query = query.Where(r => r.Address.GuestPhone.Contains(guestNameOrPhone) || r.Address.ConsigneeName.Contains(guestNameOrPhone));
+				var searchValue = guestNameOrPhone.ToLower();
+
+				query = query.Where(r =>
+					r.Address.GuestPhone.ToLower().Contains(searchValue) ||
+					r.Address.ConsigneeName.ToLower().Contains(searchValue)
+				);
 			}
 
 			return await query
-					.Include(r => r.Address)
-					.ThenInclude(a => a.GuestPhoneNavigation)
+				.Include(r => r.Address.GuestPhoneNavigation)
 				.Include(r => r.Order)
 					.ThenInclude(o => o.OrderDetails)
 						.ThenInclude(od => od.Dish)
 				.Include(r => r.Order)
 					.ThenInclude(o => o.OrderDetails)
 						.ThenInclude(od => od.Combo)
-				.Include(r => r.Order)
-					.ThenInclude(o => o.Address)
+				.Include(r => r.Order.Address)
 				.Include(r => r.TableReservations)
 					.ThenInclude(tr => tr.Table)
 				.ToListAsync();
 		}
+
 	}
 }

@@ -16,6 +16,7 @@ namespace EHM_API.Repositories
 
 		Task<Combo> GetByIdAsync(int id);
 
+		Task<bool> ComboExistsAsync(int comboId);
 		Task<Combo> AddAsync(Combo combo);
 
 		Task UpdateAsync(Combo combo);

@@ -59,6 +59,10 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Combos.FindAsync(comboId);
 		}
+		public async Task<bool> ComboExistsAsync(int comboId)
+		{
+			return await _context.Combos.AnyAsync(c => c.ComboId == comboId);
+		}
 
 		public async Task<IEnumerable<Combo>> GetAllAsync()
 		{
