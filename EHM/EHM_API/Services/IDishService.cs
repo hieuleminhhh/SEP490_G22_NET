@@ -21,5 +21,8 @@ namespace EHM_API.Services
         Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize);
         Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive);
 
-    }
+
+		Task<bool> DishExistsAsync(int dishId);
+		Task<bool> DiscountExistsAsync(int discountId);
+	}
 }

@@ -164,9 +164,11 @@ namespace EHM_API.Repositories
 			var query = _context.Reservations.AsQueryable();
 			if (!string.IsNullOrWhiteSpace(guestNameOrPhone))
 			{
+				var searchValue = guestNameOrPhone.ToLower();
+
 				query = query.Where(r =>
-					EF.Functions.Like(r.Address.GuestPhone, $"%{guestNameOrPhone}%") ||
-					EF.Functions.Like(r.Address.ConsigneeName, $"%{guestNameOrPhone}%")
+					EF.Functions.Like(r.Address.GuestPhone.ToLower(), $"%{searchValue}%") ||
+					EF.Functions.Like(r.Address.ConsigneeName.ToLower(), $"%{searchValue}%")
 				);
 			}
 			return await query

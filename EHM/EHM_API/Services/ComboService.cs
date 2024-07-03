@@ -55,6 +55,11 @@ namespace EHM_API.Services
 			return _mapper.Map<ComboDTO>(combo);
 		}
 
+		public async Task<bool> ComboExistsAsync(int comboId)
+		{
+			return await _comboRepository.ComboExistsAsync(comboId);
+		}
+
 		public async Task<CreateComboDTO> CreateComboAsync(CreateComboDTO comboDTO)
 		{
 			var combo = _mapper.Map<Combo>(comboDTO);
@@ -203,5 +208,7 @@ namespace EHM_API.Services
         {
             await _comboRepository.ClearComboDetailsAsync(comboId);
         }
-    }
+
+
+	}
 }
