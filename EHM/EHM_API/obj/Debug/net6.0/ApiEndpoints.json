@@ -772,6 +772,22 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.GuestController",
+    "Method": "CreateGuest",
+    "RelativePath": "api/Guest/CreateGuest",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createGuestDTO",
+        "Type": "EHM_API.DTOs.GuestDTO.Manager.CreateGuestDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.GuestController",
     "Method": "GetListAddress",
     "RelativePath": "api/Guest/ListAddress",
     "HttpMethod": "GET",
