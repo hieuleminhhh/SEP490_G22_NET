@@ -286,9 +286,7 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.Email, opt => opt.Ignore());
 			//kiem tra dat ban
 			CreateMap<Reservation, ReservationByStatus>()
-						 .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src =>
-							 src.Order != null && src.Order.Address != null ? src.Order.Address.ConsigneeName :
-							 src.Address != null ? src.Address.ConsigneeName : null))
+						 .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address != null ? src.Address.ConsigneeName : null))
 						 .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.Address.GuestPhone))
 						 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Address != null && src.Address.GuestPhoneNavigation != null
 		  ? src.Address.GuestPhoneNavigation.Email
@@ -362,9 +360,7 @@ namespace EHM_API.Map
 
 			//Search guest Name or Guest PHone to Reservation
 			CreateMap<Reservation, ReservationSearchDTO>()
-						   .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src =>
-						   src.Order != null && src.Order.Address != null ? src.Order.Address.ConsigneeName :
-						   src.Address != null ? src.Address.ConsigneeName : null))
+						   .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address != null ? src.Address.ConsigneeName : null))
 					   .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.Address.GuestPhone))
 					   .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Address != null && src.Address.GuestPhoneNavigation != null ? src.Address.GuestPhoneNavigation.Email: null))
 						.ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
