@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using EHM_API.DTOs.MaterialDTO;
@@ -25,15 +26,20 @@ namespace EHM_API.Controllers
             return Ok(materials);
         }
 
-
         [HttpGet("{id}")]
         public async Task<ActionResult<MaterialAllDTO>> GetMaterialById(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest(new { message = "ID must be greater than 0" });
+            }
+
             var material = await _materialService.GetMaterialByIdAsync(id);
             if (material == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Material not found" });
             }
+
             return Ok(new MaterialAllDTO
             {
                 MaterialId = material.MaterialId,
@@ -46,30 +52,81 @@ namespace EHM_API.Controllers
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<MaterialAllDTO>>> SearchMaterials([FromQuery] string name)
         {
-            var materials = await _materialService.SearchMaterialsByNameAsync(name);
-            var materialDTOs = new List<MaterialAllDTO>();
-            foreach (var material in materials)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                materialDTOs.Add(new MaterialAllDTO
-                {
-                    MaterialId = material.MaterialId,
-                    Name = material.Name,
-                    Category = material.Category,
-                    Unit = material.Unit
-                });
+                return BadRequest(new { message = "Name cannot be empty" });
             }
+
+            var materials = await _materialService.SearchMaterialsByNameAsync(name.Trim());
+            if (materials == null || !materials.Any())
+            {
+                return NotFound(new { message = "No materials found with the given name" });
+            }
+
+            var materialDTOs = materials.Select(material => new MaterialAllDTO
+            {
+                MaterialId = material.MaterialId,
+                Name = material.Name,
+                Category = material.Category,
+                Unit = material.Unit
+            });
+
             return Ok(materialDTOs);
         }
 
         [HttpPost]
         public async Task<ActionResult<MaterialAllDTO>> CreateMaterial(CreateMaterialDTO createMaterialDTO)
         {
+            var errors = new Dictionary<string, string>();
+
+            // Trim input values
+            createMaterialDTO.Name = createMaterialDTO.Name?.Trim();
+            createMaterialDTO.Category = createMaterialDTO.Category?.Trim();
+            createMaterialDTO.Unit = createMaterialDTO.Unit?.Trim();
+
+            // Validate Name
+            if (string.IsNullOrEmpty(createMaterialDTO.Name))
+            {
+                errors["name"] = "Name cannot be empty";
+            }
+            else if (createMaterialDTO.Name.Length > 100)
+            {
+                errors["name"] = "Name cannot exceed 100 characters";
+            }
+
+            // Validate Category
+            if (string.IsNullOrEmpty(createMaterialDTO.Category))
+            {
+                errors["category"] = "Category cannot be empty";
+            }
+            else if (createMaterialDTO.Category.Length > 50)
+            {
+                errors["category"] = "Category cannot exceed 50 characters";
+            }
+
+            // Validate Unit
+            if (string.IsNullOrEmpty(createMaterialDTO.Unit))
+            {
+                errors["unit"] = "Unit cannot be empty";
+            }
+            else if (createMaterialDTO.Unit.Length > 50)
+            {
+                errors["unit"] = "Unit cannot exceed 50 characters";
+            }
+
+            // Return validation errors if any
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+
             var material = new Material
             {
                 Name = createMaterialDTO.Name,
                 Category = createMaterialDTO.Category,
                 Unit = createMaterialDTO.Unit
             };
+
             var createdMaterial = await _materialService.CreateMaterialAsync(material);
             return CreatedAtAction(nameof(GetMaterialById), new { id = createdMaterial.MaterialId }, new MaterialAllDTO
             {
@@ -83,10 +140,57 @@ namespace EHM_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMaterial(int id, UpdateMaterialDTO updateMaterialDTO)
         {
+            if (id <= 0)
+            {
+                return BadRequest(new { message = "ID must be greater than 0" });
+            }
+
+            var errors = new Dictionary<string, string>();
+
+            // Trim input values
+            updateMaterialDTO.Name = updateMaterialDTO.Name?.Trim();
+            updateMaterialDTO.Category = updateMaterialDTO.Category?.Trim();
+            updateMaterialDTO.Unit = updateMaterialDTO.Unit?.Trim();
+
+            // Validate Name
+            if (string.IsNullOrEmpty(updateMaterialDTO.Name))
+            {
+                errors["name"] = "Name cannot be empty";
+            }
+            else if (updateMaterialDTO.Name.Length > 100)
+            {
+                errors["name"] = "Name cannot exceed 100 characters";
+            }
+
+            // Validate Category
+            if (string.IsNullOrEmpty(updateMaterialDTO.Category))
+            {
+                errors["category"] = "Category cannot be empty";
+            }
+            else if (updateMaterialDTO.Category.Length > 50)
+            {
+                errors["category"] = "Category cannot exceed 50 characters";
+            }
+
+            // Validate Unit
+            if (string.IsNullOrEmpty(updateMaterialDTO.Unit))
+            {
+                errors["unit"] = "Unit cannot be empty";
+            }
+            else if (updateMaterialDTO.Unit.Length > 50)
+            {
+                errors["unit"] = "Unit cannot exceed 50 characters";
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+
             var existingMaterial = await _materialService.GetMaterialByIdAsync(id);
             if (existingMaterial == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Material not found" });
             }
 
             existingMaterial.Name = updateMaterialDTO.Name;
@@ -100,10 +204,15 @@ namespace EHM_API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMaterial(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest(new { message = "ID must be greater than 0" });
+            }
+
             var existingMaterial = await _materialService.GetMaterialByIdAsync(id);
             if (existingMaterial == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Material not found" });
             }
 
             await _materialService.DeleteMaterialAsync(id);
