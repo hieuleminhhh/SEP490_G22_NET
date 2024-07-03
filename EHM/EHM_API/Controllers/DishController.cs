@@ -128,8 +128,17 @@ namespace EHM_API.Controllers
                 }
             }
 
+			if (createDishDTO.DiscountId.HasValue)
+			{
+				var discountExists = await _dishService.DiscountExistsAsync(createDishDTO.DiscountId.Value);
+				if (!discountExists)
+				{
+					errors["discountId"] = "Mã giảm giá không tồn tại.";
+				}
+			}
 
-            if (errors.Any())
+
+			if (errors.Any())
             {
                 return BadRequest(errors);
             }

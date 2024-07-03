@@ -18,10 +18,12 @@ namespace EHM_API.Controllers
 	public class ComboController : ControllerBase
 	{
 		private readonly IComboService _comboService;
+		private readonly IDishService _dishService;
 
-		public ComboController(IComboService comboService)
+		public ComboController(IComboService comboService, IDishService dishService)
 		{
 			_comboService = comboService;
+			_dishService = dishService;
 		}
 
 		[HttpGet]
@@ -376,9 +378,15 @@ namespace EHM_API.Controllers
             {
                 errors["comboId"] = "ID combo không hợp lệ";
                 return BadRequest(errors);
-            }
+			}  
+			else if (!await _comboService.ComboExistsAsync(comboId))
+			{
+				errors["comboId"] = "Combo không tồn tại";
+				return BadRequest(errors);
+			}
 
-            if (string.IsNullOrEmpty(updateComboWithDishesDTO.NameCombo))
+
+			if (string.IsNullOrEmpty(updateComboWithDishesDTO.NameCombo))
             {
                 errors["nameCombo"] = "Tên combo là bắt buộc";
             }
@@ -420,8 +428,19 @@ namespace EHM_API.Controllers
             {
                 errors["dish"] = "Thông tin món ăn là bắt buộc";
             }
+			else
+			{
+				foreach (var dishId in updateComboWithDishesDTO.DishIds)
+				{
+					if (!await _dishService.DishExistsAsync(dishId))
+					{
+						errors["dish"] = $"Món ăn với ID {dishId} không tồn tại.";
+						break;
+					}
+				}
+			}
 
-            if (errors.Any())
+			if (errors.Any())
             {
                 return BadRequest(errors);
             }
