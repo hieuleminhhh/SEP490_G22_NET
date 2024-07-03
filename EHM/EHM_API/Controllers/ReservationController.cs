@@ -5,6 +5,7 @@ using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
@@ -14,10 +15,14 @@ namespace EHM_API.Controllers
 	public class ReservationsController : ControllerBase
 	{
 		private readonly IReservationService _service;
+		private readonly IDishService _dishService;
+		private readonly IComboService _comboService;
 
-		public ReservationsController(IReservationService service)
+		public ReservationsController(IReservationService service, IDishService dishService, IComboService comboService)
 		{
 			_service = service;
+			_dishService = dishService;
+			_comboService = comboService;
 		}
 
 		[HttpGet]
@@ -27,9 +32,12 @@ namespace EHM_API.Controllers
 			return Ok(reservations);
 		}
 
+		//Create Reservation
 		[HttpPost("create")]
 		public async Task<IActionResult> CreateReservation(CreateReservationDTO createDto)
 		{
+			var errors = new Dictionary<string, string>();
+
 			if (createDto == null)
 			{
 				return BadRequest(new { message = "Dữ liệu đặt bàn không hợp lệ." });
@@ -37,24 +45,111 @@ namespace EHM_API.Controllers
 
 			if (string.IsNullOrWhiteSpace(createDto.GuestPhone))
 			{
-				return BadRequest(new { message = "Số điện thoại khách hàng là bắt buộc." });
+				errors["guestPhone"] = "Số điện thoại khách hàng là bắt buộc.";
+			}
+			else if (!Regex.IsMatch(createDto.GuestPhone, @"^\d{10,15}$"))
+			{
+				errors["guestPhone"] = "Số điện thoại không hợp lệ.";
+			}
+
+			if (!string.IsNullOrWhiteSpace(createDto.Email) && !Regex.IsMatch(createDto.Email, @"^[\w\.-]+@[\w\.-]+\.\w+$"))
+			{
+				errors["email"] = "Email không hợp lệ.";
+			}
+
+			if (string.IsNullOrWhiteSpace(createDto.ConsigneeName))
+			{
+				errors["consigneeName"] = "Tên khách hàng là bắt buộc.";
+			}
+			else if (!Regex.IsMatch(createDto.ConsigneeName, @"^[\p{L}\p{M}' \.-]+$"))
+			{
+				errors["consigneeName"] = "Tên khách hàng không hợp lệ.";
+			}
+
+			if (createDto.ReservationTime == null)
+			{
+				errors["reservationTime"] = "Thời gian đặt bàn là bắt buộc.";
+			}
+			else if (createDto.ReservationTime <= DateTime.Now)
+			{
+				errors["reservationTime"] = "Thời gian đặt bàn không hợp lệ.";
+			}
+
+			if (createDto.GuestNumber == null)
+			{
+				errors["guestNumber"] = "Số lượng khách là bắt buộc.";
 			}
 			if (createDto.GuestNumber <= 0)
 			{
-				return BadRequest(new { message = "Số lượng khách phải lớn hơn 0." });
+				errors["guestNumber"] = "Số lượng khách phải lớn hơn 0.";
+			}
+
+			if (createDto.TotalAmount == null || createDto.TotalAmount < 0)
+			{
+				errors["totalAmount"] = "Tổng tiền không hợp lệ.";
+			}
+
+			if (createDto.Deposits < 0)
+			{
+				errors["deposits"] = "Tiền đặt cọc không hợp lệ.";
+			}
+
+			if (createDto.OrderDetails != null)
+			{
+				foreach (var detail in createDto.OrderDetails)
+				{
+					if (detail.Quantity <= 0)
+					{
+						errors["quantity"] = "Số lượng không hợp lệ.";
+					}
+					if (detail.UnitPrice == null || detail.UnitPrice < 0)
+					{
+						errors["unitPrice"] = "Giá tiền không hợp lệ.";
+					}
+
+					bool isDishIdValid = detail.DishId != null && detail.DishId > 0;
+					bool isComboIdValid = detail.ComboId != null && detail.ComboId > 0;
+
+					if (isDishIdValid && isComboIdValid)
+					{
+						errors["dishOrCombo"] = "Chỉ được chọn một trong hai: Món ăn hoặc Combo, không phải cả hai.";
+					}
+					else if (!isDishIdValid && !isComboIdValid)
+					{
+						errors["dishOrCombo"] = "Món ăn hoặc combo là bắt buộc.";
+					}
+					else
+					{
+						if (isDishIdValid && !await _dishService.DishExistsAsync(detail.DishId.Value))
+						{
+							errors["dishId"] = $"Món ăn với ID {detail.DishId} không tồn tại.";
+						}
+
+						if (isComboIdValid && !await _comboService.ComboExistsAsync(detail.ComboId.Value))
+						{
+							errors["comboId"] = $"Combo với ID {detail.ComboId} không tồn tại.";
+						}
+					}
+				}
+			}
+
+
+			if (errors.Any())
+			{
+				return BadRequest(errors);
 			}
 
 			try
 			{
 				await _service.CreateReservationAsync(createDto);
-
-				return Ok(new { Message = "Đặt bàn thành công." });
+				return Ok(new { message = "Đặt bàn thành công." });
 			}
 			catch (Exception ex)
 			{
 				return StatusCode(500, new { message = "Đã xảy ra lỗi khi tạo đặt bàn. Vui lòng thử lại sau." });
 			}
 		}
+
 
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ReservationDetailDTO>> GetReservationDetail(int id)

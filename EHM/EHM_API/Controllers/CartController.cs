@@ -74,6 +74,7 @@ namespace EHM_API.Controllers
 			return Ok("Cart cleared successfully.");
 		}
 
+
 		[HttpPost("checkout")]
 		public async Task<IActionResult> Checkout([FromBody] CheckoutDTO checkoutDTO)
 		{
