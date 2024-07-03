@@ -27,6 +27,7 @@ namespace EHM_API.Repositories
 				.ToListAsync();
 		}
 
+
 		//danh sach ban cua order
 		public async Task<IEnumerable<Order>> GetOrdersWithTablesAsync()
 		{

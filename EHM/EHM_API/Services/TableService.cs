@@ -29,41 +29,56 @@ namespace EHM_API.Services
 		{
 			var tables = await _repository.GetAvailableTablesByCapacityAsync(guestNumber);
 
-			// Lấy bàn có sức chứa đơn >= guestNumber
-			var singleTables = tables.Where(t => t.Capacity >= guestNumber).ToList();
+			var groupedTables = tables.GroupBy(t => t.Floor);
 
-			if (!singleTables.Any())
+			var results = new List<FindTableDTO>();
+
+			foreach (var group in groupedTables)
 			{
-				// Tìm các tổ hợp bàn có sức chứa >= guestNumber
-				var combinedTables = FindCombination(tables.ToList(), guestNumber);
+				var singleTables = group.Where(t => t.Capacity >= guestNumber).ToList();
 
-				// Nếu tìm được tổ hợp phù hợp
+				if (singleTables.Any())
+				{
+					results.AddRange(_mapper.Map<List<FindTableDTO>>(singleTables));
+				}
+
+				var combinedTables = FindCombination(group.ToList(), guestNumber);
+
 				if (combinedTables.Any())
 				{
-					var combinedResults = combinedTables.Select(combination => new FindTableDTO
-					{
-						Capacity = combination.Sum(t => t.Capacity),
-						CombinedTables = _mapper.Map<List<FindTableDTO>>(combination)
-					}).ToList();
+					var combinedResults = combinedTables
+						.Where(combination => combination.Count > 1)
+						.Select(combination => new FindTableDTO
+						{
+							Capacity = combination.Sum(t => t.Capacity),
+							Floor = combination.First().Floor,
+							CombinedTables = _mapper.Map<List<FindTableDTO>>(combination)
+						}).ToList();
 
-					return combinedResults;
+					results.AddRange(combinedResults);
 				}
 			}
 
-			return _mapper.Map<IEnumerable<FindTableDTO>>(singleTables);
+			return results;
 		}
 
 		private List<List<Table>> FindCombination(List<Table> tables, int guestNumber)
 		{
 			var results = new List<List<Table>>();
 			FindCombinationRecursive(tables, guestNumber, new List<Table>(), 0, results);
-			return results.OrderBy(r => r.Sum(t => t.Capacity ?? 0)).ToList();
+
+			return results
+				.Where(r => r.Sum(t => t.Capacity ?? 0) >= guestNumber && r.Sum(t => t.Capacity ?? 0) <= guestNumber + 2)
+				.OrderBy(r => r.Sum(t => t.Capacity ?? 0))
+				.ToList();
 		}
 
 		private void FindCombinationRecursive(List<Table> tables, int targetCapacity, List<Table> currentCombination, int startIndex, List<List<Table>> results)
 		{
 			var currentCapacity = currentCombination.Sum(t => t.Capacity ?? 0);
-			if (currentCapacity >= targetCapacity)
+			var currentFloor = currentCombination.Any() ? currentCombination[0].Floor : tables[startIndex].Floor;
+
+			if (currentCapacity >= targetCapacity && currentCapacity <= targetCapacity + 2)
 			{
 				results.Add(new List<Table>(currentCombination));
 				return;
@@ -71,10 +86,18 @@ namespace EHM_API.Services
 
 			for (int i = startIndex; i < tables.Count; i++)
 			{
-				currentCombination.Add(tables[i]);
+				var table = tables[i];
+
+				if (currentCombination.Any() && currentCombination[0].Floor != table.Floor)
+				{
+					continue;
+				}
+
+				currentCombination.Add(table);
 				FindCombinationRecursive(tables, targetCapacity, currentCombination, i + 1, results);
 				currentCombination.RemoveAt(currentCombination.Count - 1);
 			}
 		}
+
 	}
 }

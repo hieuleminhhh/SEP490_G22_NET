@@ -18,6 +18,6 @@ namespace EHM_API.Repositories
 		Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status);
 		Task<int> GetTotalTablesAsync();
 
-
+		Task<IEnumerable<Reservation>> SearchReservationsAsync(string? guestNameOrPhone);
 	}
 }
