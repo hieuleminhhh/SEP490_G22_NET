@@ -39,8 +39,10 @@ namespace EHM_API.Repositories
         }
         public async Task<IEnumerable<Address>> GetListAddress()
         {
-            var addresses = await _context.Addresses.ToListAsync();
-            return addresses;
+			var addresses = await _context.Addresses
+			.Where(a => a.GuestAddress == "Ăn tại quán")
+			.ToListAsync();
+			return addresses;
         }
 
 		public async Task<Address> GetAddressAsync(string guestAddress, string consigneeName, string guestPhone)
