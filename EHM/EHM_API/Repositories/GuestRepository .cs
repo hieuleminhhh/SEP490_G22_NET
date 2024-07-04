@@ -39,8 +39,10 @@ namespace EHM_API.Repositories
         }
         public async Task<IEnumerable<Address>> GetListAddress()
         {
-            var addresses = await _context.Addresses.ToListAsync();
-            return addresses;
+			var addresses = await _context.Addresses
+			.Where(a => a.GuestAddress == "Ăn tại quán")
+			.ToListAsync();
+			return addresses;
         }
 
 		public async Task<Address> GetAddressAsync(string guestAddress, string consigneeName, string guestPhone)
@@ -51,11 +53,38 @@ namespace EHM_API.Repositories
 				a.GuestPhone == guestPhone);
 		}
 
-		//Create Guest
 		public async Task AddAddressAsync(Address address)
 		{
 			_context.Addresses.Add(address);
 			await _context.SaveChangesAsync();
+		}
+
+		public async Task<Guest> AddGuestAndAddressAsync(Guest guest, Address address)
+		{
+			var existingGuest = await GetGuestByPhoneAsync(guest.GuestPhone);
+			if (existingGuest == null)
+			{
+				_context.Guests.Add(guest);
+				await _context.SaveChangesAsync();
+			}
+			else
+			{
+				guest = existingGuest;
+			}
+
+			address.GuestPhoneNavigation = guest;
+			_context.Addresses.Add(address);
+			await _context.SaveChangesAsync();
+
+			return guest;
+		}
+
+		public async Task<bool> GuestAndAddressExistsAsync(string guestAddress, string consigneeName, string guestPhone)
+		{
+			return await _context.Addresses.AnyAsync(a =>
+				a.GuestAddress == guestAddress &&
+				a.ConsigneeName == consigneeName &&
+				a.GuestPhone == guestPhone);
 		}
 	}
 }

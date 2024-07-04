@@ -164,7 +164,7 @@ namespace EHM_API.Repositories
             var totalDishes = await query.CountAsync();
 
             var dishes = await query
-                .Include(d => d.Category)
+                .Include(d => d.Category).Include(d => d.Discount)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -174,13 +174,14 @@ namespace EHM_API.Repositories
                 DishId = d.DishId,
                 ItemName = d.ItemName,
                 ItemDescription = d.ItemDescription,
-                DiscountedPrice = d.Discount?.DiscountAmount,
                 Price = d.Price,
                 ImageUrl = d.ImageUrl,
                 CategoryId = d.CategoryId,
                 CategoryName = d.Category?.CategoryName,
                 IsActive = d.IsActive,
                 DiscountId = d.DishId,
+                DiscountedPrice = d.Price-(d.Price*d.Discount?.DiscountAmount/100),
+                DiscountPercentage = d.Discount?.DiscountAmount
 
             }).ToList();
 
