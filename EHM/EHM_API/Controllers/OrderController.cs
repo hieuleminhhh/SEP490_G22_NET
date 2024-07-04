@@ -210,7 +210,7 @@ namespace EHM_API.Controllers
         {
             if (updateOrder == null)
             {
-                return BadRequest(new { message = "Invalid data" });
+                return BadRequest(new { message = "Dữ liệu không hợp lệ" });
             }
 
             var existingOrder = await _orderService.GetOrderByIdAsync(orderId);

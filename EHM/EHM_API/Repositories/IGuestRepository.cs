@@ -14,5 +14,9 @@ namespace EHM_API.Repositories
 
 		Task AddAddressAsync(Address address);
         Task<Address> GetAddressAsync(string guestAddress, string consigneeName, string guestPhone);
+
+        Task<Guest> AddGuestAndAddressAsync(Guest guest, Address address);
+
+        Task<bool> GuestAndAddressExistsAsync(string guestAddress, string consigneeName, string guestPhone);
 	}
 }
