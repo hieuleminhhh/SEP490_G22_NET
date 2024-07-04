@@ -111,10 +111,9 @@ namespace EHM_API.Repositories
 		}
 
 		public async Task<Address> GetAddressByGuestPhoneAsync(string guestPhone)
-{
-    return await _context.Addresses
-        .FirstOrDefaultAsync(a => a.GuestPhone == guestPhone);
-}
+		{
+			return await _context.Addresses.FirstOrDefaultAsync(a => a.GuestPhone == guestPhone);
+		}
 
 
 		public async Task<IEnumerable<Reservation>> GetReservationsByStatus(int? status)
@@ -168,9 +167,9 @@ namespace EHM_API.Repositories
 				var searchValue = guestNameOrPhone.ToLower();
 
 				query = query.Where(r =>
-					r.Address.GuestPhone.ToLower().Contains(searchValue) ||
-					r.Address.ConsigneeName.ToLower().Contains(searchValue)
-				);
+			 (r.Address.GuestPhone != null && r.Address.GuestPhone.ToLower().Contains(searchValue)) ||
+			 (r.Address.ConsigneeName != null && r.Address.ConsigneeName.ToLower().Contains(searchValue))
+		 );
 			}
 			return await query
 				  .Include(r => r.Address.GuestPhoneNavigation)
