@@ -172,19 +172,17 @@ namespace EHM_API.Repositories
 					r.Address.ConsigneeName.ToLower().Contains(searchValue)
 				);
 			}
-
 			return await query
-				.Include(r => r.Address.GuestPhoneNavigation)
-				.Include(r => r.Order)
-					.ThenInclude(o => o.OrderDetails)
-						.ThenInclude(od => od.Dish)
-				.Include(r => r.Order)
-					.ThenInclude(o => o.OrderDetails)
-						.ThenInclude(od => od.Combo)
-				.Include(r => r.Order.Address)
-				.Include(r => r.TableReservations)
-					.ThenInclude(tr => tr.Table)
-				.ToListAsync();
+				  .Include(r => r.Address.GuestPhoneNavigation)
+				  .Include(r => r.Order)
+					  .ThenInclude(o => o.OrderDetails)
+						  .ThenInclude(od => od.Dish)
+				  .Include(r => r.Order)
+					  .ThenInclude(o => o.OrderDetails)
+						  .ThenInclude(od => od.Combo)
+				  .Include(r => r.TableReservations)
+					  .ThenInclude(tr => tr.Table)
+				  .ToListAsync();
 		}
 
 	}

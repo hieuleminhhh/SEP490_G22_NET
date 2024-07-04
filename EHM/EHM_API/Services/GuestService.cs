@@ -53,67 +53,49 @@ namespace EHM_API.Services
 		{
 			return await _guestRepository.GuestPhoneExistsAsync(guestPhone);
 		}
-        public async Task<IEnumerable<GuestAddressInfoDTO>> GetAllAddress()
-        {
-            var address = await _guestRepository.GetListAddress();
-            var addressDtos = _mapper.Map<IEnumerable<GuestAddressInfoDTO>>(address);
-            return addressDtos;
-        }
-
+		public async Task<IEnumerable<GuestAddressInfoDTO>> GetAllAddress()
+		{
+			var address = await _guestRepository.GetListAddress();
+			var addressDtos = _mapper.Map<IEnumerable<GuestAddressInfoDTO>>(address);
+			return addressDtos;
+		}
 
 		public async Task<GuestAddressInfoDTO> CreateGuestAndAddressAsync(CreateGuestDTO createGuestDTO)
 		{
-			Guest guest = null;
+			var exists = await _guestRepository.GuestAndAddressExistsAsync(createGuestDTO.GuestAddress, createGuestDTO.ConsigneeName, createGuestDTO.GuestPhone);
 
-			if (!string.IsNullOrWhiteSpace(createGuestDTO.GuestPhone))
+			if (exists)
 			{
-				guest = await _guestRepository.GetGuestByPhoneAsync(createGuestDTO.GuestPhone);
-				if (guest == null)
-				{
-					guest = new Guest
-					{
-						GuestPhone = createGuestDTO.GuestPhone,
-						Email = createGuestDTO.Email
-					};
-					await _guestRepository.AddAsync(guest);
-				}
-				else
-				{
-					guest.Email = createGuestDTO.Email;
-				}
+				throw new InvalidOperationException("Thông tin khách hàng và địa chỉ đã tồn tại.");
 			}
 
-			var existingAddress = await _guestRepository.GetAddressAsync(
-				createGuestDTO.GuestAddress,
-				createGuestDTO.ConsigneeName,
-				createGuestDTO.GuestPhone);
-
-			if (existingAddress == null)
+			var guest = new Guest
 			{
-				var address = new Address
-				{
-					GuestAddress = createGuestDTO.GuestAddress,
-					ConsigneeName = createGuestDTO.ConsigneeName,
-					GuestPhone = createGuestDTO.GuestPhone,
-					GuestPhoneNavigation = guest
-				};
+				GuestPhone = createGuestDTO.GuestPhone,
+				Email = createGuestDTO.Email
+			};
 
-				await _guestRepository.AddAddressAsync(address);
-
-				var guestAddressInfoDTO = _mapper.Map<GuestAddressInfoDTO>(address);
-
-				if (guest != null)
-				{
-					guestAddressInfoDTO.Email = guest.Email;
-				}
-
-				return guestAddressInfoDTO;
-			}
-			else
+			var address = new Address
 			{
-				return null;
-			}
+				GuestAddress = createGuestDTO.GuestAddress,
+				ConsigneeName = createGuestDTO.ConsigneeName,
+				GuestPhone = createGuestDTO.GuestPhone
+			};
+
+			var createdGuest = await _guestRepository.AddGuestAndAddressAsync(guest, address);
+
+			var guestAddressInfoDTO = new GuestAddressInfoDTO
+			{
+				GuestPhone = createdGuest.GuestPhone,
+				Email = createdGuest.Email,
+				GuestAddress = address.GuestAddress,
+				ConsigneeName = address.ConsigneeName
+			};
+
+			return guestAddressInfoDTO;
 		}
+
+
 
 
 	}

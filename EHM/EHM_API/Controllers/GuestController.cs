@@ -2,6 +2,7 @@
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace EHM_API.Controllers
 {
@@ -51,19 +52,37 @@ namespace EHM_API.Controllers
 		[HttpPost("CreateGuest")]
 		public async Task<IActionResult> CreateGuest(CreateGuestDTO createGuestDTO)
 		{
+			var errors = new Dictionary<string, string>();
+
+
+			if (string.IsNullOrEmpty(createGuestDTO.GuestPhone))
+			{
+				errors["phone"] = "Số điện thoại không được để trống.";
+			}
+			else if (!Regex.IsMatch(createGuestDTO.GuestPhone, @"^[0-9]+$"))
+			{
+				errors["phone"] = "Số điện thoại không hợp lệ.";
+			}
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
 			try
 			{
 				var guestAddressInfoDTO = await _guestService.CreateGuestAndAddressAsync(createGuestDTO);
 
-				if (guestAddressInfoDTO == null)
-				{
-					return BadRequest(new { message = "Thông tin khách hàng đã tồn tại." });
-				}
-
-				return Ok(new { message = "Thông tin khách hàng đã được tạo thành công." });
+				return Ok(new { message = "Thông tin khách hàng đã được tạo thành công.", data = guestAddressInfoDTO });
+			}
+			catch (InvalidOperationException ex)
+			{
+				return Conflict(new { message = ex.Message });
 			}
 			catch (Exception ex)
 			{
+				if (ex.Message.Contains("Thông tin khách hàng và địa chỉ đã tồn tại"))
+				{
+					return Conflict(new { message = "Thông tin khách hàng đã tồn tại." });
+				}
 				return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu của bạn." });
 			}
 		}
