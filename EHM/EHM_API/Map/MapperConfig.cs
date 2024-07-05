@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EHM_API.DTOs.AccountDTO;
 using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.CategoryDTO;
 using EHM_API.DTOs.CategoryDTO.Guest;
@@ -419,6 +420,7 @@ namespace EHM_API.Map
 						   opt => opt.MapFrom(src => src.NameCombo));
 			//Het search
 
+			CreateMap<CreateAccountDTO, Account>();
 
 		}
 
