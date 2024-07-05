@@ -19,5 +19,11 @@ namespace EHM_API.Repositories
 		Task<int> GetTotalTablesAsync();
 
 		Task<IEnumerable<Reservation>> SearchReservationsAsync(string? guestNameOrPhone);
+
+		Task<Reservation?> GetReservationByIdAsync(int reservationId);
+		Task<List<Table>> GetAllTablesAsync();
+
+		Task<List<(Table, DateTime?)>> GetTablesWithCurrentDayReservationsAsync(int reservationId);
+		Task<List<(Table, DateTime?)>> GetTablesByReservationIdAsync(int reservationId);
 	}
 }

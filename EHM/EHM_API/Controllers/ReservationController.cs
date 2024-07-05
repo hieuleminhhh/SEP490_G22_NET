@@ -242,5 +242,18 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
 			}
 		}
+
+
+		[HttpGet("check-time/{reservationId}")]
+		public async Task<IActionResult> GetReservationTime(int reservationId)
+		{
+			var result = await _service.GetReservationTimeAsync(reservationId);
+			if (result == null)
+			{
+				return NotFound(new { message = "Không tìm thấy đặt bàn" });
+			}
+				
+			return Ok(result);
+		}
 	}
 }
