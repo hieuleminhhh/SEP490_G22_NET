@@ -3,6 +3,7 @@ using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace EHM_API.Repositories
@@ -111,10 +112,9 @@ namespace EHM_API.Repositories
 		}
 
 		public async Task<Address> GetAddressByGuestPhoneAsync(string guestPhone)
-{
-    return await _context.Addresses
-        .FirstOrDefaultAsync(a => a.GuestPhone == guestPhone);
-}
+		{
+			return await _context.Addresses.FirstOrDefaultAsync(a => a.GuestPhone == guestPhone);
+		}
 
 
 		public async Task<IEnumerable<Reservation>> GetReservationsByStatus(int? status)
@@ -168,22 +168,26 @@ namespace EHM_API.Repositories
 				var searchValue = guestNameOrPhone.ToLower();
 
 				query = query.Where(r =>
-					r.Address.GuestPhone.ToLower().Contains(searchValue) ||
-					r.Address.ConsigneeName.ToLower().Contains(searchValue)
+					EF.Functions.Like(EF.Functions.Collate(r.Address.GuestPhone, "SQL_Latin1_General_CP1_CI_AS"), $"%{searchValue}%") ||
+					EF.Functions.Like(EF.Functions.Collate(r.Address.ConsigneeName, "SQL_Latin1_General_CP1_CI_AS"), $"%{searchValue}%")
 				);
 			}
+
 			return await query
-				  .Include(r => r.Address.GuestPhoneNavigation)
-				  .Include(r => r.Order)
-					  .ThenInclude(o => o.OrderDetails)
-						  .ThenInclude(od => od.Dish)
-				  .Include(r => r.Order)
-					  .ThenInclude(o => o.OrderDetails)
-						  .ThenInclude(od => od.Combo)
-				  .Include(r => r.TableReservations)
-					  .ThenInclude(tr => tr.Table)
-				  .ToListAsync();
+				.Include(r => r.Address)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Dish)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Combo)
+				.Include(r => r.TableReservations)
+					.ThenInclude(tr => tr.Table)
+				.ToListAsync();
 		}
+
+
+
 
 	}
 }
