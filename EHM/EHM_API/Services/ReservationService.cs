@@ -213,5 +213,42 @@ namespace EHM_API.Services
 			return _mapper.Map<IEnumerable<ReservationSearchDTO>>(reservations);
 		}
 
+		public async Task<CheckTimeReservationDTO?> GetReservationTimeAsync(int reservationId)
+		{
+			var reservation = await _repository.GetReservationByIdAsync(reservationId);
+
+			if (reservation == null)
+			{
+				return null;
+			}
+
+			List<(Table, DateTime?)> tablesWithCurrentDayReservations = await _repository.GetTablesWithCurrentDayReservationsAsync(reservationId);
+			List<Table> allTables = await _repository.GetAllTablesAsync();
+			List<(Table, DateTime?)> tablesByReservation = await _repository.GetTablesByReservationIdAsync(reservationId);
+
+			var todayTables = tablesWithCurrentDayReservations.Select(t => new CheckTimeTableDTO
+			{
+				TableId = t.Item1.TableId,
+				Status = t.Item1.Status,
+				Capacity = t.Item1.Capacity,
+				Floor = t.Item1.Floor,
+				ReservationTime = t.Item2
+			}).ToList();
+
+			return new CheckTimeReservationDTO
+			{
+				ReservationTime = reservation.ReservationTime,
+				CurrentDayReservationTables = todayTables,
+				AllTables = allTables.Select(t => new CheckTimeTableDTO
+				{
+					TableId = t.TableId,
+					Status = t.Status,
+					Capacity = t.Capacity,
+					Floor = t.Floor
+				}).ToList()
+			};
+		}
+
+
 	}
 }
