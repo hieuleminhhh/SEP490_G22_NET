@@ -35,12 +35,13 @@ namespace EHM_API.Controllers
         public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishes(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
-            [FromQuery] string? search = null)
+            [FromQuery] string? search = null,
+            [FromQuery] string? searchCategory = null)
         {
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;
 
-            var result = await _dishService.GetDishesAsync(search?.Trim(), page, pageSize);
+            var result = await _dishService.GetDishesAsync(search?.Trim(), searchCategory, page, pageSize);
 
             return Ok(result);
         }
