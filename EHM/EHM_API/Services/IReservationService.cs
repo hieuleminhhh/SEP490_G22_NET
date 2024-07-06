@@ -17,7 +17,7 @@ namespace EHM_API.Services
 		Task<IEnumerable<ReservationSearchDTO>> SearchReservationsAsync(string? guestNameOrPhone);
 
 		Task<CheckTimeReservationDTO?> GetReservationTimeAsync(int reservationId);
-
+		Task UpdateReservationAndTableStatusAsync(int reservationId, int tableId, int reservationStatus, int tableStatus);
 
 	}
 }
