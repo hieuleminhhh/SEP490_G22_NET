@@ -40,5 +40,10 @@ namespace EHM_API.Repositories
         {
             return await _context.Tables.FindAsync(tableId);
         }
-	}
+        public async Task UpdateTableAsync(Table table)
+        {
+            _context.Tables.Update(table);
+            await _context.SaveChangesAsync();
+        }
+    }
 }

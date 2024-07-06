@@ -3,6 +3,7 @@ using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace EHM_API.Repositories
@@ -161,27 +162,80 @@ namespace EHM_API.Repositories
 		public async Task<IEnumerable<Reservation>> SearchReservationsAsync(string? guestNameOrPhone)
 		{
 			var query = _context.Reservations.AsQueryable();
-
 			if (!string.IsNullOrWhiteSpace(guestNameOrPhone))
 			{
 				var searchValue = guestNameOrPhone.ToLower();
 
 				query = query.Where(r =>
-			 (r.Address.GuestPhone != null && r.Address.GuestPhone.ToLower().Contains(searchValue)) ||
-			 (r.Address.ConsigneeName != null && r.Address.ConsigneeName.ToLower().Contains(searchValue))
-		 );
+				EF.Functions.Like(EF.Functions.Collate(r.Address.GuestPhone, "SQL_Latin1_General_CP1_CI_AS"), $"%{searchValue}%") ||
+				r.Address.ConsigneeName.Contains(guestNameOrPhone));
 			}
+
+
 			return await query
-				  .Include(r => r.Address.GuestPhoneNavigation)
-				  .Include(r => r.Order)
-					  .ThenInclude(o => o.OrderDetails)
-						  .ThenInclude(od => od.Dish)
-				  .Include(r => r.Order)
-					  .ThenInclude(o => o.OrderDetails)
-						  .ThenInclude(od => od.Combo)
-				  .Include(r => r.TableReservations)
-					  .ThenInclude(tr => tr.Table)
-				  .ToListAsync();
+				.Include(r => r.Address)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Dish)
+				.Include(r => r.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Combo)
+				.Include(r => r.TableReservations)
+					.ThenInclude(tr => tr.Table)
+				.ToListAsync();
+		}
+
+
+		public async Task<Reservation?> GetReservationByIdAsync(int reservationId)
+		{
+			return await _context.Reservations
+				.AsNoTracking()
+				.FirstOrDefaultAsync(r => r.ReservationId == reservationId);
+		}
+		public async Task<List<Table>> GetAllTablesAsync()
+		{
+			return await _context.Tables
+				.AsNoTracking()
+				.ToListAsync();
+		}
+
+
+
+		public async Task<List<(Table, DateTime?)>> GetTablesWithCurrentDayReservationsAsync(int reservationId)
+		{
+			var reservation = await GetReservationByIdAsync(reservationId);
+
+			if (reservation == null || !reservation.ReservationTime.HasValue)
+			{
+				return new List<(Table, DateTime?)>();
+			}
+
+			var reservationDate = reservation.ReservationTime.Value.Date;
+
+			var tables = await _context.TableReservations
+				.Where(tr =>
+					tr.Reservation.Status == 1 &&
+					tr.Reservation.ReservationTime.HasValue &&
+					tr.Reservation.ReservationTime.Value.Date == reservationDate
+				)
+				.Select(tr => new { tr.Table, tr.Reservation.ReservationTime })
+				.AsNoTracking()
+				.ToListAsync();
+
+			return tables.Select(x => (x.Table, x.ReservationTime)).ToList();
+		}
+
+
+
+
+		public async Task<List<(Table, DateTime?)>> GetTablesByReservationIdAsync(int reservationId)
+		{
+			return await _context.TableReservations
+				.Where(tr => tr.ReservationId == reservationId)
+				.Select(tr => new { tr.Table, tr.Reservation.ReservationTime })
+				.AsNoTracking()
+				.ToListAsync()
+				.ContinueWith(task => task.Result.Select(x => (x.Table, x.ReservationTime)).ToList());
 		}
 
 	}

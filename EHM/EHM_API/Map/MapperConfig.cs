@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EHM_API.DTOs.AccountDTO;
 using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.CategoryDTO;
 using EHM_API.DTOs.CategoryDTO.Guest;
@@ -216,8 +217,14 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.Order,
 						   opt => opt.MapFrom(src => src.Order));
 
-			// Map Order to OrderDetailDTO1
-			CreateMap<Order, OrderDetailDTO1>()
+            CreateMap<UpdateStatusReservationTable, Reservation>()
+           .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.ReservationStatus));
+
+            CreateMap<UpdateStatusReservationTable, Table>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
+
+            // Map Order to OrderDetailDTO1
+            CreateMap<Order, OrderDetailDTO1>()
 				.ForMember(dest => dest.OrderId,
 						   opt => opt.MapFrom(src => src.OrderId))
 				.ForMember(dest => dest.OrderDate,
@@ -419,6 +426,7 @@ namespace EHM_API.Map
 						   opt => opt.MapFrom(src => src.NameCombo));
 			//Het search
 
+			CreateMap<CreateAccountDTO, Account>();
 
 		}
 

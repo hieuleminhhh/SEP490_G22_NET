@@ -1,5 +1,21 @@
 [
   {
+    "ContainingType": "EHM_API.Controllers.AccountController",
+    "Method": "CreateAccount",
+    "RelativePath": "api/Account/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountDTO",
+        "Type": "EHM_API.DTOs.AccountDTO.CreateAccountDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EHM_API.Controllers.CartController",
     "Method": "AddToCart",
     "RelativePath": "api/Cart/add",
@@ -1452,6 +1468,22 @@
       {
         "Name": "updateStatusReservationDTO",
         "Type": "EHM_API.DTOs.ReservationDTO.Manager.UpdateStatusReservationDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ReservationsController",
+    "Method": "GetReservationTime",
+    "RelativePath": "api/Reservations/check-time/{reservationId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reservationId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],
