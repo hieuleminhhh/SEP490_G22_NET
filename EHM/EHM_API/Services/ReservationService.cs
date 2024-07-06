@@ -39,7 +39,7 @@ namespace EHM_API.Services
             var reservation = await _repository.GetReservationDetailAsync(reservationId);
             if (reservation == null)
             {
-                throw new KeyNotFoundException("Reservation not found.");
+                throw new KeyNotFoundException("Không tìm thấy đặt bàn này");
             }
 
             reservation.Status = updateStatusReservationDTO.Status;
@@ -62,7 +62,11 @@ namespace EHM_API.Services
 		{
 			var guest = await _repository.GetOrCreateGuest(reservationDTO.GuestPhone, reservationDTO.Email);
 
-			var address = await _repository.GetOrCreateAddress(reservationDTO.GuestPhone, reservationDTO.GuestAddress, reservationDTO.ConsigneeName);
+			var address = await _repository.GetOrCreateAddress(
+				reservationDTO.GuestPhone,
+				reservationDTO.GuestAddress,
+				reservationDTO.ConsigneeName
+			);
 
 			var reservation = new Reservation
 			{
@@ -79,14 +83,6 @@ namespace EHM_API.Services
 
 				foreach (var item in reservationDTO.OrderDetails)
 				{
-					if (!item.DishId.HasValue || item.DishId == 0)
-					{
-						if (!item.ComboId.HasValue || item.ComboId == 0)
-						{
-							continue;
-						}
-					}
-
 					Dish dish = null;
 					Combo combo = null;
 
@@ -95,7 +91,7 @@ namespace EHM_API.Services
 						dish = await _Dishrepository.GetDishByIdAsync(item.DishId.Value);
 						if (dish == null)
 						{
-							throw new KeyNotFoundException($"Dish with ID {item.DishId} not found.");
+							throw new KeyNotFoundException("Món ăn này không tồn tại");
 						}
 					}
 					else if (item.ComboId.HasValue && item.ComboId > 0)
@@ -103,7 +99,7 @@ namespace EHM_API.Services
 						combo = await _Comborepository.GetComboByIdAsync(item.ComboId.Value);
 						if (combo == null)
 						{
-							throw new KeyNotFoundException($"Combo with ID {item.ComboId} not found.");
+							throw new KeyNotFoundException("Combo này không tồn tại");
 						}
 					}
 
@@ -140,6 +136,7 @@ namespace EHM_API.Services
 
 			await _repository.CreateReservationAsync(reservation);
 		}
+
 
 		public async Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status)
 		{
@@ -185,7 +182,7 @@ namespace EHM_API.Services
 
             if (reservation == null)
             {
-                throw new KeyNotFoundException("Reservation not found.");
+                throw new KeyNotFoundException("Không tìm thấy đặt bàn này.");
             }
 
             foreach (var tableId in registerTablesDTO.TableIds)
@@ -194,7 +191,7 @@ namespace EHM_API.Services
 
                 if (table == null)
                 {
-                    throw new KeyNotFoundException($"Table with ID {tableId} not found.");
+                    throw new KeyNotFoundException($"Bàn không tồn tại");
                 }
 
                 var tableReservation = new TableReservation
@@ -215,6 +212,43 @@ namespace EHM_API.Services
 			var reservations = await _repository.SearchReservationsAsync(guestNameOrPhone);
 			return _mapper.Map<IEnumerable<ReservationSearchDTO>>(reservations);
 		}
+
+		public async Task<CheckTimeReservationDTO?> GetReservationTimeAsync(int reservationId)
+		{
+			var reservation = await _repository.GetReservationByIdAsync(reservationId);
+
+			if (reservation == null)
+			{
+				return null;
+			}
+
+			List<(Table, DateTime?)> tablesWithCurrentDayReservations = await _repository.GetTablesWithCurrentDayReservationsAsync(reservationId);
+			List<Table> allTables = await _repository.GetAllTablesAsync();
+			List<(Table, DateTime?)> tablesByReservation = await _repository.GetTablesByReservationIdAsync(reservationId);
+
+			var todayTables = tablesWithCurrentDayReservations.Select(t => new CheckTimeTableDTO
+			{
+				TableId = t.Item1.TableId,
+				Status = t.Item1.Status,
+				Capacity = t.Item1.Capacity,
+				Floor = t.Item1.Floor,
+				ReservationTime = t.Item2
+			}).ToList();
+
+			return new CheckTimeReservationDTO
+			{
+				ReservationTime = reservation.ReservationTime,
+				CurrentDayReservationTables = todayTables,
+				AllTables = allTables.Select(t => new CheckTimeTableDTO
+				{
+					TableId = t.TableId,
+					Status = t.Status,
+					Capacity = t.Capacity,
+					Floor = t.Floor
+				}).ToList()
+			};
+		}
+
 
 	}
 }
