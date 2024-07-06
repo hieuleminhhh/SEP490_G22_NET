@@ -96,9 +96,9 @@ namespace EHM_API.Services
 
 
 
-        public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize)
+        public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize)
         {
-            var pagedDishes = await _dishRepository.GetDishesAsync(search, page, pageSize);
+            var pagedDishes = await _dishRepository.GetDishesAsync(search, categorySearch, page, pageSize);
             var dishDTOs = _mapper.Map<IEnumerable<DishDTOAll>>(pagedDishes.Items);
 
             foreach (var dishDto in dishDTOs)
