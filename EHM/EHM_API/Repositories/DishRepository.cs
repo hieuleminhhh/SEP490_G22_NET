@@ -147,15 +147,10 @@ namespace EHM_API.Repositories
             return query;
         }
 
-		public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize)
-		{
-            var query = _context.Dishes.AsQueryable();
+        public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize)
+        {
 
-            if (!string.IsNullOrEmpty(search))
-            {
-                search = search.ToLower();
-                query = query.Where(d => d.ItemName.ToLower().Contains(search));
-            }
+            var query = _context.Dishes.AsQueryable();
 
 			// Search by category name
 			if (!string.IsNullOrEmpty(categorySearch))
@@ -184,13 +179,13 @@ namespace EHM_API.Repositories
                 CategoryName = d.Category?.CategoryName,
                 IsActive = d.IsActive,
                 DiscountId = d.DishId,
-				DiscountedPrice = d.Price - (d.Price * d.Discount?.DiscountAmount / 100),
-				DiscountPercentage = d.Discount?.DiscountAmount
-
+                DiscountedPrice = d.Price - (d.Price * d.Discount?.DiscountAmount / 100),
+                DiscountPercentage = d.Discount?.DiscountAmount
             }).ToList();
 
             return new PagedResult<DishDTOAll>(dishDTOs, totalDishes, page, pageSize);
         }
+
         public async Task<Dish> GetDishByIdAsync(int dishId)
         {
             return await _context.Dishes.FindAsync(dishId);

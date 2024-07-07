@@ -217,8 +217,14 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.Order,
 						   opt => opt.MapFrom(src => src.Order));
 
-			// Map Order to OrderDetailDTO1
-			CreateMap<Order, OrderDetailDTO1>()
+            CreateMap<UpdateStatusReservationTable, Reservation>()
+           .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.ReservationStatus));
+
+            CreateMap<UpdateStatusReservationTable, Table>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
+
+            // Map Order to OrderDetailDTO1
+            CreateMap<Order, OrderDetailDTO1>()
 				.ForMember(dest => dest.OrderId,
 						   opt => opt.MapFrom(src => src.OrderId))
 				.ForMember(dest => dest.OrderDate,

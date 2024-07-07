@@ -94,8 +94,6 @@ namespace EHM_API.Services
         }
 
 
-
-
 		public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize)
 		{
 			var pagedDishes = await _dishRepository.GetDishesAsync(search, categorySearch, page, pageSize);
