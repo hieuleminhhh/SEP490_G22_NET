@@ -746,6 +746,32 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.DishController",
+    "Method": "SearchDishAndCombo",
+    "RelativePath": "api/Dish/searchDishAndCombo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.DishDTO.Manager.SearchDishAndComboDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.DishController",
     "Method": "GetSortedDishesByCategoryAsync",
     "RelativePath": "api/Dish/sorted-dishes",
     "HttpMethod": "GET",

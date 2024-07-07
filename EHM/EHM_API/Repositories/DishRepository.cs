@@ -215,7 +215,21 @@ namespace EHM_API.Repositories
 			return await _context.Discounts.AnyAsync(d => d.DiscountId == discountId);
 		}
 
+		public async Task<List<Dish>> SearchDishesAsync(string search)
+		{
+			return await _context.Dishes
+				.Where(d => d.ItemName != null && d.ItemName.Contains(search))
+				.AsNoTracking()
+				.ToListAsync();
+		}
 
+		public async Task<List<Combo>> SearchCombosAsync(string search)
+		{
+			return await _context.Combos
+				.Where(c => c.NameCombo != null && c.NameCombo.Contains(search))
+				.AsNoTracking()
+				.ToListAsync();
+		}
 	}
 
 }

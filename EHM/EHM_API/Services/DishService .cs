@@ -126,5 +126,17 @@ namespace EHM_API.Services
 		}
 
 
+		public async Task<SearchDishAndComboDTO> SearchDishAndComboAsync(string search)
+		{
+			var dishes = await _dishRepository.SearchDishesAsync(search);
+			var combos = await _dishRepository.SearchCombosAsync(search);
+
+			return new SearchDishAndComboDTO
+			{
+				Dishes = _mapper.Map<List<SearchDishDTO>>(dishes),
+				Combos = _mapper.Map<List<SearchComboDTO>>(combos)
+			};
+		}
+
 	}
 }

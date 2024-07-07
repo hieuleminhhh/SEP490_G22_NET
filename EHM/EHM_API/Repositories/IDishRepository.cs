@@ -22,6 +22,10 @@ namespace EHM_API.Repositories
         Task<List<Dish>> GetDishesByIdsAsync(List<int> dishIds);
 
 		Task<bool> DiscountExistsAsync(int discountId);
+
+        Task<List<Dish>> SearchDishesAsync(string search);
+        Task<List<Combo>> SearchCombosAsync(string search);
+
 	}
 }
 

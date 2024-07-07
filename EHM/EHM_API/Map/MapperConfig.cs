@@ -422,6 +422,9 @@ namespace EHM_API.Map
 
 			CreateMap<CreateAccountDTO, Account>();
 
+
+			CreateMap<Dish, SearchDishDTO>();
+			CreateMap<Combo, SearchComboDTO>();
 		}
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)

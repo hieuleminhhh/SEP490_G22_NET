@@ -94,13 +94,6 @@ namespace EHM_API.Services
 			return false;
 		}
 
-		/*		public async Task<CreateComboDishDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboDishDTO)
-				{
-					var result = await _comboRepository.CreateComboWithDishesAsync(createComboDishDTO);
-					return result;
-				}
-		*/
-
 		public async Task<IEnumerable<ComboDTO>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder)
 		{
 			var combos = await _comboRepository.GetAllSortedAsync(sortField, sortOrder);

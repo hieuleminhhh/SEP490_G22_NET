@@ -347,5 +347,24 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
+		[HttpGet("searchDishAndCombo")]
+		public async Task<ActionResult<SearchDishAndComboDTO>> SearchDishAndCombo([FromQuery] string search)
+		{
+			if (string.IsNullOrWhiteSpace(search))
+			{
+				return BadRequest("Từ khóa tìm kiếm không được để trống.");
+			}
+
+			var result = await _dishService.SearchDishAndComboAsync(search);
+
+			if (result == null || (result.Dishes.Count == 0 && result.Combos.Count == 0))
+			{
+				return NotFound("Không tìm thấy kết quả nào.");
+			}
+
+			return Ok(result);
+		}
+
 	}
 }
