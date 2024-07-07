@@ -16,12 +16,16 @@ namespace EHM_API.Repositories
 		Task<IEnumerable<Dish>> SearchAsync(string name);
         Task<IEnumerable<Dish>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder);
         Task<IEnumerable<Dish>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder);
-        Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize);
-        Task<Dish> GetDishByIdAsync(int dishId);
+		Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize);
+		Task<Dish> GetDishByIdAsync(int dishId);
         Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive);
         Task<List<Dish>> GetDishesByIdsAsync(List<int> dishIds);
 
 		Task<bool> DiscountExistsAsync(int discountId);
+
+        Task<List<Dish>> SearchDishesAsync(string search);
+        Task<List<Combo>> SearchCombosAsync(string search);
+
 	}
 }
 

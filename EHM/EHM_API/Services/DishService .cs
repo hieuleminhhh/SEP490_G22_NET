@@ -94,12 +94,10 @@ namespace EHM_API.Services
         }
 
 
-
-
-        public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize)
-        {
-            var pagedDishes = await _dishRepository.GetDishesAsync(search, categorySearch, page, pageSize);
-            var dishDTOs = _mapper.Map<IEnumerable<DishDTOAll>>(pagedDishes.Items);
+		public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize)
+		{
+			var pagedDishes = await _dishRepository.GetDishesAsync(search, categorySearch, page, pageSize);
+			var dishDTOs = _mapper.Map<IEnumerable<DishDTOAll>>(pagedDishes.Items);
 
             foreach (var dishDto in dishDTOs)
             {
@@ -125,6 +123,18 @@ namespace EHM_API.Services
 			return await _dishRepository.DiscountExistsAsync(discountId);
 		}
 
+
+		public async Task<SearchDishAndComboDTO> SearchDishAndComboAsync(string search)
+		{
+			var dishes = await _dishRepository.SearchDishesAsync(search);
+			var combos = await _dishRepository.SearchCombosAsync(search);
+
+			return new SearchDishAndComboDTO
+			{
+				Dishes = _mapper.Map<List<SearchDishDTO>>(dishes),
+				Combos = _mapper.Map<List<SearchComboDTO>>(combos)
+			};
+		}
 
 	}
 }
