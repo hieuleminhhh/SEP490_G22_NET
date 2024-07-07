@@ -149,18 +149,23 @@ namespace EHM_API.Repositories
 
         public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize)
         {
-
             var query = _context.Dishes.AsQueryable();
 
-			// Search by category name
-			if (!string.IsNullOrEmpty(categorySearch))
-			{
-				categorySearch = categorySearch.ToLower();
-				query = query.Where(d => d.Category.CategoryName.ToLower().Contains(categorySearch));
-			}
+            // Search by category name
+            if (!string.IsNullOrEmpty(categorySearch))
+            {
+                categorySearch = categorySearch.ToLower();
+                query = query.Where(d => d.Category.CategoryName.ToLower().Contains(categorySearch));
+            }
 
+            // Search by dish name
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower();
+                query = query.Where(d => d.ItemName.ToLower().Contains(search));
+            }
 
-			var totalDishes = await query.CountAsync();
+            var totalDishes = await query.CountAsync();
 
             var dishes = await query
                 .Include(d => d.Category).Include(d => d.Discount)
@@ -185,6 +190,7 @@ namespace EHM_API.Repositories
 
             return new PagedResult<DishDTOAll>(dishDTOs, totalDishes, page, pageSize);
         }
+
 
         public async Task<Dish> GetDishByIdAsync(int dishId)
         {
