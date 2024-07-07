@@ -13,10 +13,14 @@ namespace EHM_API.Controllers
 	public class CartController : ControllerBase
 	{
 		private readonly ICartService _cartService;
+		private readonly IComboService _comboService;
+		private readonly IDishService _dishService;
 
-		public CartController(ICartService cartService)
+		public CartController(ICartService cartService, IComboService comboService, IDishService dishService)
 		{
 			_cartService = cartService;
+			_comboService = comboService;
+			_dishService = dishService;
 		}
 
 		[HttpGet("view")]
@@ -84,51 +88,100 @@ namespace EHM_API.Controllers
 			{
 				errors["checkoutData"] = "Dữ liệu thanh toán là bắt buộc.";
 			}
-
-			if (string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone))
+			else
 			{
-				errors["guestPhone"] = "Số điện thoại khách hàng là bắt buộc.";
-			}
+				if (string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone))
+				{
+					errors["guestPhone"] = "Số điện thoại không được bỏ trống.";
+				}
+				else if (!System.Text.RegularExpressions.Regex.IsMatch(checkoutDTO.GuestPhone, @"^\d{10,15}$"))
+				{
+					errors["guestPhone"] = "Số điện thoại không hợp lệ.";
+				}
 
-			if (string.IsNullOrWhiteSpace(checkoutDTO.GuestAddress))
-			{
-				errors["guestAddress"] = "Địa chỉ khách hàng là bắt buộc.";
-			}
+				if (string.IsNullOrWhiteSpace(checkoutDTO.GuestAddress))
+				{
+					errors["guestAddress"] = "Địa chỉ không được bỏ trống.";
+				}
 
-			if (string.IsNullOrWhiteSpace(checkoutDTO.ConsigneeName))
-			{
-				errors["consigneeName"] = "Tên người nhận là bắt buộc.";
-			}
+				if (string.IsNullOrWhiteSpace(checkoutDTO.ConsigneeName))
+				{
+					errors["consigneeName"] = "Tên người nhận không được bỏ trống.";
+				}
+				else if (!System.Text.RegularExpressions.Regex.IsMatch(checkoutDTO.ConsigneeName, "^[a-zA-Z0-9 ]*$"))
+				{
+					errors["consigneeName"] = "Tên người nhận không hợp lệ.";
+				}
 
-			if (checkoutDTO.OrderDetails == null || !checkoutDTO.OrderDetails.Any())
-			{
-				errors["cartItems"] = "Giỏ hàng không được để trống.";
-			}
+				if (checkoutDTO.OrderDate == null)
+				{
+					errors["orderDate"] = "Ngày đặt hàng không được để trống.";
+				}
+				else if (checkoutDTO.OrderDate < DateTime.UtcNow)
+				{
+					errors["orderDate"] = "Ngày đặt hàng không hợp lệ.";
+				}
 
-			if (checkoutDTO.OrderDate == null)
-			{
-				errors["orderDate"] = "Ngày đặt hàng là bắt buộc.";
-			}
+				if (checkoutDTO.RecevingOrder < DateTime.UtcNow)
+				{
+					errors["receivingDate"] = "Ngày nhận không hợp lệ.";
+				}
 
+				if (checkoutDTO.Deposits < 0)
+				{
+					errors["deposit"] = "Tiền cọc không hợp lệ.";
+				}
+
+				if (checkoutDTO.TotalAmount <= 0)
+				{
+					errors["totalAmount"] = "Tổng tiền không hợp lệ.";
+				}
+
+				if (!string.IsNullOrWhiteSpace(checkoutDTO.Note) && checkoutDTO.Note.Length > 500)
+				{
+					errors["note"] = "Ghi chú không vượt quá 500 ký tự.";
+				}
+
+				else
+				{
+					foreach (var detail in checkoutDTO.OrderDetails)
+					{
+						if (detail.Quantity <= 0)
+						{
+							errors["quantity"] = "Số lượng phải lớn hơn 0.";
+						}
+						if (detail.UnitPrice <= 0)
+						{
+							errors["unitPrice"] = "Giá phải lớn hơn 0.";
+						}
+						if (detail.ComboId != null && !await _comboService.ComboExistsAsync(detail.ComboId.Value))
+						{
+							errors["combo"] = "Combo không tồn tại.";
+						}
+						if (detail.DishId != null && !await _dishService.DishExistsAsync(detail.DishId.Value))
+						{
+							errors["dish"] = "Món ăn không tồn tại.";
+						}
+
+					}
+				}
+			}
 			if (errors.Any())
 			{
 				return BadRequest(errors);
 			}
-
 			try
 			{
 				await _cartService.Checkout(checkoutDTO);
-				_cartService.ClearCart();
+				 _cartService.ClearCart();
 				return Ok(new { message = "Thanh toán thành công." });
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(new Dictionary<string, string>
-				{
-					["error"] = ex.Message
-				});
+				return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.", details = ex.Message });
 			}
 		}
+
 
 
 

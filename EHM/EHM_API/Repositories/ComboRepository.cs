@@ -102,7 +102,7 @@ namespace EHM_API.Repositories
 			var dish = await _context.Dishes.FindAsync(comboDetail.DishId);
 
 			if (combo == null || dish == null)
-				throw new ArgumentException("Combo or Dish does not exist.");
+				throw new ArgumentException("Combo hoặc Món ăn không tồn tại.");
 
 			_context.ComboDetails.Add(comboDetail);
 			await _context.SaveChangesAsync();
@@ -139,7 +139,7 @@ namespace EHM_API.Repositories
 					query = sortOrder == SortOrder.Ascending ? query.OrderBy(c => c.Price) : query.OrderByDescending(c => c.Price);
 					break;
 				default:
-					throw new ArgumentException("Invalid sort field.");
+					throw new ArgumentException("Trường sắp xếp không hợp lệ.");
 			}
 
 			return await query.ToListAsync();

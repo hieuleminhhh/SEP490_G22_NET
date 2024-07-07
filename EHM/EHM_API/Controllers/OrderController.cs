@@ -148,6 +148,7 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
 			}
 		}
+
         [HttpGet("GetListOrder")]
         public async Task<ActionResult<PagedResult<OrderDTO>>> GetListOrders(
      [FromQuery] int page = 1,
