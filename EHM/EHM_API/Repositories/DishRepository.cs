@@ -142,17 +142,13 @@ namespace EHM_API.Repositories
                     query = sortOrder == SortOrder.Ascending ? query.OrderBy(d => d.OrderDetails.Sum(od => od.Quantity)) : query.OrderByDescending(d => d.OrderDetails.Sum(od => od.Quantity));
                     break;
                 default:
-                    throw new ArgumentException("Invalid sort field.");
+                    throw new ArgumentException("Trường sắp xếp không hợp lệ.");
             }
             return query;
         }
 
-        public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, int page, int pageSize)
-        {
-            /*if (!string.IsNullOrEmpty(search) && page != 1)
-            {
-                return await GetDishesAsync(search, 1, pageSize);
-            }*/
+		public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize)
+		{
             var query = _context.Dishes.AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
@@ -161,7 +157,15 @@ namespace EHM_API.Repositories
                 query = query.Where(d => d.ItemName.ToLower().Contains(search));
             }
 
-            var totalDishes = await query.CountAsync();
+			// Search by category name
+			if (!string.IsNullOrEmpty(categorySearch))
+			{
+				categorySearch = categorySearch.ToLower();
+				query = query.Where(d => d.Category.CategoryName.ToLower().Contains(categorySearch));
+			}
+
+
+			var totalDishes = await query.CountAsync();
 
             var dishes = await query
                 .Include(d => d.Category).Include(d => d.Discount)
@@ -180,8 +184,8 @@ namespace EHM_API.Repositories
                 CategoryName = d.Category?.CategoryName,
                 IsActive = d.IsActive,
                 DiscountId = d.DishId,
-                DiscountedPrice = d.Price-(d.Price*d.Discount?.DiscountAmount/100),
-                DiscountPercentage = d.Discount?.DiscountAmount
+				DiscountedPrice = d.Price - (d.Price * d.Discount?.DiscountAmount / 100),
+				DiscountPercentage = d.Discount?.DiscountAmount
 
             }).ToList();
 
