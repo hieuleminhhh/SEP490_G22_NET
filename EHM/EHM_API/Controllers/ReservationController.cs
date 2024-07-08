@@ -296,5 +296,16 @@ namespace EHM_API.Controllers
             }
         }
 
+        [HttpPut("{reservationId}/tables/status")]
+        public async Task<IActionResult> UpdateTableStatuses(int reservationId, [FromBody] UpdateStatusTableByReservation dto)
+        {
+            var result = await _service.UpdateTableStatusesAsync(reservationId, dto.TableStatus);
+            if (!result)
+            {
+                return NotFound($"Reservation with ID {reservationId} not found.");
+            }
+
+            return NoContent();
+        }
     }
 }

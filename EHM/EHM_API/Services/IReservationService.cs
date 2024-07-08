@@ -18,6 +18,6 @@ namespace EHM_API.Services
 
 		Task<CheckTimeReservationDTO?> GetReservationTimeAsync(int reservationId);
 		Task UpdateReservationAndTableStatusAsync(int reservationId, int tableId, int reservationStatus, int tableStatus);
-
-	}
+        Task<bool> UpdateTableStatusesAsync(int reservationId, int newStatus);
+    }
 }
