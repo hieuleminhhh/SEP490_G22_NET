@@ -49,8 +49,7 @@ namespace EHM_API.Controllers
 			}
 			catch (Exception ex)
 			{
-				// Logging chi tiết lỗi
-				Console.Error.WriteLine($"Error in GetAvailableTables: {ex}");
+				Console.Error.WriteLine($"Lỗi: {ex}");
 				return StatusCode(500, new { message = "Đã xảy ra lỗi khi tìm bàn. Vui lòng thử lại sau." });
 			}
 		}
