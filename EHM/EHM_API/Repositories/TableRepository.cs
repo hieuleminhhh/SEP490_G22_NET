@@ -45,5 +45,17 @@ namespace EHM_API.Repositories
             _context.Tables.Update(table);
             await _context.SaveChangesAsync();
         }
+        public async Task<List<Table>> GetListTablesByIdsAsync(List<int> tableIds)
+        {
+            return await _context.Tables
+                                 .Where(t => tableIds.Contains(t.TableId))
+                                 .ToListAsync();
+        }
+
+        public async Task UpdateListTablesAsync(List<Table> tables)
+        {
+            _context.Tables.UpdateRange(tables);
+            await _context.SaveChangesAsync();
+        }
     }
 }
