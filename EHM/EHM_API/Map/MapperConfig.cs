@@ -13,6 +13,7 @@ using EHM_API.DTOs.GuestDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.IngredientDTO.Manager;
 using EHM_API.DTOs.MaterialDTO;
+using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.ReservationDTO.Guest;
@@ -431,7 +432,18 @@ namespace EHM_API.Map
 
 			CreateMap<Dish, SearchDishDTO>();
 			CreateMap<Combo, SearchComboDTO>();
-		}
+
+            CreateMap<OrderDetail, OrderDetailForChefDTO>()
+                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
+                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
+                .ForMember(dest => dest.ItemInComboName, opt => opt.MapFrom(src => src.Combo != null
+                    ? string.Join(", ", src.Combo.ComboDetails.Select(cd => cd.Dish.ItemName))
+                    : null))
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
+            CreateMap<UpdateStatusTableByReservation, Table>()
+                  .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
+        }
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)
 		{
