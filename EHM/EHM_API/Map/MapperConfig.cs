@@ -431,14 +431,11 @@ namespace EHM_API.Map
 
 			// Danh sach mon an and  combo 
 			CreateMap<Dish, SearchDishDTO>()
-				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
-					src.Price.HasValue && src.Discount != null && src.Discount.DiscountAmount.HasValue && src.Discount.DiscountAmount.Value > 0
-					? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount.Value / 100)
-					: src.Price
-				));
-
-
-
+			.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
+					src => src.DiscountId == null ? (decimal?)null :
+						   src.DiscountId == 0 ? src.Price :
+						   src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
+					));
 
 			CreateMap<Combo, SearchComboDTO>();
 
@@ -455,9 +452,6 @@ namespace EHM_API.Map
 			CreateMap<OrderDetail, TableOfOrderDetailDTO>()
 				.ForMember(dest => dest.Dish, opt => opt.MapFrom(src => src.Dish))
 				.ForMember(dest => dest.Combo, opt => opt.MapFrom(src => src.Combo));
-
-			CreateMap<Dish, SearchDishDTO>();
-			CreateMap<Combo, SearchComboDTO>();
 
 			CreateMap<OrderTable, GetTableDTO>()
 				.ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Table.TableId))

@@ -154,8 +154,7 @@
               "RelativeToolTip": "EHM_API\\Repositories\\OrderRepository.cs",
               "ViewState": "AQIAANAAAAAAAAAAAAAQwN8AAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-08T13:23:59.197Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-08T13:23:59.197Z"
             },
             {
               "$type": "Document",
@@ -167,8 +166,7 @@
               "RelativeToolTip": "EHM_API\\Services\\OrderService .cs",
               "ViewState": "AQIAAKUAAAAAAAAAAAAQwLkAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-08T13:24:29.601Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-08T13:24:29.601Z"
             },
             {
               "$type": "Document",
@@ -180,8 +178,7 @@
               "RelativeToolTip": "EHM_API\\Services\\DishService .cs",
               "ViewState": "AQIAAAsAAAAAAAAAAAAAAF8AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-07T07:25:22.009Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-07T07:25:22.009Z"
             },
             {
               "$type": "Document",
@@ -193,8 +190,7 @@
               "RelativeToolTip": "EHM_API\\Repositories\\DishRepository.cs",
               "ViewState": "AQIAAAoAAAAAAAAAAAAAALgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-07T07:23:52.168Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-07T07:23:52.168Z"
             },
             {
               "$type": "Document",
@@ -204,7 +200,7 @@
               "RelativeDocumentMoniker": "EHM_API\\Map\\MapperConfig.cs",
               "ToolTip": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\Map\\MapperConfig.cs",
               "RelativeToolTip": "EHM_API\\Map\\MapperConfig.cs",
-              "ViewState": "AQIAAKEBAAAAAAAAAAAAAK0BAAAqAAAA",
+              "ViewState": "AQIAAKMBAAAAAAAAAAAAALUBAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-08T13:25:32.756Z",
               "EditorCaption": ""
@@ -219,8 +215,7 @@
               "RelativeToolTip": "EHM_API\\DTOs\\TableDTO\\Manager\\FindTableAndGetOrderDTO.cs",
               "ViewState": "AQIAABIAAAAAAAAAAAAAAA0AAAApAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-08T12:50:02.992Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-08T12:50:02.992Z"
             },
             {
               "$type": "Document",
@@ -232,8 +227,7 @@
               "RelativeToolTip": "EHM_API\\DTOs\\DishDTO\\Manager\\SearchDishAndComboDTO.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAnAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-08T14:00:40.072Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-08T14:00:40.072Z"
             },
             {
               "$type": "Document",
@@ -245,8 +239,7 @@
               "RelativeToolTip": "EHM_API\\Models\\Discount.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-08T13:08:43.969Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-08T13:08:43.969Z"
             },
             {
               "$type": "Document",
@@ -258,8 +251,7 @@
               "RelativeToolTip": "EHM_API\\Models\\Dish.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-08T13:08:44.695Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-08T13:08:44.695Z"
             },
             {
               "$type": "Document",
