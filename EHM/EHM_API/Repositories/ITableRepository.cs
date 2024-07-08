@@ -9,6 +9,7 @@ namespace EHM_API.Repositories
 		Task<List<Table>> GetAvailableTablesByCapacityAsync(int capacity);
         Task<Table> GetTableByIdAsync(int tableId);
         Task UpdateTableAsync(Table table);
-
+        Task<List<Table>> GetListTablesByIdsAsync(List<int> tableIds);
+        Task UpdateListTablesAsync(List<Table> tables);
     }
 }
