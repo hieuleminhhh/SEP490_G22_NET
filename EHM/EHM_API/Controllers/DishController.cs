@@ -35,14 +35,15 @@ namespace EHM_API.Controllers
         public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishes(
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10,
-            [FromQuery] string? search = null)
-        {
+            [FromQuery] string? search = null,
+			[FromQuery] string? searchCategory = null)
+		{
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;
 
-            var result = await _dishService.GetDishesAsync(search?.Trim(), page, pageSize);
+			var result = await _dishService.GetDishesAsync(search?.Trim(), searchCategory, page, pageSize);
 
-            return Ok(result);
+			return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -345,6 +346,25 @@ namespace EHM_API.Controllers
 			{
 				return StatusCode(500, new { message = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau." });
 			}
+		}
+
+
+		[HttpGet("searchDishAndCombo")]
+		public async Task<ActionResult<SearchDishAndComboDTO>> SearchDishAndCombo([FromQuery] string search)
+		{
+			if (string.IsNullOrWhiteSpace(search))
+			{
+				return BadRequest("Từ khóa tìm kiếm không được để trống.");
+			}
+
+			var result = await _dishService.SearchDishAndComboAsync(search);
+
+			if (result == null || (result.Dishes.Count == 0 && result.Combos.Count == 0))
+			{
+				return NotFound("Không tìm thấy kết quả nào.");
+			}
+
+			return Ok(result);
 		}
 
 	}

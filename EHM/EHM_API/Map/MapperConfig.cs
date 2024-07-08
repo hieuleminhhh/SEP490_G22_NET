@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EHM_API.DTOs.AccountDTO;
 using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.CategoryDTO;
 using EHM_API.DTOs.CategoryDTO.Guest;
@@ -12,6 +13,7 @@ using EHM_API.DTOs.GuestDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.IngredientDTO.Manager;
 using EHM_API.DTOs.MaterialDTO;
+using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.ReservationDTO.Guest;
@@ -216,8 +218,14 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.Order,
 						   opt => opt.MapFrom(src => src.Order));
 
-			// Map Order to OrderDetailDTO1
-			CreateMap<Order, OrderDetailDTO1>()
+            CreateMap<UpdateStatusReservationTable, Reservation>()
+           .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.ReservationStatus));
+
+            CreateMap<UpdateStatusReservationTable, Table>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
+
+            // Map Order to OrderDetailDTO1
+            CreateMap<Order, OrderDetailDTO1>()
 				.ForMember(dest => dest.OrderId,
 						   opt => opt.MapFrom(src => src.OrderId))
 				.ForMember(dest => dest.OrderDate,
@@ -419,8 +427,23 @@ namespace EHM_API.Map
 						   opt => opt.MapFrom(src => src.NameCombo));
 			//Het search
 
+			CreateMap<CreateAccountDTO, Account>();
 
-		}
+
+			CreateMap<Dish, SearchDishDTO>();
+			CreateMap<Combo, SearchComboDTO>();
+
+            CreateMap<OrderDetail, OrderDetailForChefDTO>()
+                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
+                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
+                .ForMember(dest => dest.ItemInComboName, opt => opt.MapFrom(src => src.Combo != null
+                    ? string.Join(", ", src.Combo.ComboDetails.Select(cd => cd.Dish.ItemName))
+                    : null))
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
+            CreateMap<UpdateStatusTableByReservation, Table>()
+                  .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
+        }
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)
 		{

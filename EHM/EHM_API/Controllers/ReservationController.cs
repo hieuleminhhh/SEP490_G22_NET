@@ -255,5 +255,57 @@ namespace EHM_API.Controllers
 				
 			return Ok(result);
 		}
-	}
+
+        [HttpPut("{reservationId}/table/{tableId}/status")]
+        public async Task<IActionResult> UpdateReservationAndTableStatus(int reservationId, int tableId, [FromBody] UpdateStatusReservationTable updateStatusReservationTable)
+        {
+            var errors = new Dictionary<string, string>();
+
+            if (updateStatusReservationTable == null)
+            {
+                return BadRequest(new { message = "Dữ liệu cập nhật không hợp lệ." });
+            }
+
+            if (reservationId <= 0)
+            {
+                errors["reservationId"] = "ID đặt bàn không hợp lệ.";
+            }
+
+            if (tableId <= 0)
+            {
+                errors["tableId"] = "ID bàn không hợp lệ.";
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+
+            try
+            {
+                await _service.UpdateReservationAndTableStatusAsync(reservationId, tableId, updateStatusReservationTable.ReservationStatus, updateStatusReservationTable.TableStatus);
+                return Ok(new { message = "Cập nhật trạng thái đặt bàn và bàn thành công." });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { message = "Không tìm thấy đặt chỗ hoặc bàn." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Đã xảy ra lỗi khi cập nhật trạng thái. Lỗi: {ex.Message}" });
+            }
+        }
+
+        [HttpPut("{reservationId}/tables/status")]
+        public async Task<IActionResult> UpdateTableStatuses(int reservationId, [FromBody] UpdateStatusTableByReservation dto)
+        {
+            var result = await _service.UpdateTableStatusesAsync(reservationId, dto.TableStatus);
+            if (!result)
+            {
+                return NotFound($"Reservation with ID {reservationId} not found.");
+            }
+
+            return NoContent();
+        }
+    }
 }

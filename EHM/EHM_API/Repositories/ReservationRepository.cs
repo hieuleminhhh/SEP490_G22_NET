@@ -189,8 +189,8 @@ namespace EHM_API.Repositories
 		public async Task<Reservation?> GetReservationByIdAsync(int reservationId)
 		{
 			return await _context.Reservations
-				.AsNoTracking()
-				.FirstOrDefaultAsync(r => r.ReservationId == reservationId);
+				.AsNoTracking().Include(r => r.TableReservations)
+                .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
 		}
 		public async Task<List<Table>> GetAllTablesAsync()
 		{
@@ -237,6 +237,6 @@ namespace EHM_API.Repositories
 				.ToListAsync()
 				.ContinueWith(task => task.Result.Select(x => (x.Table, x.ReservationTime)).ToList());
 		}
-
-	}
+       
+    }
 }

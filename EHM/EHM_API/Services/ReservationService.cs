@@ -248,7 +248,45 @@ namespace EHM_API.Services
 				}).ToList()
 			};
 		}
+        public async Task UpdateReservationAndTableStatusAsync(int reservationId, int tableId, int reservationStatus, int tableStatus)
+        {
+            var reservation = await _repository.GetReservationDetailAsync(reservationId);
+            if (reservation == null)
+            {
+                throw new KeyNotFoundException("Không tìm thấy đặt bàn này");
+            }
 
+            var table = await _tableRepository.GetTableByIdAsync(tableId);
+            if (table == null)
+            {
+                throw new KeyNotFoundException("Bàn không tồn tại");
+            }
 
-	}
+            reservation.Status = reservationStatus;
+            table.Status = tableStatus;
+
+            await _repository.UpdateReservationAsync(reservation);
+            await _tableRepository.UpdateTableAsync(table);
+        }
+        public async Task<bool> UpdateTableStatusesAsync(int reservationId, int newStatus)
+        {
+            var reservation = await _repository.GetReservationByIdAsync(reservationId);
+            if (reservation == null)
+            {
+                return false;
+            }
+
+            var tableIds = reservation.TableReservations.Select(tr => tr.TableId).ToList();
+            var tables = await _tableRepository.GetListTablesByIdsAsync(tableIds);
+
+            foreach (var table in tables)
+            {
+                table.Status = newStatus;
+            }
+
+            await _tableRepository.UpdateListTablesAsync(tables);
+
+            return true;
+        }
+    }
 }

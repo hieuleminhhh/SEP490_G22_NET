@@ -1,5 +1,21 @@
 [
   {
+    "ContainingType": "EHM_API.Controllers.AccountController",
+    "Method": "CreateAccount",
+    "RelativePath": "api/Account/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "accountDTO",
+        "Type": "EHM_API.DTOs.AccountDTO.CreateAccountDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EHM_API.Controllers.CartController",
     "Method": "AddToCart",
     "RelativePath": "api/Cart/add",
@@ -719,6 +735,32 @@
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.DishDTO.Manager.DishDTOAll, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.DishController",
+    "Method": "SearchDishAndCombo",
+    "RelativePath": "api/Dish/searchDishAndCombo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.DishDTO.Manager.SearchDishAndComboDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
