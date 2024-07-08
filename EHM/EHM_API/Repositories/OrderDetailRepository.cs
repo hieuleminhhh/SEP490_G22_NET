@@ -65,6 +65,15 @@ namespace EHM_API.Repositories
 
             await _context.SaveChangesAsync();
         }
-
+        public async Task<IEnumerable<OrderDetail>> GetOrderDetailsByDishesServedAsync(int? dishesServed)
+        {
+            return await _context.Set<OrderDetail>()
+                                 .Include(od => od.Dish)
+                                 .Include(od => od.Combo)
+                                 .ThenInclude(c => c.ComboDetails)
+                                 .ThenInclude(cd => cd.Dish)
+                                 .Where(od => !dishesServed.HasValue || od.DishesServed == dishesServed)
+                                 .ToListAsync();
+        }
     }
 }
