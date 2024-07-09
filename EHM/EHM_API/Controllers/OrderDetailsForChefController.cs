@@ -77,23 +77,28 @@ namespace EHM_API.Controllers
         [HttpPost("update-dishes-served")]
         public async Task<IActionResult> UpdateDishesServed([FromBody] UpdateDishesServedDTO updateDishesServedDto)
         {
-            if (updateDishesServedDto == null || updateDishesServedDto.OrderDetailIds == null || !updateDishesServedDto.OrderDetailIds.Any())
+            if (updateDishesServedDto == null || updateDishesServedDto.OrderDetailId == 0)
             {
-                return BadRequest(new { message = "Danh sách OrderDetailIds không hợp lệ." });
+                return BadRequest(new { message = "OrderDetailId không hợp lệ." });
             }
 
             try
             {
-                await _service.UpdateDishesServedAsync(updateDishesServedDto.OrderDetailIds);
+                await _service.UpdateDishesServedAsync(updateDishesServedDto.OrderDetailId, updateDishesServedDto.DishesServed);
                 return Ok(new { message = "Cập nhật DishesServed thành công." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Đã xảy ra lỗi khi cập nhật DishesServed. Lỗi: {ex.Message}" });
             }
         }
+    
 
-        [HttpGet("getByDishesServed")]
+    [HttpGet("getByDishesServed")]
         public async Task<IActionResult> GetOrderDetailsByDishesServed([FromQuery] int? dishesServed)
         {
             try

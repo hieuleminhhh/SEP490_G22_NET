@@ -90,19 +90,25 @@ namespace EHM_API.Repositories
 
             return result.ToList();
         }
-        public async Task UpdateDishesServedAsync(List<int> orderDetailIds)
+        public async Task UpdateDishesServedAsync(int orderDetailId, int? dishesServed)
         {
-            var orderDetails = await _context.OrderDetails
-                .Where(od => orderDetailIds.Contains(od.OrderDetailId))
-                .ToListAsync();
+            var orderDetail = await _context.OrderDetails
+                .FirstOrDefaultAsync(od => od.OrderDetailId == orderDetailId);
 
-            foreach (var orderDetail in orderDetails)
+            if (orderDetail != null)
             {
-                orderDetail.DishesServed = 1; 
+                if (dishesServed <= orderDetail.Quantity)
+                {
+                    orderDetail.DishesServed = dishesServed;
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new InvalidOperationException("DishesServed cannot be greater than Quantity.");
+                }
             }
-
-            await _context.SaveChangesAsync();
         }
+
         public async Task<IEnumerable<OrderDetail>> GetOrderDetailsByDishesServedAsync(int? dishesServed)
         {
             return await _context.Set<OrderDetail>()
