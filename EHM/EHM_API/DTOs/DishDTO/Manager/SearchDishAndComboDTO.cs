@@ -12,6 +12,7 @@
 		public string? ItemName { get; set; }
 		public string? ItemDescription { get; set; }
 		public decimal? Price { get; set; }
+		public decimal? DiscountedPrice { get; set; }
 		public string? ImageUrl { get; set; }
 		public bool IsActive { get; set; }
 	}

@@ -19,6 +19,7 @@ using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.DTOs.TableDTO;
+using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Services;
 
@@ -429,9 +430,33 @@ namespace EHM_API.Map
 
 			CreateMap<CreateAccountDTO, Account>();
 
+			// Danh sach mon an and  combo 
+			CreateMap<Dish, SearchDishDTO>()
+			.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
+					src => src.DiscountId == null ? (decimal?)null :
+						   src.DiscountId == 0 ? src.Price :
+						   src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
+					));
 
-			CreateMap<Dish, SearchDishDTO>();
 			CreateMap<Combo, SearchComboDTO>();
+
+			// MApper
+			CreateMap<Order, FindTableAndGetOrderDTO>()
+			 .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+			 .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
+			 .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+			 .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
+			 .ForMember(dest => dest.TableIds, opt => opt.Ignore());
+
+			CreateMap<OrderDetail, TableOfOrderDetailDTO>()
+				.ForMember(dest => dest.Dish, opt => opt.MapFrom(src => src.Dish))
+				.ForMember(dest => dest.Combo, opt => opt.MapFrom(src => src.Combo));
+
+			CreateMap<OrderTable, GetTableDTO>()
+				.ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Table.TableId))
+				.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Table.Status))
+				.ForMember(dest => dest.Capacity, opt => opt.MapFrom(src => src.Table.Capacity))
+				.ForMember(dest => dest.Floor, opt => opt.MapFrom(src => src.Table.Floor));
 
             CreateMap<OrderDetail, OrderDetailForChefDTO>()
                 .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))

@@ -704,6 +704,11 @@
         "Name": "search",
         "Type": "System.String",
         "IsRequired": false
+      },
+      {
+        "Name": "searchCategory",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1392,6 +1397,22 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "GetOrderByTableId",
+    "RelativePath": "api/orders/getOrderByTableId",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tableId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "SearchOrdersByGuestPhone",
     "RelativePath": "api/orders/search",
     "HttpMethod": "GET",
@@ -1477,6 +1498,32 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ReservationsController",
+    "Method": "UpdateReservationAndTableStatus",
+    "RelativePath": "api/Reservations/{reservationId}/table/{tableId}/status",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reservationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "tableId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updateStatusReservationTable",
+        "Type": "EHM_API.DTOs.ReservationDTO.Manager.UpdateStatusReservationTable",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.ReservationsController",

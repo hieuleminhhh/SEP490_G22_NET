@@ -214,4 +214,28 @@ public class OrderRepository : IOrderRepository
 			.ToListAsync();
 	}
 
+	public async Task<Order?> GetOrderByTableIdAsync(int tableId)
+	{
+		return await _context.OrderTables
+			.Where(ot => ot.TableId == tableId)
+			.Include(ot => ot.Order)
+				.ThenInclude(o => o.OrderDetails)
+					.ThenInclude(od => od.Dish)
+						.ThenInclude(d => d.Discount)
+			.Include(ot => ot.Order)
+				.ThenInclude(o => o.OrderDetails)
+					.ThenInclude(od => od.Combo)
+			.Include(ot => ot.Order)
+				.ThenInclude(o => o.Address)
+			.Include(ot => ot.Order)
+				.ThenInclude(o => o.GuestPhoneNavigation)
+			.Include(ot => ot.Table)
+			.Select(ot => ot.Order)
+			.FirstOrDefaultAsync();
+	}
+
+
+
+
+
 }
