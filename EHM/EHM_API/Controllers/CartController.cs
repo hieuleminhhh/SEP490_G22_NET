@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
@@ -108,7 +109,7 @@ namespace EHM_API.Controllers
 				{
 					errors["consigneeName"] = "Tên người nhận không được bỏ trống.";
 				}
-				else if (!System.Text.RegularExpressions.Regex.IsMatch(checkoutDTO.ConsigneeName, "^[a-zA-Z0-9 ]*$"))
+				else if (!Regex.IsMatch(checkoutDTO.ConsigneeName, @"^[\p{L}\p{M}' \.-]+$"))
 				{
 					errors["consigneeName"] = "Tên người nhận không hợp lệ.";
 				}
@@ -117,12 +118,12 @@ namespace EHM_API.Controllers
 				{
 					errors["orderDate"] = "Ngày đặt hàng không được để trống.";
 				}
-				else if (checkoutDTO.OrderDate < DateTime.UtcNow)
+				else if (checkoutDTO.OrderDate > DateTime.UtcNow)
 				{
 					errors["orderDate"] = "Ngày đặt hàng không hợp lệ.";
 				}
 
-				if (checkoutDTO.RecevingOrder < DateTime.UtcNow)
+				if (checkoutDTO.RecevingOrder > DateTime.UtcNow)
 				{
 					errors["receivingDate"] = "Ngày nhận không hợp lệ.";
 				}
@@ -132,10 +133,10 @@ namespace EHM_API.Controllers
 					errors["deposit"] = "Tiền cọc không hợp lệ.";
 				}
 
-				if (checkoutDTO.TotalAmount <= 0)
+/*				if (checkoutDTO.TotalAmount <= 0)
 				{
 					errors["totalAmount"] = "Tổng tiền không hợp lệ.";
-				}
+				}*/
 
 				if (!string.IsNullOrWhiteSpace(checkoutDTO.Note) && checkoutDTO.Note.Length > 500)
 				{
