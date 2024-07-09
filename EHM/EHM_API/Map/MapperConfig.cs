@@ -459,12 +459,13 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.Floor, opt => opt.MapFrom(src => src.Table.Floor));
 
             CreateMap<OrderDetail, OrderDetailForChefDTO>()
-                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
-                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
-                .ForMember(dest => dest.ItemInComboName, opt => opt.MapFrom(src => src.Combo != null
-                    ? string.Join(", ", src.Combo.ComboDetails.Select(cd => cd.Dish.ItemName))
-                    : null))
-                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo))
+                .ForMember(dest => dest.ItemInComboName, opt => opt.MapFrom(src => src.Combo != null ? string.Join(", ", src.Combo.ComboDetails.Select(cd => cd.Dish.ItemName)) : string.Empty))
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity ?? 0));
+
+            CreateMap<Order, OrderForChefDTO>()
+                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
 
             CreateMap<UpdateStatusTableByReservation, Table>()
                   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));

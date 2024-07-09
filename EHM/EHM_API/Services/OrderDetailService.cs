@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
+using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace EHM_API.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync()
+        public async Task<IEnumerable<OrderForChefDTO>> GetOrderDetailsAsync()
         {
             return await _orderDetailRepository.GetOrderDetailsAsync();
         }
