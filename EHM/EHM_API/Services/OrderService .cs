@@ -5,6 +5,7 @@ using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
+using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -162,5 +163,47 @@ namespace EHM_API.Services
 			var orders = await _orderRepository.GetOrdersWithTablesAsync();
 			return _mapper.Map<IEnumerable<ListTableOrderDTO>>(orders);
 		}
+
+		public async Task<FindTableAndGetOrderDTO?> GetOrderByTableIdAsync(int tableId)
+		{
+			var orderTable = await _context.OrderTables
+				.Include(ot => ot.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Dish)
+							.ThenInclude(d => d.Discount)
+				.Include(ot => ot.Order)
+					.ThenInclude(o => o.OrderDetails)
+						.ThenInclude(od => od.Combo)
+				.Include(ot => ot.Order)
+					.ThenInclude(o => o.Address)
+				.Include(ot => ot.Order)
+					.ThenInclude(o => o.GuestPhoneNavigation)
+				.Include(ot => ot.Table)
+				.FirstOrDefaultAsync(ot => ot.TableId == tableId);
+
+			if (orderTable == null || orderTable.Order == null) return null;
+
+			var order = orderTable.Order;
+			var result = _mapper.Map<FindTableAndGetOrderDTO>(order);
+
+			result.TableIds = order.OrderTables
+				.Where(ot => ot.Table != null)
+				.Select(ot => new GetTableDTO
+				{
+					TableId = ot.Table.TableId,
+					Status = ot.Table.Status,
+					Capacity = ot.Table.Capacity,
+					Floor = ot.Table.Floor
+				}).ToList();
+
+			result.OrderDetails = (order.OrderDetails ?? new List<OrderDetail>())
+				.Select(od => _mapper.Map<TableOfOrderDetailDTO>(od)).ToList();
+
+			return result;
+		}
+
+
+
+
 	}
 }

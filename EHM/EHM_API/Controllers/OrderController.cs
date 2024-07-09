@@ -6,6 +6,7 @@ using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
+using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -240,5 +241,38 @@ namespace EHM_API.Controllers
 			var ordersWithTables = await _orderService.GetOrdersWithTablesAsync();
 			return Ok(ordersWithTables);
 		}
+
+		[HttpGet("getOrderByTableId")]
+		public async Task<IActionResult> GetOrderByTableId([FromQuery] int tableId)
+		{
+			var errors = new Dictionary<string, string>();
+
+			if (tableId <= 0)
+			{
+				return BadRequest(new { message = "TableId không hợp lệ." });
+			}
+
+			try
+			{
+				var result = await _orderService.GetOrderByTableIdAsync(tableId);
+
+				if (result == null)
+				{
+					return NotFound(new { message = "Không tìm thấy đơn hàng cho bàn  này." });
+				}
+
+				return Ok(new
+				{
+					message = "Lấy thông tin đơn hàng thành công.",
+					data = result
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu.", detail = ex.Message });
+			}
+		}
+
+
 	}
 }
