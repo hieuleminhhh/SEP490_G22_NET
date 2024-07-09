@@ -16,4 +16,7 @@ public interface IOrderRepository
 
     Task<IEnumerable<Order>> GetOrdersWithTablesAsync();
     Task<PagedResult<OrderDTO>> GetOrderAsync(string search, DateTime? dateFrom, DateTime? dateTo, int status, int page, int pageSize, string filterByDate, int type);
+	Task<Order?> GetOrderByTableIdAsync(int tableId);
+
 }
+

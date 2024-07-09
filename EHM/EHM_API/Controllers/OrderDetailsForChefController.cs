@@ -10,11 +10,11 @@ namespace EHM_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderDetailsController : ControllerBase
+    public class OrderDetailsForChefController : ControllerBase
     {
         private readonly IOrderDetailService _service;
 
-        public OrderDetailsController(IOrderDetailService service)
+        public OrderDetailsForChefController(IOrderDetailService service)
         {
             _service = service;
         }
@@ -66,6 +66,24 @@ namespace EHM_API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Đã xảy ra lỗi khi cập nhật DishesServed. Lỗi: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("getByDishesServed")]
+        public async Task<IActionResult> GetOrderDetailsByDishesServed([FromQuery] int? dishesServed)
+        {
+            try
+            {
+                var orderDetails = await _service.GetOrderDetailsByDishesServedAsync(dishesServed);
+                if (orderDetails == null || !orderDetails.Any())
+                {
+                    return NotFound("Không tìm thấy chi tiết đơn hàng");
+                }
+                return Ok(orderDetails);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Đã xảy ra lỗi khi tìm kiếm chi tiết đơn hàng: {ex.Message}");
             }
         }
     }
