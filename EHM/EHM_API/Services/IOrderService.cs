@@ -4,6 +4,7 @@ using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
 using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -26,5 +27,10 @@ namespace EHM_API.Services
 
 		Task<IEnumerable<ListTableOrderDTO>> GetOrdersWithTablesAsync();
 		Task<FindTableAndGetOrderDTO?> GetOrderByTableIdAsync(int tableId);
+
+        Task<FindTableAndGetOrderDTO?> UpdateOrderDetailsAsync(int tableId, UpdateTableAndGetOrderDTO dto);
+        Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto);
+
+
 	}
 }

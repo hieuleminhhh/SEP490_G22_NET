@@ -2,6 +2,7 @@
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace EHM_API.Controllers
 {
@@ -30,7 +31,7 @@ namespace EHM_API.Controllers
 			{
 				errors["FirstName"] = "Họ không được bỏ trống.";
 			}
-			else if (!System.Text.RegularExpressions.Regex.IsMatch(accountDTO.FirstName, "^[a-zA-Z0-9 ]*$"))
+			else if (!Regex.IsMatch(accountDTO.FirstName, @"^[\p{L}\p{M}\p{N} ]*$"))
 			{
 				errors["FirstName"] = "Họ không được chứa ký tự đặc biệt.";
 			}
@@ -39,11 +40,10 @@ namespace EHM_API.Controllers
 			{
 				errors["LastName"] = "Tên không được bỏ trống.";
 			}
-			else if (!System.Text.RegularExpressions.Regex.IsMatch(accountDTO.LastName, "^[a-zA-Z0-9 ]*$"))
+			else if (!Regex.IsMatch(accountDTO.LastName, @"^[\p{L}\p{M}\p{N} ]*$"))
 			{
 				errors["LastName"] = "Tên không được chứa ký tự đặc biệt.";
 			}
-
 			if (string.IsNullOrWhiteSpace(accountDTO.Email))
 			{
 				errors["Email"] = "Email không được bỏ trống.";

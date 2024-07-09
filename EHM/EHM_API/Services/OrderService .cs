@@ -15,25 +15,28 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-    public class OrderService : IOrderService
-        {
-            private readonly IOrderRepository _orderRepository;
-            private readonly IMapper _mapper;
-            private readonly EHMDBContext _context;
+	public class OrderService : IOrderService
+	{
+		private readonly IOrderRepository _orderRepository;
+		private readonly IComboRepository _comboRepository;
+		private readonly IDishRepository _dishRepository;
+		private readonly IMapper _mapper;
+		private readonly EHMDBContext _context;
 
-            public OrderService(IOrderRepository orderRepository, IMapper mapper, EHMDBContext context)
-            {
-                _orderRepository = orderRepository;
-                _mapper = mapper;
-                _context = context;
-            }
+		public OrderService(IOrderRepository orderRepository, IMapper mapper, EHMDBContext context, IComboRepository comboRepository)
+		{
+			_orderRepository = orderRepository;
+			_mapper = mapper;
+			_context = context;
+			_comboRepository = comboRepository;
+		}
 
-            public async Task<IEnumerable<OrderDTOAll>> GetAllOrdersAsync()
-            {
-                var orders = await _orderRepository.GetAllAsync();
-                var orderDtos = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
-                return orderDtos;
-            }
+		public async Task<IEnumerable<OrderDTOAll>> GetAllOrdersAsync()
+		{
+			var orders = await _orderRepository.GetAllAsync();
+			var orderDtos = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
+			return orderDtos;
+		}
 
 		public async Task<IEnumerable<SearchPhoneOrderDTO>> GetAllOrdersToSearchAsync()
 		{
@@ -42,23 +45,23 @@ namespace EHM_API.Services
 			return orderDtos;
 		}
 
-        public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
-        {
-            var order = await _orderRepository.GetByIdAsync(id);
-            if (order == null)
-            {
-                return null;
-            }
+		public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
+		{
+			var order = await _orderRepository.GetByIdAsync(id);
+			if (order == null)
+			{
+				return null;
+			}
 
-            var orderDto = _mapper.Map<OrderDTOAll>(order);
-            orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(order.OrderDetails);
+			var orderDto = _mapper.Map<OrderDTOAll>(order);
+			orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(order.OrderDetails);
 
-            return orderDto;
-        }
+			return orderDto;
+		}
 
 
 
-        public async Task<IEnumerable<SearchPhoneOrderDTO>> SearchOrdersAsync(string guestPhone = null)
+		public async Task<IEnumerable<SearchPhoneOrderDTO>> SearchOrdersAsync(string guestPhone = null)
 		{
 			if (string.IsNullOrWhiteSpace(guestPhone))
 			{
@@ -73,91 +76,91 @@ namespace EHM_API.Services
 
 
 		public async Task<OrderDTOAll> CreateOrderAsync(CreateOrderDTO createOrderDto)
-            {
+		{
 
-                var order = _mapper.Map<Order>(createOrderDto);
-
-            
-                var createdOrder = await _orderRepository.AddAsync(order);
-
-                var orderDto = _mapper.Map<OrderDTOAll>(createdOrder);
-
-                return orderDto;
-            }
-
-            public async Task<OrderDTOAll> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto)
-            {
-                var existingOrder = await _orderRepository.GetByIdAsync(id);
-                if (existingOrder == null)
-                {
-                    return null;
-                }
-
-                _mapper.Map(updateOrderDto, existingOrder);
-
-                var updatedOrder = await _orderRepository.UpdateAsync(existingOrder);
-                return _mapper.Map<OrderDTOAll>(updatedOrder);
-            }
-
-            public async Task<bool> DeleteOrderAsync(int id)
-            {
-                var existingOrder = await _orderRepository.GetByIdAsync(id);
-                if (existingOrder == null)
-                {
-                    return false;
-                }
-
-                var orderDetails = _context.OrderDetails.Where(od => od.OrderId == id);
-                _context.OrderDetails.RemoveRange(orderDetails);
-                var result = await _orderRepository.DeleteAsync(id);
-
-                await _context.SaveChangesAsync();
-
-                return result;
-        }
-
-        public async Task<bool> CancelOrderAsync(int orderId)
-        {
-            var existingOrder = await _orderRepository.GetByIdAsync(orderId);
-            if (existingOrder == null)
-            {
-                return false;
-            }
-
-            if (existingOrder.Status != 0)
-            {
-                return false;
-            }
-
-            existingOrder.Status = 4;
-            await _orderRepository.UpdateAsync(existingOrder);
-            return true;
-        }
-        public async Task<PagedResult<OrderDTO>> GetOrderAsync(string search, DateTime? dateFrom, DateTime? dateTo, int status, int page, int pageSize, string filterByDate, int type)
-        {
-            var pagedOrders = await _orderRepository.GetOrderAsync(search, dateFrom, dateTo, status, page, pageSize, filterByDate, type);
-            var orderDTOs = _mapper.Map<IEnumerable<OrderDTO>>(pagedOrders.Items);
-
-            foreach (var odDTO in orderDTOs)
-            {
-                if (odDTO.AccountId.HasValue)
-                {
-                    var address = await _context.Addresses.FindAsync(odDTO.AccountId.Value);
-                    if (address != null)
-                    {
-                        odDTO.GuestAddress = address.GuestAddress;
-                    }
-                }
-            }
-                return new PagedResult<OrderDTO>(orderDTOs, pagedOrders.TotalCount, pagedOrders.Page, pagedOrders.PageSize);
-        }
-        public async Task<Order> UpdateOrderStatusAsync(int comboId, int status)
-        {
-            return await _orderRepository.UpdateOrderStatusAsync(comboId, status);
-        }
+			var order = _mapper.Map<Order>(createOrderDto);
 
 
-        //danh sách banh
+			var createdOrder = await _orderRepository.AddAsync(order);
+
+			var orderDto = _mapper.Map<OrderDTOAll>(createdOrder);
+
+			return orderDto;
+		}
+
+		public async Task<OrderDTOAll> UpdateOrderAsync(int id, UpdateOrderDTO updateOrderDto)
+		{
+			var existingOrder = await _orderRepository.GetByIdAsync(id);
+			if (existingOrder == null)
+			{
+				return null;
+			}
+
+			_mapper.Map(updateOrderDto, existingOrder);
+
+			var updatedOrder = await _orderRepository.UpdateAsync(existingOrder);
+			return _mapper.Map<OrderDTOAll>(updatedOrder);
+		}
+
+		public async Task<bool> DeleteOrderAsync(int id)
+		{
+			var existingOrder = await _orderRepository.GetByIdAsync(id);
+			if (existingOrder == null)
+			{
+				return false;
+			}
+
+			var orderDetails = _context.OrderDetails.Where(od => od.OrderId == id);
+			_context.OrderDetails.RemoveRange(orderDetails);
+			var result = await _orderRepository.DeleteAsync(id);
+
+			await _context.SaveChangesAsync();
+
+			return result;
+		}
+
+		public async Task<bool> CancelOrderAsync(int orderId)
+		{
+			var existingOrder = await _orderRepository.GetByIdAsync(orderId);
+			if (existingOrder == null)
+			{
+				return false;
+			}
+
+			if (existingOrder.Status != 0)
+			{
+				return false;
+			}
+
+			existingOrder.Status = 4;
+			await _orderRepository.UpdateAsync(existingOrder);
+			return true;
+		}
+		public async Task<PagedResult<OrderDTO>> GetOrderAsync(string search, DateTime? dateFrom, DateTime? dateTo, int status, int page, int pageSize, string filterByDate, int type)
+		{
+			var pagedOrders = await _orderRepository.GetOrderAsync(search, dateFrom, dateTo, status, page, pageSize, filterByDate, type);
+			var orderDTOs = _mapper.Map<IEnumerable<OrderDTO>>(pagedOrders.Items);
+
+			foreach (var odDTO in orderDTOs)
+			{
+				if (odDTO.AccountId.HasValue)
+				{
+					var address = await _context.Addresses.FindAsync(odDTO.AccountId.Value);
+					if (address != null)
+					{
+						odDTO.GuestAddress = address.GuestAddress;
+					}
+				}
+			}
+			return new PagedResult<OrderDTO>(orderDTOs, pagedOrders.TotalCount, pagedOrders.Page, pagedOrders.PageSize);
+		}
+		public async Task<Order> UpdateOrderStatusAsync(int comboId, int status)
+		{
+			return await _orderRepository.UpdateOrderStatusAsync(comboId, status);
+		}
+
+
+		//danh sách banh
 		public async Task<IEnumerable<ListTableOrderDTO>> GetOrdersWithTablesAsync()
 		{
 			var orders = await _orderRepository.GetOrdersWithTablesAsync();
@@ -203,7 +206,109 @@ namespace EHM_API.Services
 		}
 
 
+		public async Task<FindTableAndGetOrderDTO?> UpdateOrderDetailsAsync(int tableId, UpdateTableAndGetOrderDTO dto)
+		{
+			var order = await _orderRepository.GetOrderByTableIdAsync(tableId);
 
+			if (order == null)
+			{
+				return null;
+			}
+
+			order.GuestPhoneNavigation.GuestPhone = dto.GuestPhone;
+			order.Address.GuestAddress = dto.GuestAddress;
+			order.Address.ConsigneeName = dto.ConsigneeName;
+
+			foreach (var detailDto in dto.OrderDetails)
+			{
+				OrderDetail? orderDetail = null;
+
+				if (detailDto.DishId.HasValue && detailDto.DishId != 0)
+				{
+					orderDetail = order.OrderDetails?.FirstOrDefault(od => od.DishId == detailDto.DishId && od.ComboId == null);
+
+					if (orderDetail != null)
+					{
+						orderDetail.Quantity += detailDto.Quantity;
+						orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? 0) * orderDetail.Quantity;
+					}
+					else
+					{
+						if (detailDto.DishId.HasValue && !(await _dishRepository.DishExistsAsync(detailDto.DishId.Value)))
+						{
+							throw new Exception($"Món ăn {detailDto.DishId.Value} không tồn tại.");
+						}
+
+						orderDetail = new OrderDetail
+						{
+							OrderId = order.OrderId,
+							DishId = detailDto.DishId,
+							ComboId = detailDto.ComboId == 0 ? null : detailDto.ComboId,
+							Quantity = detailDto.Quantity,
+							UnitPrice = (detailDto.DiscountedPrice ?? 0) * detailDto.Quantity
+						};
+						order.OrderDetails?.Add(orderDetail);
+					}
+				}
+				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
+				{
+					orderDetail = order.OrderDetails?.FirstOrDefault(od => od.ComboId == detailDto.ComboId && od.DishId == null);
+
+					if (orderDetail != null)
+					{
+						orderDetail.Quantity += detailDto.Quantity;
+						orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? 0) * orderDetail.Quantity;
+					}
+					else
+					{
+						if (!(await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value)))
+						{
+							throw new Exception($"Combo {detailDto.ComboId.Value}không tồn tại.");
+						}
+
+						orderDetail = new OrderDetail
+						{
+							OrderId = order.OrderId,
+							DishId = null,
+							ComboId = detailDto.ComboId,
+							Quantity = detailDto.Quantity,
+							UnitPrice = (detailDto.DiscountedPrice ?? 0) * detailDto.Quantity
+						};
+						order.OrderDetails?.Add(orderDetail);
+					}
+				}
+			}
+
+			order.TotalAmount = order.OrderDetails?.Sum(od => od.UnitPrice * od.Quantity) ?? 0;
+
+			await _orderRepository.UpdateOrderAsync(order);
+
+			var result = _mapper.Map<FindTableAndGetOrderDTO>(order);
+
+			result.TableIds = order.OrderTables?
+				.Where(ot => ot.Table != null)
+				.Select(ot => new GetTableDTO
+				{
+					TableId = ot.Table.TableId,
+					Status = ot.Table.Status,
+					Capacity = ot.Table.Capacity,
+					Floor = ot.Table.Floor
+				}).ToList() ?? new List<GetTableDTO>();
+
+			result.OrderDetails = (order.OrderDetails ?? new List<OrderDetail>())
+				.Select(od => _mapper.Map<TableOfOrderDetailDTO>(od)).ToList();
+
+			return result;
+		}
+
+		//Create
+
+		public Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
+		{
+			return _orderRepository.CreateOrderForTable(tableId, dto);
+		}
 
 	}
 }
+
+

@@ -440,7 +440,7 @@ namespace EHM_API.Map
 
 			CreateMap<Combo, SearchComboDTO>();
 
-			// MApper
+			// Find orders based on TableID
 			CreateMap<Order, FindTableAndGetOrderDTO>()
 			 .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
 			 .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
@@ -469,7 +469,22 @@ namespace EHM_API.Map
 
             CreateMap<UpdateStatusTableByReservation, Table>()
                   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
-        }
+
+
+			// Update  orders based on TableID
+
+
+			//Create Order for Table
+			CreateMap<CreateOrderForTableDTO, Order>();
+
+			CreateMap<Dish, CreateOrderDetailDTO>()
+		 .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
+			 src => src.DiscountId == null ? (decimal?)null :
+					src.DiscountId == 0 ? src.Price :
+					src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
+		 ));
+
+		}
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)
 		{
