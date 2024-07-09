@@ -44,7 +44,30 @@ namespace EHM_API.Repositories
 
             return orderForChefDTOs;
         }
+        public async Task<IEnumerable<OrderForChef1DTO>> GetOrderDetails1Async()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Dish)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Combo)
+                    .ThenInclude(c => c.ComboDetails)
+                    .ThenInclude(cd => cd.Dish)
+                    .OrderBy(o => o.RecevingOrder)
+                .Where(o => (o.Type == 2 || o.Type == 3) && o.Status == 2)
+                .ToListAsync();
 
+            var orderForChef1DTOs = orders.Select(o => new OrderForChef1DTO
+            {
+                OrderId = o.OrderId,
+                RecevingOrder = o.RecevingOrder,
+                Status = o.Status,
+                Type = o.Type,
+                OrderDetails = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(o.OrderDetails)
+            });
+
+            return orderForChef1DTOs;
+        }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync()
         {
             var orderDetails = await _context.OrderDetails
