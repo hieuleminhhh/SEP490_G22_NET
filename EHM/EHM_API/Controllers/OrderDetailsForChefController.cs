@@ -34,7 +34,7 @@ namespace EHM_API.Controllers
                 return Ok(new
                 {
                     message = "Lấy thông tin chi tiết đơn hàng thành công.",
-                    orderDetails
+                    data = orderDetails
                 });
             }
             catch (Exception ex)

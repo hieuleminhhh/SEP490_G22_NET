@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
+using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,17 +20,31 @@ namespace EHM_API.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync()
+        public async Task<IEnumerable<OrderForChefDTO>> GetOrderDetailsAsync()
         {
-            var orderDetails = await _context.OrderDetails
-                .Include(od => od.Dish)
-                .Include(od => od.Combo)
-                .ThenInclude(c => c.ComboDetails)
-                .ThenInclude(cd => cd.Dish)
+            var orders = await _context.Orders
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Dish)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Combo)
+                    .ThenInclude(c => c.ComboDetails)
+                    .ThenInclude(cd => cd.Dish)
+                    .OrderBy(o => o.OrderDate)
+                .Where(o => (o.Type == 1 || o.Type == 4) && o.Status == 2)
                 .ToListAsync();
 
-            return _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(orderDetails);
+            var orderForChefDTOs = orders.Select(o => new OrderForChefDTO
+            {
+                OrderId = o.OrderId,
+                OrderDate = o.OrderDate,
+                Status = o.Status,
+                Type = o.Type,
+                OrderDetails = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(o.OrderDetails)
+            });
+
+            return orderForChefDTOs;
         }
+
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync()
         {
             var orderDetails = await _context.OrderDetails
