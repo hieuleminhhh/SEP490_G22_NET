@@ -20,19 +20,20 @@ namespace EHM_API.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly ILogger<OrderController> _logger;
         private readonly IMapper _mapper;
 
-        public OrderController(IOrderService orderService, IMapper mapper)
+        public OrderController(IOrderService orderService, IMapper mapper, ILogger<OrderController> logger)
         {
             _orderService = orderService;
             _mapper = mapper;
-          
+            _logger = logger;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateOrder(CreateOrderDTO createOrderDTO)
         {
-          
+
 
             var order = await _orderService.CreateOrderAsync(createOrderDTO);
             if (order == null)
@@ -59,7 +60,7 @@ namespace EHM_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOrder(int id, UpdateOrderDTO updateOrderDTO)
         {
-         
+
 
             var existingOrder = await _orderService.GetOrderByIdAsync(id);
             if (existingOrder == null)
@@ -76,29 +77,29 @@ namespace EHM_API.Controllers
             return NoContent();
         }
 
-		[HttpPut("{id}/cancel")]
-		public async Task<IActionResult> CancelOrder(int id)
-		{
-			try
-			{
-				var isCancelled = await _orderService.CancelOrderAsync(id);
-				if (!isCancelled)
-				{
-					return NotFound(new { message = "Đơn đặt hàng không được tìm thấy." });
-				}
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelOrder(int id)
+        {
+            try
+            {
+                var isCancelled = await _orderService.CancelOrderAsync(id);
+                if (!isCancelled)
+                {
+                    return NotFound(new { message = "Đơn đặt hàng không được tìm thấy." });
+                }
 
-				return NoContent();
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
-			}
-		}
-
-
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
+            }
+        }
 
 
-		[HttpDelete("{id}")]
+
+
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var existingOrder = await _orderService.GetOrderByIdAsync(id);
@@ -131,24 +132,24 @@ namespace EHM_API.Controllers
         }
 
 
-		[HttpGet("search")]
-		public async Task<IActionResult> SearchOrdersByGuestPhone(string guestPhone)
-		{
-			try
-			{
-				var orders = await _orderService.SearchOrdersAsync(guestPhone);
-				if (orders == null || !orders.Any())
-				{
-					return NotFound(new { message = "Không tìm thấy đơn hàng nào theo số điện thoại của khách được cung cấp." });
-				}
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchOrdersByGuestPhone(string guestPhone)
+        {
+            try
+            {
+                var orders = await _orderService.SearchOrdersAsync(guestPhone);
+                if (orders == null || !orders.Any())
+                {
+                    return NotFound(new { message = "Không tìm thấy đơn hàng nào theo số điện thoại của khách được cung cấp." });
+                }
 
-				return Ok(orders);
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
-			}
-		}
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
+            }
+        }
 
         [HttpGet("GetListOrder")]
         public async Task<ActionResult<PagedResult<OrderDTO>>> GetListOrders(
@@ -235,44 +236,86 @@ namespace EHM_API.Controllers
 
 
 
-		[HttpGet("with-tables")]
-		public async Task<ActionResult<IEnumerable<ListTableOrderDTO>>> GetOrdersWithTables()
-		{
-			var ordersWithTables = await _orderService.GetOrdersWithTablesAsync();
-			return Ok(ordersWithTables);
-		}
+        [HttpGet("with-tables")]
+        public async Task<ActionResult<IEnumerable<ListTableOrderDTO>>> GetOrdersWithTables()
+        {
+            var ordersWithTables = await _orderService.GetOrdersWithTablesAsync();
+            return Ok(ordersWithTables);
+        }
 
-		[HttpGet("getOrderByTableId")]
-		public async Task<IActionResult> GetOrderByTableId([FromQuery] int tableId)
-		{
-			var errors = new Dictionary<string, string>();
+        [HttpGet("getOrderByTableId")]
+        public async Task<IActionResult> GetOrderByTableId([FromQuery] int tableId)
+        {
+            var errors = new Dictionary<string, string>();
 
-			if (tableId <= 0)
-			{
-				return BadRequest(new { message = "TableId không hợp lệ." });
-			}
+            if (tableId <= 0)
+            {
+                return BadRequest(new { message = "TableId không hợp lệ." });
+            }
 
-			try
-			{
-				var result = await _orderService.GetOrderByTableIdAsync(tableId);
+            try
+            {
+                var result = await _orderService.GetOrderByTableIdAsync(tableId);
 
-				if (result == null)
-				{
-					return NotFound(new { message = "Không tìm thấy đơn hàng cho bàn  này." });
-				}
+                if (result == null)
+                {
+                    return BadRequest(new { message = "Không tìm thấy đơn hàng cho bàn này." });
+                }
 
-				return Ok(new
-				{
-					message = "Lấy thông tin đơn hàng thành công.",
-					data = result
-				});
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu.", detail = ex.Message });
-			}
-		}
+                return Ok(new
+                {
+                    message = "Lấy thông tin đơn hàng thành công.",
+                    data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu.", detail = ex.Message });
+            }
+        }
 
 
-	}
+        [HttpPut("updateOrderDetails/{tableId}")]
+        public async Task<IActionResult> UpdateOrderDetails(int tableId, [FromBody] UpdateTableAndGetOrderDTO dto)
+        {
+            var result = await _orderService.UpdateOrderDetailsAsync(tableId, dto);
+
+            if (tableId <= 0)
+            {
+                return BadRequest(new { message = "TableId không hợp lệ." });
+            }
+
+            if (result == null)
+            {
+                return NotFound(new { message = "Không tìm thấy đơn hàng hoặc bàn." });
+            }
+
+            return Ok(new { message = "Cập nhật thành công.", data = result });
+        }
+
+        //Create Order for Table
+        [HttpPost("createOrderForTable/{tableId}")]
+        public async Task<IActionResult> CreateOrderForTable(int tableId, [FromBody] CreateOrderForTableDTO dto)
+        {
+            try
+            {
+            
+
+                var result = await _orderService.CreateOrderForTable(tableId, dto);
+                if (result == null)
+                {
+                    return BadRequest(new { message = "Không thể tạo đơn hàng." });
+                }
+                return Ok(new
+                {
+                    message = "Đã tạo đơn hàng thành công."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Đã xảy ra lỗi khi xử lý yêu cầu.");
+                return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu.", detail = ex.ToString() });
+            }
+        }
+    }
 }

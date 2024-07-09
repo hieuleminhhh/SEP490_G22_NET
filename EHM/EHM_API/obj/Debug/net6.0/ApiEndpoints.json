@@ -1219,6 +1219,68 @@
     ]
   },
   {
+    "ContainingType": "EHM_API.Controllers.OrderDetailsForChefController",
+    "Method": "GetOrderDetails",
+    "RelativePath": "api/OrderDetailsForChef",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderDetailsForChefController",
+    "Method": "GetOrderDetailsByDishesServed",
+    "RelativePath": "api/OrderDetailsForChef/getByDishesServed",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dishesServed",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderDetailsForChefController",
+    "Method": "GetOrderDetailSummary",
+    "RelativePath": "api/OrderDetailsForChef/summary",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.OrderDetailDTO.Manager.OrderDetailForChefDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderDetailsForChefController",
+    "Method": "UpdateDishesServed",
+    "RelativePath": "api/OrderDetailsForChef/update-dishes-served",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateDishesServedDto",
+        "Type": "EHM_API.DTOs.OrderDetailDTO.Manager.UpdateDishesServedDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "CreateOrder",
     "RelativePath": "api/orders",
@@ -1336,6 +1398,27 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "CreateOrderForTable",
+    "RelativePath": "api/orders/createOrderForTable/{tableId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tableId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.TableDTO.Manager.CreateOrderForTableDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "GetListOrders",
     "RelativePath": "api/orders/GetListOrder",
     "HttpMethod": "GET",
@@ -1423,6 +1506,27 @@
         "Name": "guestPhone",
         "Type": "System.String",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "UpdateOrderDetails",
+    "RelativePath": "api/orders/updateOrderDetails/{tableId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tableId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.TableDTO.Manager.UpdateTableAndGetOrderDTO",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -1520,6 +1624,27 @@
       {
         "Name": "updateStatusReservationTable",
         "Type": "EHM_API.DTOs.ReservationDTO.Manager.UpdateStatusReservationTable",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ReservationsController",
+    "Method": "UpdateTableStatuses",
+    "RelativePath": "api/Reservations/{reservationId}/tables/status",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reservationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.ReservationDTO.Manager.UpdateStatusTableByReservation",
         "IsRequired": true
       }
     ],

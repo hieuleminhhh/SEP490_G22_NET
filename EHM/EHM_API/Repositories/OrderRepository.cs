@@ -1,21 +1,27 @@
-﻿using EHM_API.DTOs.ComboDTO.Guest;
+﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.ComboDTO.Guest;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
+using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.Models;
+using EHM_API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 public class OrderRepository : IOrderRepository
 {
     private readonly EHMDBContext _context;
+	private readonly ICartRepository _cartRepository;
 
-    public OrderRepository(EHMDBContext context)
+	public OrderRepository(EHMDBContext context, ICartRepository cartRepository)
     {
         _context = context;
+        _cartRepository = cartRepository;
     }
 
     public async Task<IEnumerable<Order>> GetAllAsync()
@@ -234,7 +240,172 @@ public class OrderRepository : IOrderRepository
 			.FirstOrDefaultAsync();
 	}
 
+	public async Task UpdateOrderAsync(Order order)
+	{
+		_context.Orders.Update(order);
+		await _context.SaveChangesAsync();
+	}
 
+	public async Task<Address?> GetOrCreateAddress2(CheckoutDTO checkoutDTO)
+	{
+		if (string.IsNullOrWhiteSpace(checkoutDTO.GuestAddress) ||
+			string.IsNullOrWhiteSpace(checkoutDTO.ConsigneeName) ||
+			string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone))
+		{
+			return null;
+		}
+
+		var address = await _context.Addresses
+			.FirstOrDefaultAsync(a =>
+				a.GuestAddress == checkoutDTO.GuestAddress &&
+				a.ConsigneeName == checkoutDTO.ConsigneeName &&
+				a.GuestPhone == checkoutDTO.GuestPhone);
+
+		if (address == null)
+		{
+			address = new Address
+			{
+				GuestAddress = checkoutDTO.GuestAddress,
+				ConsigneeName = checkoutDTO.ConsigneeName,
+				GuestPhone = checkoutDTO.GuestPhone
+			};
+			_context.Addresses.Add(address);
+		}
+
+		await _context.SaveChangesAsync();
+		return address;
+	}
+
+	public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
+	{
+		var guest = await _context.Guests
+			.FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
+
+		if (guest == null)
+		{
+			guest = new Guest
+			{
+				GuestPhone = dto.GuestPhone
+			};
+			_context.Guests.Add(guest);
+			await _context.SaveChangesAsync();
+		}
+
+		var address = await GetOrCreateAddress2(new CheckoutDTO
+		{
+			GuestAddress = dto.GuestAddress,
+			ConsigneeName = dto.ConsigneeName,
+			GuestPhone = dto.GuestPhone
+		});
+
+		var order = new Order
+		{
+			OrderDate = dto.OrderDate,
+			RecevingOrder = dto.RecevingOrder,
+			GuestPhone = dto.GuestPhone,
+			Note = dto.Note,
+			Type = 2,
+			Address = address,
+			GuestPhoneNavigation = guest
+		};
+
+		_context.Orders.Add(order);
+		await _context.SaveChangesAsync();
+
+		decimal totalAmount = 0m;
+
+		if (dto.OrderDetails != null && dto.OrderDetails.Any())
+		{
+			foreach (var detailDto in dto.OrderDetails)
+			{
+				decimal unitPrice = 0m;
+
+				if (detailDto.DishId.HasValue && detailDto.DishId.Value > 0)
+				{
+					var dish = await _context.Dishes
+						.Include(d => d.Discount)
+						.FirstOrDefaultAsync(d => d.DishId == detailDto.DishId.Value);
+
+					if (dish == null)
+					{
+						throw new KeyNotFoundException($"Dish with ID {detailDto.DishId} not found.");
+					}
+
+					if (dish.Discount != null)
+					{
+						unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountAmount / 100)) * detailDto.Quantity;
+					}
+					else
+					{
+						unitPrice = (decimal)dish.Price * detailDto.Quantity;
+					}
+
+					var orderDetail = new OrderDetail
+					{
+						UnitPrice = unitPrice,
+						Quantity = detailDto.Quantity,
+						DishId = detailDto.DishId.Value,
+						ComboId = null,
+						OrderId = order.OrderId
+					};
+
+					_context.OrderDetails.Add(orderDetail);
+				}
+				else if (detailDto.ComboId.HasValue && detailDto.ComboId.Value > 0)
+				{
+					var combo = await _context.Combos
+						.FirstOrDefaultAsync(c => c.ComboId == detailDto.ComboId.Value);
+
+					if (combo == null)
+					{
+						throw new KeyNotFoundException($"Combo with ID {detailDto.ComboId} not found.");
+					}
+
+					unitPrice = (decimal)combo.Price * detailDto.Quantity;
+
+					var orderDetail = new OrderDetail
+					{
+						UnitPrice = unitPrice,
+						Quantity = detailDto.Quantity,
+						DishId = null,
+						ComboId = detailDto.ComboId.Value,
+						OrderId = order.OrderId
+					};
+
+					_context.OrderDetails.Add(orderDetail);
+				}
+				else
+				{
+					continue;
+				}
+
+				totalAmount += unitPrice * detailDto.Quantity;
+			}
+
+			await _context.SaveChangesAsync();
+		}
+
+		var orderTable = new OrderTable
+		{
+			TableId = tableId,
+			OrderId = order.OrderId
+		};
+
+		_context.OrderTables.Add(orderTable);
+		await _context.SaveChangesAsync();
+
+		order.TotalAmount = totalAmount;
+		await _context.SaveChangesAsync();
+
+		return new Order
+		{
+			OrderId = order.OrderId,
+			OrderDate = order.OrderDate,
+			TotalAmount = order.TotalAmount,
+			GuestPhone = order.GuestPhone,
+			Note = order.Note
+		};
+	}
 
 
 

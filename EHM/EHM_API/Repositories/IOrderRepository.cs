@@ -1,5 +1,7 @@
-﻿using EHM_API.DTOs.HomeDTO;
+﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,5 +20,9 @@ public interface IOrderRepository
     Task<PagedResult<OrderDTO>> GetOrderAsync(string search, DateTime? dateFrom, DateTime? dateTo, int status, int page, int pageSize, string filterByDate, int type);
 	Task<Order?> GetOrderByTableIdAsync(int tableId);
 
+    Task UpdateOrderAsync(Order order);
+    Task<Address?> GetOrCreateAddress2(CheckoutDTO checkoutDTO);
+
+	Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto);
 }
 
