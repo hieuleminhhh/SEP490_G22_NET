@@ -32,9 +32,9 @@ namespace EHM_API.Services
         {
             return await _orderDetailRepository.GetOrderDetailSummaryAsync();
         }
-        public async Task UpdateDishesServedAsync(List<int> orderDetailIds)
+        public async Task UpdateDishesServedAsync(int orderDetailId, int? dishesServed)
         {
-            await _orderDetailRepository.UpdateDishesServedAsync(orderDetailIds);
+            await _orderDetailRepository.UpdateDishesServedAsync(orderDetailId, dishesServed);
         }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsByDishesServedAsync(int? dishesServed)
         {

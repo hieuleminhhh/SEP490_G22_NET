@@ -2,6 +2,7 @@
 {
     public class UpdateDishesServedDTO
     {
-        public List<int> OrderDetailIds { get; set; }
+        public int OrderDetailId { get; set; }
+        public int? DishesServed { get; set; }
     }
 }
