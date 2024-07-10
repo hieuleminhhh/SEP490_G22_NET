@@ -19,7 +19,7 @@ namespace EHM_API.Controllers
             _service = service;
         }
 
-        [HttpGet]
+        [HttpGet("Type 1-4")]
         public async Task<IActionResult> GetOrderDetails()
         {
             try
@@ -34,7 +34,31 @@ namespace EHM_API.Controllers
                 return Ok(new
                 {
                     message = "Lấy thông tin chi tiết đơn hàng thành công.",
-                    orderDetails
+                    data = orderDetails
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Đã xảy ra lỗi khi lấy thông tin chi tiết đơn hàng. Lỗi: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("Type 2-3")]
+        public async Task<IActionResult> GetOrderDetails1()
+        {
+            try
+            {
+                var orderDetails = await _service.GetOrderDetails1Async();
+
+                if (orderDetails == null || !orderDetails.Any())
+                {
+                    return NotFound(new { message = "Không tìm thấy chi tiết đơn hàng." });
+                }
+
+                return Ok(new
+                {
+                    message = "Lấy thông tin chi tiết đơn hàng thành công.",
+                    data = orderDetails
                 });
             }
             catch (Exception ex)
@@ -53,23 +77,28 @@ namespace EHM_API.Controllers
         [HttpPost("update-dishes-served")]
         public async Task<IActionResult> UpdateDishesServed([FromBody] UpdateDishesServedDTO updateDishesServedDto)
         {
-            if (updateDishesServedDto == null || updateDishesServedDto.OrderDetailIds == null || !updateDishesServedDto.OrderDetailIds.Any())
+            if (updateDishesServedDto == null || updateDishesServedDto.OrderDetailId == 0)
             {
-                return BadRequest(new { message = "Danh sách OrderDetailIds không hợp lệ." });
+                return BadRequest(new { message = "OrderDetailId không hợp lệ." });
             }
 
             try
             {
-                await _service.UpdateDishesServedAsync(updateDishesServedDto.OrderDetailIds);
+                await _service.UpdateDishesServedAsync(updateDishesServedDto.OrderDetailId, updateDishesServedDto.DishesServed);
                 return Ok(new { message = "Cập nhật DishesServed thành công." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Đã xảy ra lỗi khi cập nhật DishesServed. Lỗi: {ex.Message}" });
             }
         }
+    
 
-        [HttpGet("getByDishesServed")]
+    [HttpGet("getByDishesServed")]
         public async Task<IActionResult> GetOrderDetailsByDishesServed([FromQuery] int? dishesServed)
         {
             try
