@@ -5,6 +5,7 @@ using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
@@ -39,29 +40,38 @@ namespace EHM_API.Controllers
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<CategoryDTO>> CreateNewCategory([FromBody] CreateCategory categoryDTO)
+		public async Task<ActionResult> CreateNewCategory([FromBody] CreateCategory categoryDTO)
 		{
+			var errors = new Dictionary<string, string>();
+
 			if (categoryDTO == null || string.IsNullOrWhiteSpace(categoryDTO.CategoryName))
 			{
-				return BadRequest("Tên danh mục món ăn là bắt buộc.");
+				errors["categoryName"] = "Tên danh mục món ăn là bắt buộc.";
+			}
+			else
+			{
+				var categoryName = categoryDTO.CategoryName.Trim();
+
+				if (categoryName.Length > 100)
+				{
+					errors["categoryName"] = "Tên danh mục phải ít hơn 100 ký tự.";
+				}
+
+				 if (!Regex.IsMatch(categoryDTO.CategoryName, @"^[\p{L}\p{M}\p{N} ]*$"))
+				{
+					errors["categoryName"] = "Tên danh mục chứa các ký tự không hợp lệ.";
+				}
+
+				var existingCategory = await _categoryService.GetCategoryByNameAsync(categoryName);
+				if (existingCategory != null)
+				{
+					errors["categoryName"] = "Tên danh mục đã tồn tại.";
+				}
 			}
 
-			var categoryName = categoryDTO.CategoryName.Trim();
-
-			if (categoryName.Length > 100)
+			if (errors.Any())
 			{
-				return BadRequest("Tên danh mục phải ít hơn 100 ký tự.");
-			}
-
-			if (!categoryName.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_'))
-			{
-				return BadRequest("Tên danh mục chứa các ký tự không hợp lệ.");
-			}
-
-			var existingCategory = await _categoryService.GetCategoryByNameAsync(categoryName);
-			if (existingCategory != null)
-			{
-				return Conflict("Tên danh mục đã tồn tại.");
+				return BadRequest(errors);
 			}
 
 			try
@@ -71,45 +81,55 @@ namespace EHM_API.Controllers
 			}
 			catch (ArgumentException ex)
 			{
-				return BadRequest(ex.Message);
+				return BadRequest(new { message = ex.Message });
 			}
 			catch (InvalidOperationException ex)
 			{
-				return Conflict(ex.Message);
+				return Conflict(new { message = ex.Message });
 			}
 		}
+
 
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
 		{
+			var errors = new Dictionary<string, string>();
+
 			if (categoryDTO == null || string.IsNullOrWhiteSpace(categoryDTO.CategoryName))
 			{
-				return BadRequest("Tên danh mục món ăn là bắt buộc.");
+				errors["categoryName"] = "Tên danh mục món ăn là bắt buộc.";
+			}
+			else
+			{
+				var categoryName = categoryDTO.CategoryName.Trim();
+
+				if (categoryName.Length > 100)
+				{
+					errors["categoryName"] = "Tên danh mục phải ít hơn 100 ký tự.";
+				}
+
+				if (!categoryName.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_'))
+				{
+					errors["categoryName"] = "Tên danh mục chứa các ký tự không hợp lệ.";
+				}
 			}
 
-			var categoryName = categoryDTO.CategoryName.Trim();
-
-			if (categoryName.Length > 100)
+			if (errors.Any())
 			{
-				return BadRequest("Tên danh mục phải ít hơn 100 ký tự.");
-			}
-
-			if (!categoryName.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_'))
-			{
-				return BadRequest("Tên danh mục chứa các ký tự không hợp lệ.");
+				return BadRequest(errors);
 			}
 
 			var existingCategory = await _categoryService.GetCategoryByIdAsync(id);
 			if (existingCategory == null)
 			{
-				return NotFound("Không tìm thấy danh mục.");
+				return NotFound(new { message = "Không tìm thấy danh mục." });
 			}
 
-			var duplicateCategory = await _categoryService.GetCategoryByNameAsync(categoryName);
+			var duplicateCategory = await _categoryService.GetCategoryByNameAsync(categoryDTO.CategoryName);
 			if (duplicateCategory != null && duplicateCategory.CategoryId != id)
 			{
-				return Conflict("Tên danh mục đã tồn tại.");
+				return Conflict(new { message = "Tên danh mục đã tồn tại." });
 			}
 
 			try
@@ -117,20 +137,21 @@ namespace EHM_API.Controllers
 				var updatedCategory = await _categoryService.UpdateCategoryAsync(id, categoryDTO);
 				if (updatedCategory == null)
 				{
-					return NotFound("Không tìm thấy danh mục sau khi cập nhật.");
+					return NotFound(new { message = "Không tìm thấy danh mục sau khi cập nhật." });
 				}
 
-				return Ok("Tên danh mục món ăn được cập nhật thành công");
+				return Ok(new { message = "Tên danh mục món ăn được cập nhật thành công", updatedCategory });
 			}
 			catch (ArgumentException ex)
 			{
-				return BadRequest(ex.Message);
+				return BadRequest(new { message = ex.Message });
 			}
 			catch (InvalidOperationException ex)
 			{
-				return Conflict(ex.Message);
+				return Conflict(new { message = ex.Message });
 			}
 		}
+
 
 		[HttpGet("dishes/{categoryName}")]
 		public async Task<ActionResult<IEnumerable<ViewCategoryDTO>>> GetDishesByCategoryName(string categoryName)

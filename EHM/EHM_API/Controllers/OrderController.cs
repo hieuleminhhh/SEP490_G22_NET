@@ -11,6 +11,8 @@ using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
@@ -20,14 +22,21 @@ namespace EHM_API.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        private readonly ILogger<OrderController> _logger;
+		private readonly ITableService _tableService;
+		private readonly IComboService _comboService;
+		private readonly IDishService _dishService;
+
+		private readonly ILogger<OrderController> _logger;
         private readonly IMapper _mapper;
 
-        public OrderController(IOrderService orderService, IMapper mapper, ILogger<OrderController> logger)
+        public OrderController(IOrderService orderService, IMapper mapper, ILogger<OrderController> logger, ITableService tableService, IComboService comboService, IDishService dishService)
         {
             _orderService = orderService;
             _mapper = mapper;
             _logger = logger;
+            _dishService = dishService;
+            _tableService = tableService;
+            _comboService = comboService;
         }
 
         [HttpPost]
@@ -274,48 +283,148 @@ namespace EHM_API.Controllers
             }
         }
 
+		[HttpPut("updateOrderDetails/{tableId}")]
+		public async Task<IActionResult> UpdateOrderDetails(int tableId, [FromBody] UpdateTableAndGetOrderDTO dto)
+		{
+			if (tableId <= 0)
+			{
+				return BadRequest(new { message = "TableId không hợp lệ." });
+			}
 
-        [HttpPut("updateOrderDetails/{tableId}")]
-        public async Task<IActionResult> UpdateOrderDetails(int tableId, [FromBody] UpdateTableAndGetOrderDTO dto)
-        {
-            var result = await _orderService.UpdateOrderDetailsAsync(tableId, dto);
+			var errors = new Dictionary<string, string>();
 
-            if (tableId <= 0)
+			if (dto.OrderId <= 0)
+			{
+				errors["OrderId"] = "OrderId không hợp lệ.";
+				return BadRequest(errors);
+			}
+
+			var orderExists = await _orderService.GetOrderByIdAsync(dto.OrderId);
+			if (orderExists == null)
+			{
+				return BadRequest(new { message = "Đơn hàng không tồn tại." });
+			}
+
+			foreach (var detail in dto.OrderDetails)
+			{
+
+				if (detail.UnitPrice <= 0)
+				{
+					errors["OrderDetails"] = "Giá của món ăn hoặc combo phải lớn hơn 0.";
+				}
+
+				if (detail.Quantity <= 0)
+				{
+					errors["OrderDetails"] = "Số lượng phải lớn hơn 0.";
+				}
+			}
+
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+
+			var result = await _orderService.UpdateOrderDetailsAsync(tableId, dto);
+
+			if (result == null)
+			{
+				return NotFound(new { message = "Không tìm thấy đơn hàng hoặc bàn." });
+			}
+
+			var options = new JsonSerializerOptions
+			{
+				ReferenceHandler = ReferenceHandler.Preserve,
+			};
+
+			var jsonResult = JsonSerializer.Serialize(result, options);
+
+			return Ok(new { message = "Cập nhật thành công.", data = jsonResult });
+		}
+
+
+
+		// Create Order for Table
+		[HttpPost("createOrderForTable/{tableId}")]
+		public async Task<IActionResult> CreateOrderForTable(int tableId, [FromBody] CreateOrderForTableDTO dto)
+		{
+			var errors = new Dictionary<string, string>();
+
+			if (tableId <= 0)
+			{
+				errors["TableId"] = "Bàn không hợp lệ.";
+				return BadRequest(errors);
+			}
+
+            var tableExists = await _tableService.ExistTable(tableId);
+            if (!tableExists)
             {
-                return BadRequest(new { message = "TableId không hợp lệ." });
+                errors["TableId"] = "Bàn không tồn tại.";
+                return BadRequest(errors);
             }
+/*            if (dto.OrderDate == null || dto.OrderDate == DateTime.MinValue)
+			{
+				errors["Order Date"] = "Ngày đặt không hợp lệ.";
+			}
 
-            if (result == null)
-            {
-                return NotFound(new { message = "Không tìm thấy đơn hàng hoặc bàn." });
-            }
+			if (dto.RecevingOrder != null && dto.RecevingOrder <= DateTime.Now)
+			{
+				errors["Receving Date"] = "Ngày nhận không hợp lệ.";
+			}*/
 
-            return Ok(new { message = "Cập nhật thành công.", data = result });
-        }
+		/*	if (dto.TotalAmount <= 0)
+			{
+				errors["TotalAmount"] = "Tổng tiền không hợp lệ.";
+			}
 
-        //Create Order for Table
-        [HttpPost("createOrderForTable/{tableId}")]
-        public async Task<IActionResult> CreateOrderForTable(int tableId, [FromBody] CreateOrderForTableDTO dto)
-        {
-            try
-            {
-            
 
-                var result = await _orderService.CreateOrderForTable(tableId, dto);
-                if (result == null)
-                {
-                    return BadRequest(new { message = "Không thể tạo đơn hàng." });
-                }
-                return Ok(new
-                {
-                    message = "Đã tạo đơn hàng thành công."
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Đã xảy ra lỗi khi xử lý yêu cầu.");
-                return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu.", detail = ex.ToString() });
-            }
-        }
-    }
+			if (dto.Type.HasValue && (dto.Type <= 1 || dto.Type >= 4))
+			{
+				errors["Type"] = "Loại đơn không hợp lệ.";
+			}*/
+
+			foreach (var detail in dto.OrderDetails)
+			{
+				if (!detail.DishId.HasValue && detail.ComboId <= 0)
+				{
+					errors["DishId"] = "Món ăn hoặc combo không được để trống.";
+				}
+				
+				// Validate UnitPrice
+				if (detail.UnitPrice <= 0)
+				{
+					errors["UnitPrice"] = "Đơn giá không hợp lệ.";
+				}
+
+				// Validate Quantity
+				if (detail.Quantity <= 0)
+				{
+					errors["Quantity"] = "Số lượng phải lớn hơn 0.";
+				}
+			}
+
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+
+			try
+			{
+				var result = await _orderService.CreateOrderForTable(tableId, dto);
+				if (result == null)
+				{
+					return BadRequest(new { message = "Không thể tạo đơn hàng." });
+				}
+				return Ok(new
+				{
+					message = "Đã tạo đơn hàng thành công."
+				});
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Đã xảy ra lỗi khi xử lý yêu cầu.");
+				return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu.", detail = ex.ToString() });
+			}
+		}
+
+	}
 }
