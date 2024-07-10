@@ -361,7 +361,7 @@ namespace EHM_API.Controllers
                 errors["TableId"] = "Bàn không tồn tại.";
                 return BadRequest(errors);
             }
-            if (dto.OrderDate == null || dto.OrderDate == DateTime.MinValue)
+/*            if (dto.OrderDate == null || dto.OrderDate == DateTime.MinValue)
 			{
 				errors["Order Date"] = "Ngày đặt không hợp lệ.";
 			}
@@ -369,7 +369,7 @@ namespace EHM_API.Controllers
 			if (dto.RecevingOrder != null && dto.RecevingOrder <= DateTime.Now)
 			{
 				errors["Receving Date"] = "Ngày nhận không hợp lệ.";
-			}
+			}*/
 
 			if (dto.TotalAmount <= 0)
 			{
