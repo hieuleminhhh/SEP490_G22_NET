@@ -9,5 +9,7 @@ namespace EHM_API.Services
 		Task<IEnumerable<TableAllDTO>> GetAllTablesAsync();
 
 		Task<IEnumerable<FindTableDTO>> GetAvailableTablesForGuestsAsync(int guestNumber);
+		Task<bool> ExistTable(int tableId);
+
 	}
 }

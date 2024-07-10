@@ -99,5 +99,10 @@ namespace EHM_API.Services
 			}
 		}
 
+		public async Task<bool> ExistTable(int tableId)
+		{
+			return await _repository.ExistTable(tableId);
+		}
+
 	}
 }
