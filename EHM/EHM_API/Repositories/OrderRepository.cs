@@ -416,7 +416,7 @@ public class OrderRepository : IOrderRepository
 			RecevingOrder = dto.RecevingOrder,
 			GuestPhone = dto.GuestPhone,
 			Note = dto.Note,
-			Type = 3,
+			Type = dto.Type,
 			Address = address,
 			GuestPhoneNavigation = guest
 		};
@@ -509,11 +509,12 @@ public class OrderRepository : IOrderRepository
 		order.TotalAmount = totalAmount;
 		
 		await _context.SaveChangesAsync();
-		var updateStatusTable = _tableRepository.UpdateBusyTableStatus(tableId);
+		await  _tableRepository.UpdateBusyTableStatus(tableId);
 		return new Order
 		{
 			OrderId = order.OrderId,
 			OrderDate = order.OrderDate,
+			Status = order.Status,
 			TotalAmount = order.TotalAmount,
 			GuestPhone = order.GuestPhone,
 			Note = order.Note
