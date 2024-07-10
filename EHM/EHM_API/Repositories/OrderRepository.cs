@@ -17,15 +17,17 @@ public class OrderRepository : IOrderRepository
 {
     private readonly EHMDBContext _context;
 	private readonly IComboRepository _comboRepository;
+	private readonly ITableRepository _tableRepository;
 	private readonly IDishRepository _dishRepository;
 	private readonly ICartRepository _cartRepository;
 
-	public OrderRepository(EHMDBContext context, ICartRepository cartRepository, IComboRepository comboRepository, IDishRepository dishRepository )
+	public OrderRepository(EHMDBContext context, ICartRepository cartRepository, IComboRepository comboRepository, IDishRepository dishRepository, ITableRepository tableRepository )
     {
         _context = context;
         _cartRepository = cartRepository;
 		_comboRepository = comboRepository;
 		_dishRepository = dishRepository;
+		_tableRepository = tableRepository;
     }
 
     public async Task<IEnumerable<Order>> GetAllAsync()
@@ -381,6 +383,7 @@ public class OrderRepository : IOrderRepository
 		order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
 
 		await UpdateOrderAsync(order);
+		var updateStatusTable = _tableRepository.UpdateBusyTableStatus(tableId);
 		return order;
 	}
 
@@ -504,8 +507,9 @@ public class OrderRepository : IOrderRepository
 		await _context.SaveChangesAsync();
 
 		order.TotalAmount = totalAmount;
+		
 		await _context.SaveChangesAsync();
-
+		var updateStatusTable = _tableRepository.UpdateBusyTableStatus(tableId);
 		return new Order
 		{
 			OrderId = order.OrderId,
