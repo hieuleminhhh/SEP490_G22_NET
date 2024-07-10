@@ -109,10 +109,6 @@ namespace EHM_API.Controllers
 				{
 					errors["consigneeName"] = "Tên người nhận không được bỏ trống.";
 				}
-				else if (!Regex.IsMatch(checkoutDTO.ConsigneeName, @"^[\p{L}\p{M}' \.-]+$"))
-				{
-					errors["consigneeName"] = "Tên người nhận không hợp lệ.";
-				}
 
 				if (checkoutDTO.OrderDate == null)
 				{

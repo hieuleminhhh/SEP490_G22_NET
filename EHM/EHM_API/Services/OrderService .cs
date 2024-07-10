@@ -205,100 +205,10 @@ namespace EHM_API.Services
 			return result;
 		}
 
-
-		public async Task<FindTableAndGetOrderDTO?> UpdateOrderDetailsAsync(int tableId, UpdateTableAndGetOrderDTO dto)
+		public async Task<Order?> UpdateOrderDetailsAsync(int tableId, UpdateTableAndGetOrderDTO dto)
 		{
-			var order = await _orderRepository.GetOrderByTableIdAsync(tableId);
-
-			if (order == null)
-			{
-				return null;
-			}
-
-			order.GuestPhoneNavigation.GuestPhone = dto.GuestPhone;
-			order.Address.GuestAddress = dto.GuestAddress;
-			order.Address.ConsigneeName = dto.ConsigneeName;
-
-			foreach (var detailDto in dto.OrderDetails)
-			{
-				OrderDetail? orderDetail = null;
-
-				if (detailDto.DishId.HasValue && detailDto.DishId != 0)
-				{
-					orderDetail = order.OrderDetails?.FirstOrDefault(od => od.DishId == detailDto.DishId && od.ComboId == null);
-
-					if (orderDetail != null)
-					{
-						orderDetail.Quantity += detailDto.Quantity;
-						orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? 0) * orderDetail.Quantity;
-					}
-					else
-					{
-						if (detailDto.DishId.HasValue && !(await _dishRepository.DishExistsAsync(detailDto.DishId.Value)))
-						{
-							throw new Exception($"Món ăn {detailDto.DishId.Value} không tồn tại.");
-						}
-
-						orderDetail = new OrderDetail
-						{
-							OrderId = order.OrderId,
-							DishId = detailDto.DishId,
-							ComboId = detailDto.ComboId == 0 ? null : detailDto.ComboId,
-							Quantity = detailDto.Quantity,
-							UnitPrice = (detailDto.DiscountedPrice ?? 0) * detailDto.Quantity
-						};
-						order.OrderDetails?.Add(orderDetail);
-					}
-				}
-				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
-				{
-					orderDetail = order.OrderDetails?.FirstOrDefault(od => od.ComboId == detailDto.ComboId && od.DishId == null);
-
-					if (orderDetail != null)
-					{
-						orderDetail.Quantity += detailDto.Quantity;
-						orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? 0) * orderDetail.Quantity;
-					}
-					else
-					{
-						if (!(await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value)))
-						{
-							throw new Exception($"Combo {detailDto.ComboId.Value}không tồn tại.");
-						}
-
-						orderDetail = new OrderDetail
-						{
-							OrderId = order.OrderId,
-							DishId = null,
-							ComboId = detailDto.ComboId,
-							Quantity = detailDto.Quantity,
-							UnitPrice = (detailDto.DiscountedPrice ?? 0) * detailDto.Quantity
-						};
-						order.OrderDetails?.Add(orderDetail);
-					}
-				}
-			}
-
-			order.TotalAmount = order.OrderDetails?.Sum(od => od.UnitPrice * od.Quantity) ?? 0;
-
-			await _orderRepository.UpdateOrderAsync(order);
-
-			var result = _mapper.Map<FindTableAndGetOrderDTO>(order);
-
-			result.TableIds = order.OrderTables?
-				.Where(ot => ot.Table != null)
-				.Select(ot => new GetTableDTO
-				{
-					TableId = ot.Table.TableId,
-					Status = ot.Table.Status,
-					Capacity = ot.Table.Capacity,
-					Floor = ot.Table.Floor
-				}).ToList() ?? new List<GetTableDTO>();
-
-			result.OrderDetails = (order.OrderDetails ?? new List<OrderDetail>())
-				.Select(od => _mapper.Map<TableOfOrderDetailDTO>(od)).ToList();
-
-			return result;
+			var order = await _orderRepository.UpdateOrderForTable(tableId, dto);
+			return order;
 		}
 
 		//Create

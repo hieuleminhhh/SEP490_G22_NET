@@ -22,7 +22,7 @@ public interface IOrderRepository
 
     Task UpdateOrderAsync(Order order);
     Task<Address?> GetOrCreateAddress2(CheckoutDTO checkoutDTO);
-
+    Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto);
 	Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto);
 }
 

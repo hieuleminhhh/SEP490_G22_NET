@@ -16,12 +16,16 @@ using System.Threading.Tasks;
 public class OrderRepository : IOrderRepository
 {
     private readonly EHMDBContext _context;
+	private readonly IComboRepository _comboRepository;
+	private readonly IDishRepository _dishRepository;
 	private readonly ICartRepository _cartRepository;
 
-	public OrderRepository(EHMDBContext context, ICartRepository cartRepository)
+	public OrderRepository(EHMDBContext context, ICartRepository cartRepository, IComboRepository comboRepository, IDishRepository dishRepository )
     {
         _context = context;
         _cartRepository = cartRepository;
+		_comboRepository = comboRepository;
+		_dishRepository = dishRepository;
     }
 
     public async Task<IEnumerable<Order>> GetAllAsync()
@@ -276,6 +280,111 @@ public class OrderRepository : IOrderRepository
 		return address;
 	}
 
+	public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
+	{
+		var order = await GetOrderByTableIdAsync(tableId);
+
+		if (order == null)
+		{
+			throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
+		}
+
+		var guest = await _context.Guests
+			.FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
+
+		if (guest == null)
+		{
+			guest = new Guest
+			{
+				GuestPhone = dto.GuestPhone
+			};
+			_context.Guests.Add(guest);
+			await _context.SaveChangesAsync();
+		}
+
+		order.GuestPhone = guest.GuestPhone;
+
+		var address = await GetOrCreateAddress2(new CheckoutDTO
+		{
+			GuestAddress = dto.GuestAddress,
+			ConsigneeName = dto.ConsigneeName,
+			GuestPhone = dto.GuestPhone
+		});
+
+		order.Address = address;
+		order.OrderDetails ??= new List<OrderDetail>();
+
+		foreach (var detailDto in dto.OrderDetails)
+		{
+			OrderDetail orderDetail = null;
+
+			if (detailDto.DishId.HasValue && detailDto.DishId != 0)
+			{
+				var dishExists = await _dishRepository.DishExistsAsync(detailDto.DishId.Value);
+				if (!dishExists)
+				{
+					throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
+				}
+
+				orderDetail = order.OrderDetails.FirstOrDefault(od => od.DishId == detailDto.DishId && od.ComboId == null);
+
+
+				if (orderDetail != null)
+				{
+					orderDetail.Quantity += detailDto.Quantity;
+					orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * orderDetail.Quantity;
+				}
+				else
+				{
+					orderDetail = new OrderDetail
+					{
+						OrderId = order.OrderId,
+						DishId = detailDto.DishId.Value,
+						ComboId = null,
+						Quantity = detailDto.Quantity,
+						UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * detailDto.Quantity
+					};
+					order.OrderDetails.Add(orderDetail);
+				}
+			}
+			else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
+			{
+
+				var comboExists = await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value);
+				if (!comboExists)
+				{
+					throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
+				}
+
+				orderDetail = order.OrderDetails.FirstOrDefault(od => od.ComboId == detailDto.ComboId && od.DishId == null);
+
+				if (orderDetail != null)
+				{
+					orderDetail.Quantity += detailDto.Quantity;
+					orderDetail.UnitPrice = orderDetail.Combo.Price * orderDetail.Quantity;
+				}
+				else
+				{
+					orderDetail = new OrderDetail
+					{
+						OrderId = order.OrderId,
+						DishId = null,
+						ComboId = detailDto.ComboId.Value,
+						Quantity = detailDto.Quantity,
+						UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
+					};
+					order.OrderDetails.Add(orderDetail);
+				}
+			}
+		}
+
+		order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
+
+		await UpdateOrderAsync(order);
+		return order;
+	}
+
+
 	public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
 	{
 		var guest = await _context.Guests
@@ -304,7 +413,7 @@ public class OrderRepository : IOrderRepository
 			RecevingOrder = dto.RecevingOrder,
 			GuestPhone = dto.GuestPhone,
 			Note = dto.Note,
-			Type = 2,
+			Type = 3,
 			Address = address,
 			GuestPhoneNavigation = guest
 		};
@@ -328,7 +437,7 @@ public class OrderRepository : IOrderRepository
 
 					if (dish == null)
 					{
-						throw new KeyNotFoundException($"Dish with ID {detailDto.DishId} not found.");
+						throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
 					}
 
 					if (dish.Discount != null)
@@ -358,7 +467,7 @@ public class OrderRepository : IOrderRepository
 
 					if (combo == null)
 					{
-						throw new KeyNotFoundException($"Combo with ID {detailDto.ComboId} not found.");
+						throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
 					}
 
 					unitPrice = (decimal)combo.Price * detailDto.Quantity;
