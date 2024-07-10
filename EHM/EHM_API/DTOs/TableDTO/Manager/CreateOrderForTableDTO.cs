@@ -5,6 +5,7 @@
 		public string? GuestAddress { get; set; }
 		public string? ConsigneeName { get; set; }
 		public DateTime OrderDate { get; set; }
+		public int? Status { get; set; }
 		public DateTime? RecevingOrder { get; set; }
 		public decimal TotalAmount { get; set; }
 		public string GuestPhone { get; set; }
