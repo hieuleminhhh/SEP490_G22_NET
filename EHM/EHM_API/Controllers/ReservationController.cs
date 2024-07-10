@@ -61,10 +61,6 @@ namespace EHM_API.Controllers
 			{
 				errors["consigneeName"] = "Tên khách hàng là bắt buộc.";
 			}
-			else if (!Regex.IsMatch(createDto.ConsigneeName, @"^[\p{L}\p{M}' \.-]+$"))
-			{
-				errors["consigneeName"] = "Tên khách hàng không hợp lệ.";
-			}
 
 			if (createDto.ReservationTime == null)
 			{
@@ -79,9 +75,9 @@ namespace EHM_API.Controllers
 			{
 				errors["guestNumber"] = "Số lượng khách là bắt buộc.";
 			}
-			if (createDto.GuestNumber <= 0)
+			if (createDto.GuestNumber < 0)
 			{
-				errors["guestNumber"] = "Số lượng khách phải lớn hơn 0.";
+				errors["guestNumber"] = "Số lượng khách phải hợp lệ.";
 			}
 
 			if (createDto.TotalAmount == null || createDto.TotalAmount < 0)

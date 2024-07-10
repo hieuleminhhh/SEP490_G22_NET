@@ -11,6 +11,8 @@ using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
@@ -274,33 +276,38 @@ namespace EHM_API.Controllers
             }
         }
 
+		[HttpPut("updateOrderDetails/{tableId}")]
+		public async Task<IActionResult> UpdateOrderDetails(int tableId, [FromBody] UpdateTableAndGetOrderDTO dto)
+		{
+			if (tableId <= 0)
+			{
+				return BadRequest(new { message = "TableId không hợp lệ." });
+			}
 
-        [HttpPut("updateOrderDetails/{tableId}")]
-        public async Task<IActionResult> UpdateOrderDetails(int tableId, [FromBody] UpdateTableAndGetOrderDTO dto)
-        {
-            var result = await _orderService.UpdateOrderDetailsAsync(tableId, dto);
+			var result = await _orderService.UpdateOrderDetailsAsync(tableId, dto);
 
-            if (tableId <= 0)
-            {
-                return BadRequest(new { message = "TableId không hợp lệ." });
-            }
+			if (result == null)
+			{
+				return NotFound(new { message = "Không tìm thấy đơn hàng hoặc bàn." });
+			}
 
-            if (result == null)
-            {
-                return NotFound(new { message = "Không tìm thấy đơn hàng hoặc bàn." });
-            }
+			var options = new JsonSerializerOptions
+			{
+				ReferenceHandler = ReferenceHandler.Preserve,
+			};
 
-            return Ok(new { message = "Cập nhật thành công.", data = result });
-        }
+			var jsonResult = JsonSerializer.Serialize(result, options);
 
-        //Create Order for Table
-        [HttpPost("createOrderForTable/{tableId}")]
+			return Ok(new { message = "Cập nhật thành công.", data = jsonResult });
+		}
+
+
+		//Create Order for Table
+		[HttpPost("createOrderForTable/{tableId}")]
         public async Task<IActionResult> CreateOrderForTable(int tableId, [FromBody] CreateOrderForTableDTO dto)
         {
             try
             {
-            
-
                 var result = await _orderService.CreateOrderForTable(tableId, dto);
                 if (result == null)
                 {
