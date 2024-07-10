@@ -26,7 +26,10 @@ namespace EHM_API.DTOs.TableDTO.Manager
 	{
 		public int OrderDetailId { get; set; }
 		public decimal? UnitPrice { get; set; }
-		public int? Quantity { get; set; }
+        public int? DishesServed { get; set; }
+        public int? Quantity { get; set; }
+		public int? DishId { get; set; }
+		public int? ComboId { get; set; }
 		public SearchDishDTO? Dish { get; set; }
 		public SearchComboDTO? Combo { get; set; }
 	}
