@@ -371,7 +371,7 @@ namespace EHM_API.Controllers
 				errors["Receving Date"] = "Ngày nhận không hợp lệ.";
 			}*/
 
-			if (dto.TotalAmount <= 0)
+		/*	if (dto.TotalAmount <= 0)
 			{
 				errors["TotalAmount"] = "Tổng tiền không hợp lệ.";
 			}
@@ -380,7 +380,7 @@ namespace EHM_API.Controllers
 			if (dto.Type.HasValue && (dto.Type <= 1 || dto.Type >= 4))
 			{
 				errors["Type"] = "Loại đơn không hợp lệ.";
-			}
+			}*/
 
 			foreach (var detail in dto.OrderDetails)
 			{

@@ -413,6 +413,7 @@ public class OrderRepository : IOrderRepository
 		var order = new Order
 		{
 			OrderDate = dto.OrderDate,
+			Status = dto.Status,
 			RecevingOrder = dto.RecevingOrder,
 			GuestPhone = dto.GuestPhone,
 			Note = dto.Note,
