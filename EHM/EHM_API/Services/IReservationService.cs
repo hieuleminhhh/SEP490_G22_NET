@@ -10,8 +10,8 @@ namespace EHM_API.Services
 	{
 		Task<IEnumerable<ReservationByStatus>> GetReservationsByStatus(int? status);
 		Task<ReservationDetailDTO> GetReservationDetailAsync(int reservationId);
-		Task CreateReservationAsync(CreateReservationDTO createDto);
-        Task UpdateStatusAsync(int reservationId, UpdateStatusReservationDTO updateStatusReservationDTO);
+		Task CreateReservationAsync(CreateReservationDTO reservationDTO);
+		Task UpdateStatusAsync(int reservationId, UpdateStatusReservationDTO updateStatusReservationDTO);
         Task<int?> CalculateStatusOfTable(Reservation reservation);
         Task RegisterTablesAsync(RegisterTablesDTO registerTablesDTO);
 		Task<IEnumerable<ReservationSearchDTO>> SearchReservationsAsync(string? guestNameOrPhone);
