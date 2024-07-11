@@ -13,22 +13,17 @@ namespace EHM_API.Services
     public class ReservationService : IReservationService
 	{
 		private readonly IReservationRepository _repository;
-		private readonly IDishRepository _Dishrepository;
-		private readonly IComboRepository _Comborepository;
         private readonly ITableRepository _tableRepository;
         private readonly ITableReservationRepository _tableReservationRepository;
         private readonly IMapper _mapper;
 
         public ReservationService(IReservationRepository repository,
-			IDishRepository dishrepository,
-			IComboRepository comborepository,
+		
 			ITableRepository tableRepository,
 			ITableReservationRepository tableReservationRepository,
 			IMapper mapper)
         {
             _repository = repository;
-            _Dishrepository = dishrepository;
-            _Comborepository = comborepository;
             _tableRepository = tableRepository;
             _tableReservationRepository = tableReservationRepository;
             _mapper = mapper;
@@ -60,82 +55,9 @@ namespace EHM_API.Services
 
 		public async Task CreateReservationAsync(CreateReservationDTO reservationDTO)
 		{
-			var guest = await _repository.GetOrCreateGuest(reservationDTO.GuestPhone, reservationDTO.Email);
-
-			var address = await _repository.GetOrCreateAddress(
-				reservationDTO.GuestPhone,
-				reservationDTO.GuestAddress,
-				reservationDTO.ConsigneeName
-			);
-
-			var reservation = new Reservation
-			{
-				AddressId = address.AddressId,
-				ReservationTime = reservationDTO.ReservationTime,
-				GuestNumber = reservationDTO.GuestNumber,
-				Note = reservationDTO.Note,
-				Status = reservationDTO.Status ?? 0
-			};
-
-			if (reservationDTO.OrderDetails != null)
-			{
-				var orderDetails = new List<OrderDetail>();
-
-				foreach (var item in reservationDTO.OrderDetails)
-				{
-					Dish dish = null;
-					Combo combo = null;
-
-					if (item.DishId.HasValue && item.DishId > 0)
-					{
-						dish = await _Dishrepository.GetDishByIdAsync(item.DishId.Value);
-						if (dish == null)
-						{
-							throw new KeyNotFoundException("Món ăn này không tồn tại");
-						}
-					}
-					else if (item.ComboId.HasValue && item.ComboId > 0)
-					{
-						combo = await _Comborepository.GetComboByIdAsync(item.ComboId.Value);
-						if (combo == null)
-						{
-							throw new KeyNotFoundException("Combo này không tồn tại");
-						}
-					}
-
-					var orderDetail = new OrderDetail
-					{
-						DishId = dish?.DishId,
-						ComboId = combo?.ComboId,
-						Quantity = item.Quantity,
-						UnitPrice = item.UnitPrice
-					};
-
-					orderDetails.Add(orderDetail);
-				}
-
-				if (orderDetails.Any())
-				{
-					var order = new Order
-					{
-						OrderDate = reservationDTO.OrderDate,
-						Status = reservationDTO.Status ?? 0,
-						RecevingOrder = reservationDTO.RecevingOrder,
-						TotalAmount = reservationDTO.TotalAmount,
-						OrderDetails = orderDetails,
-						GuestPhone = guest.GuestPhone,
-						AddressId = address.AddressId,
-						Note = reservationDTO.Note,
-						Deposits = reservationDTO.Deposits,
-						Type = reservationDTO.Type
-					};
-
-					reservation.Order = order;
-				}
-			}
-
-			await _repository.CreateReservationAsync(reservation);
+			await _repository.CreateReservationAsync(reservationDTO);
 		}
+
 
 
 		public async Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status)

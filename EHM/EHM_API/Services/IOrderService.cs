@@ -28,8 +28,9 @@ namespace EHM_API.Services
 		Task<IEnumerable<ListTableOrderDTO>> GetOrdersWithTablesAsync();
 		Task<FindTableAndGetOrderDTO?> GetOrderByTableIdAsync(int tableId);
 
-        Task<FindTableAndGetOrderDTO?> UpdateOrderDetailsAsync(int tableId, UpdateTableAndGetOrderDTO dto);
-        Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto);
+        Task<Order?> UpdateOrderDetailsAsync(int tableId, UpdateTableAndGetOrderDTO dto);
+
+		Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto);
 
 
 	}

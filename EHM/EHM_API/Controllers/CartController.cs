@@ -109,24 +109,20 @@ namespace EHM_API.Controllers
 				{
 					errors["consigneeName"] = "Tên người nhận không được bỏ trống.";
 				}
-				else if (!Regex.IsMatch(checkoutDTO.ConsigneeName, @"^[\p{L}\p{M}' \.-]+$"))
-				{
-					errors["consigneeName"] = "Tên người nhận không hợp lệ.";
-				}
 
 				if (checkoutDTO.OrderDate == null)
 				{
 					errors["orderDate"] = "Ngày đặt hàng không được để trống.";
 				}
-				else if (checkoutDTO.OrderDate > DateTime.UtcNow)
+/*				else if (checkoutDTO.OrderDate < DateTime.UtcNow)
 				{
 					errors["orderDate"] = "Ngày đặt hàng không hợp lệ.";
 				}
 
-				if (checkoutDTO.RecevingOrder > DateTime.UtcNow)
+				if (checkoutDTO.RecevingOrder < DateTime.UtcNow)
 				{
 					errors["receivingDate"] = "Ngày nhận không hợp lệ.";
-				}
+				}*/
 
 				if (checkoutDTO.Deposits < 0)
 				{

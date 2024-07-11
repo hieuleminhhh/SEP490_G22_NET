@@ -11,5 +11,9 @@ namespace EHM_API.Repositories
         Task UpdateTableAsync(Table table);
         Task<List<Table>> GetListTablesByIdsAsync(List<int> tableIds);
         Task UpdateListTablesAsync(List<Table> tables);
-    }
+
+        Task<bool> UpdateBusyTableStatus(int tableId);
+        Task<bool> ExistTable(int tableId);
+
+	}
 }

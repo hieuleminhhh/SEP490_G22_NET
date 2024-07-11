@@ -151,14 +151,12 @@ namespace EHM_API.Repositories
         {
             var query = _context.Dishes.AsQueryable();
 
-            // Search by category name
             if (!string.IsNullOrEmpty(categorySearch))
             {
                 categorySearch = categorySearch.ToLower();
                 query = query.Where(d => d.Category.CategoryName.ToLower().Contains(categorySearch));
             }
 
-            // Search by dish name
             if (!string.IsNullOrEmpty(search))
             {
                 search = search.ToLower();
