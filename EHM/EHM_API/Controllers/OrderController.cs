@@ -293,18 +293,6 @@ namespace EHM_API.Controllers
 
 			var errors = new Dictionary<string, string>();
 
-			if (dto.OrderId <= 0)
-			{
-				errors["OrderId"] = "OrderId không hợp lệ.";
-				return BadRequest(errors);
-			}
-
-			var orderExists = await _orderService.GetOrderByIdAsync(dto.OrderId);
-			if (orderExists == null)
-			{
-				return BadRequest(new { message = "Đơn hàng không tồn tại." });
-			}
-
 			foreach (var detail in dto.OrderDetails)
 			{
 

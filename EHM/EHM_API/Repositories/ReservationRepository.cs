@@ -11,10 +11,15 @@ namespace EHM_API.Repositories
 	public class ReservationRepository : IReservationRepository
 	{
 		private readonly EHMDBContext _context;
+		private readonly IDishRepository _Dishrepository;
+		private readonly IComboRepository _Comborepository;
 
-		public ReservationRepository(EHMDBContext context)
+		public ReservationRepository(EHMDBContext context, IDishRepository dishrepository,
+			IComboRepository comborepository)
 		{
 			_context = context;
+			_Dishrepository = dishrepository;
+			_Comborepository = comborepository;
 		}
 
 		
@@ -103,12 +108,86 @@ namespace EHM_API.Repositories
 			return address;
 		}
 
-
-
-		public async Task CreateReservationAsync(Reservation reservation)
+		public async Task<Reservation> CreateReservationAsync(CreateReservationDTO reservationDTO)
 		{
+			var guest = await GetOrCreateGuest(reservationDTO.GuestPhone, reservationDTO.Email);
+
+			var address = await GetOrCreateAddress(
+				reservationDTO.GuestPhone,
+				reservationDTO.GuestAddress,
+				reservationDTO.ConsigneeName
+			);
+
+			var reservation = new Reservation
+			{
+				AddressId = address.AddressId,
+				ReservationTime = reservationDTO.ReservationTime,
+				GuestNumber = reservationDTO.GuestNumber,
+				Note = reservationDTO.Note,
+				Status = reservationDTO.Status ?? 0
+			};
+
+			if (reservationDTO.OrderDetails != null)
+			{
+				var orderDetails = new List<OrderDetail>();
+
+				foreach (var item in reservationDTO.OrderDetails)
+				{
+					Dish dish = null;
+					Combo combo = null;
+
+					if (item.DishId.HasValue && item.DishId > 0)
+					{
+						dish = await _Dishrepository.GetDishByIdAsync(item.DishId.Value);
+						if (dish == null)
+						{
+							throw new KeyNotFoundException("Món ăn này không tồn tại");
+						}
+					}
+					else if (item.ComboId.HasValue && item.ComboId > 0)
+					{
+						combo = await _Comborepository.GetComboByIdAsync(item.ComboId.Value);
+						if (combo == null)
+						{
+							throw new KeyNotFoundException("Combo này không tồn tại");
+						}
+					}
+
+					var orderDetail = new OrderDetail
+					{
+						DishId = dish?.DishId,
+						ComboId = combo?.ComboId,
+						Quantity = item.Quantity,
+						UnitPrice = item.UnitPrice
+					};
+
+					orderDetails.Add(orderDetail);
+				}
+
+				if (orderDetails.Any())
+				{
+					var order = new Order
+					{
+						OrderDate = reservationDTO.OrderDate,
+						Status = reservationDTO.Status ?? 0,
+						RecevingOrder = reservationDTO.RecevingOrder,
+						TotalAmount = reservationDTO.TotalAmount,
+						OrderDetails = orderDetails,
+						GuestPhone = guest.GuestPhone,
+						AddressId = address.AddressId,
+						Note = reservationDTO.Note,
+						Deposits = reservationDTO.Deposits,
+						Type = reservationDTO.Type
+					};
+
+					reservation.Order = order;
+				}
+			}
+
 			_context.Reservations.Add(reservation);
 			await _context.SaveChangesAsync();
+
+			return reservation;
 		}
 
 		public async Task<Address> GetAddressByGuestPhoneAsync(string guestPhone)

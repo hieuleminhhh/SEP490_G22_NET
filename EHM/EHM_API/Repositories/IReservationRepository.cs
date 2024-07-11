@@ -7,7 +7,7 @@ namespace EHM_API.Repositories
 	{
 		Task<IEnumerable<Reservation>> GetReservationsByStatus(int? status);
 
-		Task CreateReservationAsync(Reservation reservation);
+		Task<Reservation> CreateReservationAsync(CreateReservationDTO reservationDTO);
 		Task<Guest> GetOrCreateGuest(string guestPhone, string email);
 		Task<Address> GetAddressByGuestPhoneAsync(string guestPhone);
 		Task<Address> GetOrCreateAddress(string guestPhone, string? guestAddress, string? consigneeName);
