@@ -414,5 +414,43 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
+		//Update status
+		[HttpPut("update-order-status-for-table")]
+		public async Task<IActionResult> UpdateOrderStatusForTable(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)
+		{
+			try
+			{
+				await _orderService.UpdateOrderStatusForTableAsync(tableId, orderId, dto);
+				return Ok();
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("cancel-order")]
+		public async Task<IActionResult> CancelOrder(int tableId, int orderId, [FromBody] CancelOrderDTO dto)
+		{
+			try
+			{
+				await _orderService.CancelOrderForTableAsync(tableId, orderId, dto);
+				return Ok(new { message = "Order cancelled successfully." });
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = ex.Message });
+			}
+		}
+
 	}
 }

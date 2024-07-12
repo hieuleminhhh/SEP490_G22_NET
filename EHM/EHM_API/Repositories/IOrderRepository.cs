@@ -24,5 +24,9 @@ public interface IOrderRepository
     Task<Address?> GetOrCreateAddress2(CheckoutDTO checkoutDTO);
     Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto);
 	Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto);
-}
+
+    Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto);
+    Task CancelOrderAsync(int tableId, int orderId, CancelOrderDTO dto);
+
+	}
 
