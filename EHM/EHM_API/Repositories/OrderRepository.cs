@@ -15,27 +15,27 @@ using System.Threading.Tasks;
 
 public class OrderRepository : IOrderRepository
 {
-    private readonly EHMDBContext _context;
+	private readonly EHMDBContext _context;
 	private readonly IComboRepository _comboRepository;
 	private readonly ITableRepository _tableRepository;
 	private readonly IDishRepository _dishRepository;
 	private readonly ICartRepository _cartRepository;
 
-	public OrderRepository(EHMDBContext context, ICartRepository cartRepository, IComboRepository comboRepository, IDishRepository dishRepository, ITableRepository tableRepository )
-    {
-        _context = context;
-        _cartRepository = cartRepository;
+	public OrderRepository(EHMDBContext context, ICartRepository cartRepository, IComboRepository comboRepository, IDishRepository dishRepository, ITableRepository tableRepository)
+	{
+		_context = context;
+		_cartRepository = cartRepository;
 		_comboRepository = comboRepository;
 		_dishRepository = dishRepository;
 		_tableRepository = tableRepository;
-    }
+	}
 
-    public async Task<IEnumerable<Order>> GetAllAsync()
-    {
-        return await _context.Orders.Include(o => o.Account)
-                                    .Include(o => o.Address).
-                                     ToListAsync();
-    }
+	public async Task<IEnumerable<Order>> GetAllAsync()
+	{
+		return await _context.Orders.Include(o => o.Account)
+									.Include(o => o.Address).
+									 ToListAsync();
+	}
 
 
 	public async Task<Order> GetByIdAsync(int id)
@@ -57,15 +57,15 @@ public class OrderRepository : IOrderRepository
 
 
 	public async Task<Order> AddAsync(Order order)
-    {
-        _context.Orders.Add(order);
-        await _context.SaveChangesAsync();
-        return order;
-    }
-    public async Task<Account> GetAccountByUsernameAsync(string username)
-    {
-        return await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username);
-    }
+	{
+		_context.Orders.Add(order);
+		await _context.SaveChangesAsync();
+		return order;
+	}
+	public async Task<Account> GetAccountByUsernameAsync(string username)
+	{
+		return await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+	}
 
 	public async Task<IEnumerable<Order>> SearchAsync(string guestPhone)
 	{
@@ -76,153 +76,153 @@ public class OrderRepository : IOrderRepository
 								.ThenInclude(od => od.Combo)
 								.Include(o => o.OrderDetails)
 								.ThenInclude(od => od.Dish)
-						    	.ThenInclude(d => d.Discount) 
+								.ThenInclude(d => d.Discount)
 								.Where(o => o.GuestPhone == guestPhone)
-						         .OrderByDescending(o => o.OrderDate)
+								 .OrderByDescending(o => o.OrderDate)
 								.ToListAsync();
 	}
 
 
 
 	public async Task<Order> UpdateAsync(Order order)
-    {
-        _context.Entry(order).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-        return order;
-    }
+	{
+		_context.Entry(order).State = EntityState.Modified;
+		await _context.SaveChangesAsync();
+		return order;
+	}
 
-    public async Task<bool> DeleteAsync(int id)
-    {
-        var order = await _context.Orders.FindAsync(id);
-        if (order == null)
-        {
-            return false;
-        }
+	public async Task<bool> DeleteAsync(int id)
+	{
+		var order = await _context.Orders.FindAsync(id);
+		if (order == null)
+		{
+			return false;
+		}
 
-        _context.Orders.Remove(order);
-        await _context.SaveChangesAsync();
-        return true;
-    }
-    public async Task<PagedResult<OrderDTO>> GetOrderAsync(string search, DateTime? dateFrom, DateTime? dateTo, int status, int page, int pageSize, string filterByDate, int type)
-    {
-        var query = _context.Orders.AsQueryable();
+		_context.Orders.Remove(order);
+		await _context.SaveChangesAsync();
+		return true;
+	}
+	public async Task<PagedResult<OrderDTO>> GetOrderAsync(string search, DateTime? dateFrom, DateTime? dateTo, int status, int page, int pageSize, string filterByDate, int type)
+	{
+		var query = _context.Orders.AsQueryable();
 
-        // Filter by search keyword (GuestPhone)
-        if (!string.IsNullOrEmpty(search))
-        {
-            search = search.ToLower();
-            query = query.Where(d => d.GuestPhone.ToLower().Contains(search));
-        }
+		// Filter by search keyword (GuestPhone)
+		if (!string.IsNullOrEmpty(search))
+		{
+			search = search.ToLower();
+			query = query.Where(d => d.GuestPhone.ToLower().Contains(search));
+		}
 
-        // Filter by DateFrom and DateTo based on filterBy parameter
-        if (dateFrom != null || dateTo != null)
-        {
-            if (filterByDate == "Đặt hàng")
-            {
-                if (dateFrom != null && dateTo != null)
-                {
-                    query = query.Where(d => d.OrderDate >= dateFrom && d.OrderDate <= dateTo.Value.AddDays(1).AddTicks(-1));
-                }
-                else if (dateFrom != null)
-                {
-                    query = query.Where(d => d.OrderDate >= dateFrom && d.OrderDate <= dateFrom.Value.AddDays(1).AddTicks(-1));
-                }
-                else if (dateTo != null)
-                {
-                    query = query.Where(d => d.OrderDate <= dateTo.Value.AddDays(1).AddTicks(-1));
-                }
-            }
-            else if (filterByDate == "Giao hàng")
-            {
-                if (dateFrom != null && dateTo != null)
-                {
-                    query = query.Where(d => d.RecevingOrder >= dateFrom && d.RecevingOrder <= dateTo.Value.AddDays(1).AddTicks(-1));
-                }
-                else if (dateFrom != null)
-                {
-                    query = query.Where(d => d.RecevingOrder >= dateFrom && d.RecevingOrder <= dateFrom.Value.AddDays(1).AddTicks(-1));
-                }
-                else if (dateTo != null)
-                {
-                    query = query.Where(d => d.RecevingOrder <= dateTo.Value.AddDays(1).AddTicks(-1));
-                }
-            }
-        }
+		// Filter by DateFrom and DateTo based on filterBy parameter
+		if (dateFrom != null || dateTo != null)
+		{
+			if (filterByDate == "Đặt hàng")
+			{
+				if (dateFrom != null && dateTo != null)
+				{
+					query = query.Where(d => d.OrderDate >= dateFrom && d.OrderDate <= dateTo.Value.AddDays(1).AddTicks(-1));
+				}
+				else if (dateFrom != null)
+				{
+					query = query.Where(d => d.OrderDate >= dateFrom && d.OrderDate <= dateFrom.Value.AddDays(1).AddTicks(-1));
+				}
+				else if (dateTo != null)
+				{
+					query = query.Where(d => d.OrderDate <= dateTo.Value.AddDays(1).AddTicks(-1));
+				}
+			}
+			else if (filterByDate == "Giao hàng")
+			{
+				if (dateFrom != null && dateTo != null)
+				{
+					query = query.Where(d => d.RecevingOrder >= dateFrom && d.RecevingOrder <= dateTo.Value.AddDays(1).AddTicks(-1));
+				}
+				else if (dateFrom != null)
+				{
+					query = query.Where(d => d.RecevingOrder >= dateFrom && d.RecevingOrder <= dateFrom.Value.AddDays(1).AddTicks(-1));
+				}
+				else if (dateTo != null)
+				{
+					query = query.Where(d => d.RecevingOrder <= dateTo.Value.AddDays(1).AddTicks(-1));
+				}
+			}
+		}
 
-        // Filter by Status
-        if (status != 0) // Assuming 0 means no filter by status
-        {
-            query = query.Where(d => (int)d.Status == status);
-        }
+		// Filter by Status
+		if (status != 0) // Assuming 0 means no filter by status
+		{
+			query = query.Where(d => (int)d.Status == status);
+		}
 
-        // Filter by Type
-        if (type != 0)
-        {
-            query = query.Where(d => d.Type == type);
-        }
+		// Filter by Type
+		if (type != 0)
+		{
+			query = query.Where(d => d.Type == type);
+		}
 
-        var totalOrders = await query.CountAsync();
+		var totalOrders = await query.CountAsync();
 
-        var orders = await query
-            .Include(a => a.Address)
-            .Include(o => o.OrderTables).ThenInclude(ot => ot.Table)
-            .OrderByDescending(o => filterByDate == "Đặt hàng" ? o.OrderDate : o.RecevingOrder) // Order by selected filter in descending order
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+		var orders = await query
+			.Include(a => a.Address)
+			.Include(o => o.OrderTables).ThenInclude(ot => ot.Table)
+			.OrderByDescending(o => filterByDate == "Đặt hàng" ? o.OrderDate : o.RecevingOrder) // Order by selected filter in descending order
+			.Skip((page - 1) * pageSize)
+			.Take(pageSize)
+			.ToListAsync();
 
-        var orderDTOs = orders.Select(o => new OrderDTO
-        {
-            OrderId = o.OrderId,
-            OrderDate = (DateTime)o.OrderDate,
-            Status = (int)o.Status,
-            RecevingOrder = o.RecevingOrder,
-            AccountId = o.AccountId,
-            TableIds = o.OrderTables.Select(tb => new TableAllDTO
-            {
-                TableId = tb.TableId,
-                Capacity = tb.Table != null ? tb.Table.Capacity : default(int),
-                Floor = tb.Table != null ? tb.Table.Floor : default(int),
-                Status = tb.Table != null ? tb.Table.Status : default(int),
-            }).ToList(),
-            InvoiceId = o.InvoiceId,
-            TotalAmount = o.TotalAmount,
-            GuestPhone = o.GuestPhone,
-            Deposits = o.Deposits,
-            AddressId = o.AddressId ?? 0,
-            GuestAddress = o.Address?.GuestAddress,
-            ConsigneeName = o.Address?.ConsigneeName,
-            Note = o.Note,
-            Type = o.Type
-        }).ToList();
+		var orderDTOs = orders.Select(o => new OrderDTO
+		{
+			OrderId = o.OrderId,
+			OrderDate = (DateTime)o.OrderDate,
+			Status = (int)o.Status,
+			RecevingOrder = o.RecevingOrder,
+			AccountId = o.AccountId,
+			TableIds = o.OrderTables.Select(tb => new TableAllDTO
+			{
+				TableId = tb.TableId,
+				Capacity = tb.Table != null ? tb.Table.Capacity : default(int),
+				Floor = tb.Table != null ? tb.Table.Floor : default(int),
+				Status = tb.Table != null ? tb.Table.Status : default(int),
+			}).ToList(),
+			InvoiceId = o.InvoiceId,
+			TotalAmount = o.TotalAmount,
+			GuestPhone = o.GuestPhone,
+			Deposits = o.Deposits,
+			AddressId = o.AddressId ?? 0,
+			GuestAddress = o.Address?.GuestAddress,
+			ConsigneeName = o.Address?.ConsigneeName,
+			Note = o.Note,
+			Type = o.Type
+		}).ToList();
 
-        return new PagedResult<OrderDTO>(orderDTOs, totalOrders, page, pageSize);
-    }
-
-
+		return new PagedResult<OrderDTO>(orderDTOs, totalOrders, page, pageSize);
+	}
 
 
-    public async Task<Order> UpdateOrderStatusAsync(int orderId, int status)
-    {
-        var od = await _context.Orders.FindAsync(orderId);
-        if (od == null)
-        {
-            return null;
-        }
 
-        od.Status = status;
-        _context.Orders.Update(od);
-        await _context.SaveChangesAsync();
 
-        return od;
-    }
+	public async Task<Order> UpdateOrderStatusAsync(int orderId, int status)
+	{
+		var od = await _context.Orders.FindAsync(orderId);
+		if (od == null)
+		{
+			return null;
+		}
+
+		od.Status = status;
+		_context.Orders.Update(od);
+		await _context.SaveChangesAsync();
+
+		return od;
+	}
 
 	public async Task<IEnumerable<Order>> GetOrdersWithTablesAsync()
 	{
 		return await _context.Orders
 			.Include(o => o.OrderTables)
 			.ThenInclude(ot => ot.Table)
-			.Include(o => o.Address) 
+			.Include(o => o.Address)
 			.ToListAsync();
 	}
 
@@ -282,113 +282,119 @@ public class OrderRepository : IOrderRepository
 		return address;
 	}
 
-	public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
-	{
-		var order = await GetOrderByTableIdAsync(tableId);
+    public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
+    {
+        // Kiểm tra xem có tồn tại đơn hàng cho bàn này không
+        var order = await GetOrderByTableIdAsync(tableId);
+        if (order == null)
+        {
+            throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
+        }
 
-		if (order == null)
-		{
-			throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
-		}
+        // Kiểm tra xem có tồn tại khách hàng với số điện thoại này không
+        var guest = await _context.Guests
+            .FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
+        if (guest == null)
+        {
+            guest = new Guest
+            {
+                GuestPhone = dto.GuestPhone
+            };
+            _context.Guests.Add(guest);
+            await _context.SaveChangesAsync();
+        }
 
-		var guest = await _context.Guests
-			.FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
+        order.GuestPhone = guest.GuestPhone;
 
-		if (guest == null)
-		{
-			guest = new Guest
-			{
-				GuestPhone = dto.GuestPhone
-			};
-			_context.Guests.Add(guest);
-			await _context.SaveChangesAsync();
-		}
+        // Tạo hoặc lấy địa chỉ khách hàng
+        var address = await GetOrCreateAddress2(new CheckoutDTO
+        {
+            GuestAddress = dto.GuestAddress,
+            ConsigneeName = dto.ConsigneeName,
+            GuestPhone = dto.GuestPhone
+        });
 
-		order.GuestPhone = guest.GuestPhone;
+        order.Address = address;
+        order.OrderDetails ??= new List<OrderDetail>();
 
-		var address = await GetOrCreateAddress2(new CheckoutDTO
-		{
-			GuestAddress = dto.GuestAddress,
-			ConsigneeName = dto.ConsigneeName,
-			GuestPhone = dto.GuestPhone
-		});
+        // Cập nhật hoặc thêm mới chi tiết đơn hàng
+        foreach (var detailDto in dto.OrderDetails)
+        {
+            OrderDetail orderDetail = null;
 
-		order.Address = address;
-		order.OrderDetails ??= new List<OrderDetail>();
+            if (detailDto.DishId.HasValue && detailDto.DishId != 0)
+            {
+                var dishExists = await _dishRepository.DishExistsAsync(detailDto.DishId.Value);
+                if (!dishExists)
+                {
+                    throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
+                }
 
-		foreach (var detailDto in dto.OrderDetails)
-		{
-			OrderDetail orderDetail = null;
+                orderDetail = order.OrderDetails.FirstOrDefault(od => od.DishId == detailDto.DishId && od.ComboId == null);
 
-			if (detailDto.DishId.HasValue && detailDto.DishId != 0)
-			{
-				var dishExists = await _dishRepository.DishExistsAsync(detailDto.DishId.Value);
-				if (!dishExists)
-				{
-					throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
-				}
+                if (orderDetail != null)
+                {
+                    orderDetail.Quantity += detailDto.Quantity;
+                    orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * orderDetail.Quantity;
+                }
+                else
+                {
+                    orderDetail = new OrderDetail
+                    {
+                        OrderId = order.OrderId,
+                        DishId = detailDto.DishId.Value,
+                        ComboId = null,
+                        Quantity = detailDto.Quantity,
+                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
+                    };
+                    order.OrderDetails.Add(orderDetail);
+                }
+            }
+            else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
+            {
+                var comboExists = await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value);
+                if (!comboExists)
+                {
+                    throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
+                }
 
-				orderDetail = order.OrderDetails.FirstOrDefault(od => od.DishId == detailDto.DishId && od.ComboId == null);
+                orderDetail = order.OrderDetails.FirstOrDefault(od => od.ComboId == detailDto.ComboId && od.DishId == null);
 
+                if (orderDetail != null)
+                {
+                    orderDetail.Quantity += detailDto.Quantity;
+                    orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Combo.Price) * orderDetail.Quantity;
+                }
+                else
+                {
+                    orderDetail = new OrderDetail
+                    {
+                        OrderId = order.OrderId,
+                        DishId = null,
+                        ComboId = detailDto.ComboId.Value,
+                        Quantity = detailDto.Quantity,
+                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
+                    };
+                    order.OrderDetails.Add(orderDetail);
+                }
+            }
+        }
 
-				if (orderDetail != null)
-				{
-					orderDetail.Quantity += detailDto.Quantity;
-					orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * orderDetail.Quantity;
-				}
-				else
-				{
-					orderDetail = new OrderDetail
-					{
-						OrderId = order.OrderId,
-						DishId = detailDto.DishId.Value,
-						ComboId = null,
-						Quantity = detailDto.Quantity,
-						UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * detailDto.Quantity
-					};
-					order.OrderDetails.Add(orderDetail);
-				}
-			}
-			else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
-			{
+        // Tính tổng số tiền của đơn hàng
+        order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
 
-				var comboExists = await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value);
-				if (!comboExists)
-				{
-					throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
-				}
+        // Cập nhật đơn hàng
+        await UpdateOrderAsync(order);
 
-				orderDetail = order.OrderDetails.FirstOrDefault(od => od.ComboId == detailDto.ComboId && od.DishId == null);
+        // Cập nhật trạng thái của bàn
+        await _tableRepository.UpdateBusyTableStatus(tableId);
 
-				if (orderDetail != null)
-				{
-					orderDetail.Quantity += detailDto.Quantity;
-					orderDetail.UnitPrice = orderDetail.Combo.Price * orderDetail.Quantity;
-				}
-				else
-				{
-					orderDetail = new OrderDetail
-					{
-						OrderId = order.OrderId,
-						DishId = null,
-						ComboId = detailDto.ComboId.Value,
-						Quantity = detailDto.Quantity,
-						UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
-					};
-					order.OrderDetails.Add(orderDetail);
-				}
-			}
-		}
-
-		order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
-
-		await UpdateOrderAsync(order);
-		var updateStatusTable = _tableRepository.UpdateBusyTableStatus(tableId);
-		return order;
-	}
+        return order;
+    }
 
 
-	public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
+
+    public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
 	{
 		var guest = await _context.Guests
 			.FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
@@ -508,9 +514,9 @@ public class OrderRepository : IOrderRepository
 		await _context.SaveChangesAsync();
 
 		order.TotalAmount = totalAmount;
-		
+
 		await _context.SaveChangesAsync();
-		await  _tableRepository.UpdateBusyTableStatus(tableId);
+		await _tableRepository.UpdateBusyTableStatus(tableId);
 		return new Order
 		{
 			OrderId = order.OrderId,
@@ -522,6 +528,96 @@ public class OrderRepository : IOrderRepository
 		};
 	}
 
+
+
+	public async Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)
+	{
+		var order = await _context.Orders
+			.Include(o => o.Address)
+			.FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+		if (order == null)
+		{
+			throw new KeyNotFoundException($"Đơn hàng {orderId} không tìm thấy.");
+		}
+
+		var table = await _context.Tables.FirstOrDefaultAsync(t => t.TableId == tableId);
+		if (table == null)
+		{
+			throw new KeyNotFoundException($"Bàn {tableId} không tìm thấy.");
+		}
+
+		order.Status = 2;
+		order.RecevingOrder = dto.RecevingOrder ?? order.RecevingOrder;
+
+		table.Status = 0;
+
+		var discount = await _context.Discounts.FirstOrDefaultAsync(d => d.DiscountId == dto.DiscountId);
+		decimal discountAmount = (decimal)(discount != null ? (order.TotalAmount * discount.DiscountAmount / 100) : 0m);
+
+		var invoice = new Invoice
+		{
+			PaymentTime = dto.PaymentTime,
+			PaymentAmount = order.TotalAmount - discountAmount,
+			DiscountId = discount?.DiscountId ?? null,
+			Taxcode = dto.Taxcode,
+			PaymentStatus = 1,
+			CustomerName = order.Address?.ConsigneeName,
+			Phone = order.Address?.GuestPhone,
+			Address = order.Address?.GuestAddress,
+			AccountId = dto.AccountId ?? null
+		};
+
+		_context.Invoices.Add(invoice);
+		await _context.SaveChangesAsync();
+
+		var invoiceLog = new InvoiceLog
+		{
+			Description = dto.Description,
+			InvoiceId = invoice.InvoiceId
+		};
+
+		_context.InvoiceLogs.Add(invoiceLog);
+		await _context.SaveChangesAsync();
+
+		order.InvoiceId = invoice.InvoiceId;
+
+		await _context.SaveChangesAsync();
+	}
+
+	public async Task CancelOrderAsync(int tableId, int orderId, CancelOrderDTO dto)
+	{
+		var order = await _context.Orders
+			.Include(o => o.OrderDetails)
+			.FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+		if (order == null)
+		{
+			throw new KeyNotFoundException($"Đơn hàng {orderId} không tìm thấy.");
+		}
+
+		var table = await _context.Tables.FirstOrDefaultAsync(t => t.TableId == tableId);
+		if (table == null)
+		{
+			throw new KeyNotFoundException($"Bàn {tableId} không tìm thấy.");
+		}
+
+		bool allDishesNotServed = order.OrderDetails.All(od => od.DishesServed == null || od.DishesServed == 0);
+		if (allDishesNotServed)
+		{
+			order.Status = 3;
+			
+		}
+
+		if (dto.RecevingOrder.HasValue)
+		{
+			order.RecevingOrder = dto.RecevingOrder;
+		}
+
+		table.Status = 0;
+
+		await _context.SaveChangesAsync();
+	}
 
 
 }

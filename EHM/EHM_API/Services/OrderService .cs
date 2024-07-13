@@ -218,6 +218,14 @@ namespace EHM_API.Services
 			return _orderRepository.CreateOrderForTable(tableId, dto);
 		}
 
+		public async Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)
+		{
+			await _orderRepository.UpdateOrderStatusForTableAsync(tableId, orderId, dto);
+		}
+		public async Task CancelOrderForTableAsync(int tableId, int orderId, CancelOrderDTO dto)
+		{
+			await _orderRepository.CancelOrderAsync(tableId, orderId, dto);
+		}
 	}
 }
 
