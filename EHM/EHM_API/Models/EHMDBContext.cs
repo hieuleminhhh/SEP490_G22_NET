@@ -361,6 +361,10 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.DishId).HasColumnName("DishID");
 
+                entity.Property(e => e.Note).HasMaxLength(200);
+
+                entity.Property(e => e.OrderDishDate).HasColumnType("datetime");
+
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
                 entity.Property(e => e.UnitPrice).HasColumnType("money");
@@ -378,6 +382,7 @@ namespace EHM_API.Models
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.OrderDetails)
                     .HasForeignKey(d => d.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_OrderDetail_Order");
             });
 
@@ -425,7 +430,7 @@ namespace EHM_API.Models
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK__Reservati__Order__52593CB8");
+                    .HasConstraintName("FK__Reservati__Order__5BE2A6F2");
             });
 
             modelBuilder.Entity<Table>(entity =>

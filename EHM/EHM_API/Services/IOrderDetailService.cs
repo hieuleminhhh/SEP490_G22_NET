@@ -7,8 +7,7 @@ namespace EHM_API.Services
 {
     public interface IOrderDetailService
     {
-        Task<IEnumerable<OrderForChefDTO>> GetOrderDetailsAsync();
-        Task<IEnumerable<OrderForChef1DTO>> GetOrderDetails1Async();
+        Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync();
         Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync();
         Task UpdateDishesServedAsync(int orderDetailId, int? dishesServed);
         Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsByDishesServedAsync(int? dishesServed);
