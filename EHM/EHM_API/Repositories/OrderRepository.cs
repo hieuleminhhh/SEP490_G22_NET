@@ -282,113 +282,119 @@ public class OrderRepository : IOrderRepository
 		return address;
 	}
 
-	public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
-	{
-		var order = await GetOrderByTableIdAsync(tableId);
+    public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
+    {
+        // Kiểm tra xem có tồn tại đơn hàng cho bàn này không
+        var order = await GetOrderByTableIdAsync(tableId);
+        if (order == null)
+        {
+            throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
+        }
 
-		if (order == null)
-		{
-			throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
-		}
+        // Kiểm tra xem có tồn tại khách hàng với số điện thoại này không
+        var guest = await _context.Guests
+            .FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
+        if (guest == null)
+        {
+            guest = new Guest
+            {
+                GuestPhone = dto.GuestPhone
+            };
+            _context.Guests.Add(guest);
+            await _context.SaveChangesAsync();
+        }
 
-		var guest = await _context.Guests
-			.FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
+        order.GuestPhone = guest.GuestPhone;
 
-		if (guest == null)
-		{
-			guest = new Guest
-			{
-				GuestPhone = dto.GuestPhone
-			};
-			_context.Guests.Add(guest);
-			await _context.SaveChangesAsync();
-		}
+        // Tạo hoặc lấy địa chỉ khách hàng
+        var address = await GetOrCreateAddress2(new CheckoutDTO
+        {
+            GuestAddress = dto.GuestAddress,
+            ConsigneeName = dto.ConsigneeName,
+            GuestPhone = dto.GuestPhone
+        });
 
-		order.GuestPhone = guest.GuestPhone;
+        order.Address = address;
+        order.OrderDetails ??= new List<OrderDetail>();
 
-		var address = await GetOrCreateAddress2(new CheckoutDTO
-		{
-			GuestAddress = dto.GuestAddress,
-			ConsigneeName = dto.ConsigneeName,
-			GuestPhone = dto.GuestPhone
-		});
+        // Cập nhật hoặc thêm mới chi tiết đơn hàng
+        foreach (var detailDto in dto.OrderDetails)
+        {
+            OrderDetail orderDetail = null;
 
-		order.Address = address;
-		order.OrderDetails ??= new List<OrderDetail>();
+            if (detailDto.DishId.HasValue && detailDto.DishId != 0)
+            {
+                var dishExists = await _dishRepository.DishExistsAsync(detailDto.DishId.Value);
+                if (!dishExists)
+                {
+                    throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
+                }
 
-		foreach (var detailDto in dto.OrderDetails)
-		{
-			OrderDetail orderDetail = null;
+                orderDetail = order.OrderDetails.FirstOrDefault(od => od.DishId == detailDto.DishId && od.ComboId == null);
 
-			if (detailDto.DishId.HasValue && detailDto.DishId != 0)
-			{
-				var dishExists = await _dishRepository.DishExistsAsync(detailDto.DishId.Value);
-				if (!dishExists)
-				{
-					throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
-				}
+                if (orderDetail != null)
+                {
+                    orderDetail.Quantity += detailDto.Quantity;
+                    orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * orderDetail.Quantity;
+                }
+                else
+                {
+                    orderDetail = new OrderDetail
+                    {
+                        OrderId = order.OrderId,
+                        DishId = detailDto.DishId.Value,
+                        ComboId = null,
+                        Quantity = detailDto.Quantity,
+                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
+                    };
+                    order.OrderDetails.Add(orderDetail);
+                }
+            }
+            else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
+            {
+                var comboExists = await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value);
+                if (!comboExists)
+                {
+                    throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
+                }
 
-				orderDetail = order.OrderDetails.FirstOrDefault(od => od.DishId == detailDto.DishId && od.ComboId == null);
+                orderDetail = order.OrderDetails.FirstOrDefault(od => od.ComboId == detailDto.ComboId && od.DishId == null);
 
+                if (orderDetail != null)
+                {
+                    orderDetail.Quantity += detailDto.Quantity;
+                    orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Combo.Price) * orderDetail.Quantity;
+                }
+                else
+                {
+                    orderDetail = new OrderDetail
+                    {
+                        OrderId = order.OrderId,
+                        DishId = null,
+                        ComboId = detailDto.ComboId.Value,
+                        Quantity = detailDto.Quantity,
+                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
+                    };
+                    order.OrderDetails.Add(orderDetail);
+                }
+            }
+        }
 
-				if (orderDetail != null)
-				{
-					orderDetail.Quantity += detailDto.Quantity;
-					orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * orderDetail.Quantity;
-				}
-				else
-				{
-					orderDetail = new OrderDetail
-					{
-						OrderId = order.OrderId,
-						DishId = detailDto.DishId.Value,
-						ComboId = null,
-						Quantity = detailDto.Quantity,
-						UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * detailDto.Quantity
-					};
-					order.OrderDetails.Add(orderDetail);
-				}
-			}
-			else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
-			{
+        // Tính tổng số tiền của đơn hàng
+        order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
 
-				var comboExists = await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value);
-				if (!comboExists)
-				{
-					throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
-				}
+        // Cập nhật đơn hàng
+        await UpdateOrderAsync(order);
 
-				orderDetail = order.OrderDetails.FirstOrDefault(od => od.ComboId == detailDto.ComboId && od.DishId == null);
+        // Cập nhật trạng thái của bàn
+        await _tableRepository.UpdateBusyTableStatus(tableId);
 
-				if (orderDetail != null)
-				{
-					orderDetail.Quantity += detailDto.Quantity;
-					orderDetail.UnitPrice = orderDetail.Combo.Price * orderDetail.Quantity;
-				}
-				else
-				{
-					orderDetail = new OrderDetail
-					{
-						OrderId = order.OrderId,
-						DishId = null,
-						ComboId = detailDto.ComboId.Value,
-						Quantity = detailDto.Quantity,
-						UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
-					};
-					order.OrderDetails.Add(orderDetail);
-				}
-			}
-		}
-
-		order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
-
-		await UpdateOrderAsync(order);
-		var updateStatusTable = _tableRepository.UpdateBusyTableStatus(tableId);
-		return order;
-	}
+        return order;
+    }
 
 
-	public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
+
+    public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
 	{
 		var guest = await _context.Guests
 			.FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);

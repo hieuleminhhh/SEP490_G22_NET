@@ -12,6 +12,8 @@ namespace EHM_API.Models
         public int? OrderId { get; set; }
         public int? DishesServed { get; set; }
         public int? ComboId { get; set; }
+        public string? Note { get; set; }
+        public DateTime? OrderDishDate { get; set; }
 
         public virtual Combo? Combo { get; set; }
         public virtual Dish? Dish { get; set; }
