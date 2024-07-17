@@ -20,53 +20,19 @@ namespace EHM_API.Repositories
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<OrderForChefDTO>> GetOrderDetailsAsync()
+        public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync()
         {
-            var orders = await _context.Orders
-                .Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.Dish)
-                .Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.Combo)
+            var orderDetails = await _context.OrderDetails
+                .Include(od => od.Dish)
+                .Include(od => od.Combo)
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
-                    .OrderBy(o => o.OrderDate)
-                .Where(o => (o.Type == 1 || o.Type == 4) && o.Status == 2)
+                .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
-            var orderForChefDTOs = orders.Select(o => new OrderForChefDTO
-            {
-                OrderId = o.OrderId,
-                OrderDate = o.OrderDate,
-                Status = o.Status,
-                Type = o.Type,
-                OrderDetails = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(o.OrderDetails)
-            });
+            var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(orderDetails);
 
-            return orderForChefDTOs;
-        }
-        public async Task<IEnumerable<OrderForChef1DTO>> GetOrderDetails1Async()
-        {
-            var orders = await _context.Orders
-                .Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.Dish)
-                .Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.Combo)
-                    .ThenInclude(c => c.ComboDetails)
-                    .ThenInclude(cd => cd.Dish)
-                    .OrderBy(o => o.RecevingOrder)
-                .Where(o => (o.Type == 2 || o.Type == 3) && o.Status == 2)
-                .ToListAsync();
-
-            var orderForChef1DTOs = orders.Select(o => new OrderForChef1DTO
-            {
-                OrderId = o.OrderId,
-                RecevingOrder = o.RecevingOrder,
-                Status = o.Status,
-                Type = o.Type,
-                OrderDetails = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(o.OrderDetails)
-            });
-
-            return orderForChef1DTOs;
+            return orderDetailDTOs;
         }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync()
         {
@@ -81,15 +47,30 @@ namespace EHM_API.Repositories
                 .GroupBy(od => new { od.DishId, od.ComboId })
                 .Select(g => new OrderDetailForChefDTO
                 {
-                    ItemName = g.First().Dish?.ItemName ?? "",
-                    ComboName = g.First().Combo?.NameCombo ?? "",
-                    ItemInComboName = g.First().Combo != null ?
-                        string.Join(", ", g.First().Combo.ComboDetails.Select(cd => cd.Dish.ItemName)) : "",
-                    Quantity = (int)g.Sum(od => od.Quantity)
+                    ItemName = g.First().Dish?.ItemName,
+                    Quantity = g.Sum(od => od.Quantity),
+                    OrderTime = g.First().OrderTime,
+                    Note = g.First().Note,
+                    DishesServed = g.Sum(od => od.DishesServed),
+                    ComboDetailsForChef = g.First().Combo != null ? new List<ComboDetailForChefDTO>
+                    {
+                new ComboDetailForChefDTO
+                {
+                    ComboName = g.First().Combo.NameCombo,                   
+                    ItemsInCombo = g.First().Combo.ComboDetails.Select(cd => new ItemInComboDTO
+                    {
+                        ItemName = cd.Dish.ItemName,
+                        QuantityDish = cd.QuantityDish
+                    }).ToList(),
+                    Note = g.First().Combo.Note,
+                    OrderTime = g.First().OrderTime
+                }
+                    } : new List<ComboDetailForChefDTO>()
                 });
 
             return result.ToList();
         }
+
         public async Task UpdateDishesServedAsync(int orderDetailId, int? dishesServed)
         {
             var orderDetail = await _context.OrderDetails

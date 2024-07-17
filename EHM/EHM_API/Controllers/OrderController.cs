@@ -293,18 +293,6 @@ namespace EHM_API.Controllers
 
 			var errors = new Dictionary<string, string>();
 
-			if (dto.OrderId <= 0)
-			{
-				errors["OrderId"] = "OrderId không hợp lệ.";
-				return BadRequest(errors);
-			}
-
-			var orderExists = await _orderService.GetOrderByIdAsync(dto.OrderId);
-			if (orderExists == null)
-			{
-				return BadRequest(new { message = "Đơn hàng không tồn tại." });
-			}
-
 			foreach (var detail in dto.OrderDetails)
 			{
 
@@ -423,6 +411,44 @@ namespace EHM_API.Controllers
 			{
 				_logger.LogError(ex, "Đã xảy ra lỗi khi xử lý yêu cầu.");
 				return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu.", detail = ex.ToString() });
+			}
+		}
+
+
+		//Update status
+		[HttpPut("update-order-status-for-table")]
+		public async Task<IActionResult> UpdateOrderStatusForTable(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)
+		{
+			try
+			{
+				await _orderService.UpdateOrderStatusForTableAsync(tableId, orderId, dto);
+				return Ok();
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, ex.Message);
+			}
+		}
+
+		[HttpPut("cancel-order")]
+		public async Task<IActionResult> CancelOrder(int tableId, int orderId, [FromBody] CancelOrderDTO dto)
+		{
+			try
+			{
+				await _orderService.CancelOrderForTableAsync(tableId, orderId, dto);
+				return Ok(new { message = "Order cancelled successfully." });
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = ex.Message });
 			}
 		}
 

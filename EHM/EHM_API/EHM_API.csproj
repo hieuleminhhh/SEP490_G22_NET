@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DTOs\TableReservationDTO\**" />
+    <Content Remove="DTOs\TableReservationDTO\**" />
+    <EmbeddedResource Remove="DTOs\TableReservationDTO\**" />
+    <None Remove="DTOs\TableReservationDTO\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
@@ -31,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\TableReservationDTO\" />
     <Folder Include="uploads\" />
   </ItemGroup>
 

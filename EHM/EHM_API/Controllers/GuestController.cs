@@ -54,6 +54,10 @@ namespace EHM_API.Controllers
 		{
 			var errors = new Dictionary<string, string>();
 
+			if (string.IsNullOrEmpty(createGuestDTO.ConsigneeName))
+			{
+				errors["consigneeName"] = "Tên khách hàng không được để trống.";
+			}
 
 			if (string.IsNullOrEmpty(createGuestDTO.GuestPhone))
 			{

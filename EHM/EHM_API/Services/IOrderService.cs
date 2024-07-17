@@ -32,6 +32,8 @@ namespace EHM_API.Services
 
 		Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto);
 
+		Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto);
+		Task CancelOrderForTableAsync(int tableId, int orderId, CancelOrderDTO dto);
 
 	}
 }

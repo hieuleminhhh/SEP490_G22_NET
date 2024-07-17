@@ -459,14 +459,24 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.Floor, opt => opt.MapFrom(src => src.Table.Floor));
 
             CreateMap<OrderDetail, OrderDetailForChefDTO>()
-                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
-                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo))
-                .ForMember(dest => dest.ItemInComboName, opt => opt.MapFrom(src => src.Combo != null ? string.Join(", ", src.Combo.ComboDetails.Select(cd => cd.Dish.ItemName)) : string.Empty))
-                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity ?? 0));
+             .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+             .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
+             .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+             .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
+             .ForMember(dest => dest.ComboDetailsForChef, opt => opt.MapFrom(src => src.Combo.ComboDetails.Select(cd => new ComboDetailForChefDTO
+             {
+                 ComboName = cd.Combo.NameCombo,
+                 ItemsInCombo = cd.Combo.ComboDetails.Select(item => new ItemInComboDTO
+                 {
+                     ItemName = item.Dish.ItemName,
+                     QuantityDish = item.QuantityDish
+                 }).ToList(),
+                 Note = cd.Combo.Note
+             })));
 
-            CreateMap<Order, OrderForChefDTO>()
-                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
-
+            CreateMap<UpdateStatusTableByReservation, Table>()
+                  .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
             CreateMap<UpdateStatusTableByReservation, Table>()
                   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
 
