@@ -3,6 +3,6 @@
     public class ItemInComboDTO
     {
         public string? ItemName { get; set; }
-        public int? Quantity { get; set; }
+        public int? QuantityDish { get; set; }
     }
 }
