@@ -5,6 +5,6 @@
         public string? ComboName { get; set; }
         public List<ItemInComboDTO>? ItemsInCombo { get; set; }
         public string? Note { get; set; }
-        public DateTime? OrderDishDate { get; set; }
+        public DateTime? OrderTime { get; set; }
     }
 }

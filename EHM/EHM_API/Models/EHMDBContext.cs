@@ -363,9 +363,9 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.Note).HasMaxLength(200);
 
-                entity.Property(e => e.OrderDishDate).HasColumnType("datetime");
-
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
+
+                entity.Property(e => e.OrderTime).HasColumnType("datetime");
 
                 entity.Property(e => e.UnitPrice).HasColumnType("money");
 
@@ -453,6 +453,7 @@ namespace EHM_API.Models
                     .WithMany(t => t.TableReservations)
                     .HasForeignKey(tr => tr.TableId);
             });
+
             OnModelCreatingPartial(modelBuilder);
         }
 
