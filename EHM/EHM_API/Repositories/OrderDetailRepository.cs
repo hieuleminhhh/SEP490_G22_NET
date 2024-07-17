@@ -27,7 +27,7 @@ namespace EHM_API.Repositories
                 .Include(od => od.Combo)
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
-                .OrderBy(od => od.OrderDishDate)
+                .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
             var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(orderDetails);
@@ -49,7 +49,7 @@ namespace EHM_API.Repositories
                 {
                     ItemName = g.First().Dish?.ItemName,
                     Quantity = g.Sum(od => od.Quantity),
-                    OrderDishDate = g.First().OrderDishDate,
+                    OrderTime = g.First().OrderTime,
                     Note = g.First().Note,
                     DishesServed = g.Sum(od => od.DishesServed),
                     ComboDetailsForChef = g.First().Combo != null ? new List<ComboDetailForChefDTO>
@@ -60,10 +60,10 @@ namespace EHM_API.Repositories
                     ItemsInCombo = g.First().Combo.ComboDetails.Select(cd => new ItemInComboDTO
                     {
                         ItemName = cd.Dish.ItemName,
-                        Quantity = cd.Quantity
+                        QuantityDish = cd.QuantityDish
                     }).ToList(),
                     Note = g.First().Combo.Note,
-                    OrderDishDate = g.First().OrderDishDate
+                    OrderTime = g.First().OrderTime
                 }
                     } : new List<ComboDetailForChefDTO>()
                 });
