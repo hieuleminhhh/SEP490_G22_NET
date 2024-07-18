@@ -58,7 +58,7 @@ namespace EHM_API.Repositories
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
-            var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(orderDetails);
+            var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailForChef1DTO>>(orderDetails);
 
             return orderDetailDTOs;
         }
