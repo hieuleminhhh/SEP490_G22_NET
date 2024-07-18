@@ -19,12 +19,52 @@ namespace EHM_API.Controllers
             _service = service;
         }
 
-        [HttpGet]
+        [HttpPut("{orderDetailId}/quantity")]
+        public async Task<IActionResult> UpdateOrderDetailQuantity(int orderDetailId, [FromBody] int quantity)
+        {
+            if (quantity <= 0)
+            {
+                return BadRequest("Số lượng phải lớn hơn không.");
+            }
+
+            var result = await _service.UpdateOrderDetailQuantityAsync(orderDetailId, quantity);
+            if (!result)
+            {
+                return NotFound("Không tìm được OrderDetailID.");
+            }
+
+            return NoContent();
+        }
+        [HttpGet("1-4")]
         public async Task<IActionResult> GetOrderDetails()
         {
             try
             {
                 var orderDetails = await _service.GetOrderDetailsAsync();
+
+                if (orderDetails == null || !orderDetails.Any())
+                {
+                    return NotFound(new { message = "Không tìm thấy chi tiết đơn hàng." });
+                }
+
+                return Ok(new
+                {
+                    message = "Lấy thông tin chi tiết đơn hàng thành công.",
+                    data = orderDetails
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Đã xảy ra lỗi khi lấy thông tin chi tiết đơn hàng. Lỗi: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("2-3")]
+        public async Task<IActionResult> GetOrderDetails1()
+        {
+            try
+            {
+                var orderDetails = await _service.GetOrderDetails1Async();
 
                 if (orderDetails == null || !orderDetails.Any())
                 {

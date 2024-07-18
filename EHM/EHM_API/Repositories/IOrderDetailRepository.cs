@@ -8,7 +8,10 @@ namespace EHM_API.Repositories
 {
     public interface IOrderDetailRepository
     {
+        Task<OrderDetail> GetOrderDetailByIdAsync(int orderDetailId);
+        Task<bool> UpdateOrderDetailAsync(OrderDetail orderDetail);
         Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync();
+        Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetails1Async();
         Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync();
         Task UpdateDishesServedAsync(int orderDetailId, int? dishesServed);
         Task<IEnumerable<OrderDetail>> GetOrderDetailsByDishesServedAsync(int? dishesServed);
