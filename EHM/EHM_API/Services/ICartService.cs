@@ -1,4 +1,6 @@
 ﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.CartDTO.OrderStaff;
+using System.Threading;
 
 namespace EHM_API.Services
 {
@@ -11,6 +13,8 @@ namespace EHM_API.Services
 		Task UpdateCart(UpdateCartDTO updateCartDTO);
 
 		Task Checkout(CheckoutDTO checkoutDTO);
+
+		Task TakeOut(TakeOutDTO takeOutDTO);
 
 		Task<CheckoutSuccessDTO> GetCheckoutSuccessInfoAsync(string guestPhone);
 	}

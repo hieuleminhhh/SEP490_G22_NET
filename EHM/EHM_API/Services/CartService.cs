@@ -1,16 +1,18 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-    public class CartService : ICartService
+	public class CartService : ICartService
 	{
 		private readonly ICartRepository _cartRepository;
 		private readonly IComboRepository _comboRepository;
@@ -92,51 +94,51 @@ namespace EHM_API.Services
 					}
 				}
 
-			
+
 				var existingOrderDetail = orderDetails.FirstOrDefault(od =>
 					(dish != null && od.DishId == dish.DishId) ||
 					(combo != null && od.ComboId == combo.ComboId));
 
 				if (existingOrderDetail != null)
 				{
-					
+
 					existingOrderDetail.Quantity += item.Quantity;
-					existingOrderDetail.UnitPrice += item.UnitPrice; 
+					existingOrderDetail.UnitPrice += item.UnitPrice;
 					totalAmount += (item.UnitPrice ?? 0m);
 				}
 				else
 				{
-					
+
 					var orderDetail = new OrderDetail
 					{
 						DishId = dish != null ? (int?)dish.DishId : null,
 						ComboId = combo != null ? (int?)combo.ComboId : null,
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
-						
+
 					};
 
 					orderDetails.Add(orderDetail);
 					totalAmount += (item.UnitPrice ?? 0m);
 				}
 			}
-            var order = new Order
-            {
-                OrderDate = DateTime.Now,
-                Status = checkoutDTO.Status ?? 0,
-                RecevingOrder = checkoutDTO.RecevingOrder,
-                GuestPhone = guest?.GuestPhone,
-                TotalAmount = totalAmount,
-                OrderDetails = orderDetails,
-                Deposits = checkoutDTO.Deposits,
-                AddressId = address?.AddressId,
-                Note = checkoutDTO.Note,
+			var order = new Order
+			{
+				OrderDate = DateTime.Now,
+				Status = checkoutDTO.Status ?? 0,
+				RecevingOrder = checkoutDTO.RecevingOrder,
+				GuestPhone = guest?.GuestPhone,
+				TotalAmount = totalAmount,
+				OrderDetails = orderDetails,
+				Deposits = checkoutDTO.Deposits,
+				AddressId = address?.AddressId,
+				Note = checkoutDTO.Note,
 				Type = checkoutDTO.Type
-				
-            };
+
+			};
 
 
-            await _cartRepository.CreateOrder(order);
+			await _cartRepository.CreateOrder(order);
 		}
 
 
@@ -151,5 +153,11 @@ namespace EHM_API.Services
 
 			return _mapper.Map<CheckoutSuccessDTO>(order);
 		}
+
+		public async Task TakeOut(TakeOutDTO takeOutDTO)
+		{
+			await _cartRepository.TakeOut(takeOutDTO);
+		}
+
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using EHM_API.Controllers;
 using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.Models;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
@@ -216,5 +217,186 @@ namespace EHM_API.Repositories
 		}
 
 
+		public async Task CreateOrderTakeOut(Order order)
+		{
+			await _context.Orders.AddAsync(order);
+			await _context.SaveChangesAsync();
+		}
+
+		public async Task<Guest> GetOrCreateGuestTakeOut(TakeOutDTO takeOutDTO)
+		{
+			if (string.IsNullOrWhiteSpace(takeOutDTO.Email) || string.IsNullOrWhiteSpace(takeOutDTO.GuestPhone))
+			{
+				return null;
+			}
+
+			var guest = await _context.Guests.FirstOrDefaultAsync(g => g.GuestPhone == takeOutDTO.GuestPhone);
+
+			if (guest != null)
+			{
+				guest.Email = takeOutDTO.Email;
+			}
+			else
+			{
+				guest = new Guest
+				{
+					GuestPhone = takeOutDTO.GuestPhone,
+					Email = takeOutDTO.Email
+				};
+				await _context.Guests.AddAsync(guest);
+			}
+
+			await _context.SaveChangesAsync();
+			return guest;
+		}
+
+		public async Task<Address?> GetOrCreateAddressTakeOut(TakeOutDTO takeOutDTO)
+		{
+			if (string.IsNullOrWhiteSpace(takeOutDTO.GuestAddress) || string.IsNullOrWhiteSpace(takeOutDTO.Email) ||
+				string.IsNullOrWhiteSpace(takeOutDTO.ConsigneeName) || string.IsNullOrWhiteSpace(takeOutDTO.GuestPhone))
+			{
+				return null;
+			}
+
+			var address = await _context.Addresses.FirstOrDefaultAsync(a =>
+				a.GuestAddress == takeOutDTO.GuestAddress &&
+				a.ConsigneeName == takeOutDTO.ConsigneeName &&
+				a.GuestPhone == takeOutDTO.GuestPhone);
+
+			if (address == null)
+			{
+				address = new Address
+				{
+					GuestAddress = takeOutDTO.GuestAddress,
+					ConsigneeName = takeOutDTO.ConsigneeName,
+					GuestPhone = takeOutDTO.GuestPhone
+				};
+				await _context.Addresses.AddAsync(address);
+				await _context.SaveChangesAsync();
+			}
+
+			return address;
+		}
+
+		public async Task TakeOut(TakeOutDTO takeOutDTO)
+		{
+			Guest guest = null;
+			Address address = null;
+
+			if (!string.IsNullOrWhiteSpace(takeOutDTO.GuestPhone) && !string.IsNullOrWhiteSpace(takeOutDTO.Email))
+			{
+				guest = await GetOrCreateGuestTakeOut(takeOutDTO);
+			}
+
+			if (!string.IsNullOrWhiteSpace(takeOutDTO.GuestAddress) && !string.IsNullOrWhiteSpace(takeOutDTO.ConsigneeName))
+			{
+				address = await GetOrCreateAddressTakeOut(takeOutDTO);
+				takeOutDTO.AddressId = address?.AddressId;
+			}
+
+			decimal totalAmount = 0;
+			var orderDetails = new List<OrderDetail>();
+
+			foreach (var item in takeOutDTO.OrderDetails)
+			{
+				if ((item.DishId.HasValue && item.DishId.Value > 0) && (item.ComboId.HasValue && item.ComboId.Value > 0) ||
+					(!item.DishId.HasValue || item.DishId.Value <= 0) && (!item.ComboId.HasValue || item.ComboId.Value <= 0))
+				{
+					throw new InvalidOperationException("Mỗi giỏ hàng phải có một món hoặc Combo, không được có cả hai hoặc không có món nào.");
+				}
+
+				Dish dish = null;
+				Combo combo = null;
+
+				if (item.DishId.HasValue && item.DishId.Value > 0)
+				{
+					dish = await GetDishByIdAsync(item.DishId.Value);
+					if (dish == null)
+					{
+						throw new KeyNotFoundException($"Món ăn với ID {item.DishId} không tồn tại.");
+					}
+				}
+
+	/*			if (item.ComboId.HasValue && item.ComboId.Value > 0)
+				{
+					combo = await _comboService.GetComboByIdAsync(item.ComboId.Value);
+					if (combo == null)
+					{
+						throw new KeyNotFoundException($"Combo với ID {item.ComboId} không tồn tại.");
+					}
+				}*/
+
+				var existingOrderDetail = orderDetails.FirstOrDefault(od =>
+					(dish != null && od.DishId == dish.DishId) ||
+					(combo != null && od.ComboId == combo.ComboId));
+
+				if (existingOrderDetail != null)
+				{
+					existingOrderDetail.Quantity += item.Quantity;
+					existingOrderDetail.UnitPrice += item.UnitPrice;
+					totalAmount += (item.UnitPrice ?? 0m);
+				}
+				else
+				{
+					var orderDetail = new OrderDetail
+					{
+						DishId = dish != null ? (int?)dish.DishId : null,
+						ComboId = combo != null ? (int?)combo.ComboId : null,
+						Quantity = item.Quantity,
+						UnitPrice = item.UnitPrice,
+					};
+
+					orderDetails.Add(orderDetail);
+					totalAmount += (item.UnitPrice ?? 0m);
+				}
+			}
+
+			var order = new Order
+			{
+				OrderDate = DateTime.Now,
+				Status = takeOutDTO.Status ?? 0,
+				RecevingOrder = takeOutDTO.RecevingOrder,
+				GuestPhone = guest?.GuestPhone,
+				TotalAmount = totalAmount,
+				OrderDetails = orderDetails,
+				Deposits = takeOutDTO.Deposits,
+				AddressId = address?.AddressId,
+				Note = takeOutDTO.Note,
+				Type = takeOutDTO.Type
+			};
+
+			await _context.Orders.AddAsync(order);
+			await _context.SaveChangesAsync();
+
+			if (order.OrderId > 0)
+			{
+				var invoice = new Invoice
+				{
+					CustomerName = order.Address.ConsigneeName,
+					Phone = order.Address.GuestPhone,
+					Address = order.Address.GuestAddress,
+					// AccountID
+					PaymentTime = takeOutDTO.PaymentTime,
+					PaymentAmount = takeOutDTO.PaymentAmount ?? totalAmount,
+					PaymentStatus = takeOutDTO.PaymentStatus,
+					AmountReceived = takeOutDTO.AmountReceived ?? totalAmount,
+					ReturnAmount = takeOutDTO.ReturnAmount ?? 0,
+					PaymentMethods = takeOutDTO.PaymentMethods ?? 0
+				};
+
+				await _context.Invoices.AddAsync(invoice);
+				await _context.SaveChangesAsync();
+
+				var invoicelog = new InvoiceLog
+				{
+					Description = takeOutDTO.Description,
+					InvoiceId = invoice.InvoiceId
+				};
+
+
+				order.InvoiceId = invoice.InvoiceId;
+				await _context.SaveChangesAsync();
+			}
+		}
 	}
 }
