@@ -127,7 +127,7 @@ namespace EHM_API.Models
             });
 
             modelBuilder.Entity<ComboDetail>()
-                         .HasKey(cd => new { cd.ComboId, cd.DishId });
+                          .HasKey(cd => new { cd.ComboId, cd.DishId });
 
             modelBuilder.Entity<ComboDetail>()
                 .HasOne(cd => cd.Combo)
@@ -226,6 +226,8 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.Address).HasMaxLength(100);
 
+                entity.Property(e => e.AmountReceived).HasColumnType("money");
+
                 entity.Property(e => e.CustomerName).HasMaxLength(50);
 
                 entity.Property(e => e.DiscountId).HasColumnName("DiscountID");
@@ -237,6 +239,8 @@ namespace EHM_API.Models
                 entity.Property(e => e.Phone)
                     .HasMaxLength(11)
                     .IsUnicode(false);
+
+                entity.Property(e => e.ReturnAmount).HasColumnType("money");
 
                 entity.Property(e => e.Taxcode)
                     .HasMaxLength(50)
