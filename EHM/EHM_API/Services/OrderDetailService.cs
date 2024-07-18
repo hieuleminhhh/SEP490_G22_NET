@@ -34,7 +34,7 @@ namespace EHM_API.Services
         {
             return await _orderDetailRepository.GetOrderDetailsAsync();
         }
-        public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetails1Async()
+        public async Task<IEnumerable<OrderDetailForChef1DTO>> GetOrderDetails1Async()
         {
             return await _orderDetailRepository.GetOrderDetails1Async();
         }
