@@ -38,7 +38,7 @@ namespace EHM_API.Repositories
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
                     .Include(od => od.Order)
-                    .Where(od => (od.Order.Type == 1 || od.Order.Type == 4 && od.Order.Status == 2) && od.OrderTime.HasValue && od.OrderTime.Value.Date == today)
+                    .Where(od => (od.Order.Type == 1 || od.Order.Type == 4) && od.Order.Status == 2 && od.OrderTime.HasValue && od.OrderTime.Value.Date == today)
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
@@ -46,7 +46,7 @@ namespace EHM_API.Repositories
 
             return orderDetailDTOs;
         }
-        public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetails1Async()
+        public async Task<IEnumerable<OrderDetailForChef1DTO>> GetOrderDetails1Async()
         {
             var orderDetails = await _context.OrderDetails
                 .Include(od => od.Dish)
@@ -54,7 +54,7 @@ namespace EHM_API.Repositories
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
                     .Include(od => od.Order)
-                    .Where(od => (od.Order.Type == 2 || od.Order.Type == 3 && od.Order.Status == 2))
+                    .Where(od => (od.Order.Type == 2 || od.Order.Type == 3) && od.Order.Status == 2)
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
@@ -71,7 +71,7 @@ namespace EHM_API.Repositories
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
                     .Include(od => od.Order)
-                    .Where(od => (od.Order.Type == 1 || od.Order.Type == 4 && od.Order.Status == 2) && od.OrderTime.HasValue && od.OrderTime.Value.Date == today)
+                    .Where(od => (od.Order.Type == 1 || od.Order.Type == 4) && od.Order.Status == 2 && od.OrderTime.HasValue && od.OrderTime.Value.Date == today)
                 .ToListAsync();
 
             var result = orderDetails
