@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -230,7 +231,30 @@ namespace EHM_API.Controllers
 				});
 			}
 		}
+		[HttpPost("AddNewOrderTakeAway")]
+		public async Task<IActionResult> AddNewOder2([FromBody] TakeOutDTO takeoutDTO)
+		{
+			var errors = new Dictionary<string, string>();
 
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+
+			try
+			{
+				await _cartService.TakeOut(takeoutDTO);
+				_cartService.ClearCart();
+				return Ok(new { message = "Tạo đơn hàng thành công." });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new Dictionary<string, string>
+				{
+					["error"] = ex.Message
+				});
+			}
+		}
 
 	}
 

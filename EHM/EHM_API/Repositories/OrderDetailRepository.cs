@@ -19,14 +19,42 @@ namespace EHM_API.Repositories
             _context = context;
             _mapper = mapper;
         }
+        public async Task<OrderDetail> GetOrderDetailByIdAsync(int orderDetailId)
+        {
+            return await _context.OrderDetails.FindAsync(orderDetailId);
+        }
 
+        public async Task<bool> UpdateOrderDetailAsync(OrderDetail orderDetail)
+        {
+            _context.OrderDetails.Update(orderDetail);
+            return await _context.SaveChangesAsync() > 0;
+        }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync()
+        {
+            var today = DateTime.Today;
+            var orderDetails = await _context.OrderDetails
+                .Include(od => od.Dish)
+                .Include(od => od.Combo)
+                    .ThenInclude(c => c.ComboDetails)
+                    .ThenInclude(cd => cd.Dish)
+                    .Include(od => od.Order)
+                    .Where(od => (od.Order.Type == 1 || od.Order.Type == 4 && od.Order.Status == 2) && od.OrderTime.HasValue && od.OrderTime.Value.Date == today)
+                .OrderBy(od => od.OrderTime)
+                .ToListAsync();
+
+            var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(orderDetails);
+
+            return orderDetailDTOs;
+        }
+        public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetails1Async()
         {
             var orderDetails = await _context.OrderDetails
                 .Include(od => od.Dish)
                 .Include(od => od.Combo)
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
+                    .Include(od => od.Order)
+                    .Where(od => (od.Order.Type == 2 || od.Order.Type == 3 && od.Order.Status == 2))
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
@@ -36,11 +64,14 @@ namespace EHM_API.Repositories
         }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync()
         {
+            var today = DateTime.Today;
             var orderDetails = await _context.OrderDetails
                 .Include(od => od.Dish)
                 .Include(od => od.Combo)
-                .ThenInclude(c => c.ComboDetails)
-                .ThenInclude(cd => cd.Dish)
+                    .ThenInclude(c => c.ComboDetails)
+                    .ThenInclude(cd => cd.Dish)
+                    .Include(od => od.Order)
+                    .Where(od => (od.Order.Type == 1 || od.Order.Type == 4 && od.Order.Status == 2) && od.OrderTime.HasValue && od.OrderTime.Value.Date == today)
                 .ToListAsync();
 
             var result = orderDetails
