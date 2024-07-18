@@ -21,6 +21,9 @@ namespace EHM_API.Models
         public string? Phone { get; set; }
         public string? Address { get; set; }
         public int? AccountId { get; set; }
+        public decimal? AmountReceived { get; set; }
+        public decimal? ReturnAmount { get; set; }
+        public int? PaymentMethods { get; set; }
 
         public virtual Account? Account { get; set; }
         public virtual Discount? Discount { get; set; }
