@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.Models;
 
 namespace EHM_API.Repositories
@@ -17,5 +18,11 @@ namespace EHM_API.Repositories
 		Task<Dish> GetDishByIdAsync(int? dishId);
 
 		Task<Order> GetOrderByGuestPhoneAsync(string guestPhone);
+
+		Task CreateOrderTakeOut(Order order);
+		Task<Guest> GetOrCreateGuestTakeOut(TakeOutDTO takeOutDTO);
+		Task<Address?> GetOrCreateAddressTakeOut(TakeOutDTO takeOutDTO);
+
+		Task TakeOut(TakeOutDTO takeOutDTO);
 	}
 }
