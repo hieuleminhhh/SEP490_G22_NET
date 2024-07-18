@@ -9,7 +9,7 @@ namespace EHM_API.Services
     {
         Task<bool> UpdateOrderDetailQuantityAsync(int orderDetailId, int quantity);
         Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync();
-        Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetails1Async();
+        Task<IEnumerable<OrderDetailForChef1DTO>> GetOrderDetails1Async();
         Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync();
         Task UpdateDishesServedAsync(int orderDetailId, int? dishesServed);
         Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsByDishesServedAsync(int? dishesServed);
