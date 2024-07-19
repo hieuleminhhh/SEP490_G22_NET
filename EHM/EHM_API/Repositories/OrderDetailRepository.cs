@@ -38,7 +38,9 @@ namespace EHM_API.Repositories
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
                     .Include(od => od.Order)
-                    .Where(od => (od.Order.Type == 1 || od.Order.Type == 4) && od.Order.Status == 2 && od.OrderTime.HasValue && od.OrderTime.Value.Date == today)
+                    .Where(od => (od.Order.Type == 1 || od.Order.Type == 4)
+                    && (od.Order.Status == 2 || od.Order.Status == 3)
+                    && od.OrderTime.HasValue && od.OrderTime.Value.Date == today && od.DishesServed == od.Quantity)
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
@@ -54,7 +56,7 @@ namespace EHM_API.Repositories
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
                     .Include(od => od.Order)
-                    .Where(od => (od.Order.Type == 2 || od.Order.Type == 3) && od.Order.Status == 2)
+                    .Where(od => (od.Order.Type == 2 || od.Order.Type == 3) && od.Order.Status == 2 && od.DishesServed == od.Quantity)
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
