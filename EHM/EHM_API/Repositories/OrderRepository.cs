@@ -43,6 +43,7 @@ public class OrderRepository : IOrderRepository
 		return await _context.Orders
 			.Include(o => o.Account)
 			.Include(o => o.Address)
+			.Include(o => o.Invoice)
 			.Include(o => o.OrderDetails)
 				.ThenInclude(od => od.Combo)
 			.Include(o => o.OrderDetails)
@@ -284,40 +285,13 @@ public class OrderRepository : IOrderRepository
 
     public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
     {
-        // Kiểm tra xem có tồn tại đơn hàng cho bàn này không
         var order = await GetOrderByTableIdAsync(tableId);
         if (order == null)
         {
             throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
         }
-
-        // Kiểm tra xem có tồn tại khách hàng với số điện thoại này không
-        var guest = await _context.Guests
-            .FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
-        if (guest == null)
-        {
-            guest = new Guest
-            {
-                GuestPhone = dto.GuestPhone
-            };
-            _context.Guests.Add(guest);
-            await _context.SaveChangesAsync();
-        }
-
-        order.GuestPhone = guest.GuestPhone;
-
-        // Tạo hoặc lấy địa chỉ khách hàng
-        var address = await GetOrCreateAddress2(new CheckoutDTO
-        {
-            GuestAddress = dto.GuestAddress,
-            ConsigneeName = dto.ConsigneeName,
-            GuestPhone = dto.GuestPhone
-        });
-
-        order.Address = address;
         order.OrderDetails ??= new List<OrderDetail>();
 
-        // Cập nhật hoặc thêm mới chi tiết đơn hàng
         foreach (var detailDto in dto.OrderDetails)
         {
             OrderDetail orderDetail = null;
@@ -334,7 +308,7 @@ public class OrderRepository : IOrderRepository
 
                 if (orderDetail != null)
                 {
-                    orderDetail.Quantity += detailDto.Quantity;
+                    orderDetail.Quantity = detailDto.Quantity;
                     orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * orderDetail.Quantity;
                 }
                 else
@@ -362,7 +336,7 @@ public class OrderRepository : IOrderRepository
 
                 if (orderDetail != null)
                 {
-                    orderDetail.Quantity += detailDto.Quantity;
+                    orderDetail.Quantity = detailDto.Quantity;
                     orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Combo.Price) * orderDetail.Quantity;
                 }
                 else
@@ -380,13 +354,10 @@ public class OrderRepository : IOrderRepository
             }
         }
 
-        // Tính tổng số tiền của đơn hàng
         order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
 
-        // Cập nhật đơn hàng
         await UpdateOrderAsync(order);
 
-        // Cập nhật trạng thái của bàn
         await _tableRepository.UpdateBusyTableStatus(tableId);
 
         return order;

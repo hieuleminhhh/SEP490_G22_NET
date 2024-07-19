@@ -14,6 +14,9 @@
         public string? ConsigneeName { get; set; }
         public string? Note { get; set; }
 		public int? Type { get; set; }
+		public decimal? AmountReceived { get; set; }
+		public decimal? ReturnAmount { get; set; }
+
 		public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
 		public IEnumerable<TableOfOrderDTO> Tables { get; set; }
 
