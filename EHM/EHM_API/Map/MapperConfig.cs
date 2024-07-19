@@ -475,6 +475,24 @@ namespace EHM_API.Map
                  Note = cd.Combo.Note
              })));
 
+            CreateMap<OrderDetail, OrderDetailForChef1DTO>()
+             .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+             .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
+             .ForMember(dest => dest.RecevingOrder, opt => opt.MapFrom(src => src.Order.RecevingOrder))
+             .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+             .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
+             .ForMember(dest => dest.ComboDetailsForChef, opt => opt.MapFrom(src => src.Combo.ComboDetails.Select(cd => new ComboDetailForChefDTO
+             {
+                 ComboName = cd.Combo.NameCombo,
+                 ItemsInCombo = cd.Combo.ComboDetails.Select(item => new ItemInComboDTO
+                 {
+                     ItemName = item.Dish.ItemName,
+                     QuantityDish = item.QuantityDish
+                 }).ToList(),
+                 Note = cd.Combo.Note
+             })));
+
             CreateMap<UpdateStatusTableByReservation, Table>()
                   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
             CreateMap<UpdateStatusTableByReservation, Table>()
