@@ -75,6 +75,7 @@ namespace EHM_API
             configuration.GetSection("JwtSettings").Bind(jwtSettings);
             builder.Services.AddSingleton(jwtSettings);
 
+            builder.Services.AddSingleton<IVnPayService, VnPayService>();
             // Add Authentication
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
