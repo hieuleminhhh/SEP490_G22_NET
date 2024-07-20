@@ -133,6 +133,9 @@ namespace EHM_API
             builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
 
 
+			builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+			builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+
 			builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {

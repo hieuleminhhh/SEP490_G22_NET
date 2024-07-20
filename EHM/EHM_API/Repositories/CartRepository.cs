@@ -381,7 +381,8 @@ namespace EHM_API.Repositories
 					PaymentStatus = takeOutDTO.PaymentStatus,
 					AmountReceived = takeOutDTO.AmountReceived ?? totalAmount,
 					ReturnAmount = takeOutDTO.ReturnAmount ?? 0,
-					PaymentMethods = takeOutDTO.PaymentMethods ?? 0
+					PaymentMethods = takeOutDTO.PaymentMethods ?? 0,
+					Taxcode = takeOutDTO.Taxcode
 				};
 
 				await _context.Invoices.AddAsync(invoice);

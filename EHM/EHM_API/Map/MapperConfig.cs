@@ -59,6 +59,8 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.Address != null ? src.Address.GuestPhone : null))
 				.ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address != null ? src.Address.GuestAddress : null))
 				.ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address != null ? src.Address.ConsigneeName : null))
+					.ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.AmountReceived : null))
+					.ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.ReturnAmount : null))
 				.ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
 				 .ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.OrderTables.Select(ot => ot.Table)));
 
@@ -472,14 +474,14 @@ namespace EHM_API.Map
                      ItemName = item.Dish.ItemName,
                      QuantityDish = item.QuantityDish
                  }).ToList(),
-                 Note = cd.Combo.Note
-             })));
+                 Note = cd.Combo.Note,
+                 OrderTime = src.OrderTime
+             }).ToList()));
 
             CreateMap<OrderDetail, OrderDetailForChef1DTO>()
              .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
              .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
              .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
-             .ForMember(dest => dest.RecevingOrder, opt => opt.MapFrom(src => src.Order.RecevingOrder))
              .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
              .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
              .ForMember(dest => dest.ComboDetailsForChef, opt => opt.MapFrom(src => src.Combo.ComboDetails.Select(cd => new ComboDetailForChefDTO
@@ -490,8 +492,9 @@ namespace EHM_API.Map
                      ItemName = item.Dish.ItemName,
                      QuantityDish = item.QuantityDish
                  }).ToList(),
-                 Note = cd.Combo.Note
-             })));
+                 Note = cd.Combo.Note,
+                 OrderTime = src.OrderTime
+             }).ToList()));
 
             CreateMap<UpdateStatusTableByReservation, Table>()
                   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));

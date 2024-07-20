@@ -3,9 +3,6 @@
 	public class UpdateTableAndGetOrderDTO
 	{
 		public List<UpdateOrderDetailDTO> OrderDetails { get; set; } = new();
-		public string? GuestPhone { get; set; }
-		public string? GuestAddress { get; set; }
-		public string? ConsigneeName { get; set; }
 	}
 
 	public class UpdateOrderDetailDTO
