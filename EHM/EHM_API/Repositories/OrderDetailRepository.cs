@@ -37,14 +37,33 @@ namespace EHM_API.Repositories
                 .Include(od => od.Combo)
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
-                    .Include(od => od.Order)
-                    .Where(od => (od.Order.Type == 1 || od.Order.Type == 4)
+                .Include(od => od.Order)
+                .Where(od => (od.Order.Type == 1 || od.Order.Type == 4)
                     && (od.Order.Status == 2 || od.Order.Status == 3)
-                    && od.OrderTime.HasValue && od.OrderTime.Value.Date == today && od.DishesServed == od.Quantity)
+                    && od.OrderTime.HasValue && od.OrderTime.Value.Date == today
+                    && od.DishesServed < od.Quantity)
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
-            var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(orderDetails);
+            var orderDetailDTOs = orderDetails.GroupBy(od => od.ComboId).Select(g => new OrderDetailForChefDTO
+            {
+                ItemName = g.First().Dish?.ItemName ?? "",
+                Quantity = g.Sum(od => od.Quantity),
+                OrderTime = g.First().OrderTime,
+                Note = g.First().Note,
+                DishesServed = g.First().DishesServed,
+                ComboDetailsForChef = g.Select(od => new ComboDetailForChefDTO
+                {
+                    ComboName = od.Combo?.NameCombo ?? "",
+                    ItemsInCombo = od.Combo?.ComboDetails.Select(cd => new ItemInComboDTO
+                    {
+                        ItemName = cd.Dish?.ItemName,
+                        QuantityDish = cd.QuantityDish
+                    }).ToList(),
+                    Note = od.Combo?.Note,
+                    OrderTime = od.OrderTime
+                }).ToList()
+            }).ToList();
 
             return orderDetailDTOs;
         }
@@ -55,14 +74,34 @@ namespace EHM_API.Repositories
                 .Include(od => od.Combo)
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
-                    .Include(od => od.Order)
-                    .Where(od => (od.Order.Type == 2 || od.Order.Type == 3) && od.Order.Status == 2 && od.DishesServed == od.Quantity)
+                .Include(od => od.Order)
+                .Where(od => (od.Order.Type == 2 || od.Order.Type == 3)
+                    && (od.Order.Status == 2)              
+                    && od.DishesServed < od.Quantity)
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
-            var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailForChef1DTO>>(orderDetails);
+            var orderDetailDTO1s = orderDetails.GroupBy(od => od.ComboId).Select(g => new OrderDetailForChef1DTO
+            {
+                ItemName = g.First().Dish?.ItemName ?? "",
+                Quantity = g.Sum(od => od.Quantity),
+                OrderTime = g.First().OrderTime,
+                Note = g.First().Note,
+                DishesServed = g.First().DishesServed,
+                ComboDetailsForChef = g.Select(od => new ComboDetailForChefDTO
+                {
+                    ComboName = od.Combo?.NameCombo ?? "",
+                    ItemsInCombo = od.Combo?.ComboDetails.Select(cd => new ItemInComboDTO
+                    {
+                        ItemName = cd.Dish?.ItemName,
+                        QuantityDish = cd.QuantityDish
+                    }).ToList(),
+                    Note = od.Combo?.Note,
+                    OrderTime = od.OrderTime
+                }).ToList()
+            }).ToList();
 
-            return orderDetailDTOs;
+            return orderDetailDTO1s;
         }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync()
         {
