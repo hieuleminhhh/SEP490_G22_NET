@@ -1,4 +1,5 @@
-﻿using EHM_API.DTOs.VnPayDTO;
+﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.VnPayDTO;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,38 +19,40 @@ namespace EHM_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetVnPay()
+        public IActionResult GetVnPay([FromBody] CheckoutDTO checkoutDTO)
         {
             try
             {
                 var vnPayModel = new VnPaymentRequestModel
                 {
-                    Amount = 300000,
-                    CreatedDate = DateTime.Now,
-                    Description = "mua hang online",
-                    FullName = "Lê Văn Dương",
+                    Amount = checkoutDTO.TotalAmount,
+                    CreatedDate = checkoutDTO.OrderDate,
+                    Description = checkoutDTO.Note,
+                    FullName = checkoutDTO.ConsigneeName,
                     OrderId = new Random().Next(1000, 100000)
                 };
 
-                // Get the VNPay URL
                 var vnPayUrl = _vnPayservice.CreatePaymentUrl(HttpContext, vnPayModel);
-                Console.WriteLine($"VNPay URL: {vnPayUrl}");
 
-                // Redirect the client to the VNPay URL
-                return Ok(vnPayUrl);
+                return Ok(new { url = vnPayUrl });
             }
             catch (Exception ex)
             {
-                // Log the exception to the console
-                Console.WriteLine($"Error occurred: {ex.Message}");
-                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-
-                // Handle the exception and return an error message
                 return BadRequest(new { message = "An error occurred while processing your request.", details = ex.Message });
             }
         }
 
+        /*[HttpGet("PaymentCallBack")]
+        public IActionResult PaymentCallBack()
+        {
+            var response = _vnPayservice.PaymentExecute(Request.Query);
 
+            // Tạo URL điều hướng với kết quả thanh toán
+            var resultUrl = $"{_config["VnPay:PaymentBackReturnUrl"]}?success={response.Success}&orderId={response.OrderId}&transactionId={response.TransactionId}&responseCode={response.VnPayResponseCode}&description={response.OrderDescription}";
+
+            return Redirect(resultUrl);
+        }*/
 
     }
+
 }
