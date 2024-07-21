@@ -21,14 +21,14 @@ namespace EHM_API.Services
             vnpay.AddRequestData("vnp_Command", _config["VnPay:Command"]);
             vnpay.AddRequestData("vnp_TmnCode", _config["VnPay:TmnCode"]);
             vnpay.AddRequestData("vnp_Amount", (model.Amount * 100).ToString()); 
-            vnpay.AddRequestData("vnp_CreateDate", model.CreatedDate.ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_CreateDate", model.CreatedDate.Value.ToString("yyyyMMddHHmmss"));
             vnpay.AddRequestData("vnp_CurrCode", _config["VnPay:CurrCode"]);
             vnpay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(context));
             vnpay.AddRequestData("vnp_Locale", _config["VnPay:Locale"]);
 
             vnpay.AddRequestData("vnp_OrderInfo", "Thanh toán cho đơn hàng:" + model.OrderId);
             vnpay.AddRequestData("vnp_OrderType", "other"); //default value: other
-            vnpay.AddRequestData("vnp_ReturnUrl", "https://domain.vn/VnPayReturn");
+            vnpay.AddRequestData("vnp_ReturnUrl", _config["VnPay:PaymentBackReturnUrl"]);
 
             vnpay.AddRequestData("vnp_TxnRef", tick); 
             var paymentUrl = vnpay.CreateRequestUrl(_config["VnPay:BaseUrl"], _config["VnPay:HashSecret"]);
