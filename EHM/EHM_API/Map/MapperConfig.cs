@@ -461,39 +461,49 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.Floor, opt => opt.MapFrom(src => src.Table.Floor));
 
             CreateMap<OrderDetail, OrderDetailForChefDTO>()
-             .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
-             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-             .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
-             .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
-             .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
-             .ForMember(dest => dest.ComboDetailsForChef, opt => opt.MapFrom(src => src.Combo.ComboDetails.Select(cd => new ComboDetailForChefDTO
+     .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+     .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+     .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
+     .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+     .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
+     .ForMember(dest => dest.ComboDetailsForChef, opt => opt.MapFrom(src => src.Combo.ComboDetails
+         .GroupBy(cd => cd.ComboId)
+         .Select(g => g.First())
+         .Select(cd => new ComboDetailForChefDTO
+         {
+             ComboName = cd.Combo.NameCombo,
+             ItemsInCombo = cd.Combo.ComboDetails.Select(item => new ItemInComboDTO
              {
-                 ComboName = cd.Combo.NameCombo,
-                 ItemsInCombo = cd.Combo.ComboDetails.Select(item => new ItemInComboDTO
-                 {
-                     ItemName = item.Dish.ItemName,
-                     QuantityDish = item.QuantityDish
-                 }).ToList(),
-                 Note = cd.Combo.Note
-             })));
+                 ItemName = item.Dish.ItemName,
+                 QuantityDish = item.QuantityDish
+             }).ToList(),
+             Note = cd.Combo.Note,
+             OrderTime = src.OrderTime
+         }).ToList()));
 
             CreateMap<OrderDetail, OrderDetailForChef1DTO>()
-             .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
-             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-             .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
-             .ForMember(dest => dest.RecevingOrder, opt => opt.MapFrom(src => src.Order.RecevingOrder))
-             .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
-             .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
-             .ForMember(dest => dest.ComboDetailsForChef, opt => opt.MapFrom(src => src.Combo.ComboDetails.Select(cd => new ComboDetailForChefDTO
-             {
-                 ComboName = cd.Combo.NameCombo,
-                 ItemsInCombo = cd.Combo.ComboDetails.Select(item => new ItemInComboDTO
-                 {
-                     ItemName = item.Dish.ItemName,
-                     QuantityDish = item.QuantityDish
-                 }).ToList(),
-                 Note = cd.Combo.Note
-             })));
+                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
+                .ForMember(dest => dest.RecevingOrder, opt => opt.MapFrom(src => src.Order.RecevingOrder))
+                .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+                .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
+                .ForMember(dest => dest.ComboDetailsForChef, opt => opt.MapFrom(src => src.Combo.ComboDetails
+                    .GroupBy(cd => cd.ComboId)
+                    .Select(g => g.First())
+                    .Select(cd => new ComboDetailForChefDTO
+                    {
+                        ComboName = cd.Combo.NameCombo,
+                        ItemsInCombo = cd.Combo.ComboDetails.Select(item => new ItemInComboDTO
+                        {
+                            ItemName = item.Dish.ItemName,
+                            QuantityDish = item.QuantityDish
+                        }).ToList(),
+                        Note = cd.Combo.Note,
+                        OrderTime = src.OrderTime
+                    }).ToList()));
+
+
 
             CreateMap<UpdateStatusTableByReservation, Table>()
                   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.TableStatus));
