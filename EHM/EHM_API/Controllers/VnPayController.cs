@@ -19,7 +19,7 @@ namespace EHM_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetVnPay([FromBody] CheckoutDTO checkoutDTO)
+        public IActionResult GetVnPay([FromBody] CheckoutSuccessDTO checkoutDTO)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace EHM_API.Controllers
                     CreatedDate = checkoutDTO.OrderDate,
                     Description = checkoutDTO.Note,
                     FullName = checkoutDTO.ConsigneeName,
-                    OrderId = new Random().Next(1000, 100000)
+                    OrderId = checkoutDTO.OrderId
                 };
 
                 var vnPayUrl = _vnPayservice.CreatePaymentUrl(HttpContext, vnPayModel);
@@ -41,17 +41,6 @@ namespace EHM_API.Controllers
                 return BadRequest(new { message = "An error occurred while processing your request.", details = ex.Message });
             }
         }
-
-        /*[HttpGet("PaymentCallBack")]
-        public IActionResult PaymentCallBack()
-        {
-            var response = _vnPayservice.PaymentExecute(Request.Query);
-
-            // Tạo URL điều hướng với kết quả thanh toán
-            var resultUrl = $"{_config["VnPay:PaymentBackReturnUrl"]}?success={response.Success}&orderId={response.OrderId}&transactionId={response.TransactionId}&responseCode={response.VnPayResponseCode}&description={response.OrderDescription}";
-
-            return Redirect(resultUrl);
-        }*/
 
     }
 
