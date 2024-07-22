@@ -75,6 +75,7 @@ namespace EHM_API
             configuration.GetSection("JwtSettings").Bind(jwtSettings);
             builder.Services.AddSingleton(jwtSettings);
 
+            builder.Services.AddSingleton<IVnPayService, VnPayService>();
             // Add Authentication
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -132,6 +133,9 @@ namespace EHM_API
             builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
 
+
+			builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+			builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 			builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>

@@ -13,6 +13,12 @@ namespace EHM_API.Services
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IMapper _mapper;
 
+      
+        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IMapper mapper)
+        {
+            _orderDetailRepository = orderDetailRepository;
+            _mapper = mapper;
+        }
         public async Task<bool> UpdateOrderDetailQuantityAsync(int orderDetailId, int quantity)
         {
             var orderDetail = await _orderDetailRepository.GetOrderDetailByIdAsync(orderDetailId);
@@ -24,12 +30,6 @@ namespace EHM_API.Services
             orderDetail.Quantity = quantity;
             return await _orderDetailRepository.UpdateOrderDetailAsync(orderDetail);
         }
-        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IMapper mapper)
-        {
-            _orderDetailRepository = orderDetailRepository;
-            _mapper = mapper;
-        }
-
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync()
         {
             return await _orderDetailRepository.GetOrderDetailsAsync();

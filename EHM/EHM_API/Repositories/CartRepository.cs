@@ -344,7 +344,7 @@ namespace EHM_API.Repositories
 						ComboId = combo != null ? (int?)combo.ComboId : null,
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
-					};
+						DishesServed = 0					};
 
 					orderDetails.Add(orderDetail);
 					totalAmount += (item.UnitPrice ?? 0m);
@@ -381,7 +381,8 @@ namespace EHM_API.Repositories
 					PaymentStatus = takeOutDTO.PaymentStatus,
 					AmountReceived = takeOutDTO.AmountReceived ?? totalAmount,
 					ReturnAmount = takeOutDTO.ReturnAmount ?? 0,
-					PaymentMethods = takeOutDTO.PaymentMethods ?? 0
+					PaymentMethods = takeOutDTO.PaymentMethods ?? 0,
+					Taxcode = takeOutDTO.Taxcode
 				};
 
 				await _context.Invoices.AddAsync(invoice);

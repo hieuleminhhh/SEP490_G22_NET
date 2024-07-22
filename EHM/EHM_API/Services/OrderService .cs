@@ -126,12 +126,6 @@ namespace EHM_API.Services
 			{
 				return false;
 			}
-
-			if (existingOrder.Status != 0)
-			{
-				return false;
-			}
-
 			existingOrder.Status = 4;
 			await _orderRepository.UpdateAsync(existingOrder);
 			return true;
