@@ -319,7 +319,8 @@ public class OrderRepository : IOrderRepository
                         DishId = detailDto.DishId.Value,
                         ComboId = null,
                         Quantity = detailDto.Quantity,
-                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
+                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity,
+						DishesServed = 0
                     };
                     order.OrderDetails.Add(orderDetail);
                 }
@@ -347,7 +348,8 @@ public class OrderRepository : IOrderRepository
                         DishId = null,
                         ComboId = detailDto.ComboId.Value,
                         Quantity = detailDto.Quantity,
-                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
+                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity,
+						DishesServed = 0
                     };
                     order.OrderDetails.Add(orderDetail);
                 }
@@ -436,7 +438,9 @@ public class OrderRepository : IOrderRepository
 						Quantity = detailDto.Quantity,
 						DishId = detailDto.DishId.Value,
 						ComboId = null,
-						OrderId = order.OrderId
+						OrderId = order.OrderId,
+						DishesServed = 0
+						
 					};
 
 					_context.OrderDetails.Add(orderDetail);
@@ -459,7 +463,8 @@ public class OrderRepository : IOrderRepository
 						Quantity = detailDto.Quantity,
 						DishId = null,
 						ComboId = detailDto.ComboId.Value,
-						OrderId = order.OrderId
+						OrderId = order.OrderId,
+						DishesServed = 0
 					};
 
 					_context.OrderDetails.Add(orderDetail);

@@ -344,7 +344,7 @@ namespace EHM_API.Repositories
 						ComboId = combo != null ? (int?)combo.ComboId : null,
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
-					};
+						DishesServed = 0					};
 
 					orderDetails.Add(orderDetail);
 					totalAmount += (item.UnitPrice ?? 0m);
