@@ -115,6 +115,7 @@ namespace EHM_API.Services
 						ComboId = combo != null ? (int?)combo.ComboId : null,
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
+						DishesServed = 0
 
 					};
 
@@ -133,7 +134,8 @@ namespace EHM_API.Services
 				Deposits = checkoutDTO.Deposits,
 				AddressId = address?.AddressId,
 				Note = checkoutDTO.Note,
-				Type = checkoutDTO.Type
+				Type = checkoutDTO.Type,
+				
 
 			};
 
