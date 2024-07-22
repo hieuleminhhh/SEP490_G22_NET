@@ -152,11 +152,11 @@ namespace EHM_API.Controllers
 						{
 							errors["unitPrice"] = "Giá phải lớn hơn 0.";
 						}
-						if (detail.ComboId != null && !await _comboService.ComboExistsAsync(detail.ComboId.Value))
+						if (!await _comboService.ComboExistsAsync(detail.ComboId.Value))
 						{
 							errors["combo"] = "Combo không tồn tại.";
 						}
-						if (detail.DishId != null && !await _dishService.DishExistsAsync(detail.DishId.Value))
+						if (!await _dishService.DishExistsAsync(detail.DishId.Value))
 						{
 							errors["dish"] = "Món ăn không tồn tại.";
 						}
