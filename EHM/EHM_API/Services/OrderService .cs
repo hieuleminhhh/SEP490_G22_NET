@@ -68,7 +68,8 @@ namespace EHM_API.Services
 				{
 					var first = g.First();
 					first.Quantity = g.Sum(od => od.Quantity);
-					first.UnitPrice = g.Average(od => od.UnitPrice);
+					first.UnitPrice = g.Sum(od => od.UnitPrice);
+					first.DishesServed = g.Sum(od => od.DishesServed);
 					return first;
 				})
 				.ToList();
@@ -196,6 +197,9 @@ namespace EHM_API.Services
 			if (orderTable == null || orderTable.Order == null) return null;
 
 			var order = orderTable.Order;
+			var combinedOrderDetails = CombineOrderDetails(order.OrderDetails);
+			order.OrderDetails = combinedOrderDetails.ToList();
+
 			var result = _mapper.Map<FindTableAndGetOrderDTO>(order);
 
 			result.TableIds = order.OrderTables
@@ -213,6 +217,7 @@ namespace EHM_API.Services
 
 			return result;
 		}
+
 
 		public async Task<Order?> UpdateOrderDetailsAsync(int tableId, UpdateTableAndGetOrderDTO dto)
 		{
