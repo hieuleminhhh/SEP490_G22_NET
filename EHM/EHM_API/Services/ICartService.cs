@@ -14,8 +14,9 @@ namespace EHM_API.Services
 
 		Task Checkout(CheckoutDTO checkoutDTO);
 
-		Task TakeOut(TakeOutDTO takeOutDTO);
+		Task<int> TakeOut(TakeOutDTO takeOutDTO);
 
-		Task<CheckoutSuccessDTO> GetCheckoutSuccessInfoAsync(string guestPhone);
+
+        Task<CheckoutSuccessDTO> GetCheckoutSuccessInfoAsync(string guestPhone);
 	}
 }
