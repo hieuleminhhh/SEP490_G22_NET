@@ -53,10 +53,25 @@ namespace EHM_API.Services
 				return null;
 			}
 
+			var combinedOrderDetails = CombineOrderDetails(order.OrderDetails);
 			var orderDto = _mapper.Map<OrderDTOAll>(order);
-			orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(order.OrderDetails);
+			orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(combinedOrderDetails);
 
 			return orderDto;
+		}
+
+		private IEnumerable<OrderDetail> CombineOrderDetails(IEnumerable<OrderDetail> orderDetails)
+		{
+			return orderDetails
+				.GroupBy(od => new { od.DishId, od.ComboId })
+				.Select(g =>
+				{
+					var first = g.First();
+					first.Quantity = g.Sum(od => od.Quantity);
+					first.UnitPrice = g.Average(od => od.UnitPrice);
+					return first;
+				})
+				.ToList();
 		}
 
 

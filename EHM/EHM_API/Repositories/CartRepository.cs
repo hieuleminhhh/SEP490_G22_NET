@@ -372,9 +372,9 @@ namespace EHM_API.Repositories
 			{
 				var invoice = new Invoice
 				{
-					CustomerName = order.Address.ConsigneeName,
-					Phone = order.Address.GuestPhone,
-					Address = order.Address.GuestAddress,
+					CustomerName = order?.Address?.ConsigneeName,
+					Phone = order?.Address?.GuestPhone,
+					Address = order?.Address?.GuestAddress,
 					// AccountID
 					PaymentTime = takeOutDTO.PaymentTime,
 					PaymentAmount = takeOutDTO.PaymentAmount ?? totalAmount,
