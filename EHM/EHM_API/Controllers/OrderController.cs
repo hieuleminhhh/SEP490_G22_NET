@@ -293,20 +293,6 @@ namespace EHM_API.Controllers
 
 			var errors = new Dictionary<string, string>();
 
-			foreach (var detail in dto.OrderDetails)
-			{
-
-				if (detail.UnitPrice <= 0)
-				{
-					errors["OrderDetails"] = "Giá của món ăn hoặc combo phải lớn hơn 0.";
-				}
-
-				if (detail.Quantity <= 0)
-				{
-					errors["OrderDetails"] = "Số lượng phải lớn hơn 0.";
-				}
-			}
-
 			if (errors.Any())
 			{
 				return BadRequest(errors);

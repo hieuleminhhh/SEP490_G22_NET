@@ -294,6 +294,7 @@ public class OrderRepository : IOrderRepository
 
 		foreach (var detailDto in dto.OrderDetails)
 		{
+			decimal unitPrice = 0m;
 			if (detailDto.DishId.HasValue && detailDto.DishId != 0)
 			{
 				var dishExists = await _dishRepository.DishExistsAsync(detailDto.DishId.Value);
@@ -302,13 +303,24 @@ public class OrderRepository : IOrderRepository
 					throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
 				}
 
+				var dish = await _dishRepository.GetByIdAsync(detailDto.DishId.Value);
+
+				if (dish.Discount != null)
+				{
+					unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountAmount / 100)) * detailDto.Quantity;
+				}
+				else
+				{
+					unitPrice = (decimal)dish.Price * detailDto.Quantity;
+				}
+
 				var orderDetail = new OrderDetail
 				{
 					OrderId = order.OrderId,
 					DishId = detailDto.DishId.Value,
 					ComboId = null,
 					Quantity = detailDto.Quantity,
-					UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity,
+					UnitPrice = unitPrice,
 					DishesServed = 0,
 					Note = detailDto.Note,
 					OrderTime = detailDto.OrderTime
@@ -323,14 +335,20 @@ public class OrderRepository : IOrderRepository
 					throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
 				}
 
+				var combo = await _comboRepository.GetByIdAsync(detailDto.ComboId.Value);
+
+				unitPrice = (decimal)combo.Price * detailDto.Quantity;
+
 				var orderDetail = new OrderDetail
 				{
 					OrderId = order.OrderId,
 					DishId = null,
 					ComboId = detailDto.ComboId.Value,
 					Quantity = detailDto.Quantity,
-					UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity,
-					DishesServed = 0
+					UnitPrice = unitPrice,
+					DishesServed = 0,
+					Note = detailDto.Note,
+					OrderTime = detailDto.OrderTime
 				};
 				order.OrderDetails.Add(orderDetail);
 			}
