@@ -283,7 +283,7 @@ namespace EHM_API.Controllers
             }
         }
 
-		[HttpPut("updateOrderDetails/{tableId}")]
+		[HttpPost("updateOrderDetails/{tableId}")]
 		public async Task<IActionResult> UpdateOrderDetails(int tableId, [FromBody] UpdateTableAndGetOrderDTO dto)
 		{
 			if (tableId <= 0)
