@@ -309,7 +309,9 @@ public class OrderRepository : IOrderRepository
 					ComboId = null,
 					Quantity = detailDto.Quantity,
 					UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity,
-					DishesServed = 0
+					DishesServed = 0,
+					Note = detailDto.Note,
+					OrderTime = detailDto.OrderTime
 				};
 				order.OrderDetails.Add(orderDetail);
 			}
@@ -416,8 +418,9 @@ public class OrderRepository : IOrderRepository
 						DishId = detailDto.DishId.Value,
 						ComboId = null,
 						OrderId = order.OrderId,
-						DishesServed = 0
-						
+						DishesServed = 0,
+						Note = detailDto.Note,
+						OrderTime = detailDto.OrderTime
 					};
 
 					_context.OrderDetails.Add(orderDetail);
