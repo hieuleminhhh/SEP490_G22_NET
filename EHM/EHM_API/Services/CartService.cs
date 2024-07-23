@@ -156,10 +156,11 @@ namespace EHM_API.Services
 			return _mapper.Map<CheckoutSuccessDTO>(order);
 		}
 
-		public async Task TakeOut(TakeOutDTO takeOutDTO)
-		{
-			await _cartRepository.TakeOut(takeOutDTO);
-		}
+        public async Task<int> TakeOut(TakeOutDTO takeOutDTO)
+        {
+            return await _cartRepository.TakeOut(takeOutDTO);
+        }
 
-	}
+
+    }
 }
