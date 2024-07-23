@@ -29,18 +29,23 @@ namespace EHM_API.Controllers
 		}
 
 
-		[HttpPost("create-invoice/{orderId}")]
-		public async Task<IActionResult> CreateInvoiceForOrder(int orderId, [FromBody] CreateInvoiceForOrderDTO createInvoiceDto)
-		{
-			try
-			{
-				await _invoiceService.CreateInvoiceForOrderAsync(orderId, createInvoiceDto);
-				return Ok(new { message = "Hóa đơn đã được tạo thành công và cập nhật vào đơn hàng." });
-			}
-			catch (KeyNotFoundException ex)
-			{
-				return NotFound(new { message = ex.Message });
-			}
-		}
-	}
+        [HttpPost("create-invoice/{orderId}")]
+        public async Task<IActionResult> CreateInvoiceForOrder(int orderId, [FromBody] CreateInvoiceForOrderDTO createInvoiceDto)
+        {
+            try
+            {
+                var invoiceId = await _invoiceService.CreateInvoiceForOrderAsync(orderId, createInvoiceDto);
+                return Ok(new
+                {
+                    message = "Hóa đơn đã được tạo thành công và cập nhật vào đơn hàng.",
+                    invoiceId = invoiceId // Include invoiceId in the response
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+    }
 }

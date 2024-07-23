@@ -62,53 +62,54 @@ namespace EHM_API.Repositories
 			return invoiceDetailDTO;
 		}
 
-		// Create invoice for order
-		public async Task CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
-		{
+        public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
+        {
+            var order = await _context.Orders
+                .Include(o => o.Address)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
-			var order = await _context.Orders
-				.Include(o => o.Address) 
-				.FirstOrDefaultAsync(o => o.OrderId == orderId);
+            if (order == null)
+            {
+                throw new KeyNotFoundException($"Không tìm thấy đơn hàng với OrderID {orderId}.");
+            }
 
-			if (order == null)
-			{
-				throw new KeyNotFoundException($"Không tìm thấy đơn hàng với OrderID {orderId}.");
-			}
+            var invoice = new Invoice
+            {
+                PaymentTime = createInvoiceDto.PaymentTime,
+                PaymentAmount = createInvoiceDto.PaymentAmount,
+                DiscountId = createInvoiceDto.DiscountId == 0 ? (int?)null : createInvoiceDto.DiscountId,
+                Taxcode = createInvoiceDto.Taxcode,
+                PaymentStatus = createInvoiceDto.PaymentStatus,
 
-			var invoice = new Invoice
-			{
-				PaymentTime = createInvoiceDto.PaymentTime,
-				PaymentAmount = createInvoiceDto.PaymentAmount,
-				DiscountId = createInvoiceDto.DiscountId == 0 ? (int?)null : createInvoiceDto.DiscountId,
-				Taxcode = createInvoiceDto.Taxcode,
-				PaymentStatus = createInvoiceDto.PaymentStatus,
+                CustomerName = order.Address?.ConsigneeName,
+                Phone = order.Address?.GuestPhone,
+                Address = order.Address?.GuestAddress,
 
-				CustomerName = order.Address?.ConsigneeName,
-				Phone = order.Address?.GuestPhone,
-				Address = order.Address?.GuestAddress,
+                AmountReceived = createInvoiceDto.AmountReceived,
+                ReturnAmount = createInvoiceDto.ReturnAmount,
+                PaymentMethods = createInvoiceDto.PaymentMethods
+            };
 
-				AmountReceived = createInvoiceDto.AmountReceived,
-				ReturnAmount = createInvoiceDto.ReturnAmount,
-				PaymentMethods = createInvoiceDto.PaymentMethods
-			};
+            await _context.Invoices.AddAsync(invoice);
+            await _context.SaveChangesAsync();
 
-			await _context.Invoices.AddAsync(invoice);
-			await _context.SaveChangesAsync();
+            var invoiceLog = new InvoiceLog
+            {
+                Description = createInvoiceDto.Description,
+                InvoiceId = invoice.InvoiceId
+            };
 
-			var invoiceLog = new InvoiceLog
-			{
-				Description = createInvoiceDto.Description,
-				InvoiceId = invoice.InvoiceId
-			};
+            await _context.InvoiceLogs.AddAsync(invoiceLog);
 
-			await _context.InvoiceLogs.AddAsync(invoiceLog);
+            order.InvoiceId = invoice.InvoiceId;
 
-			order.InvoiceId = invoice.InvoiceId;
+            await _context.SaveChangesAsync();
 
-			await _context.SaveChangesAsync();
-		}
+            return invoice.InvoiceId;
+        }
 
 
 
-	}
+
+    }
 }
