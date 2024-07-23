@@ -310,9 +310,7 @@ namespace EHM_API.Controllers
 				ReferenceHandler = ReferenceHandler.Preserve,
 			};
 
-			var jsonResult = JsonSerializer.Serialize(result, options);
-
-			return Ok(new { message = "Cập nhật thành công.", data = jsonResult });
+			return Ok(new { message = "Cập nhật thành công." });
 		}
 
 
