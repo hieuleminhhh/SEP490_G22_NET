@@ -5,6 +5,7 @@ namespace EHM_API.Services
 	public interface IInvoiceService
 	{
 		Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId);
-		Task CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto);
-	}
+		Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto);
+
+    }
 }
