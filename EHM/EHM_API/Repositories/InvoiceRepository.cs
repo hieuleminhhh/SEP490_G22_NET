@@ -108,10 +108,6 @@ namespace EHM_API.Repositories
 
             await _context.InvoiceLogs.AddAsync(invoiceLog);
 
-			// Update the Active status of OrderTable to false
-			orderTable.Active = false;
-			_context.OrderTables.Update(orderTable);
-
 			order.InvoiceId = invoice.InvoiceId;
 
             await _context.SaveChangesAsync();

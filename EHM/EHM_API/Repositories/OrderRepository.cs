@@ -230,7 +230,7 @@ public class OrderRepository : IOrderRepository
 	public async Task<Order?> GetOrderByTableIdAsync(int tableId)
 	{
 		return await _context.OrderTables
-			.Where(ot => ot.TableId == tableId && ot.Active)
+			.Where(ot => ot.TableId == tableId && ot.Order.Status == 4)
 			.Include(ot => ot.Order)
 				.ThenInclude(o => o.OrderDetails)
 					.ThenInclude(od => od.Dish)
@@ -481,8 +481,7 @@ public class OrderRepository : IOrderRepository
 		var orderTable = new OrderTable
 		{
 			TableId = tableId,
-			OrderId = order.OrderId,
-			Active = true
+			OrderId = order.OrderId
 
 		};
 
