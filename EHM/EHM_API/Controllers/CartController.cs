@@ -144,24 +144,33 @@ namespace EHM_API.Controllers
 				{
 					foreach (var detail in checkoutDTO.OrderDetails)
 					{
-						if (detail.Quantity <= 0)
+						if (detail.DishId.HasValue && detail.DishId.Value != 0)
 						{
-							errors["quantity"] = "Số lượng phải lớn hơn 0.";
-						}
-						if (detail.UnitPrice <= 0)
-						{
-							errors["unitPrice"] = "Giá phải lớn hơn 0.";
-						}
-						if (!await _comboService.ComboExistsAsync(detail.ComboId.Value))
-						{
-							errors["combo"] = "Combo không tồn tại.";
-						}
-						if (!await _dishService.DishExistsAsync(detail.DishId.Value))
-						{
-							errors["dish"] = "Món ăn không tồn tại.";
+							if (!await _dishService.DishExistsAsync(detail.DishId.Value))
+							{
+								errors["dish"] = "Món ăn không tồn tại.";
+							}
 						}
 
+						if (detail.ComboId.HasValue && detail.ComboId.Value != 0)
+						{
+							if (!await _comboService.ComboExistsAsync(detail.ComboId.Value))
+							{
+								errors["combo"] = "Combo không tồn tại.";
+							}
+						}
+
+						if (detail.UnitPrice <= 0)
+						{
+							errors["OrderDetails"] = "Giá của món ăn hoặc combo phải lớn hơn 0.";
+						}
+
+						if (detail.Quantity <= 0)
+						{
+							errors["OrderDetails"] = "Số lượng phải lớn hơn 0.";
+						}
 					}
+
 				}
 			}
 			if (errors.Any())
