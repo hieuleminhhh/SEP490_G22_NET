@@ -230,7 +230,7 @@ public class OrderRepository : IOrderRepository
 	public async Task<Order?> GetOrderByTableIdAsync(int tableId)
 	{
 		return await _context.OrderTables
-			.Where(ot => ot.TableId == tableId)
+			.Where(ot => ot.TableId == tableId && ot.Active)
 			.Include(ot => ot.Order)
 				.ThenInclude(o => o.OrderDetails)
 					.ThenInclude(od => od.Dish)
@@ -246,6 +246,8 @@ public class OrderRepository : IOrderRepository
 			.Select(ot => ot.Order)
 			.FirstOrDefaultAsync();
 	}
+
+
 
 	public async Task UpdateOrderAsync(Order order)
 	{
@@ -283,89 +285,86 @@ public class OrderRepository : IOrderRepository
 		return address;
 	}
 
-    public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
-    {
-        var order = await GetOrderByTableIdAsync(tableId);
-        if (order == null)
-        {
-            throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
-        }
-        order.OrderDetails ??= new List<OrderDetail>();
+	public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
+	{
+		var order = await GetOrderByTableIdAsync(tableId);
+		if (order == null)
+		{
+			throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
+		}
+		order.OrderDetails ??= new List<OrderDetail>();
 
-        foreach (var detailDto in dto.OrderDetails)
-        {
-            OrderDetail orderDetail = null;
+		foreach (var detailDto in dto.OrderDetails)
+		{
+			decimal unitPrice = 0m;
+			if (detailDto.DishId.HasValue && detailDto.DishId != 0)
+			{
+				var dishExists = await _dishRepository.DishExistsAsync(detailDto.DishId.Value);
+				if (!dishExists)
+				{
+					throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
+				}
 
-            if (detailDto.DishId.HasValue && detailDto.DishId != 0)
-            {
-                var dishExists = await _dishRepository.DishExistsAsync(detailDto.DishId.Value);
-                if (!dishExists)
-                {
-                    throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
-                }
+				var dish = await _dishRepository.GetByIdAsync(detailDto.DishId.Value);
 
-                orderDetail = order.OrderDetails.FirstOrDefault(od => od.DishId == detailDto.DishId && od.ComboId == null);
+				if (dish.Discount != null)
+				{
+					unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountAmount / 100)) * detailDto.Quantity;
+				}
+				else
+				{
+					unitPrice = (decimal)dish.Price * detailDto.Quantity;
+				}
 
-                if (orderDetail != null)
-                {
-                    orderDetail.Quantity = detailDto.Quantity;
-                    orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Dish.Price) * orderDetail.Quantity;
-                }
-                else
-                {
-                    orderDetail = new OrderDetail
-                    {
-                        OrderId = order.OrderId,
-                        DishId = detailDto.DishId.Value,
-                        ComboId = null,
-                        Quantity = detailDto.Quantity,
-                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
-                    };
-                    order.OrderDetails.Add(orderDetail);
-                }
-            }
-            else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
-            {
-                var comboExists = await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value);
-                if (!comboExists)
-                {
-                    throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
-                }
+				var orderDetail = new OrderDetail
+				{
+					OrderId = order.OrderId,
+					DishId = detailDto.DishId.Value,
+					ComboId = null,
+					Quantity = detailDto.Quantity,
+					UnitPrice = unitPrice,
+					DishesServed = 0,
+					Note = detailDto.Note,
+					OrderTime = detailDto.OrderTime
+				};
+				order.OrderDetails.Add(orderDetail);
+			}
+			else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
+			{
+				var comboExists = await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value);
+				if (!comboExists)
+				{
+					throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
+				}
 
-                orderDetail = order.OrderDetails.FirstOrDefault(od => od.ComboId == detailDto.ComboId && od.DishId == null);
+				var combo = await _comboRepository.GetByIdAsync(detailDto.ComboId.Value);
 
-                if (orderDetail != null)
-                {
-                    orderDetail.Quantity = detailDto.Quantity;
-                    orderDetail.UnitPrice = (detailDto.DiscountedPrice ?? orderDetail.Combo.Price) * orderDetail.Quantity;
-                }
-                else
-                {
-                    orderDetail = new OrderDetail
-                    {
-                        OrderId = order.OrderId,
-                        DishId = null,
-                        ComboId = detailDto.ComboId.Value,
-                        Quantity = detailDto.Quantity,
-                        UnitPrice = (detailDto.DiscountedPrice ?? detailDto.UnitPrice) * detailDto.Quantity
-                    };
-                    order.OrderDetails.Add(orderDetail);
-                }
-            }
-        }
+				unitPrice = (decimal)combo.Price * detailDto.Quantity;
 
-        order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
+				var orderDetail = new OrderDetail
+				{
+					OrderId = order.OrderId,
+					DishId = null,
+					ComboId = detailDto.ComboId.Value,
+					Quantity = detailDto.Quantity,
+					UnitPrice = unitPrice,
+					DishesServed = 0,
+					Note = detailDto.Note,
+					OrderTime = detailDto.OrderTime
+				};
+				order.OrderDetails.Add(orderDetail);
+			}
+		}
 
-        await UpdateOrderAsync(order);
+		order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
 
-        await _tableRepository.UpdateBusyTableStatus(tableId);
+		await UpdateOrderAsync(order);
 
-        return order;
-    }
+		return order;
+	}
 
 
-
-    public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
+	public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
 	{
 		var guest = await _context.Guests
 			.FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
@@ -436,7 +435,10 @@ public class OrderRepository : IOrderRepository
 						Quantity = detailDto.Quantity,
 						DishId = detailDto.DishId.Value,
 						ComboId = null,
-						OrderId = order.OrderId
+						OrderId = order.OrderId,
+						DishesServed = 0,
+						Note = detailDto.Note,
+						OrderTime = detailDto.OrderTime
 					};
 
 					_context.OrderDetails.Add(orderDetail);
@@ -459,7 +461,8 @@ public class OrderRepository : IOrderRepository
 						Quantity = detailDto.Quantity,
 						DishId = null,
 						ComboId = detailDto.ComboId.Value,
-						OrderId = order.OrderId
+						OrderId = order.OrderId,
+						DishesServed = 0
 					};
 
 					_context.OrderDetails.Add(orderDetail);
@@ -478,7 +481,9 @@ public class OrderRepository : IOrderRepository
 		var orderTable = new OrderTable
 		{
 			TableId = tableId,
-			OrderId = order.OrderId
+			OrderId = order.OrderId,
+			Active = true
+
 		};
 
 		_context.OrderTables.Add(orderTable);
@@ -487,7 +492,7 @@ public class OrderRepository : IOrderRepository
 		order.TotalAmount = totalAmount;
 
 		await _context.SaveChangesAsync();
-		await _tableRepository.UpdateBusyTableStatus(tableId);
+		await _tableRepository.UpdateTableStatus(tableId, 1);
 		return new Order
 		{
 			OrderId = order.OrderId,
@@ -498,8 +503,6 @@ public class OrderRepository : IOrderRepository
 			Note = order.Note
 		};
 	}
-
-
 
 	public async Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)
 	{

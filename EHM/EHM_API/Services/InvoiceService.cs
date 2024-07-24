@@ -17,9 +17,10 @@ namespace EHM_API.Services
 			return await _invoiceRepository.GetInvoiceDetailAsync(invoiceId);
 		}
 
-		public async Task CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
-		{
-			await _invoiceRepository.CreateInvoiceForOrderAsync(orderId, createInvoiceDto);
-		}
-	}
+        public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
+        {
+            return await _invoiceRepository.CreateInvoiceForOrderAsync(orderId, createInvoiceDto);
+        }
+
+    }
 }

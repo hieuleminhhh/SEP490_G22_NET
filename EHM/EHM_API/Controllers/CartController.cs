@@ -144,24 +144,33 @@ namespace EHM_API.Controllers
 				{
 					foreach (var detail in checkoutDTO.OrderDetails)
 					{
-						if (detail.Quantity <= 0)
+						if (detail.DishId.HasValue && detail.DishId.Value != 0)
 						{
-							errors["quantity"] = "Số lượng phải lớn hơn 0.";
-						}
-						if (detail.UnitPrice <= 0)
-						{
-							errors["unitPrice"] = "Giá phải lớn hơn 0.";
-						}
-						if (detail.ComboId != null && !await _comboService.ComboExistsAsync(detail.ComboId.Value))
-						{
-							errors["combo"] = "Combo không tồn tại.";
-						}
-						if (detail.DishId != null && !await _dishService.DishExistsAsync(detail.DishId.Value))
-						{
-							errors["dish"] = "Món ăn không tồn tại.";
+							if (!await _dishService.DishExistsAsync(detail.DishId.Value))
+							{
+								errors["dish"] = "Món ăn không tồn tại.";
+							}
 						}
 
+						if (detail.ComboId.HasValue && detail.ComboId.Value != 0)
+						{
+							if (!await _comboService.ComboExistsAsync(detail.ComboId.Value))
+							{
+								errors["combo"] = "Combo không tồn tại.";
+							}
+						}
+
+						if (detail.UnitPrice <= 0)
+						{
+							errors["OrderDetails"] = "Giá của món ăn hoặc combo phải lớn hơn 0.";
+						}
+
+						if (detail.Quantity <= 0)
+						{
+							errors["OrderDetails"] = "Số lượng phải lớn hơn 0.";
+						}
 					}
+
 				}
 			}
 			if (errors.Any())
@@ -231,37 +240,41 @@ namespace EHM_API.Controllers
 				});
 			}
 		}
-		[HttpPost("AddNewOrderTakeAway")]
-		public async Task<IActionResult> AddNewOder2([FromBody] TakeOutDTO takeoutDTO)
-		{
-			var errors = new Dictionary<string, string>();
+        [HttpPost("AddNewOrderTakeAway")]
+        public async Task<IActionResult> AddNewOder2([FromBody] TakeOutDTO takeoutDTO)
+        {
+            var errors = new Dictionary<string, string>();
 
-			if (errors.Any())
-			{
-				return BadRequest(errors);
-			}
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
 
-			try
-			{
-				await _cartService.TakeOut(takeoutDTO);
-				_cartService.ClearCart();
-				return Ok(new { message = "Tạo đơn hàng thành công." });
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new Dictionary<string, string>
-				{
-					["error"] = ex.Message
-				});
-			}
-		}
+            try
+            {
+                int invoiceId = await _cartService.TakeOut(takeoutDTO);
+                _cartService.ClearCart();
+                return Ok(new
+                {
+                    message = "Tạo đơn hàng thành công.",
+                    invoiceId = invoiceId
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Dictionary<string, string>
+                {
+                    ["error"] = ex.Message
+                });
+            }
+        }
 
 
 
 
-	}
+    }
 
-	public static class SessionExtensions
+    public static class SessionExtensions
 	{
 		public static void Set<T>(this ISession session, string key, T value)
 		{

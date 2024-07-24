@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.VnPayDTO;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -18,8 +19,8 @@ namespace EHM_API.Controllers
             _vnPayservice = vnPayservice;
         }
 
-        [HttpPost]
-        public IActionResult GetVnPay([FromBody] CheckoutDTO checkoutDTO)
+        [HttpPost("checkout-order")]
+        public IActionResult GetVnPay([FromBody] CheckoutSuccessDTO checkoutDTO)
         {
             try
             {
@@ -29,7 +30,7 @@ namespace EHM_API.Controllers
                     CreatedDate = checkoutDTO.OrderDate,
                     Description = checkoutDTO.Note,
                     FullName = checkoutDTO.ConsigneeName,
-                    OrderId = new Random().Next(1000, 100000)
+                    OrderId = checkoutDTO.OrderId
                 };
 
                 var vnPayUrl = _vnPayservice.CreatePaymentUrl(HttpContext, vnPayModel);
@@ -42,17 +43,30 @@ namespace EHM_API.Controllers
             }
         }
 
-        /*[HttpGet("PaymentCallBack")]
-        public IActionResult PaymentCallBack()
+        [HttpPost("checkout-reservation")]
+        public IActionResult GetVnPays([FromBody] CreateReservationDTO checkoutDTO)
         {
-            var response = _vnPayservice.PaymentExecute(Request.Query);
+            try
+            {
+                var vnPayModel = new VnPaymentRequestModel
+                {
+                    Amount = checkoutDTO.TotalAmount,
+                    CreatedDate = checkoutDTO.OrderDate,
+                    Description = checkoutDTO.Note,
+                    FullName = checkoutDTO.ConsigneeName,
+                    OrderId = 123
+                };
 
-            // Tạo URL điều hướng với kết quả thanh toán
-            var resultUrl = $"{_config["VnPay:PaymentBackReturnUrl"]}?success={response.Success}&orderId={response.OrderId}&transactionId={response.TransactionId}&responseCode={response.VnPayResponseCode}&description={response.OrderDescription}";
+                var vnPayUrl = _vnPayservice.CreatePaymentUrl(HttpContext, vnPayModel);
 
-            return Redirect(resultUrl);
-        }*/
-
+                return Ok(new { url = vnPayUrl });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "An error occurred while processing your request.", details = ex.Message });
+            }
+        }
     }
+
 
 }
