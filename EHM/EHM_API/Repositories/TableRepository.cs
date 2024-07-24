@@ -64,21 +64,22 @@ namespace EHM_API.Repositories
 		}
 
 
-		public async Task<bool> UpdateBusyTableStatus(int tableId)
-		{
-			var table = await _context.Tables.FirstOrDefaultAsync(t => t.TableId == tableId);
+        public async Task<bool> UpdateTableStatus(int tableId, int status)
+        {
+            var table = await _context.Tables.FirstOrDefaultAsync(t => t.TableId == tableId);
 
-			if (table == null)
-			{
-				throw new KeyNotFoundException($"Bàn {tableId} không tồn tại.");
-			}
+            if (table == null)
+            {
+                throw new KeyNotFoundException($"Bàn {tableId} không tồn tại.");
+            }
 
-			table.Status = 1;
+            table.Status = status;
 
-			await _context.SaveChangesAsync();
-			return true;
-		}
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
-	}
+
+    }
 }
 

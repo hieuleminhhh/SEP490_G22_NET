@@ -1,17 +1,19 @@
 ﻿using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace EHM_API.Repositories
 {
 	public class InvoiceRepository : IInvoiceRepository
 	{
 		private readonly EHMDBContext _context;
-
-		public InvoiceRepository(EHMDBContext context)
+        private readonly ITableRepository _tableRepository;
+        public InvoiceRepository(EHMDBContext context, ITableRepository tableRepository)
 		{
 			_context = context;
-		}
+            _tableRepository = tableRepository;
+        }
 		public async Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId)
 		{
 			var invoice = await _context.Invoices
@@ -73,6 +75,15 @@ namespace EHM_API.Repositories
                 throw new KeyNotFoundException($"Không tìm thấy đơn hàng với OrderID {orderId}.");
             }
 
+            // Retrieve the tableId associated with this order
+            var orderTable = await _context.OrderTables
+                .FirstOrDefaultAsync(ot => ot.OrderId == orderId);
+
+            if (orderTable == null)
+            {
+                throw new KeyNotFoundException($"Không tìm thấy bảng với OrderID {orderId}.");
+            }
+
             var invoice = new Invoice
             {
                 PaymentTime = createInvoiceDto.PaymentTime,
@@ -105,8 +116,11 @@ namespace EHM_API.Repositories
 
             await _context.SaveChangesAsync();
 
+            await _tableRepository.UpdateTableStatus(orderTable.TableId, 0);
+
             return invoice.InvoiceId;
         }
+
 
 
 
