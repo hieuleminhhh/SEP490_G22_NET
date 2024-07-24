@@ -90,7 +90,7 @@ namespace EHM_API.Controllers
             return Ok(summary);
         }
 
-        [HttpPost("update-dishes-served")]
+        [HttpPut("update-dishes-served")]
         public async Task<IActionResult> UpdateDishesServed([FromBody] UpdateDishesServedDTO updateDishesServedDto)
         {
             if (updateDishesServedDto == null || updateDishesServedDto.OrderDetailId == 0)
