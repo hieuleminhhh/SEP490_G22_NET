@@ -358,8 +358,6 @@ public class OrderRepository : IOrderRepository
 
 		await UpdateOrderAsync(order);
 
-		await _tableRepository.UpdateBusyTableStatus(tableId);
-
 		return order;
 	}
 
@@ -490,7 +488,7 @@ public class OrderRepository : IOrderRepository
 		order.TotalAmount = totalAmount;
 
 		await _context.SaveChangesAsync();
-		await _tableRepository.UpdateBusyTableStatus(tableId);
+		await _tableRepository.UpdateTableStatus(tableId, 1);
 		return new Order
 		{
 			OrderId = order.OrderId,
