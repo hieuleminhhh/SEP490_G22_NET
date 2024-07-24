@@ -51,6 +51,7 @@ namespace EHM_API.Repositories
 
         public async Task<IEnumerable<OrderDetailForChef1DTO>> GetOrderDetails1Async()
         {
+            var today = DateTime.Today;
             var orderDetails = await _context.OrderDetails
                 .Include(od => od.Dish)
                 .Include(od => od.Combo)
@@ -61,7 +62,8 @@ namespace EHM_API.Repositories
                            od.Order.RecevingOrder.HasValue &&
                            od.Order.RecevingOrder.Value.TimeOfDay == od.OrderTime.Value.TimeOfDay))
                 && (od.Order.Status == 2)
-                && od.DishesServed < od.Quantity))
+                && od.DishesServed < od.Quantity
+                && od.OrderTime.HasValue && od.OrderTime.Value.Date >= today))
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
