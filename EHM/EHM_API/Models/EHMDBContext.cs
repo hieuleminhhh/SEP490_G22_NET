@@ -400,7 +400,9 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.TableId).HasColumnName("TableID");
 
-                entity.HasOne(d => d.Order)
+				entity.Property(e => e.Active).HasDefaultValueSql("((0))");
+
+				entity.HasOne(d => d.Order)
                    .WithMany(o => o.OrderTables)
                    .HasForeignKey(d => d.OrderId)
                    .OnDelete(DeleteBehavior.ClientSetNull)
