@@ -53,10 +53,26 @@ namespace EHM_API.Services
 				return null;
 			}
 
+			var combinedOrderDetails = CombineOrderDetails(order.OrderDetails);
 			var orderDto = _mapper.Map<OrderDTOAll>(order);
-			orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(order.OrderDetails);
+			orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(combinedOrderDetails);
 
 			return orderDto;
+		}
+
+		private IEnumerable<OrderDetail> CombineOrderDetails(IEnumerable<OrderDetail> orderDetails)
+		{
+			return orderDetails
+				.GroupBy(od => new { od.DishId, od.ComboId })
+				.Select(g =>
+				{
+					var first = g.First();
+					first.Quantity = g.Sum(od => od.Quantity);
+					first.UnitPrice = g.Sum(od => od.UnitPrice);
+					first.DishesServed = g.Sum(od => od.DishesServed);
+					return first;
+				})
+				.ToList();
 		}
 
 
@@ -181,6 +197,9 @@ namespace EHM_API.Services
 			if (orderTable == null || orderTable.Order == null) return null;
 
 			var order = orderTable.Order;
+			var combinedOrderDetails = CombineOrderDetails(order.OrderDetails);
+			order.OrderDetails = combinedOrderDetails.ToList();
+
 			var result = _mapper.Map<FindTableAndGetOrderDTO>(order);
 
 			result.TableIds = order.OrderTables
@@ -198,6 +217,7 @@ namespace EHM_API.Services
 
 			return result;
 		}
+
 
 		public async Task<Order?> UpdateOrderDetailsAsync(int tableId, UpdateTableAndGetOrderDTO dto)
 		{

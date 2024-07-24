@@ -23,6 +23,7 @@ namespace EHM_API.Repositories
 		Task<Guest> GetOrCreateGuestTakeOut(TakeOutDTO takeOutDTO);
 		Task<Address?> GetOrCreateAddressTakeOut(TakeOutDTO takeOutDTO);
 
-		Task TakeOut(TakeOutDTO takeOutDTO);
-	}
+		Task<int> TakeOut(TakeOutDTO takeOutDTO);
+
+    }
 }

@@ -283,7 +283,7 @@ namespace EHM_API.Controllers
             }
         }
 
-		[HttpPut("updateOrderDetails/{tableId}")]
+		[HttpPost("updateOrderDetails/{tableId}")]
 		public async Task<IActionResult> UpdateOrderDetails(int tableId, [FromBody] UpdateTableAndGetOrderDTO dto)
 		{
 			if (tableId <= 0)
@@ -292,20 +292,6 @@ namespace EHM_API.Controllers
 			}
 
 			var errors = new Dictionary<string, string>();
-
-			foreach (var detail in dto.OrderDetails)
-			{
-
-				if (detail.UnitPrice <= 0)
-				{
-					errors["OrderDetails"] = "Giá của món ăn hoặc combo phải lớn hơn 0.";
-				}
-
-				if (detail.Quantity <= 0)
-				{
-					errors["OrderDetails"] = "Số lượng phải lớn hơn 0.";
-				}
-			}
 
 			if (errors.Any())
 			{
@@ -324,9 +310,7 @@ namespace EHM_API.Controllers
 				ReferenceHandler = ReferenceHandler.Preserve,
 			};
 
-			var jsonResult = JsonSerializer.Serialize(result, options);
-
-			return Ok(new { message = "Cập nhật thành công.", data = jsonResult });
+			return Ok(new { message = "Cập nhật thành công." });
 		}
 
 

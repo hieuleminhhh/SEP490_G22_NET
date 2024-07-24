@@ -1640,7 +1640,7 @@
     "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "UpdateOrderDetails",
     "RelativePath": "api/orders/updateOrderDetails/{tableId}",
-    "HttpMethod": "PUT",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [

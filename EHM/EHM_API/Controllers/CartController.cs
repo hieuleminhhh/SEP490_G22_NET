@@ -231,37 +231,41 @@ namespace EHM_API.Controllers
 				});
 			}
 		}
-		[HttpPost("AddNewOrderTakeAway")]
-		public async Task<IActionResult> AddNewOder2([FromBody] TakeOutDTO takeoutDTO)
-		{
-			var errors = new Dictionary<string, string>();
+        [HttpPost("AddNewOrderTakeAway")]
+        public async Task<IActionResult> AddNewOder2([FromBody] TakeOutDTO takeoutDTO)
+        {
+            var errors = new Dictionary<string, string>();
 
-			if (errors.Any())
-			{
-				return BadRequest(errors);
-			}
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
 
-			try
-			{
-				await _cartService.TakeOut(takeoutDTO);
-				_cartService.ClearCart();
-				return Ok(new { message = "Tạo đơn hàng thành công." });
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new Dictionary<string, string>
-				{
-					["error"] = ex.Message
-				});
-			}
-		}
+            try
+            {
+                int invoiceId = await _cartService.TakeOut(takeoutDTO);
+                _cartService.ClearCart();
+                return Ok(new
+                {
+                    message = "Tạo đơn hàng thành công.",
+                    invoiceId = invoiceId
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Dictionary<string, string>
+                {
+                    ["error"] = ex.Message
+                });
+            }
+        }
 
 
 
 
-	}
+    }
 
-	public static class SessionExtensions
+    public static class SessionExtensions
 	{
 		public static void Set<T>(this ISession session, string key, T value)
 		{
