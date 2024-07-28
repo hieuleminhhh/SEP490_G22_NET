@@ -139,11 +139,22 @@ namespace EHM_API.Models
                 .WithMany(d => d.ComboDetails)
                 .HasForeignKey(cd => cd.DishId);
 
+
             modelBuilder.Entity<Discount>(entity =>
             {
                 entity.ToTable("Discount");
 
                 entity.Property(e => e.DiscountId).HasColumnName("DiscountID");
+
+                entity.Property(e => e.DiscountName).HasMaxLength(200);
+
+                entity.Property(e => e.EndTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Note).HasMaxLength(200);
+
+                entity.Property(e => e.StartTime).HasColumnType("datetime");
+
+                entity.Property(e => e.TotalMoney).HasColumnType("money");
             });
 
             modelBuilder.Entity<Dish>(entity =>
@@ -400,7 +411,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.TableId).HasColumnName("TableID");
 
-				entity.HasOne(d => d.Order)
+                entity.HasOne(d => d.Order)
                    .WithMany(o => o.OrderTables)
                    .HasForeignKey(d => d.OrderId)
                    .OnDelete(DeleteBehavior.ClientSetNull)

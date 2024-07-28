@@ -7,6 +7,7 @@ using EHM_API.DTOs.CategoryDTO.Manager;
 using EHM_API.DTOs.ComboDTO.EHM_API.DTOs.ComboDTO;
 using EHM_API.DTOs.ComboDTO.Guest;
 using EHM_API.DTOs.ComboDTO.Manager;
+using EHM_API.DTOs.DiscountDTO.Manager;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.GuestDTO.Guest;
 using EHM_API.DTOs.GuestDTO.Manager;
@@ -45,10 +46,10 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
 					src => src.DiscountId == null ? (decimal?)null :
 						   src.DiscountId == 0 ? src.Price :
-						   src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
+						   src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountPercent / 100) : (decimal?)null
 					))
 				.ForMember(dest => dest.DiscountPercentage, opt => opt.MapFrom(
-					src => src.DiscountId == null || src.DiscountId == 0 ? (int?)null : src.Discount != null ? src.Discount.DiscountAmount : (int?)null
+					src => src.DiscountId == null || src.DiscountId == 0 ? (int?)null : src.Discount != null ? src.Discount.DiscountPercent : (int?)null
 					));
 
 			CreateMap<CreateDishDTO, Dish>();
@@ -74,7 +75,7 @@ namespace EHM_API.Map
 				 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.Price : (src.Dish != null ? src.Dish.Price : (decimal?)null)))
 				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
 					src.Dish != null && src.Dish.DiscountId != null && src.Dish.DiscountId != 0 && src.Dish.Price.HasValue ?
-					src.Dish.Price.Value - (src.Dish.Price.Value * (src.Dish.Discount != null ? src.Dish.Discount.DiscountAmount : 0) / 100) :
+					src.Dish.Price.Value - (src.Dish.Price.Value * (src.Dish.Discount != null ? src.Dish.Discount.DiscountPercent : 0) / 100) :
 					(decimal?)null))
 				.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
 				.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ImageUrl : src.Combo != null ? src.Combo.ImageUrl : null))
@@ -108,7 +109,7 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Combo != null && src.Combo.Price.HasValue ? src.Combo.Price : (src.Dish != null ? src.Dish.Price : (decimal?)null)))
 				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
 					src.Dish != null && src.Dish.Price.HasValue && src.Dish.Discount != null
-					? src.Dish.Price.Value - (src.Dish.Price.Value * src.Dish.Discount.DiscountAmount / 100)
+					? src.Dish.Price.Value - (src.Dish.Price.Value * src.Dish.Discount.DiscountPercent / 100)
 					: src.Combo != null && src.Combo.Price.HasValue
 					? src.Combo.Price.Value
 					: src.Dish != null ? src.Dish.Price.Value : (decimal?)null))
@@ -137,7 +138,7 @@ namespace EHM_API.Map
 				.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
 					src.DiscountId == null ? src.Price :
 					src.DiscountId == 0 ? src.Price :
-					src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : src.Price))
+					src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountPercent / 100) : src.Price))
 				.ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Price));
 
 			// Mapping Combo to OrderDetailsDTO
@@ -437,7 +438,7 @@ namespace EHM_API.Map
 			.ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
 					src => src.DiscountId == null ? (decimal?)null :
 						   src.DiscountId == 0 ? src.Price :
-						   src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
+						   src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountPercent / 100) : (decimal?)null
 					));
 
 			CreateMap<Combo, SearchComboDTO>();
@@ -521,10 +522,11 @@ namespace EHM_API.Map
 		 .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(
 			 src => src.DiscountId == null ? (decimal?)null :
 					src.DiscountId == 0 ? src.Price :
-					src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountAmount / 100) : (decimal?)null
+					src.Price.HasValue && src.Discount != null ? src.Price.Value - (src.Price.Value * src.Discount.DiscountPercent / 100) : (decimal?)null
 		 ));
 
-		}
+            CreateMap<Discount, DiscountAllDTO>().ReverseMap();
+        }
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)
 		{
@@ -537,7 +539,7 @@ namespace EHM_API.Map
 
 				if (src.Dish.Price.HasValue && src.Dish.Discount != null)
 				{
-					return src.Dish.Price.Value - (src.Dish.Price.Value * src.Dish.Discount.DiscountAmount / 100);
+					return src.Dish.Price.Value - (src.Dish.Price.Value * src.Dish.Discount.DiscountPercent / 100);
 				}
 			}
 			else if (src.ComboId != null && src.Combo != null)
