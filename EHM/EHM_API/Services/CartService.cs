@@ -115,7 +115,8 @@ namespace EHM_API.Services
 						ComboId = combo != null ? (int?)combo.ComboId : null,
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
-						DishesServed = 0
+						DishesServed = 0,
+						OrderTime = DateTime.Now,
 
 					};
 
