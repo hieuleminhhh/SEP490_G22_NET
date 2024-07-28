@@ -230,7 +230,7 @@ public class OrderRepository : IOrderRepository
 	public async Task<Order?> GetOrderByTableIdAsync(int tableId)
 	{
 		return await _context.OrderTables
-			.Where(ot => ot.TableId == tableId)
+			.Where(ot => ot.TableId == tableId && ot.Order.Status == 4)
 			.Include(ot => ot.Order)
 				.ThenInclude(o => o.OrderDetails)
 					.ThenInclude(od => od.Dish)
@@ -246,6 +246,8 @@ public class OrderRepository : IOrderRepository
 			.Select(ot => ot.Order)
 			.FirstOrDefaultAsync();
 	}
+
+
 
 	public async Task UpdateOrderAsync(Order order)
 	{
@@ -480,6 +482,7 @@ public class OrderRepository : IOrderRepository
 		{
 			TableId = tableId,
 			OrderId = order.OrderId
+
 		};
 
 		_context.OrderTables.Add(orderTable);
@@ -499,8 +502,6 @@ public class OrderRepository : IOrderRepository
 			Note = order.Note
 		};
 	}
-
-
 
 	public async Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)
 	{
