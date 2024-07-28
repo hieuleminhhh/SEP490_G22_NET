@@ -14,53 +14,58 @@ namespace EHM_API.Repositories
 			_context = context;
             _tableRepository = tableRepository;
         }
-		public async Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId)
-		{
-			var invoice = await _context.Invoices
-				.Include(i => i.Orders)
-					.ThenInclude(o => o.OrderDetails)
-					.ThenInclude(od => od.Dish)
-				.Include(i => i.Orders)
-					.ThenInclude(o => o.OrderDetails)
-					.ThenInclude(od => od.Combo)
-				.Include(i => i.Orders)
-					.ThenInclude(o => o.Address)
-				.FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
-			if (invoice == null)
-			{
-				throw new KeyNotFoundException($"Invoice with ID {invoiceId} not found.");
-			}
-			var order = invoice.Orders.FirstOrDefault();
-			if (order == null)
-			{
-				throw new KeyNotFoundException($"Order for Invoice with ID {invoiceId} not found.");
-			}
-			var invoiceDetailDTO = new InvoiceDetailDTO
-			{
-				InvoiceId = invoice.InvoiceId,
-				PaymentAmount = invoice.PaymentAmount,
-				ConsigneeName = order.Address?.ConsigneeName,
-				GuestPhone = order.GuestPhone,
-				OrderDate = order.OrderDate,
-				TotalAmount = order.TotalAmount,
-				AmountReceived = invoice.AmountReceived,
-				ReturnAmount = invoice.ReturnAmount,
-				Taxcode = invoice.Taxcode,
-				ItemInvoice = order.OrderDetails.Select(od => new ItemInvoiceDTO
-				{
-					DishId = od.DishId ?? 0,
-					ItemName = od.Dish?.ItemName,
-					ComboId = od.ComboId ?? 0,
-					NameCombo = od.Combo?.NameCombo,
-					Price = od.Dish?.Price ?? od.Combo?.Price ?? 0,
-					UnitPrice = od.UnitPrice,
-					Quantity = od.Quantity
-				}).ToList()
-			};
-			return invoiceDetailDTO;
-		}
+        public async Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId)
+        {
+            var invoice = await _context.Invoices
+                .Include(i => i.Orders)
+                    .ThenInclude(o => o.OrderDetails)
+                        .ThenInclude(od => od.Dish)
+                .Include(i => i.Orders)
+                    .ThenInclude(o => o.OrderDetails)
+                        .ThenInclude(od => od.Combo)
+                .Include(i => i.Orders)
+                    .ThenInclude(o => o.Address)
+                .FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
 
-		public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
+            if (invoice == null)
+            {
+                return null;
+            }
+
+            var order = invoice.Orders.FirstOrDefault();
+            if (order == null)
+            {
+                return null;
+            }
+
+            var invoiceDetailDTO = new InvoiceDetailDTO
+            {
+                InvoiceId = invoice.InvoiceId,
+                PaymentAmount = invoice.PaymentAmount,
+                ConsigneeName = order.Address?.ConsigneeName,
+                GuestPhone = order.GuestPhone,
+                OrderDate = order.OrderDate,
+                TotalAmount = order.TotalAmount,
+                AmountReceived = invoice.AmountReceived,
+                ReturnAmount = invoice.ReturnAmount,
+                Taxcode = invoice.Taxcode,
+                ItemInvoice = order.OrderDetails.Select(od => new ItemInvoiceDTO
+                {
+                    DishId = od.DishId ?? 0,
+                    ItemName = od.Dish?.ItemName,
+                    ComboId = od.ComboId ?? 0,
+                    NameCombo = od.Combo?.NameCombo,
+                    Price = od.Dish?.Price ?? od.Combo?.Price ?? 0,
+                    UnitPrice = od.UnitPrice,
+                    Quantity = od.Quantity
+                }).ToList()
+            };
+
+            return invoiceDetailDTO;
+        }
+
+
+        public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
         {
             var order = await _context.Orders
                 .Include(o => o.Address)
@@ -108,8 +113,8 @@ namespace EHM_API.Repositories
 
             await _context.InvoiceLogs.AddAsync(invoiceLog);
 
-			order.InvoiceId = invoice.InvoiceId;
-
+            order.InvoiceId = invoice.InvoiceId;
+            order.Status = 4;
             await _context.SaveChangesAsync();
 
             await _tableRepository.UpdateTableStatus(orderTable.TableId, 0);
