@@ -309,7 +309,7 @@ public class OrderRepository : IOrderRepository
 
 				if (dish.Discount != null)
 				{
-					unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountAmount / 100)) * detailDto.Quantity;
+					unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountPercent / 100)) * detailDto.Quantity;
 				}
 				else
 				{
@@ -422,7 +422,7 @@ public class OrderRepository : IOrderRepository
 
 					if (dish.Discount != null)
 					{
-						unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountAmount / 100)) * detailDto.Quantity;
+						unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountPercent / 100)) * detailDto.Quantity;
 					}
 					else
 					{
@@ -526,7 +526,7 @@ public class OrderRepository : IOrderRepository
 		table.Status = 0;
 
 		var discount = await _context.Discounts.FirstOrDefaultAsync(d => d.DiscountId == dto.DiscountId);
-		decimal discountAmount = (decimal)(discount != null ? (order.TotalAmount * discount.DiscountAmount / 100) : 0m);
+		decimal discountAmount = (decimal)(discount != null ? (order.TotalAmount * discount.DiscountPercent / 100) : 0m);
 
 		var invoice = new Invoice
 		{
