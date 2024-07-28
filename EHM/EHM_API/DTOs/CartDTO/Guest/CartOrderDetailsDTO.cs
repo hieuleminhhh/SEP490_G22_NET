@@ -6,5 +6,8 @@
         public int? Quantity { get; set; }
         public int? DishId { get; set; }
         public int? ComboId { get; set; }
+        public string? Note { get; set; }
+        public DateTime? OrderTime { get; set; }
+
     }
 }
