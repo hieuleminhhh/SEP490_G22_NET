@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EHM_API.DTOs.ComboDTO.Guest;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums;
@@ -135,6 +136,11 @@ namespace EHM_API.Services
 				Combos = _mapper.Map<List<SearchComboDTO>>(combos)
 			};
 		}
+        public async Task<IEnumerable<DishDTOAll>> UpdateDiscountForDishesAsync(int discountId, List<int> dishIds)
+        {
+            var dishes = await _dishRepository.UpdateDiscountForDishesAsync(discountId, dishIds);
+            return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
+        }
 
-	}
+    }
 }
