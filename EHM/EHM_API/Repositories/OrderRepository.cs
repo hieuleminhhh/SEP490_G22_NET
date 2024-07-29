@@ -230,7 +230,7 @@ public class OrderRepository : IOrderRepository
 	public async Task<Order?> GetOrderByTableIdAsync(int tableId)
 	{
 		return await _context.OrderTables
-			.Where(ot => ot.TableId == tableId && ot.Order.Status == 4)
+			.Where(ot => ot.TableId == tableId && ot.Order.Status == 3)
 			.Include(ot => ot.Order)
 				.ThenInclude(o => o.OrderDetails)
 					.ThenInclude(od => od.Dish)
@@ -288,6 +288,7 @@ public class OrderRepository : IOrderRepository
 	public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
 	{
 		var order = await GetOrderByTableIdAsync(tableId);
+
 		if (order == null)
 		{
 			throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
@@ -309,7 +310,7 @@ public class OrderRepository : IOrderRepository
 
 				if (dish.Discount != null)
 				{
-					unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountAmount / 100)) * detailDto.Quantity;
+					unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountPercent / 100)) * detailDto.Quantity;
 				}
 				else
 				{
@@ -366,37 +367,51 @@ public class OrderRepository : IOrderRepository
 
 	public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
 	{
-		var guest = await _context.Guests
-			.FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
+		Guest guest = null;
+		Address address = null;
 
-		if (guest == null)
+		if (!string.IsNullOrWhiteSpace(dto.GuestPhone))
 		{
-			guest = new Guest
+			guest = await _context.Guests
+				.FirstOrDefaultAsync(g => g.GuestPhone == dto.GuestPhone);
+			if (guest == null)
 			{
-				GuestPhone = dto.GuestPhone
-			};
-			_context.Guests.Add(guest);
-			await _context.SaveChangesAsync();
-		}
+				guest = new Guest
+				{
+					GuestPhone = dto.GuestPhone
+				};
+				_context.Guests.Add(guest);
+				await _context.SaveChangesAsync();
+			}
 
-		var address = await GetOrCreateAddress2(new CheckoutDTO
-		{
-			GuestAddress = dto.GuestAddress,
-			ConsigneeName = dto.ConsigneeName,
-			GuestPhone = dto.GuestPhone
-		});
+			if (!string.IsNullOrWhiteSpace(dto.GuestAddress) && !string.IsNullOrWhiteSpace(dto.ConsigneeName))
+			{
+				address = await GetOrCreateAddress2(new CheckoutDTO
+				{
+					GuestAddress = dto.GuestAddress,
+					ConsigneeName = dto.ConsigneeName,
+					GuestPhone = dto.GuestPhone
+				});
+			}
+		}
 
 		var order = new Order
 		{
 			OrderDate = dto.OrderDate,
 			Status = dto.Status,
 			RecevingOrder = dto.RecevingOrder,
-			GuestPhone = dto.GuestPhone,
+			GuestPhone = !string.IsNullOrWhiteSpace(dto.GuestPhone) ? dto.GuestPhone : null,
 			Note = dto.Note,
 			Type = dto.Type,
 			Address = address,
 			GuestPhoneNavigation = guest
 		};
+
+		if (string.IsNullOrWhiteSpace(dto.GuestPhone))
+		{
+			order.GuestPhone = null;
+			order.GuestPhoneNavigation = null;
+		}
 
 		_context.Orders.Add(order);
 		await _context.SaveChangesAsync();
@@ -422,7 +437,7 @@ public class OrderRepository : IOrderRepository
 
 					if (dish.Discount != null)
 					{
-						unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountAmount / 100)) * detailDto.Quantity;
+						unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountPercent / 100)) * detailDto.Quantity;
 					}
 					else
 					{
@@ -462,7 +477,9 @@ public class OrderRepository : IOrderRepository
 						DishId = null,
 						ComboId = detailDto.ComboId.Value,
 						OrderId = order.OrderId,
-						DishesServed = 0
+						DishesServed = 0,
+						Note = detailDto.Note,
+						OrderTime = detailDto.OrderTime
 					};
 
 					_context.OrderDetails.Add(orderDetail);
@@ -520,13 +537,13 @@ public class OrderRepository : IOrderRepository
 			throw new KeyNotFoundException($"Bàn {tableId} không tìm thấy.");
 		}
 
-		order.Status = 2;
+		order.Status = 3;
 		order.RecevingOrder = dto.RecevingOrder ?? order.RecevingOrder;
 
 		table.Status = 0;
 
 		var discount = await _context.Discounts.FirstOrDefaultAsync(d => d.DiscountId == dto.DiscountId);
-		decimal discountAmount = (decimal)(discount != null ? (order.TotalAmount * discount.DiscountAmount / 100) : 0m);
+		decimal discountAmount = (decimal)(discount != null ? (order.TotalAmount * discount.DiscountPercent / 100) : 0m);
 
 		var invoice = new Invoice
 		{

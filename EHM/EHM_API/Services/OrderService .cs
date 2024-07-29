@@ -192,7 +192,7 @@ namespace EHM_API.Services
 				.Include(ot => ot.Order)
 					.ThenInclude(o => o.GuestPhoneNavigation)
 				.Include(ot => ot.Table)
-				.FirstOrDefaultAsync(ot => ot.TableId == tableId);
+				.FirstOrDefaultAsync(ot => ot.TableId == tableId && ot.Order.Status == 3);
 
 			if (orderTable == null || orderTable.Order == null) return null;
 
