@@ -137,7 +137,10 @@ namespace EHM_API
 			builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 			builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
-			builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+            builder.Services.AddScoped<IDiscountService, DiscountService>();
+
+            builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
