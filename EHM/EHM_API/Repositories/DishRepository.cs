@@ -50,7 +50,7 @@ namespace EHM_API.Repositories
         public async Task<Dish> UpdateAsync(Dish dish)
         {
             var discount = await _context.Discounts.FindAsync(dish.DiscountId);
-            if (discount == null || discount.Type != 2)
+            if (discount != null || discount.Type != 2)
             {
                 throw new InvalidOperationException("Nhập discountID có Type = 2 .");
             }
