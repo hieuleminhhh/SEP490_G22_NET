@@ -41,7 +41,7 @@
     "Parameters": [
       {
         "Name": "checkoutDTO",
-        "Type": "EHM_API.DTOs.CartDTO.Guest.CheckoutDTO",
+        "Type": "EHM_API.DTOs.CartDTO.OrderStaff.TakeOutDTO",
         "IsRequired": true
       }
     ],
@@ -585,6 +585,151 @@
     ]
   },
   {
+    "ContainingType": "DiscountsController",
+    "Method": "GetAllAsync",
+    "RelativePath": "api/Discounts",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "DiscountsController",
+    "Method": "AddAsync",
+    "RelativePath": "api/Discounts",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "discountDto",
+        "Type": "EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "DiscountsController",
+    "Method": "GetByIdAsync",
+    "RelativePath": "api/Discounts/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "DiscountsController",
+    "Method": "UpdateAsync",
+    "RelativePath": "api/Discounts/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "discountDto",
+        "Type": "EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "DiscountsController",
+    "Method": "DeleteAsync",
+    "RelativePath": "api/Discounts/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DiscountsController",
+    "Method": "SearchAsync",
+    "RelativePath": "api/Discounts/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "keyword",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "EHM_API.Controllers.DishController",
     "Method": "GetDishes",
     "RelativePath": "api/Dish",
@@ -619,6 +764,37 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.DishController",
+    "Method": "UpdateDiscountForDishesAsync",
+    "RelativePath": "api/Dish/{discountId}/dishes",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "discountId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dishIds",
+        "Type": "System.Collections.Generic.List\u00601[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.ComboDTO.Guest.DishDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "EHM_API.Controllers.DishController",
@@ -1342,7 +1518,7 @@
     "ContainingType": "EHM_API.Controllers.OrderDetailsForChefController",
     "Method": "UpdateDishesServed",
     "RelativePath": "api/OrderDetailsForChef/update-dishes-served",
-    "HttpMethod": "POST",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -1593,6 +1769,32 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "GetOrderDetails",
+    "RelativePath": "api/orders/GetOrderDetails/{orderId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.OrderDTO.Manager.GetOrderDetailDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
@@ -1900,7 +2102,7 @@
   {
     "ContainingType": "EHM_API.Controllers.VnPayController",
     "Method": "GetVnPay",
-    "RelativePath": "api/VnPay",
+    "RelativePath": "api/VnPay/checkout-order",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -1908,6 +2110,22 @@
       {
         "Name": "checkoutDTO",
         "Type": "EHM_API.DTOs.CartDTO.Guest.CheckoutSuccessDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.VnPayController",
+    "Method": "GetVnPays",
+    "RelativePath": "api/VnPay/checkout-reservation",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "checkoutDTO",
+        "Type": "EHM_API.DTOs.ReservationDTO.Guest.CreateReservationDTO",
         "IsRequired": true
       }
     ],

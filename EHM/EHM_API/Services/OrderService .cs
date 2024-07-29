@@ -240,6 +240,12 @@ namespace EHM_API.Services
 		{
 			await _orderRepository.CancelOrderAsync(tableId, orderId, dto);
 		}
+
+		public async Task<IEnumerable<GetOrderDetailDTO>> GetOrderDetailsByOrderIdAsync(int orderId)
+		{
+			var orderDetails = await _orderRepository.GetOrderDetailsByOrderIdAsync(orderId);
+			return _mapper.Map<IEnumerable<GetOrderDetailDTO>>(orderDetails);
+		}
 	}
 }
 
