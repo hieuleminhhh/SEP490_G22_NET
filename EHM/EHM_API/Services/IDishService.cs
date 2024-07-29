@@ -1,4 +1,5 @@
-﻿using EHM_API.DTOs.DishDTO.Manager;
+﻿using EHM_API.DTOs.ComboDTO.Guest;
+using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums;
 using EHM_API.Enums.EHM_API.Models;
@@ -20,9 +21,9 @@ namespace EHM_API.Services
         Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder);
 		Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize);
 		Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive);
+        Task<IEnumerable<DishDTOAll>> UpdateDiscountForDishesAsync(int discountId, List<int> dishIds);
 
-
-		Task<bool> DishExistsAsync(int dishId);
+        Task<bool> DishExistsAsync(int dishId);
 		Task<bool> DiscountExistsAsync(int discountId);
 
         Task<SearchDishAndComboDTO> SearchDishAndComboAsync(string search);
