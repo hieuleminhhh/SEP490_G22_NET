@@ -49,6 +49,11 @@ namespace EHM_API.Repositories
 
         public async Task<Dish> UpdateAsync(Dish dish)
         {
+            var discount = await _context.Discounts.FindAsync(dish.DiscountId);
+            if (discount == null || discount.Type != 2)
+            {
+                throw new InvalidOperationException("Nhập discountID có Type = 2 .");
+            }
             _context.Dishes.Update(dish);
             await _context.SaveChangesAsync();
             return dish;
@@ -233,6 +238,23 @@ namespace EHM_API.Repositories
 				.AsNoTracking()
 				.ToListAsync();
 		}
-	}
+        public async Task<IEnumerable<Dish>> UpdateDiscountForDishesAsync(int discountId, List<int> dishIds)
+        {
+            var discount = await _context.Discounts.FindAsync(discountId);
+            if (discount == null || discount.Type != 2)
+            {
+                throw new InvalidOperationException("Nhập discountID có Type = 2 .");
+            }
+
+            var dishes = await _context.Dishes.Where(d => dishIds.Contains(d.DishId)).ToListAsync();
+            foreach (var dish in dishes)
+            {
+                dish.DiscountId = discountId;
+            }
+
+            await _context.SaveChangesAsync();
+            return dishes;
+        }
+    }
 
 }
