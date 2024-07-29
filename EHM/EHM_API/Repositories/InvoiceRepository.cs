@@ -112,7 +112,8 @@ namespace EHM_API.Repositories
 
             await _context.InvoiceLogs.AddAsync(invoiceLog);
 
-            order.InvoiceId = invoice.InvoiceId;
+			order.Status = 4;
+			order.InvoiceId = invoice.InvoiceId;
 
             await _context.SaveChangesAsync();
 
