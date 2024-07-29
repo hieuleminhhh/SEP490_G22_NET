@@ -400,13 +400,15 @@ namespace EHM_API.Repositories
                 await _context.Invoices.AddAsync(invoice);
                 await _context.SaveChangesAsync();
 
-                var invoicelog = new InvoiceLog
-                {
-                    Description = takeOutDTO.Description,
-                    InvoiceId = invoice.InvoiceId
-                };
+				var invoiceLog = new InvoiceLog
+				{
+					Description = takeOutDTO.Description,
+					InvoiceId = invoice.InvoiceId
+				};
 
-                order.InvoiceId = invoice.InvoiceId;
+				await _context.InvoiceLogs.AddAsync(invoiceLog);
+
+				order.InvoiceId = invoice.InvoiceId;
                 await _context.SaveChangesAsync();
 
                 invoiceId = invoice.InvoiceId;
