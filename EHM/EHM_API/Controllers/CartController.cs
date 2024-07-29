@@ -206,7 +206,7 @@ namespace EHM_API.Controllers
 		}
 		//staff order
 		[HttpPost("AddNewOrder")]
-        public async Task<IActionResult> AddNewOder([FromBody] CheckoutDTO checkoutDTO)
+        public async Task<IActionResult> AddNewOder([FromBody] TakeOutDTO checkoutDTO)
         {
 			var errors = new Dictionary<string, string>();
 
@@ -228,7 +228,7 @@ namespace EHM_API.Controllers
 
 			try
 			{
-				await _cartService.Checkout(checkoutDTO);
+				await _cartService.TakeOut(checkoutDTO);
 				_cartService.ClearCart();
 				return Ok(new { message = "Tạo đơn hàng thành công." });
 			}

@@ -26,15 +26,18 @@ namespace EHM_API.Repositories
 				.Include(i => i.Orders)
 					.ThenInclude(o => o.Address)
 				.FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
+
 			if (invoice == null)
 			{
-				throw new KeyNotFoundException($"Invoice with ID {invoiceId} not found.");
+				return null;
 			}
+
 			var order = invoice.Orders.FirstOrDefault();
 			if (order == null)
 			{
-				throw new KeyNotFoundException($"Order for Invoice with ID {invoiceId} not found.");
+				return null;
 			}
+
 			var invoiceDetailDTO = new InvoiceDetailDTO
 			{
 				InvoiceId = invoice.InvoiceId,
@@ -52,15 +55,16 @@ namespace EHM_API.Repositories
 					ItemName = od.Dish?.ItemName,
 					ComboId = od.ComboId ?? 0,
 					NameCombo = od.Combo?.NameCombo,
-					Price = od.Dish?.Price ?? od.Combo?.Price ?? 0,
+					Price = od.Dish.Price ?? od.Combo.Price,
 					UnitPrice = od.UnitPrice,
 					Quantity = od.Quantity
 				}).ToList()
 			};
+
 			return invoiceDetailDTO;
 		}
 
-		public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
+        public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
         {
             var order = await _context.Orders
                 .Include(o => o.Address)
@@ -108,7 +112,7 @@ namespace EHM_API.Repositories
 
             await _context.InvoiceLogs.AddAsync(invoiceLog);
 
-			order.InvoiceId = invoice.InvoiceId;
+            order.InvoiceId = invoice.InvoiceId;
 
             await _context.SaveChangesAsync();
 

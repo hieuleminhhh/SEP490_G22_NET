@@ -182,8 +182,8 @@ namespace EHM_API.Repositories
                 CategoryName = d.Category?.CategoryName,
                 IsActive = d.IsActive,
                 DiscountId = d.DishId,
-                DiscountedPrice = d.Price - (d.Price * d.Discount?.DiscountAmount / 100),
-                DiscountPercentage = d.Discount?.DiscountAmount
+                DiscountedPrice = d.Price - (d.Price * d.Discount?.DiscountPercent / 100),
+                DiscountPercentage = d.Discount?.DiscountPercent
             }).ToList();
 
             return new PagedResult<DishDTOAll>(dishDTOs, totalDishes, page, pageSize);

@@ -191,9 +191,17 @@ namespace EHM_API.Repositories
 
 			return await _context.Dishes.FirstOrDefaultAsync(d => d.DishId == dishId);
 		}
+        public async Task<Combo> GetComboByIdAsync(int? comboId)
+        {
+            if (comboId == null)
+            {
+                return null;
+            }
 
+            return await _context.Combos.FirstOrDefaultAsync(d => d.ComboId == comboId);
+        }
 
-		public async Task<Order> GetOrderByGuestPhoneAsync(string guestPhone)
+        public async Task<Order> GetOrderByGuestPhoneAsync(string guestPhone)
 		{
 			if (string.IsNullOrWhiteSpace(guestPhone))
 			{
@@ -317,14 +325,14 @@ namespace EHM_API.Repositories
                     }
                 }
 
-                /*			if (item.ComboId.HasValue && item.ComboId.Value > 0)
+                		if (item.ComboId.HasValue && item.ComboId.Value > 0)
                             {
-                                combo = await _comboService.GetComboByIdAsync(item.ComboId.Value);
+                                combo = await GetComboByIdAsync(item.ComboId.Value);
                                 if (combo == null)
                                 {
                                     throw new KeyNotFoundException($"Combo với ID {item.ComboId} không tồn tại.");
                                 }
-                            }*/
+                            }
 
                 var existingOrderDetail = orderDetails.FirstOrDefault(od =>
                     (dish != null && od.DishId == dish.DishId) ||
@@ -344,7 +352,9 @@ namespace EHM_API.Repositories
                         ComboId = combo != null ? (int?)combo.ComboId : null,
                         Quantity = item.Quantity,
                         UnitPrice = item.UnitPrice,
-                        DishesServed = 0
+                        DishesServed = 0,
+						OrderTime = item.OrderTime,
+						Note = item.Note,
                     };
 
                     orderDetails.Add(orderDetail);
