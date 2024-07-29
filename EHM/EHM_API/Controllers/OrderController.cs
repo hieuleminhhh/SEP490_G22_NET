@@ -436,5 +436,17 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
+		[HttpGet("GetOrderDetails/{orderId}")]
+		public async Task<ActionResult<IEnumerable<GetOrderDetailDTO>>> GetOrderDetails(int orderId)
+		{
+			var orderDetails = await _orderService.GetOrderDetailsByOrderIdAsync(orderId);
+			if (orderDetails == null || !orderDetails.Any())
+			{
+				return NotFound($"Không tìm thấy chi tiết đơn hàng cho OrderID {orderId}.");
+			}
+			return Ok(orderDetails);
+		}
+
 	}
 }

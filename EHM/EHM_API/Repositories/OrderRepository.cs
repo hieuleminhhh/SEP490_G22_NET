@@ -610,4 +610,14 @@ public class OrderRepository : IOrderRepository
 	}
 
 
+	public async Task<IEnumerable<OrderDetail>> GetOrderDetailsByOrderIdAsync(int orderId)
+	{
+		return await _context.OrderDetails
+			.Include(od => od.Dish)
+			.Include(od => od.Combo)
+			.Where(od => od.OrderId == orderId)
+			.ToListAsync();
+	}
+
+
 }
