@@ -527,6 +527,11 @@ namespace EHM_API.Map
 
             CreateMap<Discount, DiscountAllDTO>().ReverseMap();
 
+
+			// Cancel Order
+			CreateMap<CancelOrderTableDTO, Order>()
+			   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
 			//Get OrderDetail
 			CreateMap<OrderDetail, GetOrderDetailDTO>()
 		  .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))

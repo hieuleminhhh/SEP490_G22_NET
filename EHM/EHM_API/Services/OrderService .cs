@@ -20,15 +20,17 @@ namespace EHM_API.Services
 		private readonly IOrderRepository _orderRepository;
 		private readonly IComboRepository _comboRepository;
 		private readonly IDishRepository _dishRepository;
+		private readonly ITableRepository _tableRepository;
 		private readonly IMapper _mapper;
 		private readonly EHMDBContext _context;
 
-		public OrderService(IOrderRepository orderRepository, IMapper mapper, EHMDBContext context, IComboRepository comboRepository)
+		public OrderService(IOrderRepository orderRepository, IMapper mapper, EHMDBContext context, IComboRepository comboRepository, ITableRepository tableRepository)
 		{
 			_orderRepository = orderRepository;
 			_mapper = mapper;
 			_context = context;
 			_comboRepository = comboRepository;
+			_tableRepository = tableRepository;
 		}
 
 		public async Task<IEnumerable<OrderDTOAll>> GetAllOrdersAsync()
@@ -246,7 +248,47 @@ namespace EHM_API.Services
 			var orderDetails = await _orderRepository.GetOrderDetailsByOrderIdAsync(orderId);
 			return _mapper.Map<IEnumerable<GetOrderDetailDTO>>(orderDetails);
 		}
+
+
+		public async Task UpdateOrderAndTablesStatusAsyncByTableId(int tableId, CancelOrderTableDTO dto)
+		{
+			// Lấy tất cả các đơn hàng liên quan đến TableId
+			var orders = await _orderRepository.GetOrdersByTableIdAsync(tableId);
+			if (orders == null || !orders.Any())
+			{
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
+			}
+
+			foreach (var order in orders)
+			{
+				// Kiểm tra nếu có OrderDetail nào có DishesServed = 1
+				if (order.OrderDetails.Any(od => od.DishesServed == 1))
+				{
+					throw new InvalidOperationException("Không thể huỷ đơn hàng vì đã có món ăn được phục vụ.");
+				}
+
+				// Cập nhật trạng thái đơn hàng
+				if (dto.Status.HasValue)
+				{
+					order.Status = dto.Status.Value;
+				}
+
+				// Lưu các thay đổi vào cơ sở dữ liệu
+				await _orderRepository.UpdateOrderAsync(order);
+			}
+
+			// Cập nhật trạng thái của bàn thành 0
+			var table = await _tableRepository.GetTableByIdAsync(tableId);
+			if (table != null)
+			{
+				table.Status = 0;
+				await _tableRepository.UpdateTableAsync(table);
+			}
+		}
+
 	}
 }
+
+	
 
 
