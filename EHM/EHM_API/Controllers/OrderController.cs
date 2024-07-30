@@ -456,7 +456,7 @@ namespace EHM_API.Controllers
 				// Update order and table status based on tableId
 				await _orderService.UpdateOrderAndTablesStatusAsyncByTableId(tableId, dto);
 
-				return Ok(new { Message = "Order and table status updated successfully." });
+				return Ok(new { Message = "Đơn của bàn đã hủy thành công" });
 			}
 			catch (KeyNotFoundException ex)
 			{
@@ -468,7 +468,7 @@ namespace EHM_API.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(500, new { Message = "An error occurred while canceling the order.", Error = ex.Message });
+				return StatusCode(500, new { Message = "Đã xảy ra lỗi khi hủy đơn hàng.", Error = ex.Message });
 			}
 		}
 

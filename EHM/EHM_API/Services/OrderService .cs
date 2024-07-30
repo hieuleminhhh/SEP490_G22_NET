@@ -252,7 +252,6 @@ namespace EHM_API.Services
 
 		public async Task UpdateOrderAndTablesStatusAsyncByTableId(int tableId, CancelOrderTableDTO dto)
 		{
-			// Lấy tất cả các đơn hàng liên quan đến TableId
 			var orders = await _orderRepository.GetOrdersByTableIdAsync(tableId);
 			if (orders == null || !orders.Any())
 			{
@@ -261,23 +260,19 @@ namespace EHM_API.Services
 
 			foreach (var order in orders)
 			{
-				// Kiểm tra nếu có OrderDetail nào có DishesServed = 1
-				if (order.OrderDetails.Any(od => od.DishesServed == 1))
+				if (order.OrderDetails.Any(od => od.DishesServed > 0))
 				{
 					throw new InvalidOperationException("Không thể huỷ đơn hàng vì đã có món ăn được phục vụ.");
 				}
 
-				// Cập nhật trạng thái đơn hàng
 				if (dto.Status.HasValue)
 				{
 					order.Status = dto.Status.Value;
 				}
 
-				// Lưu các thay đổi vào cơ sở dữ liệu
 				await _orderRepository.UpdateOrderAsync(order);
 			}
 
-			// Cập nhật trạng thái của bàn thành 0
 			var table = await _tableRepository.GetTableByIdAsync(tableId);
 			if (table != null)
 			{
