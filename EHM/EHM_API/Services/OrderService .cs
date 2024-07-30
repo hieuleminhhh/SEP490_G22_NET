@@ -260,7 +260,7 @@ namespace EHM_API.Services
 
 			foreach (var order in orders)
 			{
-				if (order.OrderDetails.Any(od => od.DishesServed >= 1))
+				if (order.OrderDetails.Any(od => od.DishesServed > 0))
 				{
 					throw new InvalidOperationException("Không thể huỷ đơn hàng vì đã có món ăn được phục vụ.");
 				}
