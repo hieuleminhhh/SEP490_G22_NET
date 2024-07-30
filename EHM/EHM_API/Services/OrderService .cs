@@ -20,15 +20,17 @@ namespace EHM_API.Services
 		private readonly IOrderRepository _orderRepository;
 		private readonly IComboRepository _comboRepository;
 		private readonly IDishRepository _dishRepository;
+		private readonly ITableRepository _tableRepository;
 		private readonly IMapper _mapper;
 		private readonly EHMDBContext _context;
 
-		public OrderService(IOrderRepository orderRepository, IMapper mapper, EHMDBContext context, IComboRepository comboRepository)
+		public OrderService(IOrderRepository orderRepository, IMapper mapper, EHMDBContext context, IComboRepository comboRepository, ITableRepository tableRepository)
 		{
 			_orderRepository = orderRepository;
 			_mapper = mapper;
 			_context = context;
 			_comboRepository = comboRepository;
+			_tableRepository = tableRepository;
 		}
 
 		public async Task<IEnumerable<OrderDTOAll>> GetAllOrdersAsync()
@@ -246,7 +248,42 @@ namespace EHM_API.Services
 			var orderDetails = await _orderRepository.GetOrderDetailsByOrderIdAsync(orderId);
 			return _mapper.Map<IEnumerable<GetOrderDetailDTO>>(orderDetails);
 		}
+
+
+		public async Task UpdateOrderAndTablesStatusAsyncByTableId(int tableId, CancelOrderTableDTO dto)
+		{
+			var orders = await _orderRepository.GetOrdersByTableIdAsync(tableId);
+			if (orders == null || !orders.Any())
+			{
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
+			}
+
+			foreach (var order in orders)
+			{
+				if (order.OrderDetails.Any(od => od.DishesServed > 0))
+				{
+					throw new InvalidOperationException("Không thể huỷ đơn hàng vì đã có món ăn được phục vụ.");
+				}
+
+				if (dto.Status.HasValue)
+				{
+					order.Status = dto.Status.Value;
+				}
+
+				await _orderRepository.UpdateOrderAsync(order);
+			}
+
+			var table = await _tableRepository.GetTableByIdAsync(tableId);
+			if (table != null)
+			{
+				table.Status = 0;
+				await _tableRepository.UpdateTableAsync(table);
+			}
+		}
+
 	}
 }
+
+	
 
 

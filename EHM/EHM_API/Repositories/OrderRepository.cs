@@ -705,5 +705,15 @@ public class OrderRepository : IOrderRepository
 			.ToListAsync();
 	}
 
+	public async Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int tableId)
+	{
+		var orders = await _context.Orders
+			.Where(o => _context.OrderTables.Any(ot => ot.TableId == tableId && ot.OrderId == o.OrderId) && o.Status == 3)
+			.Include(o => o.OrderDetails)
+			.ToListAsync();
+
+		return orders;
+	}
+
 
 }
