@@ -49,17 +49,17 @@ namespace EHM_API.Repositories
 				AmountReceived = invoice.AmountReceived,
 				ReturnAmount = invoice.ReturnAmount,
 				Taxcode = invoice.Taxcode,
-				ItemInvoice = order.OrderDetails.Select(od => new ItemInvoiceDTO
-				{
-					DishId = od.DishId ?? 0,
-					ItemName = od.Dish?.ItemName,
-					ComboId = od.ComboId ?? 0,
-					NameCombo = od.Combo?.NameCombo,
-					Price = od.Dish.Price ?? od.Combo.Price,
-					UnitPrice = od.UnitPrice,
-					Quantity = od.Quantity
-				}).ToList()
-			};
+                ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
+                {
+                    DishId = od.DishId ?? 0,
+                    ItemName = od.Dish?.ItemName,
+                    ComboId = od.ComboId ?? 0,
+                    NameCombo = od.Combo?.NameCombo,
+                    Price = (od.Dish?.Price ?? od.Combo?.Price) ?? 0, // Default to 0 if both are null
+                    UnitPrice = od.UnitPrice,
+                    Quantity = od.Quantity
+                }).ToList()
+            };
 
 			return invoiceDetailDTO;
 		}
@@ -112,7 +112,8 @@ namespace EHM_API.Repositories
 
             await _context.InvoiceLogs.AddAsync(invoiceLog);
 
-            order.InvoiceId = invoice.InvoiceId;
+			order.Status = 4;
+			order.InvoiceId = invoice.InvoiceId;
 
             await _context.SaveChangesAsync();
 

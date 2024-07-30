@@ -192,7 +192,7 @@ namespace EHM_API.Services
 				.Include(ot => ot.Order)
 					.ThenInclude(o => o.GuestPhoneNavigation)
 				.Include(ot => ot.Table)
-				.FirstOrDefaultAsync(ot => ot.TableId == tableId);
+				.FirstOrDefaultAsync(ot => ot.TableId == tableId && ot.Order.Status == 3);
 
 			if (orderTable == null || orderTable.Order == null) return null;
 
@@ -239,6 +239,12 @@ namespace EHM_API.Services
 		public async Task CancelOrderForTableAsync(int tableId, int orderId, CancelOrderDTO dto)
 		{
 			await _orderRepository.CancelOrderAsync(tableId, orderId, dto);
+		}
+
+		public async Task<IEnumerable<GetOrderDetailDTO>> GetOrderDetailsByOrderIdAsync(int orderId)
+		{
+			var orderDetails = await _orderRepository.GetOrderDetailsByOrderIdAsync(orderId);
+			return _mapper.Map<IEnumerable<GetOrderDetailDTO>>(orderDetails);
 		}
 	}
 }

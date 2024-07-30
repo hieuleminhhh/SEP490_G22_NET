@@ -1,4 +1,5 @@
-﻿using EHM_API.DTOs.DishDTO.Manager;
+﻿using EHM_API.DTOs.ComboDTO.Guest;
+using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums;
 using EHM_API.Enums.EHM_API.Models;
@@ -366,6 +367,18 @@ namespace EHM_API.Controllers
 
 			return Ok(result);
 		}
-
-	}
+        [HttpPut("{discountId}/dishes")]
+        public async Task<ActionResult<IEnumerable<DishDTO>>> UpdateDiscountForDishesAsync(int discountId, [FromBody] List<int> dishIds)
+        {
+            try
+            {
+                var dishes = await _dishService.UpdateDiscountForDishesAsync(discountId, dishIds);
+                return Ok(dishes);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+    }
 }
