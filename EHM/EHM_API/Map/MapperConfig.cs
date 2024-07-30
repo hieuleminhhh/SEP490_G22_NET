@@ -526,14 +526,6 @@ namespace EHM_API.Map
 		 ));
 
             CreateMap<Discount, DiscountAllDTO>().ReverseMap();
-
-
-			//Get OrderDetail
-			CreateMap<OrderDetail, GetOrderDetailDTO>()
-		  .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
-		  .ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
-		  .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ImageUrl : (src.Combo != null ? src.Combo.ImageUrl : null)))
-		  .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.Price : (src.Combo != null ? src.Combo.Price : (decimal?)null)));
         }
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)
