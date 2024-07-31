@@ -284,85 +284,171 @@ public class OrderRepository : IOrderRepository
 		await _context.SaveChangesAsync();
 		return address;
 	}
-
 	public async Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto)
 	{
 		var order = await GetOrderByTableIdAsync(tableId);
-
 		if (order == null)
 		{
 			throw new KeyNotFoundException($"Không tìm thấy đơn hàng cho bàn {tableId}.");
 		}
+
 		order.OrderDetails ??= new List<OrderDetail>();
 
 		foreach (var detailDto in dto.OrderDetails)
 		{
-			decimal unitPrice = 0m;
-			if (detailDto.DishId.HasValue && detailDto.DishId != 0)
+			if (detailDto.Quantity == 0)
 			{
-				var dishExists = await _dishRepository.DishExistsAsync(detailDto.DishId.Value);
-				if (!dishExists)
+				// Xóa tất cả các OrderDetail có DishId hoặc ComboId tương ứng
+				if (detailDto.DishId.HasValue && detailDto.DishId != 0)
 				{
-					throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
-				}
+					var dishId = Math.Abs(detailDto.DishId.Value);
+					var existingDetails = order.OrderDetails
+						.Where(od => od.DishId == dishId)
+						.ToList();
 
-				var dish = await _dishRepository.GetByIdAsync(detailDto.DishId.Value);
-
-				if (dish.Discount != null)
-				{
-					unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountPercent / 100)) * detailDto.Quantity;
+					foreach (var detail in existingDetails)
+					{
+						_context.OrderDetails.Remove(detail);
+					}
 				}
-				else
+				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
 				{
-					unitPrice = (decimal)dish.Price * detailDto.Quantity;
-				}
+					var comboId = Math.Abs(detailDto.ComboId.Value);
+					var existingDetails = order.OrderDetails
+						.Where(od => od.ComboId == comboId)
+						.ToList();
 
-				var orderDetail = new OrderDetail
-				{
-					OrderId = order.OrderId,
-					DishId = detailDto.DishId.Value,
-					ComboId = null,
-					Quantity = detailDto.Quantity,
-					UnitPrice = unitPrice,
-					DishesServed = 0,
-					Note = detailDto.Note,
-					OrderTime = detailDto.OrderTime
-				};
-				order.OrderDetails.Add(orderDetail);
+					foreach (var detail in existingDetails)
+					{
+						_context.OrderDetails.Remove(detail);
+					}
+				}
 			}
-			else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
+			else if (detailDto.Quantity < 0)
 			{
-				var comboExists = await _comboRepository.ComboExistsAsync(detailDto.ComboId.Value);
-				if (!comboExists)
+				// Xử lý khi quantity âm (giảm số lượng món ăn hoặc combo)
+				if (detailDto.DishId.HasValue && detailDto.DishId != 0)
 				{
-					throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
+					var dishId = Math.Abs(detailDto.DishId.Value);
+					var existingDetails = order.OrderDetails
+						.Where(od => od.DishId == dishId)
+						.OrderByDescending(od => od.OrderTime)
+						.ToList();
+
+					var quantityToRemove = Math.Abs(detailDto.Quantity);
+					foreach (var detail in existingDetails)
+					{
+						if (quantityToRemove <= 0) break;
+
+						if (detail.Quantity <= quantityToRemove)
+						{
+							quantityToRemove -= detail.Quantity.Value;
+							_context.OrderDetails.Remove(detail);
+						}
+						else
+						{
+							detail.Quantity -= quantityToRemove;
+							quantityToRemove = 0;
+						}
+					}
+
+					if (quantityToRemove > 0)
+					{
+						throw new InvalidOperationException($"Không đủ số lượng món ăn {dishId} để giảm.");
+					}
 				}
-
-				var combo = await _comboRepository.GetByIdAsync(detailDto.ComboId.Value);
-
-				unitPrice = (decimal)combo.Price * detailDto.Quantity;
-
-				var orderDetail = new OrderDetail
+				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
 				{
-					OrderId = order.OrderId,
-					DishId = null,
-					ComboId = detailDto.ComboId.Value,
-					Quantity = detailDto.Quantity,
-					UnitPrice = unitPrice,
-					DishesServed = 0,
-					Note = detailDto.Note,
-					OrderTime = detailDto.OrderTime
-				};
-				order.OrderDetails.Add(orderDetail);
+					var comboId = Math.Abs(detailDto.ComboId.Value);
+					var existingDetails = order.OrderDetails
+						.Where(od => od.ComboId == comboId)
+						.OrderByDescending(od => od.OrderTime)
+						.ToList();
+
+					var quantityToRemove = Math.Abs(detailDto.Quantity);
+					foreach (var detail in existingDetails)
+					{
+						if (quantityToRemove <= 0) break;
+
+						if (detail.Quantity <= quantityToRemove)
+						{
+							quantityToRemove -= detail.Quantity.Value;
+							_context.OrderDetails.Remove(detail);
+						}
+						else
+						{
+							detail.Quantity -= quantityToRemove;
+							quantityToRemove = 0;
+						}
+					}
+
+					if (quantityToRemove > 0)
+					{
+						throw new InvalidOperationException($"Không đủ số lượng combo {comboId} để giảm.");
+					}
+				}
+			}
+			else
+			{
+				// Xử lý khi quantity dương (thêm món ăn hoặc combo)
+				if (detailDto.DishId.HasValue && detailDto.DishId != 0)
+				{
+					var dishId = Math.Abs(detailDto.DishId.Value);
+					var dishExists = await _dishRepository.DishExistsAsync(dishId);
+					if (!dishExists)
+					{
+						throw new KeyNotFoundException($"Món ăn {dishId} không tồn tại.");
+					}
+
+					var dish = await _dishRepository.GetByIdAsync(dishId);
+					decimal unitPrice = dish.Discount != null
+						? (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountPercent / 100))
+						: (decimal)dish.Price;
+
+					order.OrderDetails.Add(new OrderDetail
+					{
+						OrderId = order.OrderId,
+						DishId = dishId,
+						ComboId = null,
+						Quantity = detailDto.Quantity,
+						UnitPrice = unitPrice,
+						DishesServed = 0,
+						Note = detailDto.Note,
+						OrderTime = detailDto.OrderTime
+					});
+				}
+				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
+				{
+					var comboId = Math.Abs(detailDto.ComboId.Value);
+					var comboExists = await _comboRepository.ComboExistsAsync(comboId);
+					if (!comboExists)
+					{
+						throw new KeyNotFoundException($"Combo {comboId} không tồn tại.");
+					}
+
+					var combo = await _comboRepository.GetByIdAsync(comboId);
+					decimal unitPrice = (decimal)combo.Price;
+
+					order.OrderDetails.Add(new OrderDetail
+					{
+						OrderId = order.OrderId,
+						DishId = null,
+						ComboId = comboId,
+						Quantity = detailDto.Quantity,
+						UnitPrice = unitPrice,
+						DishesServed = 0,
+						Note = detailDto.Note,
+						OrderTime = detailDto.OrderTime
+					});
+				}
 			}
 		}
 
-		order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice);
-
+		order.TotalAmount = order.OrderDetails.Sum(od => od.UnitPrice * od.Quantity);
 		await UpdateOrderAsync(order);
-
 		return order;
 	}
+
 
 
 	public async Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
@@ -607,6 +693,26 @@ public class OrderRepository : IOrderRepository
 		table.Status = 0;
 
 		await _context.SaveChangesAsync();
+	}
+
+
+	public async Task<IEnumerable<OrderDetail>> GetOrderDetailsByOrderIdAsync(int orderId)
+	{
+		return await _context.OrderDetails
+			.Include(od => od.Dish)
+			.Include(od => od.Combo)
+			.Where(od => od.OrderId == orderId)
+			.ToListAsync();
+	}
+
+	public async Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int tableId)
+	{
+		var orders = await _context.Orders
+			.Where(o => _context.OrderTables.Any(ot => ot.TableId == tableId && ot.OrderId == o.OrderId) && o.Status == 3)
+			.Include(o => o.OrderDetails)
+			.ToListAsync();
+
+		return orders;
 	}
 
 

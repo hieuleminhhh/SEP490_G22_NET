@@ -28,5 +28,8 @@ public interface IOrderRepository
     Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto);
     Task CancelOrderAsync(int tableId, int orderId, CancelOrderDTO dto);
 
-	}
+	Task<IEnumerable<OrderDetail>> GetOrderDetailsByOrderIdAsync(int orderId);
+
+    Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int tableId);
+}
 
