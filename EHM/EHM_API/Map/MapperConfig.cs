@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.AccountDTO;
 using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.DTOs.CategoryDTO;
 using EHM_API.DTOs.CategoryDTO.Guest;
 using EHM_API.DTOs.CategoryDTO.Manager;
@@ -538,6 +539,14 @@ namespace EHM_API.Map
 		  .ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
 		  .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ImageUrl : (src.Combo != null ? src.Combo.ImageUrl : null)))
 		  .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.Price : (src.Combo != null ? src.Combo.Price : (decimal?)null)));
+
+
+			//Update Invoice
+			CreateMap<UpdateInvoiceDTO, Invoice>()
+			  .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.CustomerName))
+			  .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
+			  .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
+
 		}
 
 		private static decimal? CalculateDiscountedPrice(OrderDetail src)
