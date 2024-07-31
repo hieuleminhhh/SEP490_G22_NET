@@ -1,4 +1,5 @@
-﻿using EHM_API.DTOs.CartDTO.OrderStaff;
+﻿using AutoMapper;
+using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.Repositories;
 
 namespace EHM_API.Services
@@ -6,10 +7,12 @@ namespace EHM_API.Services
 	public class InvoiceService : IInvoiceService
 	{
 		private readonly IInvoiceRepository _invoiceRepository;
+		private readonly IMapper _mapper;
 
-		public InvoiceService(IInvoiceRepository orderRepository)
+		public InvoiceService(IInvoiceRepository orderRepository, IMapper mapper)
 		{
 			_invoiceRepository = orderRepository;
+			_mapper = mapper;
 		}
 
 		public async Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId)
@@ -49,5 +52,10 @@ namespace EHM_API.Services
             return await _invoiceRepository.CreateInvoiceForOrderAsync(orderId, createInvoiceDto);
         }
 
-    }
+		public async Task UpdateInvoiceAndCreateGuestAsync(int invoiceId, UpdateInvoiceDTO dto)
+		{
+			await _invoiceRepository.UpdateInvoiceAndCreateGuestAsync(invoiceId, dto);
+		}
+
+	}
 }

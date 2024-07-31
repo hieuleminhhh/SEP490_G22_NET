@@ -38,12 +38,15 @@ namespace EHM_API.Repositories
 				return null;
 			}
 
+			var consigneeName = order.Address?.ConsigneeName ?? invoice.CustomerName;
+			var guestPhone = order.GuestPhone ?? invoice.Phone;
+
 			var invoiceDetailDTO = new InvoiceDetailDTO
 			{
 				InvoiceId = invoice.InvoiceId,
 				PaymentAmount = invoice.PaymentAmount,
-				ConsigneeName = order.Address?.ConsigneeName,
-				GuestPhone = order.GuestPhone,
+				ConsigneeName = consigneeName,
+				GuestPhone = guestPhone,
 				OrderDate = order.OrderDate,
 				TotalAmount = order.TotalAmount,
 				AmountReceived = invoice.AmountReceived,
@@ -55,7 +58,7 @@ namespace EHM_API.Repositories
                     ItemName = od.Dish?.ItemName,
                     ComboId = od.ComboId ?? 0,
                     NameCombo = od.Combo?.NameCombo,
-                    Price = (od.Dish?.Price ?? od.Combo?.Price) ?? 0, // Default to 0 if both are null
+                    Price = (od.Dish?.Price ?? od.Combo?.Price) ?? 0,
                     UnitPrice = od.UnitPrice,
                     Quantity = od.Quantity
                 }).ToList()
@@ -75,7 +78,6 @@ namespace EHM_API.Repositories
                 throw new KeyNotFoundException($"Không tìm thấy đơn hàng với OrderID {orderId}.");
             }
 
-            // Retrieve the tableId associated with this order
             var orderTable = await _context.OrderTables
                 .FirstOrDefaultAsync(ot => ot.OrderId == orderId);
 
@@ -122,9 +124,57 @@ namespace EHM_API.Repositories
             return invoice.InvoiceId;
         }
 
+		public async Task UpdateInvoiceAndCreateGuestAsync(int invoiceId, UpdateInvoiceDTO dto)
+		{
+			var invoice = await _context.Invoices
+				.Include(i => i.Account)
+				.Include(i => i.Discount)
+				.Include(i => i.InvoiceLogs)
+				.Include(i => i.Orders)
+				.FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
 
+			if (invoice == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy hóa đơn với ID {invoiceId}.");
+			}
 
+			invoice.CustomerName = dto.CustomerName;
+			invoice.Phone = dto.Phone;
+			invoice.Address = dto.Address;
 
+			// Tạo khách hàng nếu cần
+			var guest = await _context.Guests.FirstOrDefaultAsync(g => g.GuestPhone == dto.Phone);
 
-    }
+			if (guest == null)
+			{
+				guest = new Guest
+				{
+					GuestPhone = dto.Phone,
+					// Bỏ qua Email nếu không cần
+				};
+				await _context.Guests.AddAsync(guest);
+				await _context.SaveChangesAsync();
+			}
+
+			// Tạo địa chỉ nếu cần
+			var address = await _context.Addresses.FirstOrDefaultAsync(a =>
+				a.GuestAddress == dto.Address &&
+				a.ConsigneeName == dto.CustomerName &&
+				a.GuestPhone == dto.Phone);
+
+			if (address == null)
+			{
+				address = new Address
+				{
+					GuestAddress = dto.Address,
+					ConsigneeName = dto.CustomerName,
+					GuestPhone = dto.Phone
+				};
+				await _context.Addresses.AddAsync(address);
+				await _context.SaveChangesAsync();
+			}
+
+			await _context.SaveChangesAsync();
+		}
+	}
 }
