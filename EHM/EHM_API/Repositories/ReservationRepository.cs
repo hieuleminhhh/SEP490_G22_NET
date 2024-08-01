@@ -158,7 +158,9 @@ namespace EHM_API.Repositories
 						DishId = dish?.DishId,
 						ComboId = combo?.ComboId,
 						Quantity = item.Quantity,
-						UnitPrice = item.UnitPrice
+						UnitPrice = item.UnitPrice,
+						Note = item.Note,
+						OrderTime = item.OrderTime
 					};
 
 					orderDetails.Add(orderDetail);

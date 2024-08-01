@@ -116,6 +116,8 @@ namespace EHM_API.Services
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
 						DishesServed = 0,
+						Note = item.Note,
+						OrderTime = item.OrderTime
 					};
 
 					orderDetails.Add(orderDetail);
