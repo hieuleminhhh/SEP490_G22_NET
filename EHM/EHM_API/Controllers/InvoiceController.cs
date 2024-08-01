@@ -47,5 +47,33 @@ namespace EHM_API.Controllers
             }
         }
 
-    }
+
+		[HttpPut("updateInvoice/{invoiceId}")]
+		public async Task<IActionResult> UpdateInvoiceAndCreateGuest(int invoiceId, [FromBody] UpdateInvoiceDTO dto)
+		{
+			try
+			{
+				if (dto == null)
+				{
+					return BadRequest("Dữ liệu không hợp lệ");
+				}
+
+				await _invoiceService.UpdateInvoiceAndCreateGuestAsync(invoiceId, dto);
+
+				return Ok(new
+				{
+					message = "Hóa đơn đã được cập nhật thành công và cập nhật vào đơn hàng."
+				});
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = ex.Message });
+			}
+		}
+
+	}
 }

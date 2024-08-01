@@ -33,6 +33,7 @@ namespace EHM_API.Models
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<OrderTable> OrderTables { get; set; } = null!;
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
+        public virtual DbSet<Setting> Settings { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
         public virtual DbSet<TableReservation> TableReservations { get; set; } = null!;
 
@@ -138,7 +139,6 @@ namespace EHM_API.Models
                 .HasOne(cd => cd.Dish)
                 .WithMany(d => d.ComboDetails)
                 .HasForeignKey(cd => cd.DishId);
-
 
             modelBuilder.Entity<Discount>(entity =>
             {
@@ -446,6 +446,34 @@ namespace EHM_API.Models
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.OrderId)
                     .HasConstraintName("FK__Reservati__Order__5BE2A6F2");
+            });
+
+            modelBuilder.Entity<Setting>(entity =>
+            {
+                entity.Property(e => e.Address).HasMaxLength(200);
+
+                entity.Property(e => e.EateryName).HasMaxLength(100);
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LinkContact)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Logo)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Phone)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Qrcode)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("QRCode");
             });
 
             modelBuilder.Entity<Table>(entity =>

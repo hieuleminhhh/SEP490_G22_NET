@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.Models;
 
 namespace EHM_API.Repositories
 {
@@ -6,6 +7,11 @@ namespace EHM_API.Repositories
 	{
 		Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId);
 		Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto);
+
+		Task UpdateInvoiceAndCreateGuestAsync(int invoiceId, UpdateInvoiceDTO dto);
+
+        Task<Invoice> GetInvoiceByIdAsync(int invoiceId);
+        Task UpdateInvoiceAsync(Invoice invoice);
 
     }
 }

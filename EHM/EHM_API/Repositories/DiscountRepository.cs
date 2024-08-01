@@ -56,5 +56,16 @@ namespace EHM_API.Repositories
                 .Where(d => d.DiscountName.Contains(keyword) || d.Note.Contains(keyword))
                 .ToListAsync();
         }
+        public async Task<Discount> GetDiscountByIdAsync(int discountId)
+        {
+            return await _context.Discounts
+                .FirstOrDefaultAsync(d => d.DiscountId == discountId);
+        }
+
+        public async Task<int> CountOrdersInRangeAsync(DateTime startTime, DateTime endTime)
+        {
+            return await _context.Orders
+                .CountAsync(o => o.OrderDate >= startTime && o.OrderDate <= endTime);
+        }
     }
 }

@@ -133,8 +133,10 @@ namespace EHM_API
             builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
 
+            builder.Services.AddScoped<ISettingRepository, SettingRepository>();
+            builder.Services.AddScoped<ISettingService, SettingService>();
 
-			builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 			builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
             builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();

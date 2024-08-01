@@ -10,5 +10,7 @@ namespace EHM_API.Repositories
         Task<Discount> UpdateAsync(Discount discount);
         Task<bool> DeleteAsync(int id);
         Task<IEnumerable<Discount>> SearchAsync(string keyword);
+        Task<Discount> GetDiscountByIdAsync(int discountId);
+        Task<int> CountOrdersInRangeAsync(DateTime startTime, DateTime endTime);
     }
 }
