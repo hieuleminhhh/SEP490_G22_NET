@@ -176,5 +176,17 @@ namespace EHM_API.Repositories
 
 			await _context.SaveChangesAsync();
 		}
-	}
+        public async Task<Invoice> GetInvoiceByIdAsync(int invoiceId)
+        {
+            return await _context.Invoices
+                .Include(i => i.Orders)
+                .FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
+        }
+
+        public async Task UpdateInvoiceAsync(Invoice invoice)
+        {
+            _context.Invoices.Update(invoice);
+            await _context.SaveChangesAsync();
+        }
+    }
 }
