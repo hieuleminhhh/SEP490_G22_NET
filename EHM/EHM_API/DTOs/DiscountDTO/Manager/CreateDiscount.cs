@@ -1,8 +1,7 @@
 ﻿namespace EHM_API.DTOs.DiscountDTO.Manager
 {
-    public class DiscountAllDTO
+    public class CreateDiscount
     {
-        public int DiscountId { get; set; }
         public int? DiscountPercent { get; set; }
         public bool? DiscountStatus { get; set; }
         public string? DiscountName { get; set; }

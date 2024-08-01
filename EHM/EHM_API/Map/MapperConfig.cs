@@ -535,6 +535,7 @@ namespace EHM_API.Map
          ));
 
             CreateMap<Discount, DiscountAllDTO>().ReverseMap();
+            CreateMap<Discount, CreateDiscount>().ReverseMap();
 
 
             // Cancel Order

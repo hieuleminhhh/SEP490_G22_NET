@@ -37,18 +37,6 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
             return discount;
         }
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var discount = await _context.Discounts.FindAsync(id);
-            if (discount == null)
-            {
-                return false;
-            }
-
-            _context.Discounts.Remove(discount);
-            await _context.SaveChangesAsync();
-            return true;
-        }
 
         public async Task<IEnumerable<Discount>> SearchAsync(string keyword)
         {
