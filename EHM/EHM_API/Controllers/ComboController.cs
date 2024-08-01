@@ -2,6 +2,7 @@
 using EHM_API.DTOs.ComboDTO.Guest;
 using EHM_API.DTOs.ComboDTO.Manager;
 using EHM_API.DTOs.DishDTO;
+using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Repositories;
@@ -351,6 +352,23 @@ namespace EHM_API.Controllers
 			{
 				errors["dish"] = "Món ăn không tồn tại";
 			}
+
+			if (string.IsNullOrEmpty(createComboWithDishesDTO.ImageUrl))
+			{
+				errors["image"] = "Hình ảnh không được để trống";
+			}
+			else
+			{
+				string extension = Path.GetExtension(createComboWithDishesDTO.ImageUrl).ToLower();
+				string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+
+				if (!allowedExtensions.Contains(extension))
+				{
+					errors["image"] = "Hình ảnh không hợp lệ. Chỉ cho phép các tệp JPG, JPEG, PNG, GIF.";
+				}
+			}
+
+
 			if (errors.Any())
 			{
 				return BadRequest(errors);
@@ -428,15 +446,18 @@ namespace EHM_API.Controllers
             {
                 errors["dish"] = "Thông tin món ăn là bắt buộc";
             }
+			if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
+			{
+				errors["image"] = "Hình ảnh không được để trống";
+			}
 			else
 			{
-				foreach (var dishId in updateComboWithDishesDTO.DishIds)
+				string extension = Path.GetExtension(updateComboWithDishesDTO.ImageUrl).ToLower();
+				string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+
+				if (!allowedExtensions.Contains(extension))
 				{
-					if (!await _dishService.DishExistsAsync(dishId))
-					{
-						errors["dish"] = $"Món ăn với ID {dishId} không tồn tại.";
-						break;
-					}
+					errors["image"] = "Hình ảnh không hợp lệ. Chỉ cho phép các tệp JPG, JPEG, PNG, GIF.";
 				}
 			}
 
