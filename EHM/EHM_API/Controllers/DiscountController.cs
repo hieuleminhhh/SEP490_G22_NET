@@ -69,4 +69,14 @@ public class DiscountsController : ControllerBase
         var discounts = await _discountService.SearchAsync(keyword);
         return Ok(discounts);
     }
+    [HttpPost("apply")]
+    public async Task<ActionResult> ApplyDiscount([FromBody] ApplyDiscountRequest request)
+    {
+        var success = await _discountService.ApplyDiscountAsync(request);
+        if (success)
+        {
+            return Ok("Discount applied successfully.");
+        }
+        return BadRequest("Failed to apply discount.");
+    }
 }

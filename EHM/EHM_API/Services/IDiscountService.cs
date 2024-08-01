@@ -12,5 +12,6 @@ namespace EHM_API.Services
         Task<DiscountAllDTO> UpdateAsync(int id, DiscountAllDTO discountDto);
         Task<bool> DeleteAsync(int id);
         Task<IEnumerable<DiscountAllDTO>> SearchAsync(string keyword);
+        Task<bool> ApplyDiscountAsync(ApplyDiscountRequest request);
     }
 }

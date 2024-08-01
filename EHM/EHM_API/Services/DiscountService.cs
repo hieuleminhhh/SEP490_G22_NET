@@ -2,16 +2,21 @@
 using EHM_API.DTOs.DiscountDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace EHM_API.Services
 {
     public class DiscountService : IDiscountService
     {
+        private readonly EHMDBContext _context;
+        private readonly IInvoiceRepository _invoiceRepository;
         private readonly IDiscountRepository _discountRepository;
         private readonly IMapper _mapper;
 
-        public DiscountService(IDiscountRepository discountRepository, IMapper mapper)
+        public DiscountService(EHMDBContext context, IInvoiceRepository invoiceRepository, IDiscountRepository discountRepository, IMapper mapper)
         {
+            _context = context;
+            _invoiceRepository = invoiceRepository;
             _discountRepository = discountRepository;
             _mapper = mapper;
         }
@@ -59,5 +64,44 @@ namespace EHM_API.Services
             var discounts = await _discountRepository.SearchAsync(keyword);
             return _mapper.Map<IEnumerable<DiscountAllDTO>>(discounts);
         }
+        public async Task<bool> ApplyDiscountAsync(ApplyDiscountRequest request)
+        {
+            var invoice = await _invoiceRepository.GetInvoiceByIdAsync(request.InvoiceId);
+            if (invoice == null)
+            {
+                return false; 
+            }
+
+            
+            var discount = await _discountRepository.GetDiscountByIdAsync(request.DiscountId);
+            if (discount == null || discount.DiscountStatus != true || discount.Type != 1)
+            {
+                return false;
+            }
+
+
+            var hasOrdersInRange = await _context.Orders
+        .AnyAsync(o => o.OrderDate >= discount.StartTime &&
+                       o.OrderDate <= discount.EndTime);
+
+            if (!hasOrdersInRange)
+            {
+                return false; 
+            }
+
+
+            var orderCount = await _discountRepository.CountOrdersInRangeAsync(discount.StartTime.Value, discount.EndTime.Value);
+            if (orderCount >= discount.QuantityLimit)
+            {
+                return false;
+            }
+
+           
+            invoice.DiscountId = discount.DiscountId;
+            await _invoiceRepository.UpdateInvoiceAsync(invoice);
+
+            return true; 
+        }
+
     }
 }

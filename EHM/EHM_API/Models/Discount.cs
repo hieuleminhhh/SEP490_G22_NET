@@ -20,6 +20,7 @@ namespace EHM_API.Models
         public DateTime? EndTime { get; set; }
         public string? Note { get; set; }
         public decimal? TotalMoney { get; set; }
+        public int? QuantityLimit { get; set; }
 
         public virtual ICollection<Dish> Dishes { get; set; }
         public virtual ICollection<Invoice> Invoices { get; set; }
