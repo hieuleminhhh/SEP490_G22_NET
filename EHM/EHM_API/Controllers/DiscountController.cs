@@ -69,5 +69,11 @@ public class DiscountsController : ControllerBase
         }
         return StatusCode(500, "An error occurred while updating discount statuses.");
     }
+    [HttpGet("active")]
+    public async Task<IActionResult> GetActiveDiscounts()
+    {
+        var discounts = await _discountService.GetActiveDiscountsAsync();
+        return Ok(discounts);
+    }
 
 }
