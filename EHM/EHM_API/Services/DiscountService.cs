@@ -33,14 +33,14 @@ namespace EHM_API.Services
             return _mapper.Map<DiscountAllDTO>(discount);
         }
 
-        public async Task<DiscountAllDTO> AddAsync(DiscountAllDTO discountDto)
+        public async Task<CreateDiscount> AddAsync(CreateDiscount discountDto)
         {
             var discount = _mapper.Map<Discount>(discountDto);
             var addedDiscount = await _discountRepository.AddAsync(discount);
-            return _mapper.Map<DiscountAllDTO>(addedDiscount);
+            return _mapper.Map<CreateDiscount>(addedDiscount);
         }
 
-        public async Task<DiscountAllDTO?> UpdateAsync(int id, DiscountAllDTO discountDto)
+        public async Task<CreateDiscount?> UpdateAsync(int id, CreateDiscount discountDto)
         {
             var existingDiscount = await _discountRepository.GetByIdAsync(id);
             if (existingDiscount == null)
@@ -51,12 +51,7 @@ namespace EHM_API.Services
             _mapper.Map(discountDto, existingDiscount);
             await _discountRepository.UpdateAsync(existingDiscount);
 
-            return _mapper.Map<DiscountAllDTO>(existingDiscount);
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            return await _discountRepository.DeleteAsync(id);
+            return _mapper.Map<CreateDiscount>(existingDiscount);
         }
 
         public async Task<IEnumerable<DiscountAllDTO>> SearchAsync(string keyword)
