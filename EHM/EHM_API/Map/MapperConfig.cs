@@ -535,7 +535,9 @@ namespace EHM_API.Map
          ));
 
             CreateMap<Discount, DiscountAllDTO>().ReverseMap();
-            CreateMap<Discount, CreateDiscount>().ReverseMap();
+            CreateMap<CreateDiscount, Discount>();
+            CreateMap<Discount, CreateDiscountResponse>();
+            CreateMap<Discount, CreateDiscount>();
 
 
             // Cancel Order
@@ -556,7 +558,9 @@ namespace EHM_API.Map
               .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
               .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
-        }
+
+			CreateMap<Discount, DiscountDTO>();
+		}
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)
         {
