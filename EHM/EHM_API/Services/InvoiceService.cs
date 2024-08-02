@@ -1,18 +1,23 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.Models;
 using EHM_API.Repositories;
+using System.Numerics;
 
 namespace EHM_API.Services
 {
 	public class InvoiceService : IInvoiceService
 	{
 		private readonly IInvoiceRepository _invoiceRepository;
+		private readonly IOrderRepository _orderRepository;
 		private readonly IMapper _mapper;
 
-		public InvoiceService(IInvoiceRepository orderRepository, IMapper mapper)
+		public InvoiceService(IInvoiceRepository invoiceRepository, IMapper mapper, IOrderRepository orderRepository)
 		{
-			_invoiceRepository = orderRepository;
+			_invoiceRepository = invoiceRepository;
 			_mapper = mapper;
+			_orderRepository = orderRepository;
 		}
 
 		public async Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId)
@@ -52,10 +57,52 @@ namespace EHM_API.Services
             return await _invoiceRepository.CreateInvoiceForOrderAsync(orderId, createInvoiceDto);
         }
 
+		public async Task<int> CreateInvoiceForOrder(int orderId, CreateInvoiceForOrder2DTO createInvoiceDto)
+		{
+			return await _invoiceRepository.CreateInvoiceForOrder(orderId, createInvoiceDto);
+		}
+
 		public async Task UpdateInvoiceAndCreateGuestAsync(int invoiceId, UpdateInvoiceDTO dto)
 		{
 			await _invoiceRepository.UpdateInvoiceAndCreateGuestAsync(invoiceId, dto);
 		}
+
+		public async Task UpdateInvoiceAndOrderAsync(int orderId, UpdateInvoiceSuccessPaymentDTO dto)
+		{
+			var order = await _orderRepository.GetByIdAsync(orderId);
+			if (order == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng với ID {orderId}.");
+			}
+
+			var invoice = await _invoiceRepository.GetInvoiceByIdAsync(order.InvoiceId.Value);
+			if (invoice == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy hóa đơn với ID {order.InvoiceId}.");
+			}
+
+			invoice.PaymentStatus = dto.PaymentStatus;
+
+			order.Status = dto.Status;
+
+			invoice.AmountReceived = order.TotalAmount;
+
+			await _invoiceRepository.UpdateInvoiceAsync(invoice);
+			await _orderRepository.UpdateOrderAsync(order);
+		}
+
+		public async Task UpdateOrderStatusAsync(int orderId, UpdateStatusOrderDTO dto)
+		{
+			var order = await _orderRepository.GetByIdAsync(orderId);
+			if (order == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng với ID {orderId}.");
+			}
+
+			order.Status = dto.Status;
+			await _orderRepository.UpdateOrderAsync(order);
+		}
+
 
 	}
 }

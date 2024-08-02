@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -123,6 +124,56 @@ namespace EHM_API.Repositories
 
             return invoice.InvoiceId;
         }
+
+
+		public async Task<int> CreateInvoiceForOrder(int orderId, CreateInvoiceForOrder2DTO createInvoiceDto)
+		{
+			var order = await _context.Orders
+				.Include(o => o.Address)
+				.FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+			if (order == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng với OrderID {orderId}.");
+			}
+
+			var invoice = new Invoice
+			{
+				PaymentTime = createInvoiceDto.PaymentTime,
+				PaymentAmount = createInvoiceDto.PaymentAmount,
+				DiscountId = createInvoiceDto.DiscountId == 0 ? (int?)null : createInvoiceDto.DiscountId,
+				Taxcode = createInvoiceDto.Taxcode,
+				PaymentStatus = 0,
+
+				CustomerName = order.Address?.ConsigneeName,
+				Phone = order.Address?.GuestPhone,
+				Address = order.Address?.GuestAddress,
+
+				AmountReceived = createInvoiceDto.AmountReceived,
+				ReturnAmount = createInvoiceDto.ReturnAmount,
+				PaymentMethods = createInvoiceDto.PaymentMethods
+			};
+
+			await _context.Invoices.AddAsync(invoice);
+			await _context.SaveChangesAsync();
+
+			var invoiceLog = new InvoiceLog
+			{
+				Description = createInvoiceDto.Description,
+				InvoiceId = invoice.InvoiceId
+			};
+
+			await _context.InvoiceLogs.AddAsync(invoiceLog);
+
+			order.Status = 2;
+			order.InvoiceId = invoice.InvoiceId;
+
+			await _context.SaveChangesAsync();
+
+
+			return invoice.InvoiceId;
+		}
+
 
 		public async Task UpdateInvoiceAndCreateGuestAsync(int invoiceId, UpdateInvoiceDTO dto)
 		{
