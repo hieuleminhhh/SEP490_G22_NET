@@ -17,6 +17,8 @@
 		public decimal? AmountReceived { get; set; }
 		public decimal? ReturnAmount { get; set; }
 
+		public int? PaymentMethods { get; set; }
+
 		public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
 		public IEnumerable<TableOfOrderDTO> Tables { get; set; }
 

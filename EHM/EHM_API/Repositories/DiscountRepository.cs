@@ -55,5 +55,13 @@ namespace EHM_API.Repositories
             return await _context.Orders
                 .CountAsync(o => o.OrderDate >= startTime && o.OrderDate <= endTime);
         }
-    }
+
+
+		public async Task<IEnumerable<Discount>> GetActiveDiscountsAsync()
+		{
+			return await _context.Discounts
+				.Where(d => d.DiscountStatus == true && d.Type == 1)
+				.ToListAsync();
+		}
+	}
 }
