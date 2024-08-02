@@ -34,14 +34,14 @@ public class DiscountsController : ControllerBase
         return Ok(discount);
     }
     [HttpPost]
-    public async Task<ActionResult<DiscountAllDTO>> AddAsync([FromBody] DiscountAllDTO discountDto)
+    public async Task<ActionResult<CreateDiscount>> AddAsync([FromBody] CreateDiscount discountDto)
     {
         var discount = await _discountService.AddAsync(discountDto);
         return Ok(discount);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<DiscountAllDTO>> UpdateAsync(int id, [FromBody] DiscountAllDTO discountDto)
+    public async Task<ActionResult<CreateDiscount>> UpdateAsync(int id, [FromBody] CreateDiscount discountDto)
     {
         var discount = await _discountService.UpdateAsync(id, discountDto);
         if (discount == null)
@@ -52,21 +52,20 @@ public class DiscountsController : ControllerBase
     }
 
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAsync(int id)
-    {
-        var result = await _discountService.DeleteAsync(id);
-        if (!result)
-        {
-            return NotFound();
-        }
-        return NoContent();
-    }
-
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<DiscountAllDTO>>> SearchAsync([FromQuery] string keyword)
     {
         var discounts = await _discountService.SearchAsync(keyword);
         return Ok(discounts);
+    }
+    [HttpPost("apply")]
+    public async Task<ActionResult> ApplyDiscount([FromBody] ApplyDiscountRequest request)
+    {
+        var success = await _discountService.ApplyDiscountAsync(request);
+        if (success)
+        {
+            return Ok("Discount applied successfully.");
+        }
+        return BadRequest("Failed to apply discount.");
     }
 }

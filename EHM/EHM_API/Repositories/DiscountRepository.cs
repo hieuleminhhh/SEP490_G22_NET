@@ -37,24 +37,23 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
             return discount;
         }
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var discount = await _context.Discounts.FindAsync(id);
-            if (discount == null)
-            {
-                return false;
-            }
-
-            _context.Discounts.Remove(discount);
-            await _context.SaveChangesAsync();
-            return true;
-        }
 
         public async Task<IEnumerable<Discount>> SearchAsync(string keyword)
         {
             return await _context.Discounts
                 .Where(d => d.DiscountName.Contains(keyword) || d.Note.Contains(keyword))
                 .ToListAsync();
+        }
+        public async Task<Discount> GetDiscountByIdAsync(int discountId)
+        {
+            return await _context.Discounts
+                .FirstOrDefaultAsync(d => d.DiscountId == discountId);
+        }
+
+        public async Task<int> CountOrdersInRangeAsync(DateTime startTime, DateTime endTime)
+        {
+            return await _context.Orders
+                .CountAsync(o => o.OrderDate >= startTime && o.OrderDate <= endTime);
         }
     }
 }
