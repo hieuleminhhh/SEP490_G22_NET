@@ -68,4 +68,12 @@ public class DiscountsController : ControllerBase
         }
         return BadRequest("Failed to apply discount.");
     }
+
+
+     [HttpGet("active")]
+    public async Task<IActionResult> GetActiveDiscounts()
+    {
+        var discounts = await _discountService.GetActiveDiscountsAsync();
+        return Ok(discounts);
+    }
 }
