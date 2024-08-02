@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace EHM_API.Controllers
 
 
         [HttpPost("create-invoice/{orderId}")]
-        public async Task<IActionResult> CreateInvoiceForOrder(int orderId, [FromBody] CreateInvoiceForOrderDTO createInvoiceDto)
+        public async Task<IActionResult> CreateInvoiceForOrderAsync(int orderId, [FromBody] CreateInvoiceForOrderDTO createInvoiceDto)
         {
             try
             {
@@ -46,6 +47,43 @@ namespace EHM_API.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
+
+		[HttpPost("createInvoiceForOrder/{orderId}")]
+		public async Task<IActionResult> CreateInvoiceForOrder(int orderId, [FromBody] CreateInvoiceForOrder2DTO createInvoiceDto)
+		{
+			try
+			{
+				var invoiceId = await _invoiceService.CreateInvoiceForOrder(orderId, createInvoiceDto);
+				return Ok(new
+				{
+					message = "Hóa đơn đã được tạo thành công và cập nhật vào đơn hàng.",
+					invoiceId = invoiceId
+				});
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { message = ex.Message });
+			}
+		}
+
+
+		[HttpPut("updateSuccessPayment/{orderId}")]
+		public async Task<IActionResult> UpdateInvoiceAndOrder(int orderId, [FromBody] UpdateInvoiceSuccessPaymentDTO dto)
+		{
+			try
+			{
+				await _invoiceService.UpdateInvoiceAndOrderAsync(orderId, dto);
+				return Ok("Cập nhật hóa đơn và đơn hàng thành công.");
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
 
 
 		[HttpPut("updateInvoice/{invoiceId}")]
@@ -72,6 +110,25 @@ namespace EHM_API.Controllers
 			catch (Exception ex)
 			{
 				return StatusCode(500, new { message = ex.Message });
+			}
+		}
+
+
+		[HttpPut("updateStatus/{orderId}")]
+		public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateStatusOrderDTO dto)
+		{
+			try
+			{
+				await _invoiceService.UpdateOrderStatusAsync(orderId, dto);
+				return Ok("Cập nhật trạng thái đơn hàng thành công.");
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = ex.Message });
 			}
 		}
 
