@@ -12,6 +12,7 @@ namespace EHM_API.Repositories
         Task<Discount> GetDiscountByIdAsync(int discountId);
         Task<int> CountOrdersInRangeAsync(DateTime startTime, DateTime endTime);
         Task<IEnumerable<Discount>> GetActiveDiscountsAsync();
+        Task<IEnumerable<Discount>> GetDiscountsWithSimilarAttributesAsync(int discountId);
 
-	}
+    }
 }

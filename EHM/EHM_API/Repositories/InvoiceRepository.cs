@@ -248,5 +248,11 @@ namespace EHM_API.Repositories
             _context.Invoices.Update(invoice);
             await _context.SaveChangesAsync();
         }
+        public async Task<int> CountInvoicesByDiscountIdAsync(int discountId)
+        {
+            return await _context.Invoices
+                .CountAsync(invoice => invoice.DiscountId == discountId);
+        }
+
     }
 }
