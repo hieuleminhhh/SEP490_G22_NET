@@ -57,12 +57,12 @@ namespace EHM_API.Repositories
         }
 
 
-		public async Task<IEnumerable<Discount>> GetActiveDiscountsAsync()
-		{
-			return await _context.Discounts
-				.Where(d => d.DiscountStatus == true && d.Type == 1)
-				.ToListAsync();
-		}
+        public async Task<IEnumerable<Discount>> GetActiveDiscountsAsync()
+        {
+            return await _context.Discounts
+                .Where(d => d.DiscountStatus == true && d.Type == 1)
+                .ToListAsync();
+        }
         public async Task<IEnumerable<Discount>> GetDiscountsWithSimilarAttributesAsync(int discountId)
         {
             var discount = await GetByIdAsync(discountId);
@@ -80,6 +80,13 @@ namespace EHM_API.Repositories
                             d.EndTime == discount.EndTime &&
                             d.Note == discount.Note)
                 .ToListAsync();
+        }
+        public async Task<Discount> GetDiscountWithDishesByIdAsync(int discountId)
+        {
+            return await _context.Discounts
+                .Include(d => d.Dishes)
+                .FirstOrDefaultAsync(d => d.DiscountId == discountId && d.Type == 2);
+
         }
     }
 }
