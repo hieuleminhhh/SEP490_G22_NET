@@ -12,8 +12,13 @@
 		public decimal? AmountReceived { get; set; }
 		public decimal? ReturnAmount { get; set; }
 		public string? Taxcode { get; set; }
-
-		public IEnumerable<ItemInvoiceDTO> ItemInvoice { get; set; }
+        public int? DiscountId { get; set; }
+        public string DiscountName { get; set; }
+        public int? DiscountPercent { get; set; }
+        public string Note { get; set; }
+        public decimal? TotalMoney { get; set; }
+        public int? QuantityLimit { get; set; }
+        public IEnumerable<ItemInvoiceDTO> ItemInvoice { get; set; }
 
 	}
 	public class ItemInvoiceDTO
