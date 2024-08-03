@@ -34,10 +34,10 @@ public class DiscountsController : ControllerBase
         return Ok(discount);
     }
     [HttpPost]
-    public async Task<ActionResult<CreateDiscount>> AddAsync([FromBody] CreateDiscount discountDto)
+    public async Task<ActionResult<CreateDiscountResponse>> AddAsync([FromBody] CreateDiscount discountDto)
     {
-        var discount = await _discountService.AddAsync(discountDto);
-        return Ok(discount);
+        var discountResponse = await _discountService.AddAsync(discountDto);
+        return Ok(discountResponse);
     }
 
     [HttpPut("{id}")]
@@ -58,22 +58,22 @@ public class DiscountsController : ControllerBase
         var discounts = await _discountService.SearchAsync(keyword);
         return Ok(discounts);
     }
-    [HttpPost("apply")]
-    public async Task<ActionResult> ApplyDiscount([FromBody] ApplyDiscountRequest request)
+
+    [HttpPost("update-discount-status")]
+    public async Task<IActionResult> UpdateDiscountStatus()
     {
-        var success = await _discountService.ApplyDiscountAsync(request);
-        if (success)
+        var result = await _discountService.UpdateDiscountStatusAsync();
+        if (result)
         {
-            return Ok("Discount applied successfully.");
+            return Ok("Discount statuses updated successfully.");
         }
-        return BadRequest("Failed to apply discount.");
+        return StatusCode(500, "An error occurred while updating discount statuses.");
     }
-
-
-     [HttpGet("active")]
+    [HttpGet("active")]
     public async Task<IActionResult> GetActiveDiscounts()
     {
         var discounts = await _discountService.GetActiveDiscountsAsync();
         return Ok(discounts);
     }
+
 }

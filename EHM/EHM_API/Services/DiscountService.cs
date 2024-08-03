@@ -32,13 +32,13 @@ namespace EHM_API.Services
             var discount = await _discountRepository.GetByIdAsync(id);
             return _mapper.Map<DiscountAllDTO>(discount);
         }
-
-        public async Task<CreateDiscount> AddAsync(CreateDiscount discountDto)
+        public async Task<CreateDiscountResponse> AddAsync(CreateDiscount discountDto)
         {
             var discount = _mapper.Map<Discount>(discountDto);
             var addedDiscount = await _discountRepository.AddAsync(discount);
-            return _mapper.Map<CreateDiscount>(addedDiscount);
+            return _mapper.Map<CreateDiscountResponse>(addedDiscount);
         }
+
 
         public async Task<CreateDiscount?> UpdateAsync(int id, CreateDiscount discountDto)
         {
@@ -59,51 +59,51 @@ namespace EHM_API.Services
             var discounts = await _discountRepository.SearchAsync(keyword);
             return _mapper.Map<IEnumerable<DiscountAllDTO>>(discounts);
         }
-        public async Task<bool> ApplyDiscountAsync(ApplyDiscountRequest request)
+        public async Task<bool> UpdateDiscountStatusAsync()
         {
-            var invoice = await _invoiceRepository.GetInvoiceByIdAsync(request.InvoiceId);
-            if (invoice == null)
+            var discounts = await _context.Discounts.ToListAsync();
+            bool statusUpdated = false;
+
+            foreach (var discount in discounts)
             {
-                return false; 
+                bool statusChanged = false;
+
+                // Kiểm tra nếu ngày hiện tại lớn hơn EndTime
+                if (discount.EndTime.HasValue && DateTime.Now > discount.EndTime.Value)
+                {
+                    discount.DiscountStatus = false;
+                    statusChanged = true;
+                }
+
+                // Nếu QuantityLimit không phải null, kiểm tra số lượng đơn hàng
+                if (discount.QuantityLimit.HasValue)
+                {
+                    var orderCount = await _discountRepository.CountOrdersInRangeAsync(discount.StartTime.Value, discount.EndTime.Value);
+
+                    if (orderCount >= discount.QuantityLimit.Value)
+                    {
+                        discount.DiscountStatus = false;
+                        statusChanged = true;
+                    }
+                }
+
+                if (statusChanged)
+                {
+                    await _discountRepository.UpdateAsync(discount);
+                    statusUpdated = true;
+                }
             }
 
-            
-            var discount = await _discountRepository.GetDiscountByIdAsync(request.DiscountId);
-            if (discount == null || discount.DiscountStatus != true || discount.Type != 1)
-            {
-                return false;
-            }
-
-
-            var hasOrdersInRange = await _context.Orders
-        .AnyAsync(o => o.OrderDate >= discount.StartTime &&
-                       o.OrderDate <= discount.EndTime);
-
-            if (!hasOrdersInRange)
-            {
-                return false; 
-            }
-
-
-            var orderCount = await _discountRepository.CountOrdersInRangeAsync(discount.StartTime.Value, discount.EndTime.Value);
-            if (orderCount >= discount.QuantityLimit)
-            {
-                return false;
-            }
-
-           
-            invoice.DiscountId = discount.DiscountId;
-            await _invoiceRepository.UpdateInvoiceAsync(invoice);
-
-            return true; 
+            return statusUpdated;
         }
 
-		public async Task<IEnumerable<DiscountDTO>> GetActiveDiscountsAsync()
-		{
-			var discounts = await _discountRepository.GetActiveDiscountsAsync();
-			return _mapper.Map<IEnumerable<DiscountDTO>>(discounts);
-		}
+        public async Task<IEnumerable<DiscountDTO>> GetActiveDiscountsAsync()
+        {
+            var discounts = await _discountRepository.GetActiveDiscountsAsync();
+            return _mapper.Map<IEnumerable<DiscountDTO>>(discounts);
+        }
 
 
-	}
+
+    }
 }
