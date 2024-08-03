@@ -41,13 +41,14 @@ namespace EHM_API.Repositories
 
 			var consigneeName = order.Address?.ConsigneeName ?? invoice.CustomerName;
 			var guestPhone = order.GuestPhone ?? invoice.Phone;
-
+			var guestAddress = order.Address?.GuestAddress ?? invoice.Address;
 			var invoiceDetailDTO = new InvoiceDetailDTO
 			{
 				InvoiceId = invoice.InvoiceId,
 				PaymentAmount = invoice.PaymentAmount,
 				ConsigneeName = consigneeName,
 				GuestPhone = guestPhone,
+				Address = guestAddress,
 				OrderDate = order.OrderDate,
 				TotalAmount = order.TotalAmount,
 				AmountReceived = invoice.AmountReceived,
