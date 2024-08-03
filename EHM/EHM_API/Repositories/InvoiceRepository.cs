@@ -15,45 +15,52 @@ namespace EHM_API.Repositories
 			_context = context;
             _tableRepository = tableRepository;
         }
-		public async Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId)
-		{
-			var invoice = await _context.Invoices
-				.Include(i => i.Orders)
-					.ThenInclude(o => o.OrderDetails)
-					.ThenInclude(od => od.Dish)
-				.Include(i => i.Orders)
-					.ThenInclude(o => o.OrderDetails)
-					.ThenInclude(od => od.Combo)
-				.Include(i => i.Orders)
-					.ThenInclude(o => o.Address)
-				.FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
+        public async Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId)
+        {
+            var invoice = await _context.Invoices.Include(i => i.Discount)
+                .Include(i => i.Orders)
+                    .ThenInclude(o => o.OrderDetails)
+                    .ThenInclude(od => od.Dish)
+                .Include(i => i.Orders)
+                    .ThenInclude(o => o.OrderDetails)
+                    .ThenInclude(od => od.Combo)
+                .Include(i => i.Orders)
+                    .ThenInclude(o => o.Address)
+                .FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
 
-			if (invoice == null)
-			{
-				return null;
-			}
+            if (invoice == null)
+            {
+                return null;
+            }
 
-			var order = invoice.Orders.FirstOrDefault();
-			if (order == null)
-			{
-				return null;
-			}
+            var order = invoice.Orders.FirstOrDefault();
+            if (order == null)
+            {
+                return null;
+            }
 
-			var consigneeName = order.Address?.ConsigneeName ?? invoice.CustomerName;
-			var guestPhone = order.GuestPhone ?? invoice.Phone;
-			var guestAddress = order.Address?.GuestAddress ?? invoice.Address;
-			var invoiceDetailDTO = new InvoiceDetailDTO
-			{
-				InvoiceId = invoice.InvoiceId,
-				PaymentAmount = invoice.PaymentAmount,
-				ConsigneeName = consigneeName,
-				GuestPhone = guestPhone,
-				Address = guestAddress,
-				OrderDate = order.OrderDate,
-				TotalAmount = order.TotalAmount,
-				AmountReceived = invoice.AmountReceived,
-				ReturnAmount = invoice.ReturnAmount,
-				Taxcode = invoice.Taxcode,
+            var consigneeName = order.Address?.ConsigneeName ?? invoice.CustomerName;
+            var guestPhone = order.GuestPhone ?? invoice.Phone;
+            var guestAddress = order.Address?.GuestAddress ?? invoice.Address;
+
+            var invoiceDetailDTO = new InvoiceDetailDTO
+            {
+                InvoiceId = invoice.InvoiceId,
+                PaymentAmount = invoice.PaymentAmount,
+                ConsigneeName = consigneeName,
+                GuestPhone = guestPhone,
+                Address = guestAddress,
+                OrderDate = order.OrderDate,
+                TotalAmount = order.TotalAmount,
+                AmountReceived = invoice.AmountReceived,
+                ReturnAmount = invoice.ReturnAmount,
+                Taxcode = invoice.Taxcode,
+                DiscountId = invoice.Discount?.DiscountId,
+                DiscountName = invoice.Discount?.DiscountName,
+                DiscountPercent = invoice.Discount?.DiscountPercent,
+                Note = invoice.Discount?.Note,
+                TotalMoney = invoice.Discount?.TotalMoney,
+                QuantityLimit = invoice.Discount?.QuantityLimit,
                 ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
                 {
                     DishId = od.DishId ?? 0,
@@ -66,8 +73,9 @@ namespace EHM_API.Repositories
                 }).ToList()
             };
 
-			return invoiceDetailDTO;
-		}
+            return invoiceDetailDTO;
+        }
+
 
         public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
         {
@@ -240,5 +248,11 @@ namespace EHM_API.Repositories
             _context.Invoices.Update(invoice);
             await _context.SaveChangesAsync();
         }
+        public async Task<int> CountInvoicesByDiscountIdAsync(int discountId)
+        {
+            return await _context.Invoices
+                .CountAsync(invoice => invoice.DiscountId == discountId);
+        }
+
     }
 }
