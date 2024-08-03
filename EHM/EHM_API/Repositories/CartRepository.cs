@@ -388,6 +388,7 @@ namespace EHM_API.Repositories
                     Phone = order?.Address?.GuestPhone,
                     Address = order?.Address?.GuestAddress,
                     // AccountID
+					DiscountId = takeOutDTO.DiscountId,
                     PaymentTime = takeOutDTO.PaymentTime,
                     PaymentAmount = takeOutDTO.PaymentAmount ?? totalAmount,
                     PaymentStatus = takeOutDTO.PaymentStatus,

@@ -13,6 +13,6 @@ namespace EHM_API.Repositories
 
         Task<Invoice> GetInvoiceByIdAsync(int invoiceId);
         Task UpdateInvoiceAsync(Invoice invoice);
-
+        Task<int> CountInvoicesByDiscountIdAsync(int discountId);
     }
 }

@@ -3,20 +3,40 @@
   "WorkspaceRootPath": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\controllers\\discountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\discountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\dtos\\cartdto\\orderstaff\\invoicedetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\cartdto\\orderstaff\\invoicedetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\services\\discountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\services\\discountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\repositories\\discountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\discountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\repositories\\invoicerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\invoicerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\repositories\\iinvoicerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\iinvoicerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\repositories\\imaterialrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\imaterialrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\services\\idiscountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\services\\idiscountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\controllers\\discountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\controllers\\discountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\repositories\\idiscountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\idiscountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\repositories\\discountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\discountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\dtos\\discountdto\\manager\\creatediscountresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -31,18 +51,6 @@
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\discountdto\\manager\\creatediscount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\repositories\\idiscountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\idiscountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\repositories\\iinvoicerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\iinvoicerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\repositories\\invoicerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\repositories\\invoicerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|c:\\users\\hp\\desktop\\git\\sep490_g22_net\\ehm\\ehm_api\\dtos\\discountdto\\manager\\applydiscountrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D74C494D-D0C8-474F-9518-2BA603A8D5B9}|EHM_API\\EHM_API.csproj|solutionrelative:ehm_api\\dtos\\discountdto\\manager\\applydiscountrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -54,21 +62,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 3,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CreateDiscountResponse.cs",
-              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscountResponse.cs",
-              "RelativeDocumentMoniker": "EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscountResponse.cs",
-              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscountResponse.cs",
-              "RelativeToolTip": "EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscountResponse.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAArAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-02T18:37:12.799Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:35:0:{e8034f19-ab72-4f06-83fd-f6832b41aa63}"
@@ -83,13 +78,39 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "InvoiceDetailDTO.cs",
+              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\OrderStaff\\InvoiceDetailDTO.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\CartDTO\\OrderStaff\\InvoiceDetailDTO.cs",
+              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\CartDTO\\OrderStaff\\InvoiceDetailDTO.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\CartDTO\\OrderStaff\\InvoiceDetailDTO.cs",
+              "ViewState": "AQIAAAUAAACgmZmZmZkxwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-03T10:35:30.432Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IMaterialRepository.cs",
+              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IMaterialRepository.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Repositories\\IMaterialRepository.cs",
+              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IMaterialRepository.cs",
+              "RelativeToolTip": "EHM_API\\Repositories\\IMaterialRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-03T10:27:32.814Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "IDiscountService.cs",
               "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\IDiscountService.cs",
               "RelativeDocumentMoniker": "EHM_API\\Services\\IDiscountService.cs",
               "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\IDiscountService.cs",
               "RelativeToolTip": "EHM_API\\Services\\IDiscountService.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAuwA0AAAAvAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAABBAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-02T17:30:42.497Z",
               "EditorCaption": ""
@@ -102,40 +123,92 @@
               "RelativeDocumentMoniker": "EHM_API\\Services\\DiscountService.cs",
               "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Services\\DiscountService.cs",
               "RelativeToolTip": "EHM_API\\Services\\DiscountService.cs",
-              "ViewState": "AQIAAEkAAAAANjMzMzMXwGYAAABEAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-02T17:29:56.917Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DiscountRepository.cs",
-              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\DiscountRepository.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Repositories\\DiscountRepository.cs",
-              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\DiscountRepository.cs",
-              "RelativeToolTip": "EHM_API\\Repositories\\DiscountRepository.cs",
-              "ViewState": "AQIAACAAAADAzMzMzMwowEAAAAADAAAA",
+              "DocumentIndex": 3,
+              "Title": "IInvoiceRepository.cs",
+              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IInvoiceRepository.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Repositories\\IInvoiceRepository.cs",
+              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IInvoiceRepository.cs",
+              "RelativeToolTip": "EHM_API\\Repositories\\IInvoiceRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAABBAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-02T17:29:37.756Z",
+              "WhenOpened": "2024-08-02T17:35:55.204Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
+              "Title": "InvoiceRepository.cs",
+              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\InvoiceRepository.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Repositories\\InvoiceRepository.cs",
+              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\InvoiceRepository.cs",
+              "RelativeToolTip": "EHM_API\\Repositories\\InvoiceRepository.cs",
+              "ViewState": "AQIAAN0AAAAAMDMzMzPjv/8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-02T17:36:07.462Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "DiscountController.cs",
               "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\DiscountController.cs",
               "RelativeDocumentMoniker": "EHM_API\\Controllers\\DiscountController.cs",
               "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Controllers\\DiscountController.cs",
               "RelativeToolTip": "EHM_API\\Controllers\\DiscountController.cs",
-              "ViewState": "AQIAADUAAACgmZmZmZkvwEgAAAA5AAAA",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAuwE8AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-02T17:45:55.244Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
+              "Title": "DiscountRepository.cs",
+              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\DiscountRepository.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Repositories\\DiscountRepository.cs",
+              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\DiscountRepository.cs",
+              "RelativeToolTip": "EHM_API\\Repositories\\DiscountRepository.cs",
+              "ViewState": "AQIAACMAAAAAAAAAAAAuwFQAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-02T17:29:37.756Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IDiscountRepository.cs",
+              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IDiscountRepository.cs",
+              "RelativeDocumentMoniker": "EHM_API\\Repositories\\IDiscountRepository.cs",
+              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IDiscountRepository.cs",
+              "RelativeToolTip": "EHM_API\\Repositories\\IDiscountRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-02T17:30:30.955Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "CreateDiscountResponse.cs",
+              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscountResponse.cs",
+              "RelativeDocumentMoniker": "EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscountResponse.cs",
+              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscountResponse.cs",
+              "RelativeToolTip": "EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscountResponse.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-02T18:37:12.799Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "MapperConfig.cs",
               "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Map\\MapperConfig.cs",
               "RelativeDocumentMoniker": "EHM_API\\Map\\MapperConfig.cs",
@@ -148,7 +221,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 11,
               "Title": "CreateDiscount.cs",
               "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscount.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\DiscountDTO\\Manager\\CreateDiscount.cs",
@@ -161,46 +234,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "IDiscountRepository.cs",
-              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IDiscountRepository.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Repositories\\IDiscountRepository.cs",
-              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IDiscountRepository.cs",
-              "RelativeToolTip": "EHM_API\\Repositories\\IDiscountRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-02T17:30:30.955Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "IInvoiceRepository.cs",
-              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IInvoiceRepository.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Repositories\\IInvoiceRepository.cs",
-              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\IInvoiceRepository.cs",
-              "RelativeToolTip": "EHM_API\\Repositories\\IInvoiceRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-02T17:35:55.204Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "InvoiceRepository.cs",
-              "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\InvoiceRepository.cs",
-              "RelativeDocumentMoniker": "EHM_API\\Repositories\\InvoiceRepository.cs",
-              "ToolTip": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\Repositories\\InvoiceRepository.cs",
-              "RelativeToolTip": "EHM_API\\Repositories\\InvoiceRepository.cs",
-              "ViewState": "AQIAAMEAAAAAAAAAAAAQwNkAAAAEAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-02T17:36:07.462Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "ApplyDiscountRequest.cs",
               "DocumentMoniker": "C:\\Users\\hp\\Desktop\\GIT\\SEP490_G22_NET\\EHM\\EHM_API\\DTOs\\DiscountDTO\\Manager\\ApplyDiscountRequest.cs",
               "RelativeDocumentMoniker": "EHM_API\\DTOs\\DiscountDTO\\Manager\\ApplyDiscountRequest.cs",
