@@ -75,5 +75,16 @@ public class DiscountsController : ControllerBase
         var discounts = await _discountService.GetActiveDiscountsAsync();
         return Ok(discounts);
     }
+    [HttpGet("{id}/with-dishes")]
+    public async Task<ActionResult<DiscountWithDishesDTO>> GetDiscountWithDishesByIdAsync(int id)
+    {
+        var discountWithDishes = await _discountService.GetDiscountWithDishesByIdAsync(id);
+        if (discountWithDishes == null)
+        {
+            return NotFound();
+        }
+        return Ok(discountWithDishes);
+    }
+
 
 }
