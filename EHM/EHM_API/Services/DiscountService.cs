@@ -145,7 +145,17 @@ namespace EHM_API.Services
             return _mapper.Map<IEnumerable<DiscountDTO>>(discounts);
         }
 
+        public async Task<DiscountWithDishesDTO> GetDiscountWithDishesByIdAsync(int discountId)
+        {
+            var discount = await _discountRepository.GetDiscountWithDishesByIdAsync(discountId);
+            if (discount == null)
+            {
+                return null;
+            }
 
+            var discountWithDishesDto = _mapper.Map<DiscountWithDishesDTO>(discount);
+            return discountWithDishesDto;
+        }
 
     }
 }
