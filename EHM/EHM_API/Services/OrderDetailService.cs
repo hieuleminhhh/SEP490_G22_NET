@@ -32,11 +32,24 @@ namespace EHM_API.Services
         }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync()
         {
-            return await _orderDetailRepository.GetOrderDetailsAsync();
+            var orderDetails = await _orderDetailRepository.GetOrderDetailsAsync();
+            foreach (var orderDetail in orderDetails)
+            {
+                orderDetail.Quantity -= orderDetail.DishesServed;
+                orderDetail.DishesServed = 0;
+            }
+            return orderDetails;
         }
+
         public async Task<IEnumerable<OrderDetailForChef1DTO>> GetOrderDetails1Async()
         {
-            return await _orderDetailRepository.GetOrderDetails1Async();
+            var orderDetails = await _orderDetailRepository.GetOrderDetails1Async();
+            foreach (var orderDetail in orderDetails)
+            {
+                orderDetail.Quantity -= orderDetail.DishesServed;
+                orderDetail.DishesServed = 0;
+            }
+            return orderDetails;
         }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync()
         {
@@ -44,7 +57,16 @@ namespace EHM_API.Services
         }
         public async Task UpdateDishesServedAsync(int orderDetailId, int? dishesServed)
         {
-            await _orderDetailRepository.UpdateDishesServedAsync(orderDetailId, dishesServed);
+            var orderDetail = await _orderDetailRepository.GetOrderDetailByIdAsync(orderDetailId);
+            if (orderDetail != null && dishesServed.HasValue)
+            {
+                orderDetail.DishesServed += dishesServed.Value;
+                await _orderDetailRepository.UpdateOrderDetailAsync(orderDetail);
+            }
+            else
+            {
+                throw new InvalidOperationException("OrderDetail not found or invalid dishesServed value.");
+            }
         }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsByDishesServedAsync(int? dishesServed)
         {
