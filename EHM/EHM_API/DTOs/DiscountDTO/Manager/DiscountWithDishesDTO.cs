@@ -12,7 +12,7 @@ namespace EHM_API.DTOs.DiscountDTO.Manager
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public int Type { get; set; }
-        public decimal? DiscountPercentage { get; set; }
+        public int? DiscountPercent { get; set; }
         public int? QuantityLimit { get; set; }
         public IEnumerable<DishDTOAll> Dishes { get; set; }
     }
