@@ -74,23 +74,16 @@ namespace EHM_API.Services
 
             if (discount.Type == 2)
             {
-                return new
-                {
-                    Discount = _mapper.Map<DiscountWithDishesDTO>(discount),
-                    SimilarDiscounts = _mapper.Map<IEnumerable<DiscountAllDTO>>(similarDiscounts)
-                };
+                return _mapper.Map<IEnumerable<DiscountWithDishesDTO>>(allDiscounts);
             }
             else if (discount.Type == 1)
             {
-                return new
-                {
-                    Discount = _mapper.Map<DiscountAllDTO>(discount),
-                    SimilarDiscounts = _mapper.Map<IEnumerable<DiscountAllDTO>>(similarDiscounts)
-                };
+                return _mapper.Map<IEnumerable<DiscountAllDTO>>(allDiscounts);
             }
 
             return null;
         }
+
 
 
         public async Task<CreateDiscountResponse> AddAsync(CreateDiscount discountDto)
