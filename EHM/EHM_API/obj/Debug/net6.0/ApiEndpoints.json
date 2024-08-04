@@ -614,13 +614,13 @@
     "Parameters": [
       {
         "Name": "discountDto",
-        "Type": "EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO",
+        "Type": "EHM_API.DTOs.DiscountDTO.Manager.CreateDiscount",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO",
+        "Type": "EHM_API.DTOs.DiscountDTO.Manager.CreateDiscountResponse",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -671,13 +671,13 @@
       },
       {
         "Name": "discountDto",
-        "Type": "EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO",
+        "Type": "EHM_API.DTOs.DiscountDTO.Manager.CreateDiscount",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "EHM_API.DTOs.DiscountDTO.Manager.DiscountAllDTO",
+        "Type": "EHM_API.DTOs.DiscountDTO.Manager.CreateDiscount",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -689,18 +689,12 @@
   },
   {
     "ContainingType": "DiscountsController",
-    "Method": "DeleteAsync",
-    "RelativePath": "api/Discounts/{id}",
-    "HttpMethod": "DELETE",
+    "Method": "GetActiveDiscounts",
+    "RelativePath": "api/Discounts/active",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -728,6 +722,16 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "DiscountsController",
+    "Method": "UpdateDiscountStatus",
+    "RelativePath": "api/Discounts/update-discount-status",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.DishController",
@@ -1267,7 +1271,7 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.InvoiceController",
-    "Method": "CreateInvoiceForOrder",
+    "Method": "CreateInvoiceForOrderAsync",
     "RelativePath": "api/Invoice/create-invoice/{orderId}",
     "HttpMethod": "POST",
     "IsController": true,
@@ -1281,6 +1285,90 @@
       {
         "Name": "createInvoiceDto",
         "Type": "EHM_API.DTOs.CartDTO.OrderStaff.CreateInvoiceForOrderDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.InvoiceController",
+    "Method": "CreateInvoiceForOrder",
+    "RelativePath": "api/Invoice/createInvoiceForOrder/{orderId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "createInvoiceDto",
+        "Type": "EHM_API.DTOs.OrderDTO.Manager.CreateInvoiceForOrder2DTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.InvoiceController",
+    "Method": "UpdateInvoiceAndCreateGuest",
+    "RelativePath": "api/Invoice/updateInvoice/{invoiceId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "invoiceId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.CartDTO.OrderStaff.UpdateInvoiceDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.InvoiceController",
+    "Method": "UpdateOrderStatus",
+    "RelativePath": "api/Invoice/updateStatus/{orderId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.OrderDTO.Manager.UpdateStatusOrderDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.InvoiceController",
+    "Method": "UpdateInvoiceAndOrder",
+    "RelativePath": "api/Invoice/updateSuccessPayment/{orderId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.OrderDTO.Manager.UpdateInvoiceSuccessPaymentDTO",
         "IsRequired": true
       }
     ],
@@ -1674,6 +1762,27 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "CancelOrder",
+    "RelativePath": "api/orders/CancelOrderForTable/{tableId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tableId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.OrderDTO.Manager.CancelOrderTableDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "CreateOrderForTable",
     "RelativePath": "api/orders/createOrderForTable/{tableId}",
     "HttpMethod": "POST",
@@ -2059,6 +2168,99 @@
         "Name": "guestNameOrguestPhone",
         "Type": "System.String",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.SettingController",
+    "Method": "GetAllAsync",
+    "RelativePath": "api/Setting",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.SettingDTO.Manager.SettingAllDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.SettingController",
+    "Method": "AddAsync",
+    "RelativePath": "api/Setting",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "settingDto",
+        "Type": "EHM_API.DTOs.SettingDTO.Manager.SettingAllDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.SettingDTO.Manager.SettingAllDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.SettingController",
+    "Method": "UpdateAsync",
+    "RelativePath": "api/Setting/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "settingDto",
+        "Type": "EHM_API.DTOs.SettingDTO.Manager.SettingAllDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EHM_API.DTOs.SettingDTO.Manager.SettingAllDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.SettingController",
+    "Method": "DeleteAsync",
+    "RelativePath": "api/Setting/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

@@ -379,44 +379,9 @@ namespace EHM_API.Repositories
             await _context.Orders.AddAsync(order);
             await _context.SaveChangesAsync();
 
-            int invoiceId = 0;
-            if (order.OrderId > 0)
-            {
-                var invoice = new Invoice
-                {
-                    CustomerName = order?.Address?.ConsigneeName,
-                    Phone = order?.Address?.GuestPhone,
-                    Address = order?.Address?.GuestAddress,
-                    // AccountID
-					DiscountId = takeOutDTO.DiscountId,
-                    PaymentTime = takeOutDTO.PaymentTime,
-                    PaymentAmount = takeOutDTO.PaymentAmount ?? totalAmount,
-                    PaymentStatus = takeOutDTO.PaymentStatus,
-                    AmountReceived = takeOutDTO.AmountReceived ?? totalAmount,
-                    ReturnAmount = takeOutDTO.ReturnAmount ?? 0,
-                    PaymentMethods = takeOutDTO.PaymentMethods ?? 0,
-                    Taxcode = takeOutDTO.Taxcode
-                };
+			return order.OrderId;
 
-                await _context.Invoices.AddAsync(invoice);
-                await _context.SaveChangesAsync();
-
-				var invoiceLog = new InvoiceLog
-				{
-					Description = takeOutDTO.Description,
-					InvoiceId = invoice.InvoiceId
-				};
-
-				await _context.InvoiceLogs.AddAsync(invoiceLog);
-
-				order.InvoiceId = invoice.InvoiceId;
-                await _context.SaveChangesAsync();
-
-                invoiceId = invoice.InvoiceId;
-            }
-
-            return invoiceId;
-        }
+		}
 
     }
 }
