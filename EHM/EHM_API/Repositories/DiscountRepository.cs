@@ -19,10 +19,29 @@ namespace EHM_API.Repositories
             return await _context.Discounts.ToListAsync();
         }
 
-        public async Task<Discount> GetByIdAsync(int id)
+        public async Task<Discount> GetByIdAsync(int discountId)
         {
-            return await _context.Discounts.FindAsync(id);
+          
+            var discount = await _context.Discounts
+                .FirstOrDefaultAsync(d => d.DiscountId == discountId);
+
+            if (discount == null)
+            {
+                return null;
+            }
+
+            
+            if (discount.Type == 2)
+            {
+               
+                await _context.Entry(discount)
+                    .Collection(d => d.Dishes)
+                    .LoadAsync();
+            }
+
+            return discount;
         }
+
 
         public async Task<Discount> AddAsync(Discount discount)
         {
@@ -80,13 +99,6 @@ namespace EHM_API.Repositories
                             d.EndTime == discount.EndTime &&
                             d.Note == discount.Note)
                 .ToListAsync();
-        }
-        public async Task<Discount> GetDiscountWithDishesByIdAsync(int discountId)
-        {
-            return await _context.Discounts
-                .Include(d => d.Dishes)
-                .FirstOrDefaultAsync(d => d.DiscountId == discountId && d.Type == 2);
-
         }
     }
 }

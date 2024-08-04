@@ -60,20 +60,38 @@ namespace EHM_API.Services
         }
 
 
-        public async Task<IEnumerable<DiscountAllDTO>> GetByIdAsync(int id)
+        public async Task<object?> GetByIdAsync(int id)
         {
             var discount = await _discountRepository.GetByIdAsync(id);
             if (discount == null)
             {
                 return null;
             }
-            var similarDiscounts = await _discountRepository.GetDiscountsWithSimilarAttributesAsync(id);
 
+            var similarDiscounts = await _discountRepository.GetDiscountsWithSimilarAttributesAsync(id);
             var allDiscounts = new List<Discount> { discount };
             allDiscounts.AddRange(similarDiscounts);
 
-            return _mapper.Map<IEnumerable<DiscountAllDTO>>(allDiscounts);
+            if (discount.Type == 2)
+            {
+                return new
+                {
+                    Discount = _mapper.Map<DiscountWithDishesDTO>(discount),
+                    SimilarDiscounts = _mapper.Map<IEnumerable<DiscountAllDTO>>(similarDiscounts)
+                };
+            }
+            else if (discount.Type == 1)
+            {
+                return new
+                {
+                    Discount = _mapper.Map<DiscountAllDTO>(discount),
+                    SimilarDiscounts = _mapper.Map<IEnumerable<DiscountAllDTO>>(similarDiscounts)
+                };
+            }
+
+            return null;
         }
+
 
         public async Task<CreateDiscountResponse> AddAsync(CreateDiscount discountDto)
         {
@@ -145,17 +163,6 @@ namespace EHM_API.Services
             return _mapper.Map<IEnumerable<DiscountDTO>>(discounts);
         }
 
-        public async Task<DiscountWithDishesDTO> GetDiscountWithDishesByIdAsync(int discountId)
-        {
-            var discount = await _discountRepository.GetDiscountWithDishesByIdAsync(discountId);
-            if (discount == null)
-            {
-                return null;
-            }
-
-            var discountWithDishesDto = _mapper.Map<DiscountWithDishesDTO>(discount);
-            return discountWithDishesDto;
-        }
-
+       
     }
 }
