@@ -227,6 +227,13 @@ namespace EHM_API.Services
 			return order;
 		}
 
+		public async Task<Order?> UpdateOrderDetailsByOrderIdAsync(int orderId, UpdateTableAndGetOrderDTO dto)
+		{
+			var order = await _orderRepository.UpdateOrderDetailsByOrderId(orderId, dto);
+			return order;
+		}
+
+
 		//Create
 
 		public Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
