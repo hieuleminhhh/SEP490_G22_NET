@@ -30,6 +30,7 @@ namespace EHM_API.Services
 
         Task<Order?> UpdateOrderDetailsAsync(int tableId, UpdateTableAndGetOrderDTO dto);
 
+		Task<Order?> UpdateOrderDetailsByOrderIdAsync(int orderId, UpdateTableAndGetOrderDTO dto);
 		Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto);
 
 		Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto);

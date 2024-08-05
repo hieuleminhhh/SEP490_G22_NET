@@ -371,13 +371,18 @@ namespace EHM_API.Repositories
 				var discount = await _discountRepository.GetDiscountByIdAsync(takeOutDTO.DiscountId.Value);
 				if (discount != null && discount.DiscountStatus == true)
 				{
-					if (discount.DiscountPercent.HasValue)
+					if (totalAmount >= (discount.TotalMoney ?? 0) &&
+						(discount.QuantityLimit == null || discount.QuantityLimit > 0))
 					{
-						discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
-					}
-					else if (discount.TotalMoney.HasValue)
-					{
-						discountAmount = discount.TotalMoney.Value;
+						if (discount.DiscountPercent.HasValue)
+						{
+							discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
+						}
+
+						if (discount.QuantityLimit.HasValue && discount.QuantityLimit > 0)
+						{
+							discount.QuantityLimit--;
+						}
 					}
 				}
 			}
