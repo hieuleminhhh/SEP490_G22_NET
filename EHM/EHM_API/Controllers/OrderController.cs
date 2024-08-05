@@ -448,6 +448,18 @@ namespace EHM_API.Controllers
 			return Ok(orderDetails);
 		}
 
+
+		[HttpGet("GetDishOrderDetails/{orderId}")]
+		public async Task<ActionResult<IEnumerable<GetDishOrderDetailDTO>>> GetDishOrderDetails(int orderId)
+		{
+			var orderDetails = await _orderService.GetOrderDetailsByOrderId(orderId);
+			if (orderDetails == null || !orderDetails.Any())
+			{
+				return NotFound($"Không tìm thấy chi tiết đơn hàng cho OrderID {orderId}.");
+			}
+			return Ok(orderDetails);
+		}
+
 		[HttpPut("CancelOrderForTable/{tableId}")]
 		public async Task<IActionResult> CancelOrder(int tableId, [FromBody] CancelOrderTableDTO dto)
 		{

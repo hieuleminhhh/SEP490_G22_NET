@@ -706,6 +706,7 @@ public class OrderRepository : IOrderRepository
 			.ToListAsync();
 	}
 
+
 	public async Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int tableId)
 	{
 		var orders = await _context.Orders

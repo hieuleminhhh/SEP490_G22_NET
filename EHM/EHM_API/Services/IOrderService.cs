@@ -35,6 +35,7 @@ namespace EHM_API.Services
 		Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto);
 		Task CancelOrderForTableAsync(int tableId, int orderId, CancelOrderDTO dto);
 		Task<IEnumerable<GetOrderDetailDTO>> GetOrderDetailsByOrderIdAsync(int orderId);
+		Task<IEnumerable<GetDishOrderDetailDTO>> GetOrderDetailsByOrderId(int orderId);
 
 		Task UpdateOrderAndTablesStatusAsyncByTableId(int tableId, CancelOrderTableDTO dto);
 	}

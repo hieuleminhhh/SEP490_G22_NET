@@ -90,7 +90,16 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ImageUrl : src.Combo != null ? src.Combo.ImageUrl : null))
                 .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed));
 
-            CreateMap<Table, TableOfOrderDTO>();
+
+			CreateMap<OrderDetail, GetDishOrderDetailDTO>()
+	        .ForMember(dest => dest.ComboId, opt => opt.MapFrom(src => src.ComboId))
+	        .ForMember(dest => dest.DishId, opt => opt.MapFrom(src => src.DishId))
+			 .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
+	        .ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
+			.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
+
+			CreateMap<Table, TableOfOrderDTO>();
 
 
             CreateMap<CreateOrderDTO, Order>();
