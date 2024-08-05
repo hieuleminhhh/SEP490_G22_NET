@@ -632,13 +632,10 @@ public class OrderRepository : IOrderRepository
 
 		table.Status = 0;
 
-		var discount = await _context.Discounts.FirstOrDefaultAsync(d => d.DiscountId == dto.DiscountId);
-		decimal discountAmount = (decimal)(discount != null ? (order.TotalAmount * discount.DiscountPercent / 100) : 0m);
-
 		var invoice = new Invoice
 		{
 			PaymentTime = dto.PaymentTime,
-			PaymentAmount = order.TotalAmount - discountAmount,
+			PaymentAmount = order.TotalAmount,
 			Taxcode = dto.Taxcode,
 			PaymentStatus = 1,
 			CustomerName = order.Address?.ConsigneeName,
