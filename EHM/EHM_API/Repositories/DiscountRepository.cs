@@ -19,10 +19,29 @@ namespace EHM_API.Repositories
             return await _context.Discounts.ToListAsync();
         }
 
-        public async Task<Discount> GetByIdAsync(int id)
+        public async Task<Discount> GetByIdAsync(int discountId)
         {
-            return await _context.Discounts.FindAsync(id);
+          
+            var discount = await _context.Discounts
+                .FirstOrDefaultAsync(d => d.DiscountId == discountId);
+
+            if (discount == null)
+            {
+                return null;
+            }
+
+            
+            if (discount.Type == 2)
+            {
+               
+                await _context.Entry(discount)
+                    .Collection(d => d.Dishes)
+                    .LoadAsync();
+            }
+
+            return discount;
         }
+
 
         public async Task<Discount> AddAsync(Discount discount)
         {
@@ -57,11 +76,29 @@ namespace EHM_API.Repositories
         }
 
 
-		public async Task<IEnumerable<Discount>> GetActiveDiscountsAsync()
-		{
-			return await _context.Discounts
-				.Where(d => d.DiscountStatus == true && d.Type == 1)
-				.ToListAsync();
-		}
-	}
+        public async Task<IEnumerable<Discount>> GetActiveDiscountsAsync()
+        {
+            return await _context.Discounts
+                .Where(d => d.DiscountStatus == true && d.Type == 1)
+                .ToListAsync();
+        }
+        public async Task<IEnumerable<Discount>> GetDiscountsWithSimilarAttributesAsync(int discountId)
+        {
+            var discount = await GetByIdAsync(discountId);
+            if (discount == null)
+            {
+                return Enumerable.Empty<Discount>();
+            }
+
+            return await _context.Discounts
+                .Where(d => d.DiscountId != discountId &&
+                            d.DiscountStatus == discount.DiscountStatus &&
+                            d.DiscountName == discount.DiscountName &&
+                            d.Type == discount.Type &&
+                            d.StartTime == discount.StartTime &&
+                            d.EndTime == discount.EndTime &&
+                            d.Note == discount.Note)
+                .ToListAsync();
+        }
+    }
 }

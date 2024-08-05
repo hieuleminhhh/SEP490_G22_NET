@@ -131,7 +131,8 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.ReceivingTime, opt => opt.MapFrom(src => src.RecevingOrder))
                 .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
-                .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+				 .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId))
+				.ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
                 .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Deposits))
                 .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
             // Mapping Dish to OrderDetailsDTO
@@ -560,7 +561,10 @@ namespace EHM_API.Map
 
 
 			CreateMap<Discount, DiscountDTO>();
-		}
+
+            CreateMap<Discount, DiscountWithDishesDTO>()
+               .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes));
+        }
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)
         {

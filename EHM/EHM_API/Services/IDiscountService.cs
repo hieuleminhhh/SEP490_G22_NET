@@ -7,7 +7,7 @@ namespace EHM_API.Services
     public interface IDiscountService
     {
         Task<IEnumerable<DiscountAllDTO>> GetAllAsync();
-        Task<DiscountAllDTO> GetByIdAsync(int id);
+        Task<object?> GetByIdAsync(int id);
         Task<CreateDiscountResponse> AddAsync(CreateDiscount discountDto);
         Task<CreateDiscount> UpdateAsync(int id, CreateDiscount discountDto);
         Task<IEnumerable<DiscountAllDTO>> SearchAsync(string keyword);

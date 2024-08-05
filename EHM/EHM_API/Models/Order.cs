@@ -23,10 +23,12 @@ namespace EHM_API.Models
         public int? AddressId { get; set; }
         public string? Note { get; set; }
         public int? Type { get; set; }
+		public int? DiscountId { get; set; }
 
-        public virtual Account? Account { get; set; }
+		public virtual Account? Account { get; set; }
         public virtual Address? Address { get; set; }
-        public virtual Guest? GuestPhoneNavigation { get; set; }
+		public virtual Discount? Discount { get; set; }
+		public virtual Guest? GuestPhoneNavigation { get; set; }
         public virtual Invoice? Invoice { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<Reservation> Reservations { get; set; }

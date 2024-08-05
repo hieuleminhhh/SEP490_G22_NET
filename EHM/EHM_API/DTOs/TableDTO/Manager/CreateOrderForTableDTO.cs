@@ -12,6 +12,7 @@
 		public int? AddressId { get; set; }
 		public string Note { get; set; }
 		public int? Type { get; set; }
+		public int? DiscountId { get; set; }
 		public List<CreateOrderDetailDTO> OrderDetails { get; set; }
 	}
 

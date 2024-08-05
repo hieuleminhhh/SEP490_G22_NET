@@ -17,7 +17,7 @@ namespace EHM_API.Repositories
         }
         public async Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId)
         {
-            var invoice = await _context.Invoices.Include(i => i.Discount)
+            var invoice = await _context.Invoices
                 .Include(i => i.Orders)
                     .ThenInclude(o => o.OrderDetails)
                     .ThenInclude(od => od.Dish)
@@ -26,7 +26,9 @@ namespace EHM_API.Repositories
                     .ThenInclude(od => od.Combo)
                 .Include(i => i.Orders)
                     .ThenInclude(o => o.Address)
-                .FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
+				.Include(i => i.Orders)
+				   .ThenInclude(o => o.Discount)
+				.FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
 
             if (invoice == null)
             {
@@ -55,12 +57,6 @@ namespace EHM_API.Repositories
                 AmountReceived = invoice.AmountReceived,
                 ReturnAmount = invoice.ReturnAmount,
                 Taxcode = invoice.Taxcode,
-                DiscountId = invoice.Discount?.DiscountId,
-                DiscountName = invoice.Discount?.DiscountName,
-                DiscountPercent = invoice.Discount?.DiscountPercent,
-                Note = invoice.Discount?.Note,
-                TotalMoney = invoice.Discount?.TotalMoney,
-                QuantityLimit = invoice.Discount?.QuantityLimit,
                 ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
                 {
                     DishId = od.DishId ?? 0,
@@ -100,7 +96,6 @@ namespace EHM_API.Repositories
             {
                 PaymentTime = createInvoiceDto.PaymentTime,
                 PaymentAmount = createInvoiceDto.PaymentAmount,
-                DiscountId = createInvoiceDto.DiscountId == 0 ? (int?)null : createInvoiceDto.DiscountId,
                 Taxcode = createInvoiceDto.Taxcode,
                 PaymentStatus = createInvoiceDto.PaymentStatus,
 
@@ -150,7 +145,6 @@ namespace EHM_API.Repositories
 			{
 				PaymentTime = createInvoiceDto.PaymentTime,
 				PaymentAmount = createInvoiceDto.PaymentAmount,
-				DiscountId = createInvoiceDto.DiscountId == 0 ? (int?)null : createInvoiceDto.DiscountId,
 				Taxcode = createInvoiceDto.Taxcode,
 				PaymentStatus = 0,
 
@@ -188,7 +182,6 @@ namespace EHM_API.Repositories
 		{
 			var invoice = await _context.Invoices
 				.Include(i => i.Account)
-				.Include(i => i.Discount)
 				.Include(i => i.InvoiceLogs)
 				.Include(i => i.Orders)
 				.FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
@@ -248,5 +241,6 @@ namespace EHM_API.Repositories
             _context.Invoices.Update(invoice);
             await _context.SaveChangesAsync();
         }
+
     }
 }
