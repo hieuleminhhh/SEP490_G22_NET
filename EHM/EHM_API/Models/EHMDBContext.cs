@@ -241,8 +241,6 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.CustomerName).HasMaxLength(50);
 
-                entity.Property(e => e.DiscountId).HasColumnName("DiscountID");
-
                 entity.Property(e => e.PaymentAmount).HasColumnType("money");
 
                 entity.Property(e => e.PaymentTime).HasColumnType("datetime");
@@ -261,11 +259,6 @@ namespace EHM_API.Models
                     .WithMany(p => p.Invoices)
                     .HasForeignKey(d => d.AccountId)
                     .HasConstraintName("FK_Invoice_Account");
-
-                entity.HasOne(d => d.Discount)
-                    .WithMany(p => p.Invoices)
-                    .HasForeignKey(d => d.DiscountId)
-                    .HasConstraintName("FK_Invoice_Discount");
             });
 
             modelBuilder.Entity<InvoiceLog>(entity =>
@@ -328,8 +321,9 @@ namespace EHM_API.Models
                 entity.Property(e => e.AddressId).HasColumnName("AddressID");
 
                 entity.Property(e => e.Deposits).HasColumnType("money");
+				entity.Property(e => e.DiscountId).HasColumnName("DiscountID");
 
-                entity.Property(e => e.GuestPhone)
+				entity.Property(e => e.GuestPhone)
                     .HasMaxLength(15)
                     .IsUnicode(false);
 
@@ -355,7 +349,12 @@ namespace EHM_API.Models
                     .HasForeignKey(d => d.AddressId)
                     .HasConstraintName("FK_Order_Address");
 
-                entity.HasOne(d => d.GuestPhoneNavigation)
+				entity.HasOne(d => d.Discount)
+				  .WithMany(p => p.Orders)
+				  .HasForeignKey(d => d.DiscountId)
+				  .HasConstraintName("FK_Order_Discount");
+
+				entity.HasOne(d => d.GuestPhoneNavigation)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.GuestPhone)
                     .HasConstraintName("FK_Order_Guest");

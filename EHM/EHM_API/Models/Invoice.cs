@@ -14,7 +14,6 @@ namespace EHM_API.Models
         public int InvoiceId { get; set; }
         public DateTime? PaymentTime { get; set; }
         public decimal? PaymentAmount { get; set; }
-        public int? DiscountId { get; set; }
         public string? Taxcode { get; set; }
         public int PaymentStatus { get; set; }
         public string? CustomerName { get; set; }
@@ -26,7 +25,6 @@ namespace EHM_API.Models
         public int? PaymentMethods { get; set; }
 
         public virtual Account? Account { get; set; }
-        public virtual Discount? Discount { get; set; }
         public virtual ICollection<InvoiceLog> InvoiceLogs { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
     }

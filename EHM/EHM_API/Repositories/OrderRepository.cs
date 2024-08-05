@@ -42,6 +42,7 @@ public class OrderRepository : IOrderRepository
 	{
 		return await _context.Orders
 			.Include(o => o.Account)
+			.Include(d => d.Discount)
 			.Include(o => o.Address)
 			.Include(o => o.Invoice)
 			.Include(o => o.OrderDetails)
@@ -78,6 +79,7 @@ public class OrderRepository : IOrderRepository
 								.Include(o => o.OrderDetails)
 								.ThenInclude(od => od.Dish)
 								.ThenInclude(d => d.Discount)
+								.Include(d => d.Discount)
 								.Where(o => o.GuestPhone == guestPhone)
 								 .OrderByDescending(o => o.OrderDate)
 								.ToListAsync();
@@ -167,7 +169,8 @@ public class OrderRepository : IOrderRepository
 		var orders = await query
 			.Include(a => a.Address)
 			.Include(o => o.OrderTables).ThenInclude(ot => ot.Table)
-			.OrderByDescending(o => filterByDate == "Đặt hàng" ? o.OrderDate : o.RecevingOrder) // Order by selected filter in descending order
+			.Include(d => d.Discount)
+			.OrderByDescending(o => filterByDate == "Đặt hàng" ? o.OrderDate : o.RecevingOrder)
 			.Skip((page - 1) * pageSize)
 			.Take(pageSize)
 			.ToListAsync();
@@ -194,7 +197,8 @@ public class OrderRepository : IOrderRepository
 			GuestAddress = o.Address?.GuestAddress,
 			ConsigneeName = o.Address?.ConsigneeName,
 			Note = o.Note,
-			Type = o.Type
+			Type = o.Type,
+			DiscountId = o.DiscountId
 		}).ToList();
 
 		return new PagedResult<OrderDTO>(orderDTOs, totalOrders, page, pageSize);
@@ -489,6 +493,7 @@ public class OrderRepository : IOrderRepository
 			GuestPhone = !string.IsNullOrWhiteSpace(dto.GuestPhone) ? dto.GuestPhone : null,
 			Note = dto.Note,
 			Type = dto.Type,
+			DiscountId = dto.DiscountId,
 			Address = address,
 			GuestPhoneNavigation = guest
 		};
@@ -628,14 +633,10 @@ public class OrderRepository : IOrderRepository
 
 		table.Status = 0;
 
-		var discount = await _context.Discounts.FirstOrDefaultAsync(d => d.DiscountId == dto.DiscountId);
-		decimal discountAmount = (decimal)(discount != null ? (order.TotalAmount * discount.DiscountPercent / 100) : 0m);
-
 		var invoice = new Invoice
 		{
 			PaymentTime = dto.PaymentTime,
-			PaymentAmount = order.TotalAmount - discountAmount,
-			DiscountId = discount?.DiscountId ?? null,
+			PaymentAmount = order.TotalAmount,
 			Taxcode = dto.Taxcode,
 			PaymentStatus = 1,
 			CustomerName = order.Address?.ConsigneeName,
