@@ -12,5 +12,6 @@
 		public string? Note { get; set; }
 		public decimal? TotalMoney { get; set; }
 		public int? QuantityLimit { get; set; }
+		public int? UsedCount { get; set; }
 	}
 }
