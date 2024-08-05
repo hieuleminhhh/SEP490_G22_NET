@@ -42,6 +42,7 @@ public class OrderRepository : IOrderRepository
 	{
 		return await _context.Orders
 			.Include(o => o.Account)
+			.Include(d => d.Discount)
 			.Include(o => o.Address)
 			.Include(o => o.Invoice)
 			.Include(o => o.OrderDetails)
