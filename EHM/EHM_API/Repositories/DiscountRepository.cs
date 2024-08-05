@@ -69,13 +69,6 @@ namespace EHM_API.Repositories
                 .FirstOrDefaultAsync(d => d.DiscountId == discountId);
         }
 
-        public async Task<int> CountOrdersInRangeAsync(DateTime startTime, DateTime endTime)
-        {
-            return await _context.Orders
-                .CountAsync(o => o.OrderDate >= startTime && o.OrderDate <= endTime);
-        }
-
-
         public async Task<IEnumerable<Discount>> GetActiveDiscountsAsync()
         {
             return await _context.Discounts

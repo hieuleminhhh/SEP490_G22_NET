@@ -42,6 +42,7 @@ public class OrderRepository : IOrderRepository
 	{
 		return await _context.Orders
 			.Include(o => o.Account)
+			.Include(d => d.Discount)
 			.Include(o => o.Address)
 			.Include(o => o.Invoice)
 			.Include(o => o.OrderDetails)
@@ -705,6 +706,7 @@ public class OrderRepository : IOrderRepository
 			.ToListAsync();
 	}
 
+
 	public async Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int tableId)
 	{
 		var orders = await _context.Orders
@@ -715,5 +717,9 @@ public class OrderRepository : IOrderRepository
 		return orders;
 	}
 
-
+    public async Task<int> CountOrderByDiscountIdAsync(int discountId)
+    {
+        return await _context.Orders
+            .CountAsync(order => order.DiscountId == discountId);
+    }
 }

@@ -9,14 +9,14 @@ namespace EHM_API.Services
     public class DiscountService : IDiscountService
     {
         private readonly EHMDBContext _context;
-        private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IDiscountRepository _discountRepository;
         private readonly IMapper _mapper;
 
-        public DiscountService(EHMDBContext context, IInvoiceRepository invoiceRepository, IDiscountRepository discountRepository, IMapper mapper)
+        public DiscountService(EHMDBContext context, IOrderRepository orderRepository, IDiscountRepository discountRepository, IMapper mapper)
         {
             _context = context;
-            _invoiceRepository = invoiceRepository;
+            _orderRepository = orderRepository;
             _discountRepository = discountRepository;
             _mapper = mapper;
         }
@@ -30,25 +30,33 @@ namespace EHM_API.Services
             {
                 bool statusChanged = false;
 
+          
+                if (discount.StartTime.HasValue && DateTime.Now >= discount.StartTime.Value)
+                {
+                    discount.DiscountStatus = true;
+                    statusChanged = true;
+                }
+
+              
                 if (discount.EndTime.HasValue && DateTime.Now >= discount.EndTime.Value)
                 {
                     discount.DiscountStatus = false;
                     statusChanged = true;
                 }
 
-           
-            /*    if (discount.QuantityLimit.HasValue)
+            
+                if (discount.QuantityLimit.HasValue)
                 {
-                    var invoiceCount = await _invoiceRepository.CountInvoicesByDiscountIdAsync(discount.DiscountId);
+                    var orderCount = await _orderRepository.CountOrderByDiscountIdAsync(discount.DiscountId);
 
-                    if (invoiceCount >= discount.QuantityLimit.Value)
+                    if (orderCount >= discount.QuantityLimit.Value)
                     {
                         discount.DiscountStatus = false;
                         statusChanged = true;
                     }
-                }*/
+                }
 
-               
+         
                 if (statusChanged)
                 {
                     await _discountRepository.UpdateAsync(discount);
@@ -58,6 +66,7 @@ namespace EHM_API.Services
 
             return _mapper.Map<IEnumerable<DiscountAllDTO>>(discounts);
         }
+
 
 
         public async Task<object?> GetByIdAsync(int id)
@@ -83,8 +92,6 @@ namespace EHM_API.Services
 
             return null;
         }
-
-
 
         public async Task<CreateDiscountResponse> AddAsync(CreateDiscount discountDto)
         {
@@ -113,49 +120,21 @@ namespace EHM_API.Services
             var discounts = await _discountRepository.SearchAsync(keyword);
             return _mapper.Map<IEnumerable<DiscountAllDTO>>(discounts);
         }
-        public async Task<bool> UpdateDiscountStatusAsync()
-        {
-            var discounts = await _context.Discounts.ToListAsync();
-            bool statusUpdated = false;
-
-            foreach (var discount in discounts)
-            {
-                bool statusChanged = false;
-
-              
-                if (discount.EndTime.HasValue && DateTime.Now > discount.EndTime.Value)
-                {
-                    discount.DiscountStatus = false;
-                    statusChanged = true;
-                }
-
-                if (discount.QuantityLimit.HasValue)
-                {
-                    var orderCount = await _discountRepository.CountOrdersInRangeAsync(discount.StartTime.Value, discount.EndTime.Value);
-
-                    if (orderCount >= discount.QuantityLimit.Value)
-                    {
-                        discount.DiscountStatus = false;
-                        statusChanged = true;
-                    }
-                }
-
-                if (statusChanged)
-                {
-                    await _discountRepository.UpdateAsync(discount);
-                    statusUpdated = true;
-                }
-            }
-
-            return statusUpdated;
-        }
 
         public async Task<IEnumerable<DiscountDTO>> GetActiveDiscountsAsync()
         {
             var discounts = await _discountRepository.GetActiveDiscountsAsync();
-            return _mapper.Map<IEnumerable<DiscountDTO>>(discounts);
+            var discountDTOs = _mapper.Map<IEnumerable<DiscountDTO>>(discounts);
+
+            foreach (var discountDTO in discountDTOs)
+            {
+              
+                discountDTO.UsedCount = await _orderRepository.CountOrderByDiscountIdAsync(discountDTO.DiscountId);
+            }
+
+            return discountDTOs;
         }
 
-       
+
     }
 }
