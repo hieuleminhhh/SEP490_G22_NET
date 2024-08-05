@@ -136,8 +136,7 @@ namespace EHM_API.Services
 				AddressId = address?.AddressId,
 				Note = checkoutDTO.Note,
 				Type = checkoutDTO.Type,
-				
-
+				DiscountId = checkoutDTO.DiscountId
 			};
 
 
