@@ -16,13 +16,15 @@ namespace EHM_API.Services
 	{
 		private readonly ICartRepository _cartRepository;
 		private readonly IComboRepository _comboRepository;
+		private readonly IDiscountRepository _discountRepository;
 		private readonly IMapper _mapper;
 
-		public CartService(ICartRepository cartRepository, IComboRepository comboRepository, IMapper mapper)
+		public CartService(ICartRepository cartRepository, IComboRepository comboRepository, IMapper mapper, IDiscountRepository discountRepository)
 		{
 			_cartRepository = cartRepository;
 			_comboRepository = comboRepository;
 			_mapper = mapper;
+			_discountRepository = discountRepository;
 		}
 
 		public List<Cart2DTO> GetCart()
@@ -62,6 +64,7 @@ namespace EHM_API.Services
 			}
 
 			decimal totalAmount = 0;
+			decimal discountAmount = 0;
 
 			var orderDetails = new List<OrderDetail>();
 
@@ -94,21 +97,18 @@ namespace EHM_API.Services
 					}
 				}
 
-
 				var existingOrderDetail = orderDetails.FirstOrDefault(od =>
 					(dish != null && od.DishId == dish.DishId) ||
 					(combo != null && od.ComboId == combo.ComboId));
 
 				if (existingOrderDetail != null)
 				{
-
 					existingOrderDetail.Quantity += item.Quantity;
 					existingOrderDetail.UnitPrice += item.UnitPrice;
 					totalAmount += (item.UnitPrice ?? 0m);
 				}
 				else
 				{
-
 					var orderDetail = new OrderDetail
 					{
 						DishId = dish != null ? (int?)dish.DishId : null,
@@ -124,13 +124,32 @@ namespace EHM_API.Services
 					totalAmount += (item.UnitPrice ?? 0m);
 				}
 			}
+
+			if (checkoutDTO.DiscountId.HasValue)
+			{
+				var discount = await _discountRepository.GetDiscountByIdAsync(checkoutDTO.DiscountId.Value);
+				if (discount != null && discount.DiscountStatus == true)
+				{
+					if (discount.DiscountPercent.HasValue)
+					{
+						discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
+					}
+					else if (discount.TotalMoney.HasValue)
+					{
+						discountAmount = discount.TotalMoney.Value;
+					}
+				}
+			}
+
+			var finalTotalAmount = totalAmount - discountAmount;
+
 			var order = new Order
 			{
 				OrderDate = DateTime.Now,
 				Status = checkoutDTO.Status ?? 0,
 				RecevingOrder = checkoutDTO.RecevingOrder,
 				GuestPhone = guest?.GuestPhone,
-				TotalAmount = totalAmount,
+				TotalAmount = finalTotalAmount,
 				OrderDetails = orderDetails,
 				Deposits = checkoutDTO.Deposits,
 				AddressId = address?.AddressId,
@@ -139,9 +158,9 @@ namespace EHM_API.Services
 				DiscountId = checkoutDTO.DiscountId
 			};
 
-
 			await _cartRepository.CreateOrder(order);
 		}
+
 
 
 		public async Task<CheckoutSuccessDTO> GetCheckoutSuccessInfoAsync(string guestPhone)
