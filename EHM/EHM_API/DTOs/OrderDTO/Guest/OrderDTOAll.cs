@@ -14,9 +14,13 @@
         public string? ConsigneeName { get; set; }
         public string? Note { get; set; }
 		public int? Type { get; set; }
+		public int? DiscountId { get; set; }
+		public int? DiscountPercent { get; set; }
+		public string? DiscountName { get; set; }
+		public int? QuantityLimit { get; set; }
+
 		public decimal? AmountReceived { get; set; }
 		public decimal? ReturnAmount { get; set; }
-
 		public int? PaymentMethods { get; set; }
 
 		public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }

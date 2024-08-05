@@ -12,7 +12,6 @@
 		public decimal? AmountReceived { get; set; }
 		public decimal? ReturnAmount { get; set; }
 		public string? Taxcode { get; set; }
-        public int? DiscountId { get; set; }
         public string DiscountName { get; set; }
         public int? DiscountPercent { get; set; }
         public string Note { get; set; }
@@ -25,11 +24,9 @@
 	{
 		public int DishId { get; set; }
 		public string? ItemName { get; set; }
-
 		public int ComboId { get; set; }
 		public string? NameCombo { get; set; }
 		public decimal? Price { get; set; }
-
 		public decimal? UnitPrice { get; set; }
 		public int? Quantity { get; set; }
 	}
