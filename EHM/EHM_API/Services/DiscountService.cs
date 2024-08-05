@@ -37,7 +37,7 @@ namespace EHM_API.Services
                 }
 
            
-                if (discount.QuantityLimit.HasValue)
+            /*    if (discount.QuantityLimit.HasValue)
                 {
                     var invoiceCount = await _invoiceRepository.CountInvoicesByDiscountIdAsync(discount.DiscountId);
 
@@ -46,7 +46,7 @@ namespace EHM_API.Services
                         discount.DiscountStatus = false;
                         statusChanged = true;
                     }
-                }
+                }*/
 
                
                 if (statusChanged)
