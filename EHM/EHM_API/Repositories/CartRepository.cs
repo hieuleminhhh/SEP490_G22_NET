@@ -220,6 +220,7 @@ namespace EHM_API.Repositories
 				.Include(o => o.OrderDetails)
 					.ThenInclude(od => od.Dish)
 						.ThenInclude(d => d.Discount)
+				.Include(o => o.Discount)
 				.OrderByDescending(o => o.OrderId)
 				.FirstOrDefaultAsync();
 		}
@@ -373,7 +374,9 @@ namespace EHM_API.Repositories
                 Deposits = takeOutDTO.Deposits,
                 AddressId = address?.AddressId,
                 Note = takeOutDTO.Note,
-                Type = takeOutDTO.Type
+                Type = takeOutDTO.Type,
+				DiscountId = takeOutDTO.DiscountId
+
             };
 
             await _context.Orders.AddAsync(order);

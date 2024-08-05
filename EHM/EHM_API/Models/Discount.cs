@@ -8,8 +8,8 @@ namespace EHM_API.Models
         public Discount()
         {
             Dishes = new HashSet<Dish>();
-            Invoices = new HashSet<Invoice>();
-        }
+			Orders = new HashSet<Order>();
+		}
 
         public int DiscountId { get; set; }
         public int? DiscountPercent { get; set; }
@@ -23,6 +23,6 @@ namespace EHM_API.Models
         public int? QuantityLimit { get; set; }
 
         public virtual ICollection<Dish> Dishes { get; set; }
-        public virtual ICollection<Invoice> Invoices { get; set; }
-    }
+		public virtual ICollection<Order> Orders { get; set; }
+	}
 }

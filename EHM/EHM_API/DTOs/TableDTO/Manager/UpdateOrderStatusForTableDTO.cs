@@ -4,7 +4,6 @@
 	{
 		public DateTime? RecevingOrder { get; set; }
 		public DateTime? PaymentTime { get; set; }
-		public int? DiscountId { get; set; }
 		public string? Taxcode { get; set; }
 		public int? AccountId { get; set; }
 		public string? Description { get; set; }
