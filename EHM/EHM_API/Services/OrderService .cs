@@ -249,6 +249,32 @@ namespace EHM_API.Services
 			return _mapper.Map<IEnumerable<GetOrderDetailDTO>>(orderDetails);
 		}
 
+		public async Task<IEnumerable<GetDishOrderDetailDTO>> GetOrderDetailsByOrderId(int orderId)
+		{
+			var orderDetails = await _orderRepository.GetOrderDetailsByOrderIdAsync(orderId);
+
+			var combinedOrderDetails = orderDetails
+			.GroupBy(od => new { od.DishId, od.ComboId })
+			.Select(g =>
+			{
+				var first = g.First();
+				return new OrderDetail
+				{
+					ComboId = first.ComboId,
+					DishId = first.DishId,
+					Quantity = g.Sum(od => od.Quantity),
+					Dish = first.Dish, 
+					Combo = first.Combo
+				};
+			})
+			.ToList();
+
+
+			return _mapper.Map<IEnumerable<GetDishOrderDetailDTO>>(combinedOrderDetails);
+		}
+
+
+
 
 		public async Task UpdateOrderAndTablesStatusAsyncByTableId(int tableId, CancelOrderTableDTO dto)
 		{
