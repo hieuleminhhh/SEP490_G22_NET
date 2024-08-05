@@ -136,7 +136,11 @@ namespace EHM_API.Services
 					}
 					else if (discount.TotalMoney.HasValue)
 					{
-						discountAmount = discount.TotalMoney.Value;
+						discountAmount = Math.Min(totalAmount, discount.TotalMoney.Value);
+					}
+					if (discount.QuantityLimit.HasValue && discount.QuantityLimit > 0)
+					{
+						discount.QuantityLimit--;
 					}
 				}
 			}
