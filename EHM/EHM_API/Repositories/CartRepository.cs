@@ -15,14 +15,16 @@ namespace EHM_API.Repositories
 	{
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly IDishService _dishService;
+		private readonly IDiscountRepository _discountRepository;
 		private readonly IComboService _comboService;
 		private readonly EHMDBContext _context;
 
-		public CartRepository(IHttpContextAccessor httpContextAccessor, IDishService dishService, EHMDBContext context)
+		public CartRepository(IHttpContextAccessor httpContextAccessor, IDishService dishService, EHMDBContext context, IDiscountRepository discountRepository)
 		{
 			_httpContextAccessor = httpContextAccessor;
 			_dishService = dishService;
 			_context = context;
+			_discountRepository = discountRepository;
 		}
 
 		public List<Cart2DTO> GetCart()
@@ -287,104 +289,122 @@ namespace EHM_API.Repositories
 			return address;
 		}
 
-        public async Task<int> TakeOut(TakeOutDTO takeOutDTO)
-        {
-            Guest guest = null;
-            Address address = null;
+		public async Task<int> TakeOut(TakeOutDTO takeOutDTO)
+		{
+			Guest guest = null;
+			Address address = null;
 
-            if (!string.IsNullOrWhiteSpace(takeOutDTO.GuestPhone) && !string.IsNullOrWhiteSpace(takeOutDTO.Email))
-            {
-                guest = await GetOrCreateGuestTakeOut(takeOutDTO);
-            }
+			if (!string.IsNullOrWhiteSpace(takeOutDTO.GuestPhone) && !string.IsNullOrWhiteSpace(takeOutDTO.Email))
+			{
+				guest = await GetOrCreateGuestTakeOut(takeOutDTO);
+			}
 
-            if (!string.IsNullOrWhiteSpace(takeOutDTO.GuestAddress) && !string.IsNullOrWhiteSpace(takeOutDTO.ConsigneeName))
-            {
-                address = await GetOrCreateAddressTakeOut(takeOutDTO);
-                takeOutDTO.AddressId = address?.AddressId;
-            }
+			if (!string.IsNullOrWhiteSpace(takeOutDTO.GuestAddress) && !string.IsNullOrWhiteSpace(takeOutDTO.ConsigneeName))
+			{
+				address = await GetOrCreateAddressTakeOut(takeOutDTO);
+				takeOutDTO.AddressId = address?.AddressId;
+			}
 
-            decimal totalAmount = 0;
-            var orderDetails = new List<OrderDetail>();
+			decimal totalAmount = 0;
+			decimal discountAmount = 0;
+			var orderDetails = new List<OrderDetail>();
 
-            foreach (var item in takeOutDTO.OrderDetails)
-            {
-                if ((item.DishId.HasValue && item.DishId.Value > 0) && (item.ComboId.HasValue && item.ComboId.Value > 0) ||
-                    (!item.DishId.HasValue || item.DishId.Value <= 0) && (!item.ComboId.HasValue || item.ComboId.Value <= 0))
-                {
-                    throw new InvalidOperationException("Mỗi giỏ hàng phải có một món hoặc Combo, không được có cả hai hoặc không có món nào.");
-                }
+			foreach (var item in takeOutDTO.OrderDetails)
+			{
+				if ((item.DishId.HasValue && item.DishId.Value > 0) && (item.ComboId.HasValue && item.ComboId.Value > 0) ||
+					(!item.DishId.HasValue || item.DishId.Value <= 0) && (!item.ComboId.HasValue || item.ComboId.Value <= 0))
+				{
+					throw new InvalidOperationException("Mỗi giỏ hàng phải có một món hoặc Combo, không được có cả hai hoặc không có món nào.");
+				}
 
-                Dish dish = null;
-                Combo combo = null;
+				Dish dish = null;
+				Combo combo = null;
 
-                if (item.DishId.HasValue && item.DishId.Value > 0)
-                {
-                    dish = await GetDishByIdAsync(item.DishId.Value);
-                    if (dish == null)
-                    {
-                        throw new KeyNotFoundException($"Món ăn với ID {item.DishId} không tồn tại.");
-                    }
-                }
+				if (item.DishId.HasValue && item.DishId.Value > 0)
+				{
+					dish = await GetDishByIdAsync(item.DishId.Value);
+					if (dish == null)
+					{
+						throw new KeyNotFoundException($"Món ăn với ID {item.DishId} không tồn tại.");
+					}
+				}
 
-                		if (item.ComboId.HasValue && item.ComboId.Value > 0)
-                            {
-                                combo = await GetComboByIdAsync(item.ComboId.Value);
-                                if (combo == null)
-                                {
-                                    throw new KeyNotFoundException($"Combo với ID {item.ComboId} không tồn tại.");
-                                }
-                            }
+				if (item.ComboId.HasValue && item.ComboId.Value > 0)
+				{
+					combo = await GetComboByIdAsync(item.ComboId.Value);
+					if (combo == null)
+					{
+						throw new KeyNotFoundException($"Combo với ID {item.ComboId} không tồn tại.");
+					}
+				}
 
-                var existingOrderDetail = orderDetails.FirstOrDefault(od =>
-                    (dish != null && od.DishId == dish.DishId) ||
-                    (combo != null && od.ComboId == combo.ComboId));
+				var existingOrderDetail = orderDetails.FirstOrDefault(od =>
+					(dish != null && od.DishId == dish.DishId) ||
+					(combo != null && od.ComboId == combo.ComboId));
 
-                if (existingOrderDetail != null)
-                {
-                    existingOrderDetail.Quantity += item.Quantity;
-                    existingOrderDetail.UnitPrice += item.UnitPrice;
-                    totalAmount += (item.UnitPrice ?? 0m);
-                }
-                else
-                {
-                    var orderDetail = new OrderDetail
-                    {
-                        DishId = dish != null ? (int?)dish.DishId : null,
-                        ComboId = combo != null ? (int?)combo.ComboId : null,
-                        Quantity = item.Quantity,
-                        UnitPrice = item.UnitPrice,
-                        DishesServed = 0,
+				if (existingOrderDetail != null)
+				{
+					existingOrderDetail.Quantity += item.Quantity;
+					existingOrderDetail.UnitPrice += item.UnitPrice;
+					totalAmount += (item.UnitPrice ?? 0m);
+				}
+				else
+				{
+					var orderDetail = new OrderDetail
+					{
+						DishId = dish != null ? (int?)dish.DishId : null,
+						ComboId = combo != null ? (int?)combo.ComboId : null,
+						Quantity = item.Quantity,
+						UnitPrice = item.UnitPrice,
+						DishesServed = 0,
 						OrderTime = item.OrderTime,
 						Note = item.Note,
-                    };
+					};
 
-                    orderDetails.Add(orderDetail);
-                    totalAmount += (item.UnitPrice ?? 0m);
-                }
-            }
+					orderDetails.Add(orderDetail);
+					totalAmount += (item.UnitPrice ?? 0m);
+				}
+			}
 
-            var order = new Order
-            {
-                OrderDate = DateTime.Now,
-                Status = takeOutDTO.Status ?? 0,
-                RecevingOrder = takeOutDTO.RecevingOrder,
-                GuestPhone = guest?.GuestPhone,
-                TotalAmount = totalAmount,
-                OrderDetails = orderDetails,
-                Deposits = takeOutDTO.Deposits,
-                AddressId = address?.AddressId,
-                Note = takeOutDTO.Note,
-                Type = takeOutDTO.Type,
+			if (takeOutDTO.DiscountId.HasValue)
+			{
+				var discount = await _discountRepository.GetDiscountByIdAsync(takeOutDTO.DiscountId.Value);
+				if (discount != null && discount.DiscountStatus == true)
+				{
+					if (discount.DiscountPercent.HasValue)
+					{
+						discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
+					}
+					else if (discount.TotalMoney.HasValue)
+					{
+						discountAmount = discount.TotalMoney.Value;
+					}
+				}
+			}
+
+			var finalTotalAmount = totalAmount - discountAmount;
+
+			var order = new Order
+			{
+				OrderDate = DateTime.Now,
+				Status = takeOutDTO.Status ?? 0,
+				RecevingOrder = takeOutDTO.RecevingOrder,
+				GuestPhone = guest?.GuestPhone,
+				TotalAmount = finalTotalAmount,
+				OrderDetails = orderDetails,
+				Deposits = takeOutDTO.Deposits,
+				AddressId = address?.AddressId,
+				Note = takeOutDTO.Note,
+				Type = takeOutDTO.Type,
 				DiscountId = takeOutDTO.DiscountId
+			};
 
-            };
-
-            await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
+			await _context.Orders.AddAsync(order);
+			await _context.SaveChangesAsync();
 
 			return order.OrderId;
-
 		}
 
-    }
+
+	}
 }

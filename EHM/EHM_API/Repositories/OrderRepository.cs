@@ -717,9 +717,9 @@ public class OrderRepository : IOrderRepository
 		return orders;
 	}
 
-    public async Task<int> CountOrderByDiscountIdAsync(int discountId)
-    {
-        return await _context.Orders
-            .CountAsync(order => order.DiscountId == discountId);
-    }
+	public async Task<int> CountOrderByDiscountIdAsync(int discountId)
+	{
+		return await _context.Orders
+			.CountAsync(order => order.DiscountId == discountId);
+	}
 }
