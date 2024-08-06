@@ -29,6 +29,19 @@ namespace EHM_API.Controllers
 
 			return Ok(guestAddressInfo);
 		}
+		[HttpGet("ListAddress")]
+		public async Task<IActionResult> GetListAddress()
+		{
+			var address = await _guestService.GetAllAddress();
+
+			if (address == null)
+			{
+				return NotFound();
+			}
+
+			return Ok(address);
+		}
+
 		[HttpGet("phoneExists/{guestPhone}")]
 		public async Task<IActionResult> GuestPhoneExists(string guestPhone)
 		{
@@ -36,18 +49,7 @@ namespace EHM_API.Controllers
 
 			return Ok(new { Exists = exists });
 		}
-        [HttpGet("ListAddress")]
-        public async Task<IActionResult> GetListAddress()
-        {
-			var address = await _guestService.GetAllAddress();
-
-            if (address == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(address);
-        }
+        
 
 		[HttpPost("CreateGuest")]
 		public async Task<IActionResult> CreateGuest(CreateGuestDTO createGuestDTO)

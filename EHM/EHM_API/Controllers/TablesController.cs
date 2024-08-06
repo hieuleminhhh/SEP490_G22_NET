@@ -16,14 +16,6 @@ namespace EHM_API.Controllers
 		{
 			_service = service;
 		}
-
-		[HttpGet]
-		public async Task<ActionResult<IEnumerable<TableAllDTO>>> GetAllTables()
-		{
-			var tables = await _service.GetAllTablesAsync();
-			return Ok(tables);
-		}
-
 		[HttpGet("available")]
 		public async Task<IActionResult> GetAvailableTables([FromQuery] int guestNumber)
 		{
@@ -53,6 +45,15 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "Đã xảy ra lỗi khi tìm bàn. Vui lòng thử lại sau." });
 			}
 		}
+
+		[HttpGet]
+		public async Task<ActionResult<IEnumerable<TableAllDTO>>> GetAllTables()
+		{
+			var tables = await _service.GetAllTablesAsync();
+			return Ok(tables);
+		}
+
+		
 
 
 	}
