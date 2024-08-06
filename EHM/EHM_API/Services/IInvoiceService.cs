@@ -12,6 +12,6 @@ namespace EHM_API.Services
 		Task UpdateInvoiceAndOrderAsync(int orderId, UpdateInvoiceSuccessPaymentDTO dto);
 		Task UpdateOrderStatusAsync(int orderId, UpdateStatusOrderDTO dto);
 		Task UpdateInvoiceAndCreateGuestAsync(int invoiceId, UpdateInvoiceDTO dto);
-
+		Task<GetInvoiceByOrderDTO> GetInvoiceByOrderIdAsync(int orderId);
 	}
 }

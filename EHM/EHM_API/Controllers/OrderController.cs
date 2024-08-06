@@ -313,6 +313,35 @@ namespace EHM_API.Controllers
 			return Ok(new { message = "Cập nhật thành công." });
 		}
 
+		[HttpPost("updateOrderDetailsByOrderId/{orderId}")]
+		public async Task<IActionResult> UpdateOrderDetailsByOrderId(int orderId, [FromBody] UpdateTableAndGetOrderDTO dto)
+		{
+			if (orderId <= 0)
+			{
+				return BadRequest(new { message = "OrderId không hợp lệ." });
+			}
+
+			var errors = new Dictionary<string, string>();
+
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+
+			var result = await _orderService.UpdateOrderDetailsByOrderIdAsync(orderId, dto);
+
+			if (result == null)
+			{
+				return NotFound(new { message = "Không tìm thấy đơn hàng." });
+			}
+
+			var options = new JsonSerializerOptions
+			{
+				ReferenceHandler = ReferenceHandler.Preserve,
+			};
+
+			return Ok(new { message = "Cập nhật thành công." });
+		}
 
 
 		// Create Order for Table
@@ -460,15 +489,14 @@ namespace EHM_API.Controllers
 			return Ok(orderDetails);
 		}
 
-		[HttpPut("CancelOrderForTable/{tableId}")]
-		public async Task<IActionResult> CancelOrder(int tableId, [FromBody] CancelOrderTableDTO dto)
+		[HttpPut("UpdateStatus/{tableId}")]
+		public async Task<IActionResult> UpdateStatus(int tableId, [FromBody] CancelOrderTableDTO dto)
 		{
 			try
 			{
-				// Update order and table status based on tableId
 				await _orderService.UpdateOrderAndTablesStatusAsyncByTableId(tableId, dto);
 
-				return Ok(new { Message = "Đơn của bàn đã hủy thành công" });
+				return Ok(new { Message = "Đơn của bàn đã được cập nhật thành công" });
 			}
 			catch (KeyNotFoundException ex)
 			{
@@ -480,7 +508,7 @@ namespace EHM_API.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(500, new { Message = "Đã xảy ra lỗi khi hủy đơn hàng.", Error = ex.Message });
+				return StatusCode(500, new { Message = "Đã xảy ra lỗi khi cập nhật đơn hàng.", Error = ex.Message });
 			}
 		}
 

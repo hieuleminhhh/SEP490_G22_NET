@@ -103,6 +103,14 @@ namespace EHM_API.Services
 			await _orderRepository.UpdateOrderAsync(order);
 		}
 
-
+		public async Task<GetInvoiceByOrderDTO> GetInvoiceByOrderIdAsync(int orderId)
+		{
+			var invoice = await _invoiceRepository.GetInvoiceByOrderIdAsync(orderId);
+			if (invoice == null)
+			{
+				throw new KeyNotFoundException($"KHông tìm thấy hóa đơn cho đơn hàng {orderId}");
+			}
+			return _mapper.Map<GetInvoiceByOrderDTO>(invoice);
+		}
 	}
 }

@@ -147,9 +147,12 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.ReceivingTime, opt => opt.MapFrom(src => src.RecevingOrder))
                 .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
-				 .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId))
+		    	 .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId))
 				.ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
-                .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Deposits))
+	            .ForMember(dest => dest.DiscountPriceOrder, opt => opt.MapFrom(src =>
+	                src.Discount != null && src.Discount.DiscountPercent.HasValue && src.TotalAmount.HasValue
+	                 ? (src.TotalAmount.Value * src.Discount.DiscountPercent.Value) / 100m : 0m  ))
+				.ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Deposits))
                 .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
             // Mapping Dish to OrderDetailsDTO
             CreateMap<Dish, OrderDetailsDTO>()
@@ -575,6 +578,7 @@ namespace EHM_API.Map
               .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
               .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
+			CreateMap<Invoice, GetInvoiceByOrderDTO>();
 
 			CreateMap<Discount, DiscountDTO>();
 
