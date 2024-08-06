@@ -132,5 +132,23 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[HttpGet("GetInvoiceByOrderID/{orderId}")]
+		public async Task<IActionResult> GetInvoiceByOrderId(int orderId)
+		{
+			try
+			{
+				var invoiceDto = await _invoiceService.GetInvoiceByOrderIdAsync(orderId);
+				return Ok(invoiceDto);
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { Message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+			}
+		}
+
 	}
 }

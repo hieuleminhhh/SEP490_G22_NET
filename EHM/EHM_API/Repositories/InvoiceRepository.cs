@@ -242,5 +242,12 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
         }
 
-    }
+		public async Task<Invoice> GetInvoiceByOrderIdAsync(int orderId)
+		{
+			return await _context.Orders
+				.Where(o => o.OrderId == orderId)
+				.Select(o => o.Invoice)
+				.FirstOrDefaultAsync();
+		}
+	}
 }
