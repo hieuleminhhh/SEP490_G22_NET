@@ -578,6 +578,7 @@ namespace EHM_API.Map
               .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
               .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
+			CreateMap<Invoice, GetInvoiceByOrderDTO>();
 
 			CreateMap<Discount, DiscountDTO>();
 
