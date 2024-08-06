@@ -13,5 +13,6 @@ namespace EHM_API.Services
         Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailSummaryAsync();
         Task UpdateDishesServedAsync(int orderDetailId, int? dishesServed);
         Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsByDishesServedAsync(int? dishesServed);
+        Task<IEnumerable<OrderDetailForStaff>> SearchByDishOrComboNameAsync(string keyword);
     }
 }
