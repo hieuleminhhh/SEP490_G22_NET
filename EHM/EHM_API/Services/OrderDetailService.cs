@@ -73,6 +73,10 @@ namespace EHM_API.Services
             var orderDetails = await _orderDetailRepository.GetOrderDetailsByDishesServedAsync(dishesServed);
             return _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(orderDetails);
         }
-
+        public async Task<IEnumerable<OrderDetailForStaff>> SearchByDishOrComboNameAsync(string keyword)
+        {
+            var orderDetails = await _orderDetailRepository.SearchByDishOrComboNameAsync(keyword);
+            return _mapper.Map<IEnumerable<OrderDetailForStaff>>(orderDetails);
+        }
     }
 }
