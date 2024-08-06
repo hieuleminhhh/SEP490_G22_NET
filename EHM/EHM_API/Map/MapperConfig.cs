@@ -484,6 +484,7 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.Floor, opt => opt.MapFrom(src => src.Table.Floor));
 
             CreateMap<OrderDetail, OrderDetailForChefDTO>()
+     .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Order.Type))
      .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
      .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
      .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
@@ -505,6 +506,7 @@ namespace EHM_API.Map
          }).ToList()));
 
             CreateMap<OrderDetail, OrderDetailForChef1DTO>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Order.Type))
                 .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
