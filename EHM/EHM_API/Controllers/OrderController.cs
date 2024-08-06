@@ -313,6 +313,35 @@ namespace EHM_API.Controllers
 			return Ok(new { message = "Cập nhật thành công." });
 		}
 
+		[HttpPost("updateOrderDetailsByOrderId/{orderId}")]
+		public async Task<IActionResult> UpdateOrderDetailsByOrderId(int orderId, [FromBody] UpdateTableAndGetOrderDTO dto)
+		{
+			if (orderId <= 0)
+			{
+				return BadRequest(new { message = "OrderId không hợp lệ." });
+			}
+
+			var errors = new Dictionary<string, string>();
+
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+
+			var result = await _orderService.UpdateOrderDetailsByOrderIdAsync(orderId, dto);
+
+			if (result == null)
+			{
+				return NotFound(new { message = "Không tìm thấy đơn hàng." });
+			}
+
+			var options = new JsonSerializerOptions
+			{
+				ReferenceHandler = ReferenceHandler.Preserve,
+			};
+
+			return Ok(new { message = "Cập nhật thành công." });
+		}
 
 
 		// Create Order for Table
@@ -441,6 +470,18 @@ namespace EHM_API.Controllers
 		public async Task<ActionResult<IEnumerable<GetOrderDetailDTO>>> GetOrderDetails(int orderId)
 		{
 			var orderDetails = await _orderService.GetOrderDetailsByOrderIdAsync(orderId);
+			if (orderDetails == null || !orderDetails.Any())
+			{
+				return NotFound($"Không tìm thấy chi tiết đơn hàng cho OrderID {orderId}.");
+			}
+			return Ok(orderDetails);
+		}
+
+
+		[HttpGet("GetDishOrderDetails/{orderId}")]
+		public async Task<ActionResult<IEnumerable<GetDishOrderDetailDTO>>> GetDishOrderDetails(int orderId)
+		{
+			var orderDetails = await _orderService.GetOrderDetailsByOrderId(orderId);
 			if (orderDetails == null || !orderDetails.Any())
 			{
 				return NotFound($"Không tìm thấy chi tiết đơn hàng cho OrderID {orderId}.");

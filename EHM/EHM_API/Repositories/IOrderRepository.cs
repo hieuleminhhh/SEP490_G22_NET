@@ -23,6 +23,7 @@ public interface IOrderRepository
     Task UpdateOrderAsync(Order order);
     Task<Address?> GetOrCreateAddress2(CheckoutDTO checkoutDTO);
     Task<Order> UpdateOrderForTable(int tableId, UpdateTableAndGetOrderDTO dto);
+    Task<Order?> UpdateOrderDetailsByOrderId(int orderId, UpdateTableAndGetOrderDTO dto);
 	Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto);
 
     Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto);
@@ -31,5 +32,6 @@ public interface IOrderRepository
 	Task<IEnumerable<OrderDetail>> GetOrderDetailsByOrderIdAsync(int orderId);
 
     Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int tableId);
+    Task<int> CountOrderByDiscountIdAsync(int discountId);
 }
 
