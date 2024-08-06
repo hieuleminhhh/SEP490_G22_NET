@@ -16,6 +16,7 @@
 		public string? Note { get; set; }
 		public int? Type { get; set; }
 		public int? DiscountId { get; set; }
+		public decimal? DiscountPriceOrder { get; set; }
 
 		public List<OrderDetailsDTO> OrderDetails { get; set; }
     }
