@@ -7,7 +7,6 @@
 		public DateTime? PaymentTime { get; set; }
 		public decimal? PaymentAmount { get; set; }
 		public string? Taxcode { get; set; }
-		public int PaymentStatus { get; set; }
 		public int? AccountId { get; set; }
 		public decimal? AmountReceived { get; set; }
 		public decimal? ReturnAmount { get; set; }

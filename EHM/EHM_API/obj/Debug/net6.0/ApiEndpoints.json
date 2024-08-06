@@ -724,16 +724,6 @@
     ]
   },
   {
-    "ContainingType": "DiscountsController",
-    "Method": "UpdateDiscountStatus",
-    "RelativePath": "api/Discounts/update-discount-status",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
     "ContainingType": "EHM_API.Controllers.DishController",
     "Method": "GetDishes",
     "RelativePath": "api/Dish",
@@ -1313,6 +1303,22 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.InvoiceController",
+    "Method": "GetInvoiceByOrderId",
+    "RelativePath": "api/Invoice/GetInvoiceByOrderID/{orderId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.InvoiceController",
     "Method": "UpdateInvoiceAndCreateGuest",
     "RelativePath": "api/Invoice/updateInvoice/{invoiceId}",
     "HttpMethod": "PUT",
@@ -1464,6 +1470,22 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.MaterialController",
+    "Method": "DeleteMaterial",
+    "RelativePath": "api/Material/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.MaterialController",
     "Method": "UpdateMaterial",
     "RelativePath": "api/Material/{id}",
     "HttpMethod": "PUT",
@@ -1478,22 +1500,6 @@
       {
         "Name": "updateMaterialDTO",
         "Type": "EHM_API.DTOs.MaterialDTO.UpdateMaterialDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "EHM_API.Controllers.MaterialController",
-    "Method": "DeleteMaterial",
-    "RelativePath": "api/Material/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
         "IsRequired": true
       }
     ],
@@ -1581,6 +1587,32 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderDetailsForChefController",
+    "Method": "SearchByDishOrComboNameAsync",
+    "RelativePath": "api/OrderDetailsForChef/searchforstaff",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "keyword",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.OrderDetailDTO.Manager.OrderDetailForStaff, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderDetailsForChefController",
@@ -1762,27 +1794,6 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
-    "Method": "CancelOrder",
-    "RelativePath": "api/orders/CancelOrderForTable/{tableId}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "tableId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "EHM_API.DTOs.OrderDTO.Manager.CancelOrderTableDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "CreateOrderForTable",
     "RelativePath": "api/orders/createOrderForTable/{tableId}",
     "HttpMethod": "POST",
@@ -1801,6 +1812,32 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "GetDishOrderDetails",
+    "RelativePath": "api/orders/GetDishOrderDetails/{orderId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[EHM_API.DTOs.OrderDTO.Manager.GetDishOrderDetailDTO, EHM_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
@@ -1963,6 +2000,69 @@
       {
         "Name": "dto",
         "Type": "EHM_API.DTOs.TableDTO.Manager.UpdateTableAndGetOrderDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "UpdateOrderDetailsByOrderId",
+    "RelativePath": "api/orders/updateOrderDetailsByOrderId/{orderId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.TableDTO.Manager.UpdateTableAndGetOrderDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/orders/UpdateStatus/{tableId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tableId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.OrderDTO.Manager.CancelOrderTableDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "UpdateStatusAndCreateInvoice",
+    "RelativePath": "api/orders/UpdateStatusAndCreateInvoice{orderId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.OrderDTO.Manager.UpdateStatusAndCInvoiceD",
         "IsRequired": true
       }
     ],
