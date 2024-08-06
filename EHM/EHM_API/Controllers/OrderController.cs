@@ -489,15 +489,14 @@ namespace EHM_API.Controllers
 			return Ok(orderDetails);
 		}
 
-		[HttpPut("CancelOrderForTable/{tableId}")]
-		public async Task<IActionResult> CancelOrder(int tableId, [FromBody] CancelOrderTableDTO dto)
+		[HttpPut("UpdateStatus/{tableId}")]
+		public async Task<IActionResult> UpdateStatus(int tableId, [FromBody] CancelOrderTableDTO dto)
 		{
 			try
 			{
-				// Update order and table status based on tableId
 				await _orderService.UpdateOrderAndTablesStatusAsyncByTableId(tableId, dto);
 
-				return Ok(new { Message = "Đơn của bàn đã hủy thành công" });
+				return Ok(new { Message = "Đơn của bàn đã được cập nhật thành công" });
 			}
 			catch (KeyNotFoundException ex)
 			{
@@ -509,7 +508,7 @@ namespace EHM_API.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(500, new { Message = "Đã xảy ra lỗi khi hủy đơn hàng.", Error = ex.Message });
+				return StatusCode(500, new { Message = "Đã xảy ra lỗi khi cập nhật đơn hàng.", Error = ex.Message });
 			}
 		}
 

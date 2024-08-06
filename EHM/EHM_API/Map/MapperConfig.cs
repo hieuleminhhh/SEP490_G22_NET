@@ -578,11 +578,20 @@ namespace EHM_API.Map
               .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
               .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
+			CreateMap<Invoice, GetInvoiceByOrderDTO>();
 
 			CreateMap<Discount, DiscountDTO>();
 
             CreateMap<Discount, DiscountWithDishesDTO>()
                .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes));
+
+            CreateMap<OrderDetail, OrderDetailForStaff>()
+                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo))
+                .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.Order.Type))
+                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.Order.OrderDate))
+                .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Order.OrderTables.FirstOrDefault().TableId))
+                .ForMember(dest => dest.QuantityRequired, opt => opt.MapFrom(src => src.Quantity - src.DishesServed));
         }
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)
