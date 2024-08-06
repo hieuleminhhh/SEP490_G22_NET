@@ -149,7 +149,7 @@ namespace EHM_API.Repositories
                 .ThenInclude(od => od.OrderTables)
                 .Include(od => od.Dish)
                 .Include(od => od.Combo)  
-                .Where(od => (od.Dish.ItemName.Contains(keyword) || od.Combo.NameCombo.Contains(keyword)) && od.Order.Status == 3)
+                .Where(od => (od.Dish.ItemName.Contains(keyword) || od.Combo.NameCombo.Contains(keyword)) && od.Order.Status == 3 && od.OrderTime.HasValue && od.OrderTime.Value.Date == DateTime.Today)
                 .ToListAsync();
         }
     }
