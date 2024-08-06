@@ -512,5 +512,24 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
+		[HttpPut("UpdateStatusAndCreateInvoice{orderId}")]
+		public async Task<IActionResult> UpdateStatusAndCreateInvoice(int orderId, UpdateStatusAndCInvoiceD dto)
+		{
+			try
+			{
+				await _orderService.UpdateStatusAndCreateInvoiceAsync(orderId, dto);
+				return Ok(new { Message = "Trạng thái đơn hàng được cập nhật và tạo hóa đơn thành công." });
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { Message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+			}
+		}
+
 	}
 }

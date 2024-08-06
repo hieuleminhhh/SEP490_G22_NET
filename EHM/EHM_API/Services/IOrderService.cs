@@ -39,5 +39,8 @@ namespace EHM_API.Services
 		Task<IEnumerable<GetDishOrderDetailDTO>> GetOrderDetailsByOrderId(int orderId);
 
 		Task UpdateOrderAndTablesStatusAsyncByTableId(int tableId, CancelOrderTableDTO dto);
+
+
+		Task UpdateStatusAndCreateInvoiceAsync(int orderId, UpdateStatusAndCInvoiceD dto);
 	}
 }
