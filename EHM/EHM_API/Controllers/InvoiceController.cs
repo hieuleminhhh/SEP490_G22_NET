@@ -132,13 +132,13 @@ namespace EHM_API.Controllers
 			}
 		}
 
-		[HttpGet("GetInvoiceByOrderID/{orderId}")]
-		public async Task<IActionResult> GetInvoiceByOrderId(int orderId)
+		[HttpGet("GetInvoiceByOrderId/{orderId}")]
+		public async Task<ActionResult<InvoiceDetailDTO>> GetInvoiceByOrderId(int orderId)
 		{
 			try
 			{
-				var invoiceDto = await _invoiceService.GetInvoiceByOrderIdAsync(orderId);
-				return Ok(invoiceDto);
+				var invoiceDetail = await _invoiceService.GetInvoiceByOrderIdAsync(orderId);
+				return Ok(invoiceDetail);
 			}
 			catch (KeyNotFoundException ex)
 			{
@@ -149,6 +149,7 @@ namespace EHM_API.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
 			}
 		}
+
 
 	}
 }

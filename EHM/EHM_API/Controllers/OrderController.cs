@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using EHM_API.Models;
 
 namespace EHM_API.Controllers
 {
@@ -518,8 +519,12 @@ namespace EHM_API.Controllers
 		{
 			try
 			{
-				await _orderService.UpdateStatusAndCreateInvoiceAsync(orderId, dto);
-				return Ok(new { Message = "Trạng thái đơn hàng được cập nhật và tạo hóa đơn thành công." });
+				var invoiceId = await _orderService.UpdateStatusAndCreateInvoiceAsync(orderId, dto);
+				return Ok(new
+				{
+					Message = "Trạng thái đơn hàng được cập nhật và tạo hóa đơn thành công.",
+					InvoiceID = invoiceId
+				});
 			}
 			catch (KeyNotFoundException ex)
 			{
@@ -530,6 +535,7 @@ namespace EHM_API.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
 			}
 		}
+
 
 	}
 }
