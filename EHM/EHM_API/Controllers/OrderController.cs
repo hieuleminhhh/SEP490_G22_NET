@@ -490,7 +490,7 @@ namespace EHM_API.Controllers
 			return Ok(orderDetails);
 		}
 
-		[HttpPut("UpdateStatus/{tableId}")]
+		[HttpPut("CancelOrderForTable/{tableId}")]
 		public async Task<IActionResult> UpdateStatus(int tableId, [FromBody] CancelOrderTableDTO dto)
 		{
 			try
