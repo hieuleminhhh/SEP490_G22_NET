@@ -67,23 +67,6 @@ namespace EHM_API.Controllers
 		}
 
 
-		[HttpPut("updateSuccessPayment/{orderId}")]
-		public async Task<IActionResult> UpdateInvoiceAndOrder(int orderId, [FromBody] UpdateInvoiceSuccessPaymentDTO dto)
-		{
-			try
-			{
-				await _invoiceService.UpdateInvoiceAndOrderAsync(orderId, dto);
-				return Ok("Cập nhật hóa đơn và đơn hàng thành công.");
-			}
-			catch (KeyNotFoundException ex)
-			{
-				return NotFound(new { message = ex.Message });
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(new { message = ex.Message });
-			}
-		}
 
 
 		[HttpPut("updateInvoice/{invoiceId}")]
@@ -113,6 +96,23 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[HttpPut("updateSuccessPayment/{orderId}")]
+		public async Task<IActionResult> UpdateInvoiceAndOrder(int orderId, [FromBody] UpdateInvoiceSuccessPaymentDTO dto)
+		{
+			try
+			{
+				await _invoiceService.UpdateInvoiceAndOrderAsync(orderId, dto);
+				return Ok("Cập nhật hóa đơn và đơn hàng thành công.");
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
 
 		[HttpPut("updateStatus/{orderId}")]
 		public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateStatusOrderDTO dto)
