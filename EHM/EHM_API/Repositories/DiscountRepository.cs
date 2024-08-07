@@ -93,5 +93,13 @@ namespace EHM_API.Repositories
                             d.Note == discount.Note)
                 .ToListAsync();
         }
-    }
+
+		public async Task<Discount> GetDiscountByOrderIdAsync(int orderId)
+		{
+			return await _context.Orders
+				.Where(o => o.OrderId == orderId)
+				.Select(o => o.Discount)
+				.FirstOrDefaultAsync();
+		}
+	}
 }
