@@ -257,7 +257,6 @@ namespace EHM_API.Controllers
                 return Ok(new
                 {
                     message = "Tạo đơn hàng thành công.",
-                    invoiceId = invoiceId
                 });
             }
             catch (Exception ex)

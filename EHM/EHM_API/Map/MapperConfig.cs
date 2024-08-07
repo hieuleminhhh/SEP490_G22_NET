@@ -584,7 +584,9 @@ namespace EHM_API.Map
 
 			CreateMap<Discount, DiscountDTO>();
 
-            CreateMap<Discount, DiscountWithDishesDTO>()
+			CreateMap<Discount, GetDiscountByOrderID>();
+
+			CreateMap<Discount, DiscountWithDishesDTO>()
                .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes));
 
             CreateMap<OrderDetail, OrderDetailForStaff>()
