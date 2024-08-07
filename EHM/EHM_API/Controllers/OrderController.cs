@@ -513,7 +513,7 @@ namespace EHM_API.Controllers
 		}
 
 
-		[HttpPut("UpdateStatusAndCreateInvoice{orderId}")]
+		[HttpPut("UpdateStatusAndCreateInvoice/{orderId}")]
 		public async Task<IActionResult> UpdateStatusAndCreateInvoice(int orderId, UpdateStatusAndCInvoiceD dto)
 		{
 			try
