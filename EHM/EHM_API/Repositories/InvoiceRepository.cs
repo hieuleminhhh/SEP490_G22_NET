@@ -249,5 +249,12 @@ namespace EHM_API.Repositories
 				.Select(o => o.Invoice)
 				.FirstOrDefaultAsync();
 		}
+
+		public async Task CreateInvoiceAsync(Invoice invoice)
+		{
+			_context.Invoices.Add(invoice);
+			await _context.SaveChangesAsync();
+		}
+
 	}
 }

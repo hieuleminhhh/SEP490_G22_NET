@@ -151,7 +151,16 @@ namespace EHM_API.Controllers
 				return Conflict(new { message = ex.Message });
 			}
 		}
-
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteCategory(int id)
+		{
+			var result = await _categoryService.DeleteCategoryAsync(id);
+			if (!result)
+			{
+				return NotFound();
+			}
+			return NoContent();
+		}
 
 		[HttpGet("dishes/{categoryName}")]
 		public async Task<ActionResult<IEnumerable<ViewCategoryDTO>>> GetDishesByCategoryName(string categoryName)
@@ -164,15 +173,6 @@ namespace EHM_API.Controllers
 			return Ok(dishes);
 		}
 
-		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteCategory(int id)
-		{
-			var result = await _categoryService.DeleteCategoryAsync(id);
-			if (!result)
-			{
-				return NotFound();
-			}
-			return NoContent();
-		}
+		
 	}
 }
