@@ -146,7 +146,7 @@ namespace EHM_API.Services
 			{
 				return false;
 			}
-			existingOrder.Status = 4;
+			existingOrder.Status = 5;
 			await _orderRepository.UpdateAsync(existingOrder);
 			return true;
 		}
