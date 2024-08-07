@@ -136,6 +136,23 @@ namespace EHM_API.Controllers
 				Unit = createdMaterial.Unit
 			});
 		}
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteMaterial(int id)
+		{
+			if (id <= 0)
+			{
+				return BadRequest(new { message = "ID phải lớn hơn 0." });
+			}
+
+			var existingMaterial = await _materialService.GetMaterialByIdAsync(id);
+			if (existingMaterial == null)
+			{
+				return NotFound(new { message = "Không tìm thấy nguyên liệu." });
+			}
+
+			await _materialService.DeleteMaterialAsync(id);
+			return NoContent();
+		}
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateMaterial(int id, UpdateMaterialDTO updateMaterialDTO)
@@ -201,22 +218,6 @@ namespace EHM_API.Controllers
 			return NoContent();
 		}
 
-		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteMaterial(int id)
-		{
-			if (id <= 0)
-			{
-				return BadRequest(new { message = "ID phải lớn hơn 0." });
-			}
-
-			var existingMaterial = await _materialService.GetMaterialByIdAsync(id);
-			if (existingMaterial == null)
-			{
-				return NotFound(new { message = "Không tìm thấy nguyên liệu." });
-			}
-
-			await _materialService.DeleteMaterialAsync(id);
-			return NoContent();
-		}
+		
 	}
 }

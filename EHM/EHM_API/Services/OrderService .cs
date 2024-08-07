@@ -20,17 +20,19 @@ namespace EHM_API.Services
 		private readonly IOrderRepository _orderRepository;
 		private readonly IComboRepository _comboRepository;
 		private readonly IDishRepository _dishRepository;
+		private readonly IInvoiceRepository _invoiceRepository;
 		private readonly ITableRepository _tableRepository;
 		private readonly IMapper _mapper;
 		private readonly EHMDBContext _context;
 
-		public OrderService(IOrderRepository orderRepository, IMapper mapper, EHMDBContext context, IComboRepository comboRepository, ITableRepository tableRepository)
+		public OrderService(IOrderRepository orderRepository, IMapper mapper, EHMDBContext context, IComboRepository comboRepository, ITableRepository tableRepository, IInvoiceRepository invoiceRepository)
 		{
 			_orderRepository = orderRepository;
 			_mapper = mapper;
 			_context = context;
 			_comboRepository = comboRepository;
 			_tableRepository = tableRepository;
+			_invoiceRepository = invoiceRepository;
 		}
 
 		public async Task<IEnumerable<OrderDTOAll>> GetAllOrdersAsync()
@@ -313,6 +315,44 @@ namespace EHM_API.Services
 				await _tableRepository.UpdateTableAsync(table);
 			}
 		}
+
+		public async Task UpdateStatusAndCreateInvoiceAsync(int orderId, UpdateStatusAndCInvoiceD dto)
+		{
+			var order = await _orderRepository.GetByIdAsync(orderId);
+			if (order == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy order {orderId}");
+			}
+
+			order.Status = dto.Status;
+			await _orderRepository.UpdateOrderAsync(order);
+
+			var invoice = new Invoice
+			{
+				PaymentTime = dto.PaymentTime,
+				PaymentAmount = dto.PaymentAmount,
+				Taxcode = dto.Taxcode,
+				PaymentStatus = 1,
+
+				CustomerName = order.Address?.ConsigneeName,
+				Phone = order.Address?.GuestPhone,
+				Address = order.Address?.GuestAddress,
+				//AccountId = dto.AccountId,
+
+				AmountReceived = dto.AmountReceived,
+				ReturnAmount = dto.ReturnAmount,
+				PaymentMethods = dto.PaymentMethods,
+				InvoiceLogs = new List<InvoiceLog>
+			{
+				new InvoiceLog { Description = dto.Description }
+			}
+			};
+
+			await _invoiceRepository.CreateInvoiceAsync(invoice);
+			order.InvoiceId = invoice.InvoiceId;
+			await _orderRepository.UpdateOrderAsync(order);
+		}
+
 
 	}
 }

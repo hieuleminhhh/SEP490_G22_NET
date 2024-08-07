@@ -13,5 +13,7 @@ namespace EHM_API.Repositories
 
         Task<Invoice> GetInvoiceByIdAsync(int invoiceId);
         Task UpdateInvoiceAsync(Invoice invoice);
-    }
+		Task<Invoice> GetInvoiceByOrderIdAsync(int orderId);
+		Task CreateInvoiceAsync(Invoice invoice);
+	}
 }

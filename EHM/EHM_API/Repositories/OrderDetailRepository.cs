@@ -142,5 +142,18 @@ namespace EHM_API.Repositories
                                  .Where(od => !dishesServed.HasValue || od.DishesServed == dishesServed)
                                  .ToListAsync();
         }
+        public async Task<IEnumerable<OrderDetail>> SearchByDishOrComboNameAsync(string keyword)
+        {
+            return await _context.OrderDetails
+                .Include(od => od.Order)
+                .ThenInclude(od => od.OrderTables)
+                .Include(od => od.Dish)
+                .Include(od => od.Combo)  
+                .Where(od => (od.Dish.ItemName.Contains(keyword) || od.Combo.NameCombo.Contains(keyword))
+                && od.Order.Status == 3 && od.OrderTime.HasValue 
+                && od.OrderTime.Value.Date == DateTime.Today
+                && od.Quantity > od.DishesServed)
+                .ToListAsync();
+        }
     }
 }

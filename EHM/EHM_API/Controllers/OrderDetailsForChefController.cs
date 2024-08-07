@@ -131,5 +131,12 @@ namespace EHM_API.Controllers
                 return StatusCode(500, $"Đã xảy ra lỗi khi tìm kiếm chi tiết đơn hàng: {ex.Message}");
             }
         }
+
+        [HttpGet("searchforstaff")]
+        public async Task<ActionResult<IEnumerable<OrderDetailForStaff>>> SearchByDishOrComboNameAsync(string keyword)
+        {
+            var results = await _service.SearchByDishOrComboNameAsync(keyword);
+            return Ok(results);
+        }
     }
 }
