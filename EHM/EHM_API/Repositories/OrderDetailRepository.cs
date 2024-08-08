@@ -41,7 +41,7 @@ namespace EHM_API.Repositories
                 .Include(od => od.Order)
                 .Where(od => (od.Order.Type == 1 || od.Order.Type == 4 || (od.Order.Type == 3
                 && od.Order.RecevingOrder.HasValue && od.Order.RecevingOrder.Value.TimeOfDay != od.OrderTime.Value.TimeOfDay))
-                && (od.Order.Status == 2 || od.Order.Status == 3)
+                && (od.Order.Status == 3 || od.Order.Status == 6)
                 && od.OrderTime.HasValue && od.OrderTime.Value.Date == today && od.DishesServed < od.Quantity)
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
@@ -156,19 +156,6 @@ namespace EHM_API.Repositories
                 && od.Quantity > od.DishesServed)
                 .ToListAsync();
         }
-        public async Task<IEnumerable<OrderDetail>> GetOrderDetailsForStaffType1Async()
-        {
-            return await _context.OrderDetails
-                .Include(od => od.Order)
-                .ThenInclude(od => od.OrderTables)
-            .Include(od => od.Dish)
-            .Include(od => od.Combo)
-            .Where(od => (od.Order.Status == 6
-                && od.OrderTime.HasValue
-                && od.OrderTime.Value.Date == DateTime.Today
-                && od.Order.Type == 1
-                && od.Quantity > od.DishesServed))
-                .ToListAsync(); 
-        }
+      
     }
 }

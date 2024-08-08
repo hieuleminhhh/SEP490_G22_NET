@@ -33,5 +33,6 @@ public interface IOrderRepository
 
     Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int tableId);
     Task<int> CountOrderByDiscountIdAsync(int discountId);
+    Task<IEnumerable<Order>> GetOrderDetailsForStaffType1Async();
 }
 

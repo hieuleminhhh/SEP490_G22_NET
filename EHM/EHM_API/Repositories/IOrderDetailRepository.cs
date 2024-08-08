@@ -16,6 +16,5 @@ namespace EHM_API.Repositories
         Task UpdateDishesServedAsync(int orderDetailId, int? dishesServed);
         Task<IEnumerable<OrderDetail>> GetOrderDetailsByDishesServedAsync(int? dishesServed);
         Task<IEnumerable<OrderDetail>> SearchByDishOrComboNameAsync(string keyword);
-        Task<IEnumerable<OrderDetail>> GetOrderDetailsForStaffType1Async();
     }
 }

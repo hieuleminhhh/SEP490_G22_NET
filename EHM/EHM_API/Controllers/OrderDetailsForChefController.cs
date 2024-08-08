@@ -13,10 +13,12 @@ namespace EHM_API.Controllers
     public class OrderDetailsForChefController : ControllerBase
     {
         private readonly IOrderDetailService _service;
+        private readonly IOrderService _orderService;
 
-        public OrderDetailsForChefController(IOrderDetailService service)
+        public OrderDetailsForChefController(IOrderDetailService service, IOrderService orderService)
         {
             _service = service;
+            _orderService = orderService;
         }
 
         [HttpPut("{orderDetailId}/quantity")]
@@ -139,10 +141,10 @@ namespace EHM_API.Controllers
             return Ok(results);
         }
 
-        [HttpGet("stafftype1")]
+        [HttpGet("stafftype1-2")]
         public async Task<ActionResult<IEnumerable<OrderDetailForStaffType1>>> GetOrderDetailsForStaffType1Async()
         {
-            var results = await _service.GetOrderDetailsForStaffType1Async();
+            var results = await _orderService.GetOrderDetailsForStaffType1Async();
             return Ok(results);
         }
     }
