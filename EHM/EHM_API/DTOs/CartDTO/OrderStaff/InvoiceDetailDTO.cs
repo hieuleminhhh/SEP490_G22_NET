@@ -4,7 +4,10 @@
 	{
 		public int InvoiceId { get; set; }
 		public decimal? PaymentAmount { get; set; }
-        public string? Address { get; set; }
+		public DateTime? PaymentTime { get; set; }
+		public int PaymentStatus { get; set; }
+
+		public string? Address { get; set; }
         public string? ConsigneeName { get; set; }
 		public string? GuestPhone { get; set; }
 		public DateTime? OrderDate { get; set; }

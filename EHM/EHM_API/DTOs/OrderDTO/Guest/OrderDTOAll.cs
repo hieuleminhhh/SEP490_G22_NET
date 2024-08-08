@@ -23,6 +23,10 @@
 		public decimal? ReturnAmount { get; set; }
 		public int? PaymentMethods { get; set; }
 
+		public int PaymentStatus { get; set; }
+		public DateTime? PaymentTime { get; set; }
+		public string? Taxcode { get; set; }
+
 		public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
 		public IEnumerable<TableOfOrderDTO> Tables { get; set; }
 
