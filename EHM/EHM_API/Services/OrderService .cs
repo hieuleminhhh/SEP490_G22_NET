@@ -2,6 +2,7 @@
 using EHM_API.DTOs.DishDTO;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
+using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
@@ -353,10 +354,14 @@ namespace EHM_API.Services
 
 			return invoice.InvoiceId;
 		}
+        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
+        {
+            var orderDetails = await _orderRepository.GetOrderDetailsForStaffType1Async();
+            return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orderDetails);
+        }
 
 
-
-	}
+    }
 }
 
 	

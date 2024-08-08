@@ -597,12 +597,18 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Order.OrderTables.FirstOrDefault().TableId))
                 .ForMember(dest => dest.QuantityRequired, opt => opt.MapFrom(src => src.Quantity - src.DishesServed));
 
-            CreateMap<OrderDetail, OrderDetailForStaffType1>()
-               .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
-               .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo))
-               .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.Order.Type))
-               .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.Order.OrderDate));
-              
+            CreateMap<Order, OrderDetailForStaffType1>()
+                   .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.Type))
+                   .ForMember(dest => dest.ItemInOrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
+
+            // Mapping OrderDetail to ItemInOrderDetail
+            CreateMap<OrderDetail, ItemInOrderDetail>()
+                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
+                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
+                .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+                .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
+                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime));
+
         }
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)
