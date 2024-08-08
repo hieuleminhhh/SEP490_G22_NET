@@ -42,13 +42,6 @@ namespace EHM_API.Controllers
 			return Ok(address);
 		}
 
-		[HttpGet("phoneExists/{guestPhone}")]
-		public async Task<IActionResult> GuestPhoneExists(string guestPhone)
-		{
-			var exists = await _guestService.GuestPhoneExistsAsync(guestPhone);
-
-			return Ok(new { Exists = exists });
-		}
         
 
 		[HttpPost("CreateGuest")]
@@ -93,6 +86,13 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[HttpGet("phoneExists/{guestPhone}")]
+		public async Task<IActionResult> GuestPhoneExists(string guestPhone)
+		{
+			var exists = await _guestService.GuestPhoneExistsAsync(guestPhone);
+
+			return Ok(new { Exists = exists });
+		}
 
 	}
 }

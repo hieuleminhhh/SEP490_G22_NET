@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.HomeDTO;
+using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
@@ -41,5 +42,6 @@ namespace EHM_API.Services
 		Task UpdateOrderAndTablesStatusAsyncByTableId(int tableId, CancelOrderTableDTO dto);
 
 		Task<int> UpdateStatusAndCreateInvoiceAsync(int orderId, UpdateStatusAndCInvoiceD dto);
-	}
+        Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async();
+    }
 }
