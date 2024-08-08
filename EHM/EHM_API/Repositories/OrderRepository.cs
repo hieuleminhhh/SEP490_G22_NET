@@ -806,7 +806,7 @@ public class OrderRepository : IOrderRepository
 					continue;
 				}
 
-				totalAmount += unitPrice * detailDto.Quantity;
+				totalAmount += unitPrice;
 			}
 
 			await _context.SaveChangesAsync();
