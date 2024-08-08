@@ -1,6 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.CartDTO.OrderStaff;
-using EHM_API.Models;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -253,12 +252,11 @@ namespace EHM_API.Controllers
 
             try
             {
-                int orderId = await _cartService.TakeOut(takeoutDTO);
+                int invoiceId = await _cartService.TakeOut(takeoutDTO);
                 _cartService.ClearCart();
                 return Ok(new
                 {
                     message = "Tạo đơn hàng thành công.",
-                    orderId
                 });
             }
             catch (Exception ex)
