@@ -990,10 +990,9 @@ public class OrderRepository : IOrderRepository
                 .ThenInclude(od => od.Combo)
             .Include(o => o.OrderTables)
             .Where(o =>
-                ((o.Status == 6 || o.Status == 3)
-                 && o.OrderDetails.Any(od => od.Quantity > od.DishesServed))
-                || (o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value == DateTime.Now)
-                || (o.Type == 1 && o.OrderDate.HasValue && o.OrderDate.Value.Date == DateTime.Today))
+                ((o.Status == 6))
+                && ((o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)
+                || (o.Type == 1 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)))
             .ToListAsync();
     }
 
