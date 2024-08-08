@@ -806,7 +806,7 @@ public class OrderRepository : IOrderRepository
 					continue;
 				}
 
-				totalAmount += unitPrice * detailDto.Quantity;
+				totalAmount += unitPrice;
 			}
 
 			await _context.SaveChangesAsync();
@@ -979,4 +979,20 @@ public class OrderRepository : IOrderRepository
 		return await _context.Orders
 			.CountAsync(order => order.DiscountId == discountId);
 	}
+    public async Task<IEnumerable<Order>> GetOrderDetailsForStaffType1Async()
+    {
+        return await _context.Orders
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Dish)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Combo)
+            .Include(o => o.OrderTables)
+            .Where(o =>
+                ((o.Status == 6 || o.Status == 3)
+                 && o.OrderDetails.Any(od => od.Quantity > od.DishesServed))
+                || (o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value == DateTime.Now)
+                || (o.Type == 1 && o.OrderDate.HasValue && o.OrderDate.Value.Date == DateTime.Today))
+            .ToListAsync();
+    }
+
 }

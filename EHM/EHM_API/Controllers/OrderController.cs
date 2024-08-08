@@ -127,21 +127,6 @@ namespace EHM_API.Controllers
             return NoContent();
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllOrders()
-        {
-            var orders = await _orderService.GetAllOrdersAsync();
-            if (orders == null)
-            {
-                return StatusCode(500, "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.");
-            }
-
-            var orderDTOs = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
-            return Ok(orderDTOs);
-        }
-
-
         [HttpGet("search")]
         public async Task<IActionResult> SearchOrdersByGuestPhone(string guestPhone)
         {
@@ -160,6 +145,22 @@ namespace EHM_API.Controllers
                 return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await _orderService.GetAllOrdersAsync();
+            if (orders == null)
+            {
+                return StatusCode(500, "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.");
+            }
+
+            var orderDTOs = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
+            return Ok(orderDTOs);
+        }
+
+
+        
 
         [HttpGet("GetListOrder")]
         public async Task<ActionResult<PagedResult<OrderDTO>>> GetListOrders(

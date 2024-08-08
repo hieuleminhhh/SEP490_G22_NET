@@ -6,6 +6,7 @@ using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace EHM_API.Repositories
 {
@@ -40,7 +41,7 @@ namespace EHM_API.Repositories
                 .Include(od => od.Order)
                 .Where(od => (od.Order.Type == 1 || od.Order.Type == 4 || (od.Order.Type == 3
                 && od.Order.RecevingOrder.HasValue && od.Order.RecevingOrder.Value.TimeOfDay != od.OrderTime.Value.TimeOfDay))
-                && (od.Order.Status == 2 || od.Order.Status == 3)
+                && (od.Order.Status == 3 || od.Order.Status == 6)
                 && od.OrderTime.HasValue && od.OrderTime.Value.Date == today && od.DishesServed < od.Quantity)
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
@@ -155,5 +156,6 @@ namespace EHM_API.Repositories
                 && od.Quantity > od.DishesServed)
                 .ToListAsync();
         }
+      
     }
 }
