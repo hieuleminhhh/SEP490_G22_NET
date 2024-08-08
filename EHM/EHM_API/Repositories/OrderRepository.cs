@@ -806,7 +806,7 @@ public class OrderRepository : IOrderRepository
 					continue;
 				}
 
-				totalAmount += unitPrice * detailDto.Quantity;
+				totalAmount += unitPrice;
 			}
 
 			await _context.SaveChangesAsync();
@@ -987,11 +987,12 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.OrderDetails)
                 .ThenInclude(od => od.Combo)
             .Include(o => o.OrderTables)
-            .Where(o => (o.Status == 6 || o.Status == 3)
-                        && o.OrderDetails.Any(od => od.OrderTime.HasValue
-                                                     && od.OrderTime.Value.Date == DateTime.Today
-                                                     && (o.Type == 1 || o.Type == 2)
-                                                     && od.Quantity > od.DishesServed))
+            .Where(o =>
+                ((o.Status == 6 || o.Status == 3)
+                 && o.OrderDetails.Any(od => od.Quantity > od.DishesServed))
+                || (o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value == DateTime.Now)
+                || (o.Type == 1 && o.OrderDate.HasValue && o.OrderDate.Value.Date == DateTime.Today))
             .ToListAsync();
     }
+
 }
