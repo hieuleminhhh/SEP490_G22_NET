@@ -252,11 +252,12 @@ namespace EHM_API.Controllers
 
             try
             {
-                int invoiceId = await _cartService.TakeOut(takeoutDTO);
+                int orderId = await _cartService.TakeOut(takeoutDTO);
                 _cartService.ClearCart();
                 return Ok(new
                 {
                     message = "Tạo đơn hàng thành công.",
+					orderId
                 });
             }
             catch (Exception ex)
