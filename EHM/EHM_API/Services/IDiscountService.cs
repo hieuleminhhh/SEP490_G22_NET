@@ -12,5 +12,7 @@ namespace EHM_API.Services
 		Task<CreateDiscount> UpdateAsync(int id, CreateDiscount discountDto);
 		Task<IEnumerable<DiscountAllDTO>> SearchAsync(string keyword);
 		Task<IEnumerable<DiscountDTO>> GetActiveDiscountsAsync();
+
+		Task<GetDiscountByOrderID> GetDiscountByOrderIdAsync(int orderId);
 	}
 }

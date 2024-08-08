@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using EHM_API.Models;
 
 namespace EHM_API.Controllers
 {
@@ -126,21 +127,6 @@ namespace EHM_API.Controllers
             return NoContent();
         }
 
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllOrders()
-        {
-            var orders = await _orderService.GetAllOrdersAsync();
-            if (orders == null)
-            {
-                return StatusCode(500, "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.");
-            }
-
-            var orderDTOs = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
-            return Ok(orderDTOs);
-        }
-
-
         [HttpGet("search")]
         public async Task<IActionResult> SearchOrdersByGuestPhone(string guestPhone)
         {
@@ -159,6 +145,22 @@ namespace EHM_API.Controllers
                 return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await _orderService.GetAllOrdersAsync();
+            if (orders == null)
+            {
+                return StatusCode(500, "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.");
+            }
+
+            var orderDTOs = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
+            return Ok(orderDTOs);
+        }
+
+
+        
 
         [HttpGet("GetListOrder")]
         public async Task<ActionResult<PagedResult<OrderDTO>>> GetListOrders(
@@ -489,7 +491,7 @@ namespace EHM_API.Controllers
 			return Ok(orderDetails);
 		}
 
-		[HttpPut("UpdateStatus/{tableId}")]
+		[HttpPut("CancelOrderForTable/{tableId}")]
 		public async Task<IActionResult> UpdateStatus(int tableId, [FromBody] CancelOrderTableDTO dto)
 		{
 			try
@@ -513,13 +515,17 @@ namespace EHM_API.Controllers
 		}
 
 
-		[HttpPut("UpdateStatusAndCreateInvoice{orderId}")]
+		[HttpPut("UpdateStatusAndCreateInvoice/{orderId}")]
 		public async Task<IActionResult> UpdateStatusAndCreateInvoice(int orderId, UpdateStatusAndCInvoiceD dto)
 		{
 			try
 			{
-				await _orderService.UpdateStatusAndCreateInvoiceAsync(orderId, dto);
-				return Ok(new { Message = "Trạng thái đơn hàng được cập nhật và tạo hóa đơn thành công." });
+				var invoiceId = await _orderService.UpdateStatusAndCreateInvoiceAsync(orderId, dto);
+				return Ok(new
+				{
+					Message = "Trạng thái đơn hàng được cập nhật và tạo hóa đơn thành công.",
+					InvoiceID = invoiceId
+				});
 			}
 			catch (KeyNotFoundException ex)
 			{
@@ -530,6 +536,7 @@ namespace EHM_API.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
 			}
 		}
+
 
 	}
 }

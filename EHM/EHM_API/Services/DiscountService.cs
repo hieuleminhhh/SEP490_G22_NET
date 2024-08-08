@@ -135,6 +135,12 @@ namespace EHM_API.Services
 			return discountDTOs;
 		}
 
+		public async Task<GetDiscountByOrderID> GetDiscountByOrderIdAsync(int orderId)
+		{
+			var discount = await _discountRepository.GetDiscountByOrderIdAsync(orderId);
+			return _mapper.Map<GetDiscountByOrderID>(discount);
+		}
+
 
 	}
 }

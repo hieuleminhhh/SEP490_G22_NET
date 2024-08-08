@@ -6,6 +6,7 @@ using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace EHM_API.Repositories
 {
@@ -154,6 +155,20 @@ namespace EHM_API.Repositories
                 && od.OrderTime.Value.Date == DateTime.Today
                 && od.Quantity > od.DishesServed)
                 .ToListAsync();
+        }
+        public async Task<IEnumerable<OrderDetail>> GetOrderDetailsForStaffType1Async()
+        {
+            return await _context.OrderDetails
+                .Include(od => od.Order)
+                .ThenInclude(od => od.OrderTables)
+            .Include(od => od.Dish)
+            .Include(od => od.Combo)
+            .Where(od => (od.Order.Status == 6
+                && od.OrderTime.HasValue
+                && od.OrderTime.Value.Date == DateTime.Today
+                && od.Order.Type == 1
+                && od.Quantity > od.DishesServed))
+                .ToListAsync(); 
         }
     }
 }
