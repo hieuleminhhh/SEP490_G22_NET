@@ -939,7 +939,7 @@ public class OrderRepository : IOrderRepository
 		bool allDishesNotServed = order.OrderDetails.All(od => od.DishesServed == null || od.DishesServed == 0);
 		if (allDishesNotServed)
 		{
-			order.Status = 3;
+			order.Status = 5;
 			
 		}
 

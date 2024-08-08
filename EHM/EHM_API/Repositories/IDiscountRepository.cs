@@ -12,5 +12,7 @@ namespace EHM_API.Repositories
         Task<Discount> GetDiscountByIdAsync(int discountId);
         Task<IEnumerable<Discount>> GetActiveDiscountsAsync();
         Task<IEnumerable<Discount>> GetDiscountsWithSimilarAttributesAsync(int discountId);
-    }
+
+		Task<Discount> GetDiscountByOrderIdAsync(int orderId);
+	}
 }

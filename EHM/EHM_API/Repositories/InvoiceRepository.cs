@@ -57,7 +57,12 @@ namespace EHM_API.Repositories
                 AmountReceived = invoice.AmountReceived,
                 ReturnAmount = invoice.ReturnAmount,
                 Taxcode = invoice.Taxcode,
-                ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
+				DiscountName = order.Discount?.DiscountName,
+				DiscountPercent = order.Discount?.DiscountPercent,
+				Note = order.Discount?.Note,
+				TotalMoney = order.Discount?.TotalMoney,
+				QuantityLimit = order.Discount?.QuantityLimit,
+				ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
                 {
                     DishId = od.DishId ?? 0,
                     ItemName = od.Dish?.ItemName,
@@ -245,6 +250,7 @@ namespace EHM_API.Repositories
 		public async Task<Invoice> GetInvoiceByOrderIdAsync(int orderId)
 		{
 			return await _context.Orders
+                .Include(d => d.Discount)
 				.Where(o => o.OrderId == orderId)
 				.Select(o => o.Invoice)
 				.FirstOrDefaultAsync();

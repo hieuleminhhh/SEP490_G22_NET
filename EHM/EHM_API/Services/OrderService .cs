@@ -146,7 +146,7 @@ namespace EHM_API.Services
 			{
 				return false;
 			}
-			existingOrder.Status = 4;
+			existingOrder.Status = 5;
 			await _orderRepository.UpdateAsync(existingOrder);
 			return true;
 		}
@@ -315,13 +315,12 @@ namespace EHM_API.Services
 				await _tableRepository.UpdateTableAsync(table);
 			}
 		}
-
-		public async Task UpdateStatusAndCreateInvoiceAsync(int orderId, UpdateStatusAndCInvoiceD dto)
+		public async Task<int> UpdateStatusAndCreateInvoiceAsync(int orderId, UpdateStatusAndCInvoiceD dto)
 		{
 			var order = await _orderRepository.GetByIdAsync(orderId);
 			if (order == null)
 			{
-				throw new KeyNotFoundException($"Không tìm thấy order {orderId}");
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng {orderId}");
 			}
 
 			order.Status = dto.Status;
@@ -337,21 +336,24 @@ namespace EHM_API.Services
 				CustomerName = order.Address?.ConsigneeName,
 				Phone = order.Address?.GuestPhone,
 				Address = order.Address?.GuestAddress,
-				//AccountId = dto.AccountId,
 
+			//	AccountId = dto.AccountId,
 				AmountReceived = dto.AmountReceived,
 				ReturnAmount = dto.ReturnAmount,
 				PaymentMethods = dto.PaymentMethods,
 				InvoiceLogs = new List<InvoiceLog>
-			{
-				new InvoiceLog { Description = dto.Description }
-			}
+		{
+			new InvoiceLog { Description = dto.Description }
+		}
 			};
-
 			await _invoiceRepository.CreateInvoiceAsync(invoice);
+
 			order.InvoiceId = invoice.InvoiceId;
 			await _orderRepository.UpdateOrderAsync(order);
+
+			return invoice.InvoiceId;
 		}
+
 
 
 	}
