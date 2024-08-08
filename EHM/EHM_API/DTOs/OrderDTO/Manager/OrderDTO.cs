@@ -19,6 +19,7 @@ namespace EHM_API.DTOs.OrderDTO.Manager
         public string? ConsigneeName { get; set; }
         public string? Note { get; set; }
 		public int? Type { get; set; }
-		public int? DiscountId { get; set; }
-	}
+        public int? DiscountId { get; set; }
+        public int? PaymentStatus { get; set; }
+    }
 }

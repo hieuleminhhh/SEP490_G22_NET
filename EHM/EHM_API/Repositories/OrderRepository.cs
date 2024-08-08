@@ -172,7 +172,8 @@ public class OrderRepository : IOrderRepository
 			.Include(a => a.Address)
 			.Include(o => o.OrderTables).ThenInclude(ot => ot.Table)
 			.Include(d => d.Discount)
-			.OrderByDescending(o => filterByDate == "Đặt hàng" ? o.OrderDate : o.RecevingOrder)
+            .Include(i => i.Invoice)
+            .OrderByDescending(o => filterByDate == "Đặt hàng" ? o.OrderDate : o.RecevingOrder)
 			.Skip((page - 1) * pageSize)
 			.Take(pageSize)
 			.ToListAsync();
@@ -198,9 +199,10 @@ public class OrderRepository : IOrderRepository
 			AddressId = o.AddressId ?? 0,
 			GuestAddress = o.Address?.GuestAddress,
 			ConsigneeName = o.Address?.ConsigneeName,
-			Note = o.Note,
-			Type = o.Type,
-			DiscountId = o.DiscountId
+            PaymentStatus = o.Invoice != null ? o.Invoice.PaymentStatus : default(int),
+            Note = o.Note,
+			Type = o.Type,    
+            DiscountId = o.DiscountId
 		}).ToList();
 
 		return new PagedResult<OrderDTO>(orderDTOs, totalOrders, page, pageSize);
