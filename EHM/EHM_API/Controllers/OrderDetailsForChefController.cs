@@ -138,5 +138,12 @@ namespace EHM_API.Controllers
             var results = await _service.SearchByDishOrComboNameAsync(keyword);
             return Ok(results);
         }
+
+        [HttpGet("stafftype1")]
+        public async Task<ActionResult<IEnumerable<OrderDetailForStaffType1>>> GetOrderDetailsForStaffType1Async()
+        {
+            var results = await _service.GetOrderDetailsForStaffType1Async();
+            return Ok(results);
+        }
     }
 }
