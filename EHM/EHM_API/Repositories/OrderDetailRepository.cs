@@ -39,10 +39,21 @@ namespace EHM_API.Repositories
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
                 .Include(od => od.Order)
-                .Where(od => (od.Order.Type == 1 || od.Order.Type == 4 || (od.Order.Type == 3
-                && od.Order.RecevingOrder.HasValue && od.Order.RecevingOrder.Value.TimeOfDay != od.OrderTime.Value.TimeOfDay))
+                .Where(od => ((od.Order.Type == 1 
+                && (od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue
+                && (od.Order.RecevingOrder.Value.TimeOfDay == DateTime.Now.TimeOfDay)
+                ||(od.Order.RecevingOrder.Value.TimeOfDay == od.Order.OrderDate.Value.TimeOfDay)))
+                || (od.Order.Type == 4 && od.OrderTime.HasValue 
+                && od.OrderTime.Value.Date == today)
+                || (od.Order.Type == 3
+                && od.Order.RecevingOrder.HasValue 
+                && od.Order.RecevingOrder.Value.TimeOfDay == od.OrderTime.Value.TimeOfDay)
+                || (od.Order.Type == 2 
+                && ((od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue)
+                && (od.Order.RecevingOrder.Value.TimeOfDay == od.Order.OrderDate.Value.TimeOfDay)
+                || (od.Order.RecevingOrder.Value.TimeOfDay == DateTime.Now.TimeOfDay))))
                 && (od.Order.Status == 3 || od.Order.Status == 6)
-                && od.OrderTime.HasValue && od.OrderTime.Value.Date == today && od.DishesServed < od.Quantity)
+                && od.DishesServed < od.Quantity)
                 .OrderBy(od => od.OrderTime)
                 .ToListAsync();
 
@@ -59,13 +70,21 @@ namespace EHM_API.Repositories
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
                 .Include(od => od.Order)
-                .Where(od => ((od.Order.Type == 2 || (od.Order.Type == 3 &&
-                           od.Order.RecevingOrder.HasValue &&
-                           od.Order.RecevingOrder.Value.TimeOfDay == od.OrderTime.Value.TimeOfDay))
-                && (od.Order.Status == 2)
+                .Where(od => ((od.Order.Type == 1
+                && (od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue
+                && (od.Order.RecevingOrder.Value.TimeOfDay != DateTime.Now.TimeOfDay)
+                || (od.Order.RecevingOrder.Value.TimeOfDay != od.Order.OrderDate.Value.TimeOfDay)))
+                || (od.Order.Type == 3
+                && od.Order.RecevingOrder.HasValue
+                && od.Order.RecevingOrder.Value.TimeOfDay != od.OrderTime.Value.TimeOfDay)
+                || (od.Order.Type == 2
+                && ((od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue)
+                && (od.Order.RecevingOrder.Value.TimeOfDay != od.Order.OrderDate.Value.TimeOfDay)
+                || (od.Order.RecevingOrder.Value.TimeOfDay != DateTime.Now.TimeOfDay))))
+                && (od.Order.Status == 6)
                 && od.DishesServed < od.Quantity
-                && od.OrderTime.HasValue && od.OrderTime.Value.Date >= today))
-                .OrderBy(od => od.OrderTime)
+                && od.OrderTime.HasValue && od.Order.RecevingOrder.Value.Date >= today)
+                .OrderBy(od => od.Order.RecevingOrder)
                 .ToListAsync();
 
             var orderDetailDTO1s = _mapper.Map<IEnumerable<OrderDetailForChef1DTO>>(orderDetails);
