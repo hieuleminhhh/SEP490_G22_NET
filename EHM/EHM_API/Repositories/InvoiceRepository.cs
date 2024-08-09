@@ -49,7 +49,9 @@ namespace EHM_API.Repositories
             {
                 InvoiceId = invoice.InvoiceId,
                 PaymentAmount = invoice.PaymentAmount,
-                ConsigneeName = consigneeName,
+				PaymentTime = invoice.PaymentTime,
+				PaymentStatus = invoice.PaymentStatus,
+				ConsigneeName = consigneeName,
                 GuestPhone = guestPhone,
                 Address = guestAddress,
                 OrderDate = order.OrderDate,
