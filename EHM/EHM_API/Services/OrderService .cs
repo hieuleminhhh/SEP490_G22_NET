@@ -332,7 +332,7 @@ namespace EHM_API.Services
 				PaymentTime = dto.PaymentTime,
 				PaymentAmount = dto.PaymentAmount,
 				Taxcode = dto.Taxcode,
-				PaymentStatus = 1,
+				PaymentStatus = dto.PaymentStatus,
 
 				CustomerName = order.Address?.ConsigneeName,
 				Phone = order.Address?.GuestPhone,
