@@ -395,7 +395,8 @@ namespace EHM_API.Services
 
 			if (dto.AmountReceived.HasValue)
 			{
-				order.Invoice.AmountReceived = dto.AmountReceived.Value;
+				order.Invoice!.AmountReceived = dto.AmountReceived.Value;
+				order.Invoice!.PaymentStatus = 1;
 
 				var invoiceLog = new InvoiceLog
 				{

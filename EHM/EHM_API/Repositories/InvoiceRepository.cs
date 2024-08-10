@@ -1,4 +1,6 @@
-﻿using EHM_API.DTOs.CartDTO.OrderStaff;
+﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -64,6 +66,7 @@ namespace EHM_API.Repositories
 				Note = order.Discount?.Note,
 				TotalMoney = order.Discount?.TotalMoney,
 				QuantityLimit = order.Discount?.QuantityLimit,
+				Deposits = order.Deposits,
 				ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
                 {
                     DishId = od.DishId ?? 0,
@@ -79,8 +82,7 @@ namespace EHM_API.Repositories
             return invoiceDetailDTO;
         }
 
-
-        public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
+		public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
         {
             var order = await _context.Orders
                 .Include(o => o.Address)
@@ -269,6 +271,120 @@ namespace EHM_API.Repositories
 			_context.InvoiceLogs.Add(invoiceLog);
 			await _context.SaveChangesAsync();
 		}
+
+
+		public async Task<Guest> GetOrCreateGuest(InvoiceOfSitting dto)
+		{
+
+			if (string.IsNullOrWhiteSpace(dto.Phone))
+			{
+				return null;
+			}
+
+			var guest = await _context.Guests
+				.FirstOrDefaultAsync(g => g.GuestPhone == dto.Phone);
+
+			if (guest != null)
+			{
+			
+			}
+			else
+			{
+			
+				guest = new Guest
+				{
+					GuestPhone = dto.Phone
+				};
+				await _context.Guests.AddAsync(guest);
+			}
+
+			await _context.SaveChangesAsync();
+			return guest;
+		}
+
+		public async Task<Address> GetOrCreateAddress(InvoiceOfSitting dto)
+		{
+			if (string.IsNullOrWhiteSpace(dto.Address) ||
+				string.IsNullOrWhiteSpace(dto.CustomerName) ||
+				string.IsNullOrWhiteSpace(dto.Phone))
+			{
+				return null;
+			}
+
+			var address = await _context.Addresses
+				.FirstOrDefaultAsync(a =>
+					a.GuestAddress == dto.Address &&
+					a.ConsigneeName == dto.CustomerName &&
+					a.GuestPhone == dto.Phone);
+
+			if (address == null)
+			{
+				address = new Address
+				{
+					GuestAddress = dto.Address,
+					ConsigneeName = dto.CustomerName,
+					GuestPhone = dto.Phone
+				};
+				await _context.Addresses.AddAsync(address);
+				await _context.SaveChangesAsync();
+			}
+
+			return address;
+		}
+
+		public async Task UpdateOrderAndInvoiceAsync(int orderId, InvoiceOfSitting dto)
+		{
+			var order = await _context.Orders
+				.Include(o => o.Invoice)
+				.Include(o => o.OrderTables)
+					.ThenInclude(ot => ot.Table)
+				.FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+			if (order == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng {orderId}.");
+			}
+
+			var guest = await GetOrCreateGuest(dto);
+			var address = await GetOrCreateAddress(dto);
+
+			order.Status = dto.Status;
+
+			if (order.Invoice != null)
+			{
+				order.Invoice.PaymentTime = dto.PaymentTime;
+				order.Invoice.PaymentAmount = dto.PaymentAmount;
+				order.Invoice.Taxcode = dto.Taxcode;
+				order.Invoice.PaymentStatus = dto.PaymentStatus;
+
+				order.Invoice.CustomerName = address?.GuestAddress ?? dto.CustomerName;
+				order.Invoice.Phone = guest?.GuestPhone ?? dto.Phone;
+				order.Invoice.Address = address?.GuestAddress ?? dto.Address;
+
+				order.Invoice.AmountReceived = dto.AmountReceived;
+				order.Invoice.ReturnAmount = dto.ReturnAmount;
+				order.Invoice.PaymentMethods = dto.PaymentMethods;
+
+				if (!string.IsNullOrEmpty(dto.Description))
+				{
+					var invoiceLog = new InvoiceLog
+					{
+						InvoiceId = order.Invoice.InvoiceId,
+						Description = dto.Description
+					};
+					_context.InvoiceLogs.Add(invoiceLog);
+				}
+			}
+
+			foreach (var orderTable in order.OrderTables)
+			{
+				orderTable.Table.Status = 0;
+			}
+
+			await _context.SaveChangesAsync();
+		}
+
+
 
 	}
 }
