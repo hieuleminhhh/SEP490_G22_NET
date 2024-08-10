@@ -568,9 +568,10 @@ namespace EHM_API.Map
             CreateMap<Discount, CreateDiscountResponse>();
             CreateMap<Discount, CreateDiscount>();
 
+			CreateMap<Discount, DiscountDTO>();
 
-            // Cancel Order
-            CreateMap<CancelOrderTableDTO, Order>()
+			// Cancel Order
+			CreateMap<CancelOrderTableDTO, Order>()
                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
             //Get OrderDetail
