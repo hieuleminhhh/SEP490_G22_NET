@@ -66,6 +66,7 @@ namespace EHM_API.Repositories
 				Note = order.Discount?.Note,
 				TotalMoney = order.Discount?.TotalMoney,
 				QuantityLimit = order.Discount?.QuantityLimit,
+				Deposits = order.Deposits,
 				ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
                 {
                     DishId = od.DishId ?? 0,
@@ -335,6 +336,8 @@ namespace EHM_API.Repositories
 		{
 			var order = await _context.Orders
 				.Include(o => o.Invoice)
+				.Include(o => o.OrderTables)
+					.ThenInclude(ot => ot.Table)
 				.FirstOrDefaultAsync(o => o.OrderId == orderId);
 
 			if (order == null)
@@ -343,9 +346,7 @@ namespace EHM_API.Repositories
 			}
 
 			var guest = await GetOrCreateGuest(dto);
-
 			var address = await GetOrCreateAddress(dto);
-
 
 			order.Status = dto.Status;
 
@@ -375,8 +376,14 @@ namespace EHM_API.Repositories
 				}
 			}
 
+			foreach (var orderTable in order.OrderTables)
+			{
+				orderTable.Table.Status = 0;
+			}
+
 			await _context.SaveChangesAsync();
 		}
+
 
 
 	}
