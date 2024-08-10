@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Http;
@@ -149,6 +150,44 @@ namespace EHM_API.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
 			}
 		}
+
+		[HttpPut("UpdateDepositAndCreateInvoice/{orderId}")]
+		public async Task<IActionResult> UpdateDepositAndCreateInvoice(int orderId, [FromBody] PrepaymentDTO dto)
+		{
+			try
+			{
+				var invoiceId = await _invoiceService.UpdateDepositAndCreateInvoiceAsync(orderId, dto);
+				return Ok(new { Message = "Đã cập nhật khoản tiền gửi và tạo hóa đơn thành công.", InvoiceId = invoiceId });
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { Message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+			}
+		}
+
+		[HttpPut("UpdateOrderAndInvoice/{orderId}")]
+		public async Task<IActionResult> UpdateOrderAndInvoice(int orderId, InvoiceOfSitting dto)
+		{
+			try
+			{
+				await _invoiceService.UpdateOrderAndInvoiceAsync(orderId, dto);
+				return Ok(new { Message = "Trạng thái đơn hàng và hóa đơn được cập nhật thành công." });
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { Message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+			}
+		}
+
+
 
 
 	}

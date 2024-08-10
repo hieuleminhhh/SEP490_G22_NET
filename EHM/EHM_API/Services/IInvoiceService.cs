@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
 
 namespace EHM_API.Services
@@ -13,5 +14,10 @@ namespace EHM_API.Services
 		Task UpdateOrderStatusAsync(int orderId, UpdateStatusOrderDTO dto);
 		Task UpdateInvoiceAndCreateGuestAsync(int invoiceId, UpdateInvoiceDTO dto);
 		Task<InvoiceDetailDTO> GetInvoiceByOrderIdAsync(int orderId);
+		Task<int> UpdateDepositAndCreateInvoiceAsync(int orderId, PrepaymentDTO dto);
+
+		Task UpdateOrderAndInvoiceAsync(int orderId, InvoiceOfSitting dto);
+		
+
 	}
 }

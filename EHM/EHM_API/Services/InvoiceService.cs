@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
@@ -119,6 +120,53 @@ namespace EHM_API.Services
 
 			invoiceDetail.ItemInvoice = CombineInvoiceItems(invoiceDetail.ItemInvoice);
 			return invoiceDetail;
+		}
+
+		public async Task<int> UpdateDepositAndCreateInvoiceAsync(int orderId, PrepaymentDTO dto)
+		{
+			var order = await _orderRepository.GetByIdAsync(orderId);
+			if (order == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng {orderId}");
+			}
+
+			order.Deposits = dto.Deposits;
+			
+
+			var invoice = _mapper.Map<Invoice>(dto);
+
+			if (order.Address != null)
+			{
+				invoice.CustomerName = order.Address.ConsigneeName;
+				invoice.Phone = order.Address.GuestPhone;
+				invoice.Address = order.Address.GuestAddress;
+			}
+
+			if (order.AccountId.HasValue)
+			{
+				invoice.AccountId = order.AccountId;
+			}
+			else
+			{
+				invoice.AccountId = null; 
+			}
+
+			await _invoiceRepository.CreateInvoiceAsync(invoice);
+
+			invoice.InvoiceLogs.Add(new InvoiceLog
+			{
+				Description = dto.Description,
+				InvoiceId = invoice.InvoiceId
+			});
+			order.InvoiceId = invoice.InvoiceId;
+			await _orderRepository.UpdateAsync(order);
+
+			return invoice.InvoiceId;
+		}
+
+		public async Task UpdateOrderAndInvoiceAsync(int orderId, InvoiceOfSitting dto)
+		{
+			await _invoiceRepository.UpdateOrderAndInvoiceAsync(orderId, dto);
 		}
 
 	}
