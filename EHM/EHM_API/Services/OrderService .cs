@@ -332,7 +332,7 @@ namespace EHM_API.Services
 				PaymentTime = dto.PaymentTime,
 				PaymentAmount = dto.PaymentAmount,
 				Taxcode = dto.Taxcode,
-				PaymentStatus = 1,
+				PaymentStatus = dto.PaymentStatus,
 
 				CustomerName = order.Address?.ConsigneeName,
 				Phone = order.Address?.GuestPhone,
@@ -356,9 +356,60 @@ namespace EHM_API.Services
 		}
         public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
         {
+            // Retrieve orders including their details
             var orderDetails = await _orderRepository.GetOrderDetailsForStaffType1Async();
-            return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orderDetails);
+
+            // Map orders to DTO
+            var mappedOrders = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orderDetails);
+
+            // Set Status for each order based on its order details
+            foreach (var order in mappedOrders)
+            {
+                if (order.ItemInOrderDetails.Any())
+                {
+                    // Check if all OrderDetails have Quantity == DishesServed
+                    bool allDetailsCompleted = order.ItemInOrderDetails.All(detail => detail.Quantity == detail.DishesServed);
+                    order.Status = allDetailsCompleted ? 1 : 0; // Assuming 1 for true and 0 for false
+                }
+                else
+                {
+                    order.Status = 0; // Default status if no details are present
+                }
+            }
+
+            return mappedOrders;
         }
+
+		public async Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto)
+		{
+			var order = await _orderRepository.GetByIdAsync(orderId);
+			if (order == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng với OrderID {orderId}");
+			}
+
+			if (dto.Status.HasValue)
+			{
+				order.Status = dto.Status.Value;
+			}
+
+			if (dto.AmountReceived.HasValue)
+			{
+				order.Invoice.AmountReceived = dto.AmountReceived.Value;
+
+				var invoiceLog = new InvoiceLog
+				{
+					Description = dto.Description,
+					InvoiceId = order.InvoiceId
+				};
+
+				await _invoiceRepository.CreateInvoiceLog(invoiceLog);
+			}
+
+			await _orderRepository.UpdateOrderAsync(order);
+		}
+
+
 
 
     }
