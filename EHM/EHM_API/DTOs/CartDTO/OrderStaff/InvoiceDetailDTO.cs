@@ -20,7 +20,9 @@
         public string Note { get; set; }
         public decimal? TotalMoney { get; set; }
         public int? QuantityLimit { get; set; }
-        public IEnumerable<ItemInvoiceDTO> ItemInvoice { get; set; }
+
+		public decimal Deposits { get; set; }
+		public IEnumerable<ItemInvoiceDTO> ItemInvoice { get; set; }
 
 	}
 	public class ItemInvoiceDTO
