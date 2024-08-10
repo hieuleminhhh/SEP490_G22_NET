@@ -307,86 +307,7 @@ namespace EHM_API.Controllers
 			return Ok(combo);
 		}
 
-		[HttpPost("CreateComboWithDishes")]
-		public async Task<ActionResult<ComboDTO>> CreateComboWithDishes([FromBody] CreateComboDishDTO createComboWithDishesDTO)
-		{
-			var errors = new Dictionary<string, string>();
-
-			if (string.IsNullOrEmpty(createComboWithDishesDTO.NameCombo))
-			{
-				errors["nameCombo"] = "Tên Combo không được để trống";
-			}
-			else if (createComboWithDishesDTO.NameCombo.Length > 100)
-			{
-				errors["nameCombo"] = "Tên Combo không được vượt quá 100 ký tự";
-			}
-
-			if (!createComboWithDishesDTO.Price.HasValue)
-			{
-				errors["price"] = "Giá của Combo không được để trống";
-			}
-			else if (createComboWithDishesDTO.Price < 0 || createComboWithDishesDTO.Price > 1000000000)
-			{
-				errors["price"] = "Giá của Combo phải nằm trong khoảng từ 0 đến 1,000,000,000";
-			}
-
-			if (string.IsNullOrEmpty(createComboWithDishesDTO.Note))
-			{
-				errors["note"] = "Mô tả không được để trống";
-			}
-			else if (createComboWithDishesDTO.Note?.Length > 500)
-			{
-				errors["note"] = "Mô tả combo không được vượt quá 500 ký tự";
-			}
-			if (string.IsNullOrEmpty(createComboWithDishesDTO.ImageUrl))
-			{
-				errors["image"] = "Hình ảnh không được để trống";
-			}
-
-			var existingCombos = await _comboService.SearchComboByNameAsync(createComboWithDishesDTO.NameCombo);
-			if (existingCombos.Any())
-			{
-				errors["nameCombo"] = "Tên combo đã tồn tại";
-			}
-			if (createComboWithDishesDTO.DishIds == null || createComboWithDishesDTO.DishIds.Count == 0)
-			{
-				errors["dish"] = "Món ăn không tồn tại";
-			}
-
-			if (string.IsNullOrEmpty(createComboWithDishesDTO.ImageUrl))
-			{
-				errors["image"] = "Hình ảnh không được để trống";
-			}
-			else
-			{
-				string extension = Path.GetExtension(createComboWithDishesDTO.ImageUrl).ToLower();
-				string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
-
-				if (!allowedExtensions.Contains(extension))
-				{
-					errors["image"] = "Hình ảnh không hợp lệ. Chỉ cho phép các tệp JPG, JPEG, PNG, GIF.";
-				}
-			}
-
-
-			if (errors.Any())
-			{
-				return BadRequest(errors);
-			}
-			try
-			{
-				var result = await _comboService.CreateComboWithDishesAsync(createComboWithDishesDTO);
-				return Ok(new
-				{
-					message = "Combo đã được tạo thành công",
-					result
-				});
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, new { message = ex.Message });
-			}
-		}
+		
         [HttpPut("UpdateComboWithDishes/{comboId}")]
         public async Task<ActionResult<ComboDTO>> UpdateComboWithDishes(int comboId, [FromBody] UpdateComboDishDTO updateComboWithDishesDTO)
         {
@@ -481,6 +402,87 @@ namespace EHM_API.Controllers
             }
         }
 
+		[HttpPost("CreateComboWithDishes")]
+		public async Task<ActionResult<ComboDTO>> CreateComboWithDishes([FromBody] CreateComboDishDTO createComboWithDishesDTO)
+		{
+			var errors = new Dictionary<string, string>();
 
-    }
+			if (string.IsNullOrEmpty(createComboWithDishesDTO.NameCombo))
+			{
+				errors["nameCombo"] = "Tên Combo không được để trống";
+			}
+			else if (createComboWithDishesDTO.NameCombo.Length > 100)
+			{
+				errors["nameCombo"] = "Tên Combo không được vượt quá 100 ký tự";
+			}
+
+			if (!createComboWithDishesDTO.Price.HasValue)
+			{
+				errors["price"] = "Giá của Combo không được để trống";
+			}
+			else if (createComboWithDishesDTO.Price < 0 || createComboWithDishesDTO.Price > 1000000000)
+			{
+				errors["price"] = "Giá của Combo phải nằm trong khoảng từ 0 đến 1,000,000,000";
+			}
+
+			if (string.IsNullOrEmpty(createComboWithDishesDTO.Note))
+			{
+				errors["note"] = "Mô tả không được để trống";
+			}
+			else if (createComboWithDishesDTO.Note?.Length > 500)
+			{
+				errors["note"] = "Mô tả combo không được vượt quá 500 ký tự";
+			}
+			if (string.IsNullOrEmpty(createComboWithDishesDTO.ImageUrl))
+			{
+				errors["image"] = "Hình ảnh không được để trống";
+			}
+
+			var existingCombos = await _comboService.SearchComboByNameAsync(createComboWithDishesDTO.NameCombo);
+			if (existingCombos.Any())
+			{
+				errors["nameCombo"] = "Tên combo đã tồn tại";
+			}
+			if (createComboWithDishesDTO.DishIds == null || createComboWithDishesDTO.DishIds.Count == 0)
+			{
+				errors["dish"] = "Món ăn không tồn tại";
+			}
+
+			if (string.IsNullOrEmpty(createComboWithDishesDTO.ImageUrl))
+			{
+				errors["image"] = "Hình ảnh không được để trống";
+			}
+			else
+			{
+				string extension = Path.GetExtension(createComboWithDishesDTO.ImageUrl).ToLower();
+				string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+
+				if (!allowedExtensions.Contains(extension))
+				{
+					errors["image"] = "Hình ảnh không hợp lệ. Chỉ cho phép các tệp JPG, JPEG, PNG, GIF.";
+				}
+			}
+
+
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+			try
+			{
+				var result = await _comboService.CreateComboWithDishesAsync(createComboWithDishesDTO);
+				return Ok(new
+				{
+					message = "Combo đã được tạo thành công",
+					result
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = ex.Message });
+			}
+		}
+
+
+	}
 }
