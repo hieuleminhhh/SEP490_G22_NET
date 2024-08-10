@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 
@@ -17,5 +18,6 @@ namespace EHM_API.Repositories
 		Task CreateInvoiceAsync(Invoice invoice);
 
 		Task CreateInvoiceLog(InvoiceLog invoiceLog);
+		Task UpdateOrderAndInvoiceAsync(int orderId, InvoiceOfSitting dto);
 	}
 }
