@@ -32,64 +32,94 @@ namespace EHM_API.Repositories
         }
         public async Task<IEnumerable<OrderDetailForChefDTO>> GetOrderDetailsAsync()
         {
-            var today = DateTime.Today;
+            var now = DateTime.Now;
+            var today = now.Date;
+
             var orderDetails = await _context.OrderDetails
                 .Include(od => od.Dish)
                 .Include(od => od.Combo)
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
                 .Include(od => od.Order)
-                .Where(od => ((od.Order.Type == 1 
-                && (od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue
-                && (od.Order.RecevingOrder.Value.TimeOfDay == DateTime.Now.TimeOfDay)
-                ||(od.Order.RecevingOrder.Value.TimeOfDay == od.Order.OrderDate.Value.TimeOfDay)))
-                || (od.Order.Type == 4 && od.OrderTime.HasValue 
-                && od.OrderTime.Value.Date == today)
-                || (od.Order.Type == 3
-                && od.Order.RecevingOrder.HasValue 
-                && od.Order.RecevingOrder.Value.TimeOfDay == od.OrderTime.Value.TimeOfDay)
-                || (od.Order.Type == 2 
-                && ((od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue)
-                && (od.Order.RecevingOrder.Value.TimeOfDay == od.Order.OrderDate.Value.TimeOfDay)
-                || (od.Order.RecevingOrder.Value.TimeOfDay == DateTime.Now.TimeOfDay))))
-                && (od.Order.Status == 3 || od.Order.Status == 6)
-                && od.DishesServed < od.Quantity)
-                .OrderBy(od => od.OrderTime)
+                .Where(od =>
+                    (
+                      // Type = 1: Mang về
+                      (od.Order.Type == 1 && od.Order.OrderDate.HasValue
+                    && od.Order.OrderDate.Value.Date == today
+                    && (od.Order.RecevingOrder == null || od.Order.RecevingOrder.Value.Date == now.Date))
+                        // Type = 2: Online
+                        || (od.Order.Type == 2
+                            && od.Order.RecevingOrder.HasValue
+                            && od.OrderTime.HasValue
+                            && od.Order.RecevingOrder.Value.Date == now.Date)
+                        // Type = 3: Đặt bàn
+                        || (od.Order.Type == 3
+                            && od.Order.RecevingOrder.HasValue
+                            && od.Order.RecevingOrder.Value.Date == now.Date)
+                        // Type = 4: Tại chỗ
+                        || (od.Order.Type == 4 && od.OrderTime.HasValue
+                            && od.OrderTime.Value.Date == today)
+                    )
+                    // Điều kiện trạng thái
+                    && (od.Order.Status == 3 || od.Order.Status == 6)
+                    && od.DishesServed < od.Quantity)
+               
+                .OrderBy(od => od.Order.RecevingOrder.HasValue
+                    ? od.Order.RecevingOrder.Value.AddHours(-1)
+                    : (od.OrderTime.HasValue ? od.OrderTime.Value : od.Order.OrderDate.Value))
                 .ToListAsync();
 
             var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(orderDetails);
             return orderDetailDTOs;
         }
 
+
+
         public async Task<IEnumerable<OrderDetailForChef1DTO>> GetOrderDetails1Async()
         {
             var today = DateTime.Today;
+            var now = DateTime.Now;
+
             var orderDetails = await _context.OrderDetails
                 .Include(od => od.Dish)
                 .Include(od => od.Combo)
                     .ThenInclude(c => c.ComboDetails)
                     .ThenInclude(cd => cd.Dish)
                 .Include(od => od.Order)
-                .Where(od => ((od.Order.Type == 1
-                && (od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue
-                && (od.Order.RecevingOrder.Value.TimeOfDay != DateTime.Now.TimeOfDay)
-                || (od.Order.RecevingOrder.Value.TimeOfDay != od.Order.OrderDate.Value.TimeOfDay)))
-                || (od.Order.Type == 3
-                && od.Order.RecevingOrder.HasValue
-                && od.Order.RecevingOrder.Value.TimeOfDay != od.OrderTime.Value.TimeOfDay)
-                || (od.Order.Type == 2
-                && ((od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue)
-                && (od.Order.RecevingOrder.Value.TimeOfDay != od.Order.OrderDate.Value.TimeOfDay)
-                || (od.Order.RecevingOrder.Value.TimeOfDay != DateTime.Now.TimeOfDay))))
-                && (od.Order.Status == 6)
-                && od.DishesServed < od.Quantity
-                && od.OrderTime.HasValue && od.Order.RecevingOrder.Value.Date >= today)
+                .Where(od => (
+                        // Type = 1: Mang về
+                        (od.Order.Type == 1
+                            && od.Order.RecevingOrder.HasValue
+                            && od.Order.OrderDate.HasValue
+                            && od.Order.OrderDate < od.Order.RecevingOrder)
+                        // Type = 2: Online
+                        || (od.Order.Type == 2
+                            && od.Order.RecevingOrder.HasValue
+                            && od.Order.OrderDate.HasValue
+                            && od.Order.OrderDate < od.Order.RecevingOrder)
+                        // Type = 3: Đặt bàn
+                        || (od.Order.Type == 3
+                            && od.Order.RecevingOrder.HasValue
+                            && od.OrderTime.HasValue
+                            && od.OrderTime < od.Order.RecevingOrder)
+                        // Type = 4: Tại chỗ
+                        || (od.Order.Type == 4
+                            && od.OrderTime.HasValue
+                            && od.OrderTime.Value.Date == today)
+                    )
+                    // Điều kiện trạng thái
+                    && (od.Order.Status == 6)
+                    && od.DishesServed < od.Quantity
+                    && od.OrderTime.HasValue
+                    && od.Order.RecevingOrder.Value.Date >= today)
+                // Sắp xếp theo thời gian RecevingOrder
                 .OrderBy(od => od.Order.RecevingOrder)
                 .ToListAsync();
 
             var orderDetailDTO1s = _mapper.Map<IEnumerable<OrderDetailForChef1DTO>>(orderDetails);
             return orderDetailDTO1s;
         }
+
 
 
 
