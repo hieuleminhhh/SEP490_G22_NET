@@ -37,7 +37,7 @@ namespace EHM_API.Controllers
 
             return NoContent();
         }
-        [HttpGet("1-4")]
+        [HttpGet("Current orderdetails")]
         public async Task<IActionResult> GetOrderDetails()
         {
             try
@@ -61,7 +61,7 @@ namespace EHM_API.Controllers
             }
         }
 
-        [HttpGet("2-3")]
+        [HttpGet("Future orderdetails")]
         public async Task<IActionResult> GetOrderDetails1()
         {
             try
