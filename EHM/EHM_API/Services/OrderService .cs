@@ -360,8 +360,38 @@ namespace EHM_API.Services
             return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orderDetails);
         }
 
+		public async Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto)
+		{
+			var order = await _orderRepository.GetByIdAsync(orderId);
+			if (order == null)
+			{
+				throw new KeyNotFoundException($"Không tìm thấy đơn hàng với OrderID {orderId}");
+			}
 
-    }
+			if (dto.Status.HasValue)
+			{
+				order.Status = dto.Status.Value;
+			}
+
+			if (dto.AmountReceived.HasValue)
+			{
+				order.Invoice.AmountReceived = dto.AmountReceived.Value;
+
+				var invoiceLog = new InvoiceLog
+				{
+					Description = dto.Description,
+					InvoiceId = order.InvoiceId
+				};
+
+				await _invoiceRepository.CreateInvoiceLog(invoiceLog);
+			}
+
+			await _orderRepository.UpdateOrderAsync(order);
+		}
+
+
+
+	}
 }
 
 	

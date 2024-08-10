@@ -40,7 +40,7 @@ namespace EHM_API.Repositories
 		public async Task<IEnumerable<Address>> GetListAddress()
 		{
 			var addresses = await _context.Addresses
-				.Where(a => a.GuestAddress != null && a.GuestAddress.ToUpper() == "ĂN TẠI QUÁN")
+				.Where(a => a.GuestAddress != null)
 				.ToListAsync();
 			return addresses;
 		}

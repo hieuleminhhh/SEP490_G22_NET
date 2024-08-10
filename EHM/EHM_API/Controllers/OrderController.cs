@@ -537,6 +537,25 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[HttpPut("UpdateAmountReceiving/{orderId}")]
+		public async Task<IActionResult> UpdateAmountReceiving(int orderId, UpdateAmountReceiving dto)
+		{
+			try
+			{
+				await _orderService.UpdateAmountReceivingAsync(orderId, dto);
+				return Ok(new { Message = "Số tiền nhận đã được cập nhật thành công." });
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(new { Message = ex.Message });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+			}
+		}
+
+
 
 	}
 }

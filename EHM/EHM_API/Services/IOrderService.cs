@@ -38,10 +38,10 @@ namespace EHM_API.Services
 		Task CancelOrderForTableAsync(int tableId, int orderId, CancelOrderDTO dto);
 		Task<IEnumerable<GetOrderDetailDTO>> GetOrderDetailsByOrderIdAsync(int orderId);
 		Task<IEnumerable<GetDishOrderDetailDTO>> GetOrderDetailsByOrderId(int orderId);
-
 		Task UpdateOrderAndTablesStatusAsyncByTableId(int tableId, CancelOrderTableDTO dto);
-
 		Task<int> UpdateStatusAndCreateInvoiceAsync(int orderId, UpdateStatusAndCInvoiceD dto);
         Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async();
-    }
+		Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto);
+
+	}
 }

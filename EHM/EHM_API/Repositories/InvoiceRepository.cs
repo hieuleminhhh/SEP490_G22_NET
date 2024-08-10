@@ -264,5 +264,11 @@ namespace EHM_API.Repositories
 			await _context.SaveChangesAsync();
 		}
 
+		public async Task CreateInvoiceLog(InvoiceLog invoiceLog)
+		{
+			_context.InvoiceLogs.Add(invoiceLog);
+			await _context.SaveChangesAsync();
+		}
+
 	}
 }
