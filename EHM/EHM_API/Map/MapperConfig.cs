@@ -587,7 +587,10 @@ namespace EHM_API.Map
 
 			CreateMap<Invoice, GetInvoiceByOrderDTO>();
 
-			CreateMap<Discount, DiscountDTO>();
+			CreateMap<Order, UpdateAmountReceiving>()
+		.ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice.AmountReceived))
+		.ForMember(dest => dest.Description, opt => opt.Ignore());
+
 
 			CreateMap<Discount, GetDiscountByOrderID>();
 
