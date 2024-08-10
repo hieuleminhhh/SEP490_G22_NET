@@ -117,15 +117,7 @@ namespace EHM_API.Controllers
 			return Ok(updatedIngredient);
 		}
 
-		[HttpDelete("{dishId}/{materialId}")]
-		public async Task<IActionResult> DeleteIngredient(int dishId, int materialId)
-		{
-			var result = await _ingredientService.DeleteIngredientAsync(dishId, materialId);
-			if (!result)
-				return NotFound(new { message = "Không tìm thấy nguyên liệu với món ăn đã cung cấp." });
-
-			return NoContent();
-		}
+		
 
 		[HttpGet("search-by-dish-id/{dishId}")]
 		public async Task<ActionResult<IEnumerable<IngredientAllDTO>>> SearchIngredientsByDishId(int dishId)
@@ -149,6 +141,16 @@ namespace EHM_API.Controllers
 			}
 
 			return Ok(ingredients);
+		}
+
+		[HttpDelete("{dishId}/{materialId}")]
+		public async Task<IActionResult> DeleteIngredient(int dishId, int materialId)
+		{
+			var result = await _ingredientService.DeleteIngredientAsync(dishId, materialId);
+			if (!result)
+				return NotFound(new { message = "Không tìm thấy nguyên liệu với món ăn đã cung cấp." });
+
+			return NoContent();
 		}
 
 		[HttpGet("search-by-dish-item-name")]

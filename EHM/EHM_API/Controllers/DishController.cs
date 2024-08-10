@@ -251,32 +251,6 @@ namespace EHM_API.Controllers
             });
         }
 
-		[HttpGet("search")]
-		public async Task<ActionResult<IEnumerable<DishDTOAll>>> SearchDishes([FromQuery] string? name)
-		{
-			try
-			{
-				if (string.IsNullOrWhiteSpace(name))
-				{
-					return BadRequest(new { message = "Từ khóa tìm kiếm không được để trống." });
-				}
-
-				var dishes = await _dishService.SearchDishesAsync(name.Trim());
-
-				if (dishes == null || !dishes.Any())
-				{
-					return NotFound(new { message = "Không tìm thấy món ăn nào phù hợp với từ khóa." });
-				}
-
-				return Ok(new { message = "Tìm kiếm thành công.", data = dishes });
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình tìm kiếm. Vui lòng thử lại sau." });
-			}
-		}
-
-
 		[HttpGet("sorted-dishes")]
 		public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
 		{
@@ -313,8 +287,32 @@ namespace EHM_API.Controllers
 			}
 		}
 
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<DishDTOAll>>> SearchDishes([FromQuery] string? name)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    return BadRequest(new { message = "Từ khóa tìm kiếm không được để trống." });
+                }
 
-		[HttpPatch("{dishId}/status")]
+                var dishes = await _dishService.SearchDishesAsync(name.Trim());
+
+                if (dishes == null || !dishes.Any())
+                {
+                    return NotFound(new { message = "Không tìm thấy món ăn nào phù hợp với từ khóa." });
+                }
+
+                return Ok(new { message = "Tìm kiếm thành công.", data = dishes });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình tìm kiếm. Vui lòng thử lại sau." });
+            }
+        }
+
+        [HttpPatch("{dishId}/status")]
 		public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
 		{
 			try
@@ -350,23 +348,6 @@ namespace EHM_API.Controllers
 		}
 
 
-		[HttpGet("searchDishAndCombo")]
-		public async Task<ActionResult<SearchDishAndComboDTO>> SearchDishAndCombo([FromQuery] string search)
-		{
-			if (string.IsNullOrWhiteSpace(search))
-			{
-				return BadRequest("Từ khóa tìm kiếm không được để trống.");
-			}
-
-			var result = await _dishService.SearchDishAndComboAsync(search);
-
-			if (result == null || (result.Dishes.Count == 0 && result.Combos.Count == 0))
-			{
-				return NotFound("Không tìm thấy kết quả nào.");
-			}
-
-			return Ok(result);
-		}
         [HttpPut("{discountId}/dishes")]
         public async Task<ActionResult<IEnumerable<DishDTO>>> UpdateDiscountForDishesAsync(int discountId, [FromBody] List<int> dishIds)
         {
@@ -379,6 +360,23 @@ namespace EHM_API.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+        [HttpGet("searchDishAndCombo")]
+        public async Task<ActionResult<SearchDishAndComboDTO>> SearchDishAndCombo([FromQuery] string search)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                return BadRequest("Từ khóa tìm kiếm không được để trống.");
+            }
+
+            var result = await _dishService.SearchDishAndComboAsync(search);
+
+            if (result == null || (result.Dishes.Count == 0 && result.Combos.Count == 0))
+            {
+                return NotFound("Không tìm thấy kết quả nào.");
+            }
+
+            return Ok(result);
         }
     }
 }
