@@ -606,8 +606,9 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.QuantityRequired, opt => opt.MapFrom(src => src.Quantity - src.DishesServed));
 
             CreateMap<Order, OrderDetailForStaffType1>()
-                   .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.Type))
-                   .ForMember(dest => dest.ItemInOrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
+                 .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.Type))
+    .ForMember(dest => dest.ItemInOrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
+    .ForMember(dest => dest.Status, opt => opt.MapFrom<OrderStatusResolver>());
 
             // Mapping OrderDetail to ItemInOrderDetail
             CreateMap<OrderDetail, ItemInOrderDetail>()
@@ -640,7 +641,14 @@ namespace EHM_API.Map
 
             return null;
         }
-
+        public class OrderStatusResolver : IValueResolver<Order, OrderDetailForStaffType1, int?>
+        {
+            public int? Resolve(Order source, OrderDetailForStaffType1 destination, int? destMember, ResolutionContext context)
+            {
+                var allDetails = source.OrderDetails;
+                return allDetails.All(detail => detail.Quantity == detail.DishesServed) ? 1 : 0; // Assuming 1 for true and 0 for false
+            }
+        }
 
 
     }
