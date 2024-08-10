@@ -992,7 +992,7 @@ public class OrderRepository : IOrderRepository
             .Where(o =>
                 ((o.Status == 6))
                 && ((o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)
-                || (o.Type == 1 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)))
+                || (o.Type == 1 && (o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today || o.RecevingOrder == null))))
             .ToListAsync();
     }
 

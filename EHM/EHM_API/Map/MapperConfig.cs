@@ -494,6 +494,7 @@ namespace EHM_API.Map
      .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
      .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
      .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
+      .ForMember(dest => dest.RecevingOrder, opt => opt.MapFrom(src => src.Order.RecevingOrder))
      .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
      .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
      .ForMember(dest => dest.ComboDetailsForChef, opt => opt.MapFrom(src => src.Combo.ComboDetails
