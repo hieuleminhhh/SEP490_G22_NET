@@ -45,29 +45,38 @@ namespace EHM_API.Repositories
                     (
                       // Type = 1: Mang về
                       (od.Order.Type == 1 && od.Order.OrderDate.HasValue
+                      && od.Order.Status == 6
                     && od.Order.OrderDate.Value.Date == today
                     && (od.Order.RecevingOrder == null || od.Order.RecevingOrder.Value.Date == now.Date))
                         // Type = 2: Online
                         || (od.Order.Type == 2
                             && od.Order.RecevingOrder.HasValue
-                            && od.OrderTime.HasValue
+                            && od.Order.Status == 6
+                            && od.OrderTime.HasValue && od.OrderTime.Value.Date == now.Date
                             && od.Order.RecevingOrder.Value.Date == now.Date)
                         // Type = 3: Đặt bàn
                         || (od.Order.Type == 3
                             && od.Order.RecevingOrder.HasValue
+                            && (od.Order.Status == 2 || od.Order.Status == 3)
                             && od.Order.RecevingOrder.Value.Date == now.Date)
                         // Type = 4: Tại chỗ
                         || (od.Order.Type == 4 && od.OrderTime.HasValue
+                       && (od.Order.Status == 3)
                             && od.OrderTime.Value.Date == today)
                     )
                     // Điều kiện trạng thái
-                    && (od.Order.Status == 3 || od.Order.Status == 6)
+
                     && od.DishesServed < od.Quantity)
-               
-                .OrderBy(od => od.Order.RecevingOrder.HasValue
+
+               .OrderBy(od =>
+            od.Order.Type == 3 && od.Order.RecevingOrder.HasValue && od.OrderTime.HasValue
+                ? (od.Order.RecevingOrder.Value > od.OrderTime.Value.AddHours(1)
+                    ? od.Order.RecevingOrder.Value
+                    : od.OrderTime.Value)
+                : (od.Order.RecevingOrder.HasValue
                     ? od.Order.RecevingOrder.Value.AddHours(-1)
-                    : (od.OrderTime.HasValue ? od.OrderTime.Value : od.Order.OrderDate.Value))
-                .ToListAsync();
+                    : (od.OrderTime.HasValue ? od.OrderTime.Value : od.Order.OrderDate.Value)))
+        .ToListAsync();
 
             var orderDetailDTOs = _mapper.Map<IEnumerable<OrderDetailForChefDTO>>(orderDetails);
             return orderDetailDTOs;
@@ -90,25 +99,24 @@ namespace EHM_API.Repositories
                         // Type = 1: Mang về
                         (od.Order.Type == 1
                             && od.Order.RecevingOrder.HasValue
+                             && (od.Order.Status == 6)
                             && od.Order.OrderDate.HasValue
-                            && od.Order.OrderDate < od.Order.RecevingOrder)
+                            && od.Order.OrderDate.Value.Date != od.Order.RecevingOrder.Value.Date)
                         // Type = 2: Online
                         || (od.Order.Type == 2
                             && od.Order.RecevingOrder.HasValue
+                             && (od.Order.Status == 6)
                             && od.Order.OrderDate.HasValue
-                            && od.Order.OrderDate < od.Order.RecevingOrder)
+                            && od.Order.OrderDate.Value.Date != od.Order.RecevingOrder.Value.Date)
                         // Type = 3: Đặt bàn
                         || (od.Order.Type == 3
                             && od.Order.RecevingOrder.HasValue
+                             && (od.Order.Status == 2 || od.Order.Status == 3)
                             && od.OrderTime.HasValue
-                            && od.OrderTime < od.Order.RecevingOrder)
-                        // Type = 4: Tại chỗ
-                        || (od.Order.Type == 4
-                            && od.OrderTime.HasValue
-                            && od.OrderTime.Value.Date == today)
+                            && od.OrderTime.Value.Date < od.Order.RecevingOrder.Value.Date)
+
                     )
                     // Điều kiện trạng thái
-                    && (od.Order.Status == 6)
                     && od.DishesServed < od.Quantity
                     && od.OrderTime.HasValue
                     && od.Order.RecevingOrder.Value.Date >= today)
