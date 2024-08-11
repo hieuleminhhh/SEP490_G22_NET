@@ -15,7 +15,7 @@
 		public decimal? AmountReceived { get; set; }
 		public decimal? ReturnAmount { get; set; }
 		public int? PaymentMethods { get; set; }
-
 		public string? Description { get; set; }
+		public int? TableStatus { get; set; }
 	}
 }
