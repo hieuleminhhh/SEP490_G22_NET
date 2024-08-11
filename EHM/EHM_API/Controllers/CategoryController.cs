@@ -89,7 +89,16 @@ namespace EHM_API.Controllers
 			}
 		}
 
-
+		[HttpGet("dishes/{categoryName}")]
+		public async Task<ActionResult<IEnumerable<ViewCategoryDTO>>> GetDishesByCategoryName(string categoryName)
+		{
+			var dishes = await _categoryService.GetDishesByCategoryNameAsync(categoryName);
+			if (dishes == null || !dishes.Any())
+			{
+				return NotFound("Không tìm thấy món ăn nào cho danh mục này.");
+			}
+			return Ok(dishes);
+		}
 
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
@@ -162,16 +171,7 @@ namespace EHM_API.Controllers
 			return NoContent();
 		}
 
-		[HttpGet("dishes/{categoryName}")]
-		public async Task<ActionResult<IEnumerable<ViewCategoryDTO>>> GetDishesByCategoryName(string categoryName)
-		{
-			var dishes = await _categoryService.GetDishesByCategoryNameAsync(categoryName);
-			if (dishes == null || !dishes.Any())
-			{
-				return NotFound("Không tìm thấy món ăn nào cho danh mục này.");
-			}
-			return Ok(dishes);
-		}
+		
 
 		
 	}
