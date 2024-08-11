@@ -101,5 +101,10 @@ namespace EHM_API.Repositories
 				.Select(o => o.Discount)
 				.FirstOrDefaultAsync();
 		}
+
+		public async Task<bool> DiscountNameExistsAsync(string discountName)
+		{
+			return await _context.Discounts.AnyAsync(d => d.DiscountName == discountName);
+		}
 	}
 }

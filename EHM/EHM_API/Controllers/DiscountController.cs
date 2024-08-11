@@ -127,6 +127,7 @@ public class DiscountsController : ControllerBase
 			errors["discountName"] = "Tên giảm giá không được để trống";
 		}
 
+
 		if (!string.IsNullOrEmpty(discountDto.DiscountName))
 		{
 			if (discountDto.DiscountName.Length > 100)
