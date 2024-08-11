@@ -357,7 +357,7 @@ namespace EHM_API.Repositories
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
 						DishesServed = 0,
-						OrderTime = item.OrderTime,
+						OrderTime = DateTime.Now,
 						Note = item.Note,
 					};
 
