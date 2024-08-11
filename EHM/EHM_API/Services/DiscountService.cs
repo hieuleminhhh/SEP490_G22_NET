@@ -141,6 +141,9 @@ namespace EHM_API.Services
 			return _mapper.Map<GetDiscountByOrderID>(discount);
 		}
 
-
+		public async Task<bool> IsDiscountNameExistingAsync(string discountName)
+		{
+			return await _discountRepository.DiscountNameExistsAsync(discountName);
+		}
 	}
 }
