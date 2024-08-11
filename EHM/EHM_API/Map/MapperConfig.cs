@@ -614,7 +614,8 @@ namespace EHM_API.Map
 	        .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.AmountReceived : (decimal?)null))
 	        .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.ReturnAmount : (decimal?)null))
 	        .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentMethods : (int?)null))
-	        .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.InvoiceLogs.Select(log => log.Description).FirstOrDefault() : (string?)null));
+	        .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.InvoiceLogs.Select(log => log.Description).FirstOrDefault() : (string?)null))
+			.ForMember(dest => dest.TableStatus, opt => opt.MapFrom(src => src.OrderTables.FirstOrDefault().Table.Status));
 
 
 
