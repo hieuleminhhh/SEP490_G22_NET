@@ -7,7 +7,6 @@
 		public DateTime OrderDate { get; set; }
 		public int? Status { get; set; }
 		public DateTime? RecevingOrder { get; set; }
-		public decimal TotalAmount { get; set; }
 		public string GuestPhone { get; set; }
 		public int? AddressId { get; set; }
 		public string Note { get; set; }
