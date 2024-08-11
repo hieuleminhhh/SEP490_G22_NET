@@ -378,7 +378,7 @@ namespace EHM_API.Repositories
 
 			foreach (var orderTable in order.OrderTables)
 			{
-				orderTable.Table.Status = 0;
+				orderTable.Table.Status = dto.TableStatus ?? 0;
 			}
 
 			await _context.SaveChangesAsync();
