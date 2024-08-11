@@ -814,38 +814,6 @@ public class OrderRepository : IOrderRepository
 			await _context.SaveChangesAsync();
 		}
 
-		decimal discountAmount = 0m;
-		if (dto.DiscountId.HasValue)
-		{
-			var discount = await _context.Discounts
-				.FirstOrDefaultAsync(d => d.DiscountId == dto.DiscountId.Value);
-
-			if (discount != null && discount.DiscountStatus == true)
-			{
-				if (discount.DiscountPercent.HasValue)
-				{
-					discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
-				}
-				else if (discount.TotalMoney.HasValue)
-				{
-					discountAmount = Math.Min(totalAmount, discount.TotalMoney.Value);
-				}
-				if (discount.QuantityLimit.HasValue && discount.QuantityLimit > 0)
-				{
-					discount.QuantityLimit--;
-				}
-
-				if (discount.QuantityLimit == 0)
-				{
-				
-					discount.DiscountStatus = false;
-					_context.Discounts.Update(discount);
-				}
-			}
-		}
-
-		var finalTotalAmount = totalAmount - discountAmount;
-
 		var orderTable = new OrderTable
 		{
 			TableId = tableId,
@@ -855,7 +823,7 @@ public class OrderRepository : IOrderRepository
 		_context.OrderTables.Add(orderTable);
 		await _context.SaveChangesAsync();
 
-		order.TotalAmount = finalTotalAmount;
+		order.TotalAmount = totalAmount;
 
 		await _context.SaveChangesAsync();
 		await _tableRepository.UpdateTableStatus(tableId, 1);
