@@ -160,7 +160,7 @@ namespace EHM_API.Repositories
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
 						Note = item.Note,
-						OrderTime = item.OrderTime
+						OrderTime = DateTime.Now
 					};
 
 					orderDetails.Add(orderDetail);
@@ -170,7 +170,7 @@ namespace EHM_API.Repositories
 				{
 					var order = new Order
 					{
-						OrderDate = reservationDTO.OrderDate,
+						OrderDate = DateTime.Now,
 						Status = reservationDTO.Status ?? 0,
 						RecevingOrder = reservationDTO.RecevingOrder,
 						TotalAmount = reservationDTO.TotalAmount,
