@@ -117,7 +117,7 @@ namespace EHM_API.Services
 						UnitPrice = item.UnitPrice,
 						DishesServed = 0,
 						Note = item.Note,
-						OrderTime = item.OrderTime
+						OrderTime = DateTime.Now
 					};
 
 					orderDetails.Add(orderDetail);
@@ -181,9 +181,9 @@ namespace EHM_API.Services
 
 		public async Task<int> TakeOut(TakeOutDTO takeOutDTO)
 		{
-			if (takeOutDTO.OrderDate.HasValue)
+			if (takeOutDTO.RecevingOrder.HasValue)
 			{
-				if (takeOutDTO.OrderDate.Value.Date == DateTime.Now.Date)
+				if (takeOutDTO.RecevingOrder.Value.Date == DateTime.Now.Date)
 				{
 					takeOutDTO.Status = 6; 
 				}

@@ -24,7 +24,7 @@ namespace EHM_API.Models
         public string? Note { get; set; }
         public int? Type { get; set; }
 		public int? DiscountId { get; set; }
-
+		public string? CancelationReason { get; set; }
 		public virtual Account? Account { get; set; }
         public virtual Address? Address { get; set; }
 		public virtual Discount? Discount { get; set; }
