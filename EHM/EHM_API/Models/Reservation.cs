@@ -12,6 +12,7 @@ namespace EHM_API.Models
         public int? Status { get; set; }
         public int AddressId { get; set; }
         public int? OrderId { get; set; }
+        public string? ReasonCancel { get; set; }
 
         public virtual Address Address { get; set; } = null!;
         public virtual Order? Order { get; set; }

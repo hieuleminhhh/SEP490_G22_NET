@@ -18,5 +18,17 @@ namespace EHM_API.Repositories
             await _context.TableReservations.AddAsync(tableReservation);
             await _context.SaveChangesAsync();
         }
+        public async Task<bool> DeleteTableReservationByReservationIdAsync(int reservationId)
+        {
+            var tableReservation = await _context.TableReservations
+                .FirstOrDefaultAsync(tr => tr.ReservationId == reservationId);
+
+            if (tableReservation == null)
+                return false;
+
+            _context.TableReservations.Remove(tableReservation);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
