@@ -302,6 +302,7 @@ namespace EHM_API.Map
 
             //Table
             CreateMap<Table, TableAllDTO>();
+            CreateMap<CreateTableDTO, Table>().ReverseMap();
             CreateMap<Table, FindTableDTO>()
                .ForMember(dest => dest.CombinedTables, opt => opt.Ignore());
 

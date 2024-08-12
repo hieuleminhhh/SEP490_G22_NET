@@ -320,12 +320,15 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.AddressId).HasColumnName("AddressID");
 
-				entity.Property(e => e.CancelationReason).HasMaxLength(200);
+                entity.Property(e => e.CancelationReason).HasMaxLength(200);
 
-				entity.Property(e => e.Deposits).HasColumnType("money");
-				entity.Property(e => e.DiscountId).HasColumnName("DiscountID");
+                entity.Property(e => e.Deposits)
+                    .HasColumnType("money")
+                    .HasDefaultValueSql("((0))");
 
-				entity.Property(e => e.GuestPhone)
+                entity.Property(e => e.DiscountId).HasColumnName("DiscountID");
+
+                entity.Property(e => e.GuestPhone)
                     .HasMaxLength(15)
                     .IsUnicode(false);
 
@@ -351,12 +354,12 @@ namespace EHM_API.Models
                     .HasForeignKey(d => d.AddressId)
                     .HasConstraintName("FK_Order_Address");
 
-				entity.HasOne(d => d.Discount)
-				  .WithMany(p => p.Orders)
-				  .HasForeignKey(d => d.DiscountId)
-				  .HasConstraintName("FK_Order_Discount");
+                entity.HasOne(d => d.Discount)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.DiscountId)
+                    .HasConstraintName("FK_Order_Discount");
 
-				entity.HasOne(d => d.GuestPhoneNavigation)
+                entity.HasOne(d => d.GuestPhoneNavigation)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.GuestPhone)
                     .HasConstraintName("FK_Order_Guest");
@@ -425,6 +428,7 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_OrderTable_Table");
             });
 
+
             modelBuilder.Entity<Reservation>(entity =>
             {
                 entity.ToTable("Reservation");
@@ -434,6 +438,8 @@ namespace EHM_API.Models
                 entity.Property(e => e.Note).HasMaxLength(255);
 
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
+
+                entity.Property(e => e.ReasonCancel).HasMaxLength(200);
 
                 entity.Property(e => e.ReservationTime).HasColumnType("datetime");
 
@@ -446,7 +452,7 @@ namespace EHM_API.Models
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK__Reservati__Order__5BE2A6F2");
+                    .HasConstraintName("FK__Reservati__Order__6FE99F9F");
             });
 
             modelBuilder.Entity<Setting>(entity =>
