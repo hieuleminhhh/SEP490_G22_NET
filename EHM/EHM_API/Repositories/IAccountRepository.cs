@@ -7,5 +7,9 @@ namespace EHM_API.Repositories
 		Task<Account> AddAccountAsync(Account account);
 
 		Task<bool> AccountExistsAsync(string username);
-	}
+        Task<IEnumerable<Account>> GetAllAccountsAsync();
+        Task<Account> GetAccountByIdAsync(int id);
+        Task<Account> UpdateAccountAsync(Account account);
+        Task<Account> RemoveAccountAsync(int id);
+    }
 }
