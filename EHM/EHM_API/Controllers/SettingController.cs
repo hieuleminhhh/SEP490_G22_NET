@@ -22,13 +22,6 @@ namespace EHM_API.Controllers
             return Ok(settings);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<SettingAllDTO>> AddAsync([FromBody] SettingAllDTO settingDto)
-        {
-            var setting = await _settingService.AddAsync(settingDto);
-            return Created("", setting);
-        }
-
         [HttpPut("{id}")]
         public async Task<ActionResult<SettingAllDTO>> UpdateAsync(int id, [FromBody] SettingAllDTO settingDto)
         {
@@ -39,6 +32,15 @@ namespace EHM_API.Controllers
             }
             return Ok(updatedSetting);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<SettingAllDTO>> AddAsync([FromBody] SettingAllDTO settingDto)
+        {
+            var setting = await _settingService.AddAsync(settingDto);
+            return Created("", setting);
+        }
+
+        
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id)
