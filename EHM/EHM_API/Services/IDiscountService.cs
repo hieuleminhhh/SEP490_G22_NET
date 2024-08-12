@@ -14,5 +14,6 @@ namespace EHM_API.Services
 		Task<IEnumerable<DiscountDTO>> GetActiveDiscountsAsync();
 
 		Task<GetDiscountByOrderID> GetDiscountByOrderIdAsync(int orderId);
+		Task<bool> IsDiscountNameExistingAsync(string discountName);
 	}
 }

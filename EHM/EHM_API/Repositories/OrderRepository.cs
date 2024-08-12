@@ -532,7 +532,6 @@ public class OrderRepository : IOrderRepository
 			}
 			else if (detailDto.Quantity < 0)
 			{
-				// Xử lý khi quantity âm (giảm số lượng món ăn hoặc combo)
 				if (detailDto.DishId.HasValue && detailDto.DishId != 0)
 				{
 					var dishId = Math.Abs(detailDto.DishId.Value);
@@ -596,7 +595,6 @@ public class OrderRepository : IOrderRepository
 			}
 			else if (detailDto.Quantity > 0 && detailDto.Quantity <= 100)
 			{
-				// Xử lý khi quantity dương (thêm món ăn hoặc combo)
 				if (detailDto.DishId.HasValue && detailDto.DishId != 0)
 				{
 					var dishId = Math.Abs(detailDto.DishId.Value);
@@ -652,31 +650,7 @@ public class OrderRepository : IOrderRepository
 
 		decimal totalAmount = (decimal)order.OrderDetails.Sum(od => od.UnitPrice);
 
-		decimal discountAmount = 0;
-		if (dto.DiscountId.HasValue)
-		{
-			var discount = await _discountRepository.GetDiscountByIdAsync(dto.DiscountId.Value);
-			if (discount != null && discount.DiscountStatus == true)
-			{
-				if (totalAmount >= (discount.TotalMoney ?? 0) &&
-					(discount.QuantityLimit == null || discount.QuantityLimit > 0))
-				{
-					if (discount.DiscountPercent.HasValue)
-					{
-						discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
-					}
-
-					if (discount.QuantityLimit.HasValue && discount.QuantityLimit > 0)
-					{
-						discount.QuantityLimit--;
-					}
-				}
-			}
-		}
-
-		var finalTotalAmount = totalAmount - discountAmount;
-
-		order.TotalAmount = finalTotalAmount;
+		order.TotalAmount = totalAmount;
 		order.DiscountId = dto.DiscountId.HasValue && dto.DiscountId.Value > 0 ? dto.DiscountId.Value : (int?)null;
 
 		await UpdateOrderAsync(order);
@@ -715,7 +689,7 @@ public class OrderRepository : IOrderRepository
 
 		var order = new Order
 		{
-			OrderDate = dto.OrderDate,
+			OrderDate = DateTime.Now,
 			Status = dto.Status,
 			RecevingOrder = dto.RecevingOrder,
 			GuestPhone = !string.IsNullOrWhiteSpace(dto.GuestPhone) ? dto.GuestPhone : null,
@@ -772,7 +746,7 @@ public class OrderRepository : IOrderRepository
 						OrderId = order.OrderId,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					};
 
 					_context.OrderDetails.Add(orderDetail);
@@ -814,38 +788,6 @@ public class OrderRepository : IOrderRepository
 			await _context.SaveChangesAsync();
 		}
 
-		decimal discountAmount = 0m;
-		if (dto.DiscountId.HasValue)
-		{
-			var discount = await _context.Discounts
-				.FirstOrDefaultAsync(d => d.DiscountId == dto.DiscountId.Value);
-
-			if (discount != null && discount.DiscountStatus == true)
-			{
-				if (discount.DiscountPercent.HasValue)
-				{
-					discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
-				}
-				else if (discount.TotalMoney.HasValue)
-				{
-					discountAmount = Math.Min(totalAmount, discount.TotalMoney.Value);
-				}
-				if (discount.QuantityLimit.HasValue && discount.QuantityLimit > 0)
-				{
-					discount.QuantityLimit--;
-				}
-
-				if (discount.QuantityLimit == 0)
-				{
-				
-					discount.DiscountStatus = false;
-					_context.Discounts.Update(discount);
-				}
-			}
-		}
-
-		var finalTotalAmount = totalAmount - discountAmount;
-
 		var orderTable = new OrderTable
 		{
 			TableId = tableId,
@@ -855,7 +797,7 @@ public class OrderRepository : IOrderRepository
 		_context.OrderTables.Add(orderTable);
 		await _context.SaveChangesAsync();
 
-		order.TotalAmount = finalTotalAmount;
+		order.TotalAmount = totalAmount;
 
 		await _context.SaveChangesAsync();
 		await _tableRepository.UpdateTableStatus(tableId, 1);

@@ -130,6 +130,7 @@ namespace EHM_API.Services
 				throw new KeyNotFoundException($"Không tìm thấy đơn hàng {orderId}");
 			}
 
+			order.Status = 3;
 			order.Deposits = dto.Deposits;
 			
 

@@ -40,7 +40,7 @@ namespace EHM_API.Controllers
                 return Ok(new
                 {
                     message = "Hóa đơn đã được tạo thành công và cập nhật vào đơn hàng.",
-                    invoiceId = invoiceId // Include invoiceId in the response
+                    invoiceId = invoiceId
                 });
             }
             catch (KeyNotFoundException ex)

@@ -306,7 +306,6 @@ namespace EHM_API.Repositories
 			}
 
 			decimal totalAmount = 0;
-			decimal discountAmount = 0;
 			var orderDetails = new List<OrderDetail>();
 
 			foreach (var item in takeOutDTO.OrderDetails)
@@ -357,7 +356,7 @@ namespace EHM_API.Repositories
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
 						DishesServed = 0,
-						OrderTime = item.OrderTime,
+						OrderTime = DateTime.Now,
 						Note = item.Note,
 					};
 
@@ -366,36 +365,13 @@ namespace EHM_API.Repositories
 				}
 			}
 
-			if (takeOutDTO.DiscountId.HasValue)
-			{
-				var discount = await _discountRepository.GetDiscountByIdAsync(takeOutDTO.DiscountId.Value);
-				if (discount != null && discount.DiscountStatus == true)
-				{
-					if (totalAmount >= (discount.TotalMoney ?? 0) &&
-						(discount.QuantityLimit == null || discount.QuantityLimit > 0))
-					{
-						if (discount.DiscountPercent.HasValue)
-						{
-							discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
-						}
-
-						if (discount.QuantityLimit.HasValue && discount.QuantityLimit > 0)
-						{
-							discount.QuantityLimit--;
-						}
-					}
-				}
-			}
-
-			var finalTotalAmount = totalAmount - discountAmount;
-
 			var order = new Order
 			{
 				OrderDate = DateTime.Now,
 				Status = takeOutDTO.Status ?? 0,
 				RecevingOrder = takeOutDTO.RecevingOrder,
 				GuestPhone = guest?.GuestPhone,
-				TotalAmount = finalTotalAmount,
+				TotalAmount = totalAmount,
 				OrderDetails = orderDetails,
 				Deposits = takeOutDTO.Deposits,
 				AddressId = address?.AddressId,
