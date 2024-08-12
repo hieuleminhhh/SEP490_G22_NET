@@ -532,7 +532,6 @@ public class OrderRepository : IOrderRepository
 			}
 			else if (detailDto.Quantity < 0)
 			{
-				// Xử lý khi quantity âm (giảm số lượng món ăn hoặc combo)
 				if (detailDto.DishId.HasValue && detailDto.DishId != 0)
 				{
 					var dishId = Math.Abs(detailDto.DishId.Value);
@@ -596,7 +595,6 @@ public class OrderRepository : IOrderRepository
 			}
 			else if (detailDto.Quantity > 0 && detailDto.Quantity <= 100)
 			{
-				// Xử lý khi quantity dương (thêm món ăn hoặc combo)
 				if (detailDto.DishId.HasValue && detailDto.DishId != 0)
 				{
 					var dishId = Math.Abs(detailDto.DishId.Value);
@@ -652,31 +650,7 @@ public class OrderRepository : IOrderRepository
 
 		decimal totalAmount = (decimal)order.OrderDetails.Sum(od => od.UnitPrice);
 
-		decimal discountAmount = 0;
-		if (dto.DiscountId.HasValue)
-		{
-			var discount = await _discountRepository.GetDiscountByIdAsync(dto.DiscountId.Value);
-			if (discount != null && discount.DiscountStatus == true)
-			{
-				if (totalAmount >= (discount.TotalMoney ?? 0) &&
-					(discount.QuantityLimit == null || discount.QuantityLimit > 0))
-				{
-					if (discount.DiscountPercent.HasValue)
-					{
-						discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
-					}
-
-					if (discount.QuantityLimit.HasValue && discount.QuantityLimit > 0)
-					{
-						discount.QuantityLimit--;
-					}
-				}
-			}
-		}
-
-		var finalTotalAmount = totalAmount - discountAmount;
-
-		order.TotalAmount = finalTotalAmount;
+		order.TotalAmount = totalAmount;
 		order.DiscountId = dto.DiscountId.HasValue && dto.DiscountId.Value > 0 ? dto.DiscountId.Value : (int?)null;
 
 		await UpdateOrderAsync(order);
