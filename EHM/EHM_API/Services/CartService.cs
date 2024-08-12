@@ -117,7 +117,7 @@ namespace EHM_API.Services
 						UnitPrice = item.UnitPrice,
 						DishesServed = 0,
 						Note = item.Note,
-						OrderTime = item.OrderTime
+						OrderTime = DateTime.Now
 					};
 
 					orderDetails.Add(orderDetail);
@@ -125,7 +125,7 @@ namespace EHM_API.Services
 				}
 			}
 
-			if (checkoutDTO.DiscountId.HasValue)
+/*			if (checkoutDTO.DiscountId.HasValue)
 			{
 				var discount = await _discountRepository.GetDiscountByIdAsync(checkoutDTO.DiscountId.Value);
 				if (discount != null && discount.DiscountStatus == true)
@@ -143,9 +143,9 @@ namespace EHM_API.Services
 						discount.QuantityLimit--;
 					}
 				}
-			}
+			}*/
 
-			var finalTotalAmount = totalAmount - discountAmount;
+			var finalTotalAmount = totalAmount;
 
 			var order = new Order
 			{

@@ -1,5 +1,6 @@
 ﻿using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,8 +20,14 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Tables.ToListAsync();
 		}
+        public async Task<Table> CreateAsync(Table table)
+        {
+            _context.Tables.Add(table);
+            await _context.SaveChangesAsync();
+            return table;
+        }
 
-		public async Task<List<Table>> GetAvailableTablesByCapacityAsync(int capacity)
+        public async Task<List<Table>> GetAvailableTablesByCapacityAsync(int capacity)
 		{
 			return await _context.Tables
 				.OrderBy(t => t.Capacity)
@@ -45,12 +52,19 @@ namespace EHM_API.Repositories
 			return await _context.Tables.AnyAsync(t => t.TableId == tableId);
 		}
 
-		public async Task UpdateTableAsync(Table table)
-		{
-			_context.Tables.Update(table);
-			await _context.SaveChangesAsync();
-		}
-		public async Task<List<Table>> GetListTablesByIdsAsync(List<int> tableIds)
+        public async Task<Table> UpdateTableAsync(Table table)
+        {
+            var existingTable = await _context.Tables.FindAsync(table.TableId);
+            if (existingTable == null)
+            {
+                return null;
+            }
+            _context.Entry(existingTable).CurrentValues.SetValues(table);
+            await _context.SaveChangesAsync();
+            return existingTable;
+        }
+
+        public async Task<List<Table>> GetListTablesByIdsAsync(List<int> tableIds)
 		{
 			return await _context.Tables
 								 .Where(t => tableIds.Contains(t.TableId))
