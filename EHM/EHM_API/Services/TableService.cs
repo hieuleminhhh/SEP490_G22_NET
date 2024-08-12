@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EHM_API.DTOs.DiscountDTO.Manager;
+using EHM_API.DTOs.SettingDTO.Manager;
 using EHM_API.DTOs.TableDTO;
+using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
 
@@ -24,6 +28,30 @@ namespace EHM_API.Services
 			var tables = await _repository.GetAllTablesAsync();
 			return _mapper.Map<IEnumerable<TableAllDTO>>(tables);
 		}
+		public async Task<CreateTableDTO> AddAsync(CreateTableDTO tabledto) 
+		{
+
+			var table = _mapper.Map<Table>(tabledto);
+			var addedtable = await _repository.CreateAsync(table);
+			return _mapper.Map<CreateTableDTO>(addedtable);
+		}
+		public async Task<TableAllDTO> GetTableByIdAsync(int tableId)
+		{
+			var table = await _repository.GetTableByIdAsync(tableId);
+			if (table == null)
+			{
+				return null;
+			}
+			return _mapper.Map<TableAllDTO>(table);
+		}
+
+		public async Task<CreateTableDTO> UpdateAsync(int tableId, CreateTableDTO tabledto)
+		{
+            var table = _mapper.Map<Table>(tabledto);
+            table.TableId = tableId;
+            var updatedTable = await _repository.UpdateTableAsync(table);
+            return updatedTable != null ? _mapper.Map<CreateTableDTO>(updatedTable) : null;
+        }
 
 		public async Task<IEnumerable<FindTableDTO>> GetAvailableTablesForGuestsAsync(int guestNumber)
 		{

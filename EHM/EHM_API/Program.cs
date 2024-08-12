@@ -142,6 +142,9 @@ namespace EHM_API
             builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
             builder.Services.AddScoped<IDiscountService, DiscountService>();
 
+            builder.Services.AddScoped<ITableReservationRepository, TableReservationRepository>();
+            builder.Services.AddScoped<ITableReservationService, TableReservationService>();
+
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {

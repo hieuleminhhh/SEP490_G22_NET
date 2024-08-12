@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using EHM_API.DTOs.TableDTO;
 using EHM_API.Services;
+using EHM_API.DTOs.TableDTO.Manager;
 
 namespace EHM_API.Controllers
 {
@@ -16,7 +17,23 @@ namespace EHM_API.Controllers
 		{
 			_service = service;
 		}
-		[HttpGet("available")]
+       
+        [HttpGet("{id}")]
+        public async Task <IActionResult> GetById(int id)
+        {
+            var table = await _service.GetTableByIdAsync(id);
+            if (table == null)
+                return NotFound();
+
+            return Ok(table);
+        }
+        [HttpPost]
+        public async Task <IActionResult> Create(CreateTableDTO tabledto)
+        {
+          var table = await _service.AddAsync(tabledto);
+          return Ok(table);
+        }
+        [HttpGet("available")]
 		public async Task<IActionResult> GetAvailableTables([FromQuery] int guestNumber)
 		{
 			try
@@ -52,9 +69,15 @@ namespace EHM_API.Controllers
 			var tables = await _service.GetAllTablesAsync();
 			return Ok(tables);
 		}
+        [HttpPut("{id}")]
+        public async Task <IActionResult> UpdateAsync(int id, CreateTableDTO tabledto)
+        {
+			var tableid = await _service.GetTableByIdAsync(id);
+		    var updatetable = await _service.UpdateAsync(id, tabledto);
+            return Ok(updatetable);
+        }
 
-		
 
 
-	}
+    }
 }
