@@ -410,6 +410,24 @@ namespace EHM_API.Services
 			await _orderRepository.UpdateOrderAsync(order);
 		}
 
+        public async Task<CancelationReasonDTO?> UpdateCancelationReasonAsync(int orderId, CancelationReasonDTO? cancelationReasonDTO)
+        {
+            if (cancelationReasonDTO == null)
+            {
+                throw new ArgumentNullException(nameof(cancelationReasonDTO)); 
+            }
+
+            var order = await _orderRepository.UpdateCancelationReasonAsync(orderId, cancelationReasonDTO.CancelationReason);
+            if (order == null)
+            {
+                return null; 
+            }
+
+            return new CancelationReasonDTO
+            {
+                CancelationReason = order.CancelationReason
+            };
+        }
 
 
 

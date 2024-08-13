@@ -65,19 +65,19 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address != null ? src.Address.ConsigneeName : null))
                 .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.AmountReceived : null))
                 .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.ReturnAmount : null))
-	     	    .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.DiscountId : (int?)null))
+                 .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.DiscountId : (int?)null))
                 .ForMember(dest => dest.DiscountPercent, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.DiscountPercent : (int?)null))
-	            .ForMember(dest => dest.DiscountName, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.DiscountName : null))
-			    .ForMember(dest => dest.QuantityLimit, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.QuantityLimit : null))
-				.ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.AmountReceived : (decimal?)null))
-	            .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.ReturnAmount : (decimal?)null))
-	            .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentMethods : (int?)null))
+                .ForMember(dest => dest.DiscountName, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.DiscountName : null))
+                .ForMember(dest => dest.QuantityLimit, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.QuantityLimit : null))
+                .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.AmountReceived : (decimal?)null))
+                .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.ReturnAmount : (decimal?)null))
+                .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentMethods : (int?)null))
                 .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentStatus : (int?)null))
-				.ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentTime : (DateTime?)null))
+                .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentTime : (DateTime?)null))
                 .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.Taxcode : null))
                 .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentStatus : 0))
 
-				.ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
+                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
                 .ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.OrderTables.Select(ot => ot.Table)));
 
 
@@ -97,15 +97,15 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed));
 
 
-			CreateMap<OrderDetail, GetDishOrderDetailDTO>()
-	        .ForMember(dest => dest.ComboId, opt => opt.MapFrom(src => src.ComboId))
-	        .ForMember(dest => dest.DishId, opt => opt.MapFrom(src => src.DishId))
-			 .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
-	        .ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
-			.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+            CreateMap<OrderDetail, GetDishOrderDetailDTO>()
+            .ForMember(dest => dest.ComboId, opt => opt.MapFrom(src => src.ComboId))
+            .ForMember(dest => dest.DishId, opt => opt.MapFrom(src => src.DishId))
+             .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
+            .ForMember(dest => dest.NameCombo, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
 
 
-			CreateMap<Table, TableOfOrderDTO>();
+            CreateMap<Table, TableOfOrderDTO>();
 
 
             CreateMap<CreateOrderDTO, Order>();
@@ -139,33 +139,27 @@ namespace EHM_API.Map
                     : src.Dish != null ? src.Dish.Price.Value : (decimal?)null))
                 .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+
             // Mapping Order to CheckoutSuccessDTO
             CreateMap<Order, CheckoutSuccessDTO>()
-               .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
-               .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.GuestPhoneNavigation.Email))
-               .ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.Address.AddressId))
-               .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
-               .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
-               .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
-               .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
-               .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status ?? 0))
-               .ForMember(dest => dest.ReceivingTime, opt => opt.MapFrom(src => src.RecevingOrder))
-               .ForMember(dest => dest.DiscountPriceOrder, opt => opt.MapFrom(src =>
-                   src.Discount != null && src.Discount.DiscountPercent.HasValue && src.TotalAmount.HasValue
-                       ? (src.TotalAmount.Value * src.Discount.DiscountPercent.Value) / 100m : 0m))
-               .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src =>
-                   src.TotalAmount.HasValue
-                       ? src.TotalAmount.Value -
-                         (src.Discount != null && src.Discount.DiscountPercent.HasValue
-                           ? (src.TotalAmount.Value * src.Discount.DiscountPercent.Value) / 100m
-                           : 0m)
-                       : 0m))
-               .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
-               .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId))
-               .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
-               .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Deposits))
-               .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
-
+                .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.GuestPhoneNavigation.Email))
+                .ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.Address.AddressId))
+                .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+                .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
+                .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
+                .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status ?? 0))
+                .ForMember(dest => dest.ReceivingTime, opt => opt.MapFrom(src => src.RecevingOrder))
+                .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
+                 .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId))
+                .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+                .ForMember(dest => dest.DiscountPriceOrder, opt => opt.MapFrom(src =>
+                    src.Discount != null && src.Discount.DiscountPercent.HasValue && src.TotalAmount.HasValue
+                     ? (src.TotalAmount.Value * src.Discount.DiscountPercent.Value) / 100m : 0m))
+                .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Deposits))
+                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
             // Mapping Dish to OrderDetailsDTO
             CreateMap<Dish, OrderDetailsDTO>()
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
@@ -308,7 +302,6 @@ namespace EHM_API.Map
 
             //Table
             CreateMap<Table, TableAllDTO>();
-            CreateMap<CreateTableDTO, Table>().ReverseMap();
             CreateMap<Table, FindTableDTO>()
                .ForMember(dest => dest.CombinedTables, opt => opt.Ignore());
 
@@ -575,10 +568,10 @@ namespace EHM_API.Map
             CreateMap<Discount, CreateDiscountResponse>();
             CreateMap<Discount, CreateDiscount>();
 
-			CreateMap<Discount, DiscountDTO>();
+            CreateMap<Discount, DiscountDTO>();
 
-			// Cancel Order
-			CreateMap<CancelOrderTableDTO, Order>()
+            // Cancel Order
+            CreateMap<CancelOrderTableDTO, Order>()
                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
 
             //Get OrderDetail
@@ -595,45 +588,45 @@ namespace EHM_API.Map
               .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
               .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
 
-			CreateMap<Invoice, GetInvoiceByOrderDTO>();
+            CreateMap<Invoice, GetInvoiceByOrderDTO>();
 
-			CreateMap<PrepaymentDTO, Invoice>()
-	        .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.PaymentTime))
-	        .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.PaymentAmount))
-	        .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Taxcode))
-	        .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.PaymentStatus))
-	       
-	        .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
-	        .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.AmountReceived))
-	        .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.ReturnAmount))
-	        .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.PaymentMethods));
+            CreateMap<PrepaymentDTO, Invoice>()
+            .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.PaymentTime))
+            .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.PaymentAmount))
+            .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Taxcode))
+            .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.PaymentStatus))
 
-			CreateMap<Order, InvoiceOfSitting>()
-	        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-	        .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentTime : (DateTime?)null))
-	        .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentAmount : (decimal?)null))
-	        .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.Taxcode : (string?)null))
-	        .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentStatus : 0))
-	        .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.CustomerName : (string?)null))
-	        .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.Phone : (string?)null))
-	        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.Address : (string?)null))
-	        .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.AccountId : (int?)null))
-	        .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.AmountReceived : (decimal?)null))
-	        .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.ReturnAmount : (decimal?)null))
-	        .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentMethods : (int?)null))
-	        .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.InvoiceLogs.Select(log => log.Description).FirstOrDefault() : (string?)null))
-			.ForMember(dest => dest.TableStatus, opt => opt.MapFrom(src => src.OrderTables.FirstOrDefault().Table.Status));
+            .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
+            .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.AmountReceived))
+            .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.ReturnAmount))
+            .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.PaymentMethods));
 
-
-
-			CreateMap<Order, UpdateAmountReceiving>()
-		.ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice.AmountReceived))
-		.ForMember(dest => dest.Description, opt => opt.Ignore());
+            CreateMap<Order, InvoiceOfSitting>()
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentTime : (DateTime?)null))
+            .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentAmount : (decimal?)null))
+            .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.Taxcode : (string?)null))
+            .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentStatus : 0))
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.CustomerName : (string?)null))
+            .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.Phone : (string?)null))
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.Address : (string?)null))
+            .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.AccountId : (int?)null))
+            .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.AmountReceived : (decimal?)null))
+            .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.ReturnAmount : (decimal?)null))
+            .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentMethods : (int?)null))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.InvoiceLogs.Select(log => log.Description).FirstOrDefault() : (string?)null))
+            .ForMember(dest => dest.TableStatus, opt => opt.MapFrom(src => src.OrderTables.FirstOrDefault().Table.Status));
 
 
-			CreateMap<Discount, GetDiscountByOrderID>();
 
-			CreateMap<Discount, DiscountWithDishesDTO>()
+            CreateMap<Order, UpdateAmountReceiving>()
+        .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice.AmountReceived))
+        .ForMember(dest => dest.Description, opt => opt.Ignore());
+
+
+            CreateMap<Discount, GetDiscountByOrderID>();
+
+            CreateMap<Discount, DiscountWithDishesDTO>()
                .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes));
 
             CreateMap<OrderDetail, OrderDetailForStaff>()
@@ -657,7 +650,12 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
                 .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime));
 
+            //Account
+            CreateMap<Account, GetAccountDTO>();
+            CreateMap<CreateAccountDTO, Account>();
+            CreateMap<UpdateAccountDTO, Account>();
         }
+
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)
         {

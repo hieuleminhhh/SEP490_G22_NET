@@ -555,7 +555,24 @@ namespace EHM_API.Controllers
 			}
 		}
 
+        [HttpPut("{orderId}/cancelation-reason")]
+        public async Task<IActionResult> UpdateCancelationReason(int orderId, [FromBody] CancelationReasonDTO? cancelationReasonDTO)
+        {
+            if (cancelationReasonDTO == null)
+            {
+                return BadRequest("CancelationReasonDTO is required.");
+            }
+
+            var result = await _orderService.UpdateCancelationReasonAsync(orderId, cancelationReasonDTO);
+
+            if (result == null)
+            {
+                return NotFound("Order not found or could not be updated.");
+            }
+
+            return Ok(result);
+        }
 
 
-	}
+    }
 }

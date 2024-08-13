@@ -2,10 +2,14 @@
 
 namespace EHM_API.Repositories
 {
-	public interface IAccountRepository
-	{
-		Task<Account> AddAccountAsync(Account account);
+    public interface IAccountRepository
+    {
+        Task<Account> AddAccountAsync(Account account);
 
-		Task<bool> AccountExistsAsync(string username);
-	}
+        Task<bool> AccountExistsAsync(string username);
+        Task<IEnumerable<Account>> GetAllAccountsAsync();
+        Task<Account> GetAccountByIdAsync(int id);
+        Task<Account> UpdateAccountAsync(Account account);
+        Task<Account> RemoveAccountAsync(int id);
+    }
 }
