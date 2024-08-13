@@ -155,7 +155,7 @@ namespace EHM_API.Repositories
 				PaymentTime = createInvoiceDto.PaymentTime,
 				PaymentAmount = createInvoiceDto.PaymentAmount,
 				Taxcode = createInvoiceDto.Taxcode,
-				PaymentStatus = 0,
+				PaymentStatus = createInvoiceDto.PaymentStatus,
 
 				CustomerName = order.Address?.ConsigneeName,
 				Phone = order.Address?.GuestPhone,
