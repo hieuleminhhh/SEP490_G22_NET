@@ -139,36 +139,35 @@ namespace EHM_API.Map
                     : src.Dish != null ? src.Dish.Price.Value : (decimal?)null))
                 .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+            // Mapping Order to CheckoutSuccessDTO
+            CreateMap<Order, CheckoutSuccessDTO>()
+               .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+               .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.GuestPhoneNavigation.Email))
+               .ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.Address.AddressId))
+               .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+               .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
+               .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
+               .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
+               .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status ?? 0))
+               .ForMember(dest => dest.ReceivingTime, opt => opt.MapFrom(src => src.RecevingOrder))
+               .ForMember(dest => dest.DiscountPriceOrder, opt => opt.MapFrom(src =>
+                   src.Discount != null && src.Discount.DiscountPercent.HasValue && src.TotalAmount.HasValue
+                       ? (src.TotalAmount.Value * src.Discount.DiscountPercent.Value) / 100m : 0m))
+               .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src =>
+                   src.TotalAmount.HasValue
+                       ? src.TotalAmount.Value -
+                         (src.Discount != null && src.Discount.DiscountPercent.HasValue
+                           ? (src.TotalAmount.Value * src.Discount.DiscountPercent.Value) / 100m
+                           : 0m)
+                       : 0m))
+               .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
+               .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId))
+               .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
+               .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Deposits))
+               .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
 
-			// Mapping Order to CheckoutSuccessDTO
-			CreateMap<Order, CheckoutSuccessDTO>()
-	           .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
-	           .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.GuestPhoneNavigation.Email))
-	           .ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.Address.AddressId))
-	           .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
-	           .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
-	           .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
-	           .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
-	           .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status ?? 0))
-	           .ForMember(dest => dest.ReceivingTime, opt => opt.MapFrom(src => src.RecevingOrder))
-	           .ForMember(dest => dest.DiscountPriceOrder, opt => opt.MapFrom(src =>
-		           src.Discount != null && src.Discount.DiscountPercent.HasValue && src.TotalAmount.HasValue
-			           ? (src.TotalAmount.Value * src.Discount.DiscountPercent.Value) / 100m : 0m))
-	           .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src =>
-		           src.TotalAmount.HasValue
-			           ? src.TotalAmount.Value -
-				         (src.Discount != null && src.Discount.DiscountPercent.HasValue
-				           ? (src.TotalAmount.Value * src.Discount.DiscountPercent.Value) / 100m
-				           : 0m)
-			           : 0m))
-	           .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
-	           .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId))
-	           .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
-	           .ForMember(dest => dest.Deposits, opt => opt.MapFrom(src => src.Deposits))
-	           .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
-
-			// Mapping Dish to OrderDetailsDTO
-			CreateMap<Dish, OrderDetailsDTO>()
+            // Mapping Dish to OrderDetailsDTO
+            CreateMap<Dish, OrderDetailsDTO>()
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src =>
                     src.DiscountId == null ? src.Price :
