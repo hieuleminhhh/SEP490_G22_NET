@@ -42,6 +42,8 @@ namespace EHM_API.Services
 		Task<int> UpdateStatusAndCreateInvoiceAsync(int orderId, UpdateStatusAndCInvoiceD dto);
         Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async();
 		Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto);
+        Task<CancelationReasonDTO?> UpdateCancelationReasonAsync(int orderId, CancelationReasonDTO? cancelationReasonDTO);
 
-	}
+
+    }
 }

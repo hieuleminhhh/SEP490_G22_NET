@@ -13,17 +13,17 @@ namespace EHM_API.Repositories
 		private readonly EHMDBContext _context;
 		private readonly IDishRepository _Dishrepository;
 		private readonly IComboRepository _Comborepository;
+        private readonly IOrderRepository _orderRepository;
 
-		public ReservationRepository(EHMDBContext context, IDishRepository dishrepository,
-			IComboRepository comborepository)
-		{
-			_context = context;
-			_Dishrepository = dishrepository;
-			_Comborepository = comborepository;
-		}
+        public ReservationRepository(EHMDBContext context, IDishRepository dishrepository, IComboRepository comborepository, IOrderRepository orderRepository)
+        {
+            _context = context;
+            _Dishrepository = dishrepository;
+            _Comborepository = comborepository;
+            _orderRepository = orderRepository;
+        }
 
-		
-		public async Task<Reservation> GetReservationDetailAsync(int reservationId)
+        public async Task<Reservation> GetReservationDetailAsync(int reservationId)
 		{
 			return await _context.Reservations
 				.Include(r => r.Address)
@@ -160,7 +160,7 @@ namespace EHM_API.Repositories
 						Quantity = item.Quantity,
 						UnitPrice = item.UnitPrice,
 						Note = item.Note,
-						OrderTime = item.OrderTime
+						OrderTime = DateTime.Now
 					};
 
 					orderDetails.Add(orderDetail);
@@ -170,7 +170,7 @@ namespace EHM_API.Repositories
 				{
 					var order = new Order
 					{
-						OrderDate = reservationDTO.OrderDate,
+						OrderDate = DateTime.Now,
 						Status = reservationDTO.Status ?? 0,
 						RecevingOrder = reservationDTO.RecevingOrder,
 						TotalAmount = reservationDTO.TotalAmount,
@@ -318,6 +318,27 @@ namespace EHM_API.Repositories
 				.ToListAsync()
 				.ContinueWith(task => task.Result.Select(x => (x.Table, x.ReservationTime)).ToList());
 		}
-       
+
+		public async Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel)
+        {
+            var reservation = await GetReservationByIdAsync(reservationId);
+            if (reservation == null)
+            {
+                return null;
+            }
+
+            reservation.ReasonCancel = reasonCancel;
+
+            if (reservation.OrderId.HasValue)
+            {
+                await _orderRepository.UpdateCancelationReasonAsync(reservation.OrderId.Value, reasonCancel);
+            }
+
+            _context.Reservations.Update(reservation);
+            await _context.SaveChangesAsync();
+
+            return reservation;
+        }
+
     }
 }
