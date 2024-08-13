@@ -289,19 +289,37 @@ namespace EHM_API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Đã xảy ra lỗi khi cập nhật trạng thái. Lỗi: {ex.Message}" });
-            }
-        }
+			}
+		}
 
-        [HttpPut("{reservationId}/tables/status")]
-        public async Task<IActionResult> UpdateTableStatuses(int reservationId, [FromBody] UpdateStatusTableByReservation dto)
+		[HttpPut("{reservationId}/tables/status")]
+		public async Task<IActionResult> UpdateTableStatuses(int reservationId, [FromBody] UpdateStatusTableByReservation dto)
+		{
+			var result = await _service.UpdateTableStatusesAsync(reservationId, dto.TableStatus);
+			if (!result)
+			{
+				return NotFound($"Reservation with ID {reservationId} not found.");
+			}
+
+			return NoContent();
+		}
+
+		[HttpPut("{reservationId}/reason-cancel")]
+        public async Task<IActionResult> UpdateReasonCancel(int reservationId, [FromBody] ReasonCancelDTO? reasonCancelDTO)
         {
-            var result = await _service.UpdateTableStatusesAsync(reservationId, dto.TableStatus);
-            if (!result)
+            if (reasonCancelDTO == null)
             {
-                return NotFound($"Reservation with ID {reservationId} not found.");
+                return BadRequest("ReservationDTO is required.");
             }
 
-            return NoContent();
+            var result = await _service.UpdateReasonCancelAsync(reservationId, reasonCancelDTO);
+
+            if (result == null)
+            {
+                return NotFound("Reservation not found or could not be updated.");
+            }
+
+            return Ok(result);
         }
     }
 }

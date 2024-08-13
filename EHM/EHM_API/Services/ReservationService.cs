@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.Models;
@@ -209,6 +210,25 @@ namespace EHM_API.Services
             await _tableRepository.UpdateListTablesAsync(tables);
 
             return true;
+        }
+        public async Task<ReasonCancelDTO?> UpdateReasonCancelAsync(int reservationId, ReasonCancelDTO? reasonCancelDTO)
+        {
+            if (reasonCancelDTO == null)
+            {
+                throw new ArgumentNullException(nameof(reasonCancelDTO));
+            }
+
+            var updatedReservation = await _repository.UpdateReasonCancelAsync(reservationId, reasonCancelDTO.ReasonCancel);
+
+            if (updatedReservation == null)
+            {
+                return null;
+            }
+
+            return new ReasonCancelDTO
+            {
+                ReasonCancel = updatedReservation.ReasonCancel
+            };
         }
     }
 }
