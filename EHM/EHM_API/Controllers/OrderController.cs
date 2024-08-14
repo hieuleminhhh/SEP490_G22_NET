@@ -555,8 +555,9 @@ namespace EHM_API.Controllers
 			}
 		}
 
-        [HttpPut("{orderId}/cancelation-reason")]
-        public async Task<IActionResult> UpdateCancelationReason(int orderId, [FromBody] CancelationReasonDTO? cancelationReasonDTO)
+        [HttpPut("CancelOrderReason/{orderId}")]
+
+		public async Task<IActionResult> UpdateCancelationReason(int orderId, [FromBody] CancelationReasonDTO? cancelationReasonDTO)
         {
             if (cancelationReasonDTO == null)
             {

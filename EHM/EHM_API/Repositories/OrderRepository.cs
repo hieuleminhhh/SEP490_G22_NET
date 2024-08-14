@@ -944,7 +944,7 @@ public class OrderRepository : IOrderRepository
         {
             return null; 
         }
-
+		order.Status = 5;
         order.CancelationReason = reason;
         _context.Orders.Update(order);
         await _context.SaveChangesAsync();
