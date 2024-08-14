@@ -172,8 +172,8 @@ public class OrderRepository : IOrderRepository
 			.Include(a => a.Address)
 			.Include(o => o.OrderTables).ThenInclude(ot => ot.Table)
 			.Include(d => d.Discount)
-            .Include(i => i.Invoice)
-            .OrderByDescending(o => filterByDate == "Đặt hàng" ? o.OrderDate : o.RecevingOrder)
+			.Include(i => i.Invoice)
+			.OrderByDescending(o => filterByDate == "Đặt hàng" ? o.OrderDate : o.RecevingOrder)
 			.Skip((page - 1) * pageSize)
 			.Take(pageSize)
 			.ToListAsync();
@@ -199,10 +199,10 @@ public class OrderRepository : IOrderRepository
 			AddressId = o.AddressId ?? 0,
 			GuestAddress = o.Address?.GuestAddress,
 			ConsigneeName = o.Address?.ConsigneeName,
-            PaymentStatus = o.Invoice != null ? o.Invoice.PaymentStatus : default(int),
-            Note = o.Note,
-			Type = o.Type,    
-            DiscountId = o.DiscountId
+			PaymentStatus = o.Invoice != null ? o.Invoice.PaymentStatus : default(int),
+			Note = o.Note,
+			Type = o.Type,
+			DiscountId = o.DiscountId
 		}).ToList();
 
 		return new PagedResult<OrderDTO>(orderDTOs, totalOrders, page, pageSize);
@@ -618,7 +618,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
@@ -642,7 +642,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 			}
@@ -695,7 +695,7 @@ public class OrderRepository : IOrderRepository
 			GuestPhone = !string.IsNullOrWhiteSpace(dto.GuestPhone) ? dto.GuestPhone : null,
 			Note = dto.Note,
 			Type = dto.Type,
-			DiscountId =dto.DiscountId.HasValue && dto.DiscountId.Value > 0 ? dto.DiscountId.Value : (int?)null,
+			DiscountId = dto.DiscountId.HasValue && dto.DiscountId.Value > 0 ? dto.DiscountId.Value : (int?)null,
 			Address = address,
 			GuestPhoneNavigation = guest
 		};
@@ -884,7 +884,7 @@ public class OrderRepository : IOrderRepository
 		if (allDishesNotServed)
 		{
 			order.Status = 5;
-			
+
 		}
 
 		if (dto.RecevingOrder.HasValue)
@@ -923,19 +923,32 @@ public class OrderRepository : IOrderRepository
 		return await _context.Orders
 			.CountAsync(order => order.DiscountId == discountId);
 	}
-    public async Task<IEnumerable<Order>> GetOrderDetailsForStaffType1Async()
+	public async Task<IEnumerable<Order>> GetOrderDetailsForStaffType1Async()
+	{
+		return await _context.Orders
+			.Include(o => o.OrderDetails)
+				.ThenInclude(od => od.Dish)
+			.Include(o => o.OrderDetails)
+				.ThenInclude(od => od.Combo)
+			.Include(o => o.OrderTables)
+			.Where(o =>
+				((o.Status == 6))
+				&& ((o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)
+				|| (o.Type == 1 && (o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today || o.RecevingOrder == null))))
+			.ToListAsync();
+	}
+    public async Task<Order?> UpdateCancelationReasonAsync(int orderId, string? reason)
     {
-        return await _context.Orders
-            .Include(o => o.OrderDetails)
-                .ThenInclude(od => od.Dish)
-            .Include(o => o.OrderDetails)
-                .ThenInclude(od => od.Combo)
-            .Include(o => o.OrderTables)
-            .Where(o =>
-                ((o.Status == 6))
-                && ((o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)
-                || (o.Type == 1 && (o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today || o.RecevingOrder == null))))
-            .ToListAsync();
-    }
+        var order = await _context.Orders.FindAsync(orderId);
+        if (order == null)
+        {
+            return null; 
+        }
 
+        order.CancelationReason = reason;
+        _context.Orders.Update(order);
+        await _context.SaveChangesAsync();
+
+        return order;
+    }
 }

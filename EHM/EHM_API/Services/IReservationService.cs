@@ -1,4 +1,5 @@
-﻿using EHM_API.DTOs.ReservationDTO.Guest;
+﻿using EHM_API.DTOs.OrderDTO.Guest;
+using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.Models;
 using System.Collections.Generic;
@@ -19,5 +20,6 @@ namespace EHM_API.Services
 		Task<CheckTimeReservationDTO?> GetReservationTimeAsync(int reservationId);
 		Task UpdateReservationAndTableStatusAsync(int reservationId, int tableId, int reservationStatus, int tableStatus);
         Task<bool> UpdateTableStatusesAsync(int reservationId, int newStatus);
+        Task<ReasonCancelDTO?> UpdateReasonCancelAsync(int reservationId, ReasonCancelDTO? reasonCancelDTO);
     }
 }

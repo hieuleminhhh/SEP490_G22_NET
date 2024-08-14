@@ -555,6 +555,38 @@ namespace EHM_API.Controllers
 			}
 		}
 
+        [HttpPut("{orderId}/cancelation-reason")]
+        public async Task<IActionResult> UpdateCancelationReason(int orderId, [FromBody] CancelationReasonDTO? cancelationReasonDTO)
+        {
+            if (cancelationReasonDTO == null)
+            {
+                return BadRequest("Hãy điền lý do hủy đơn");
+            }
+
+            var result = await _orderService.UpdateCancelationReasonAsync(orderId, cancelationReasonDTO);
+
+            if (result == null)
+            {
+                return NotFound("Không tìm thấy đơn hàng hoặc không thể cập nhật.");
+            }
+
+            return Ok(result);
+        }
+
+
+		[HttpPost("AcceptOrder/{orderId}")]
+		public async Task<IActionResult> AcceptOrder(int orderId, [FromBody] AcceptOrderDTO acceptOrderDto)
+		{
+			try
+			{
+				await _orderService.AcceptOrderAsync(orderId, acceptOrderDto);
+				return Ok(new { Message = "Đơn hàng được chấp nhận thành công." });
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
 
 	}
