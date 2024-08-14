@@ -654,7 +654,12 @@ namespace EHM_API.Map
             CreateMap<Account, GetAccountDTO>();
             CreateMap<CreateAccountDTO, Account>();
             CreateMap<UpdateAccountDTO, Account>();
-        }
+
+
+			CreateMap<AcceptOrderDTO, Invoice>()
+		   .ForMember(dest => dest.PaymentTime, opt => opt.Ignore())
+		   .ForMember(dest => dest.PaymentStatus, opt => opt.Ignore());
+		}
 
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)
