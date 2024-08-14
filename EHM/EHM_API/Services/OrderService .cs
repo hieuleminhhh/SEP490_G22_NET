@@ -429,9 +429,59 @@ namespace EHM_API.Services
             };
         }
 
+		public async Task AcceptOrderAsync(int orderId, AcceptOrderDTO acceptOrderDto)
+		{
+			var order = await _orderRepository.GetByIdAsync(orderId);
+			if (order == null)
+			{
+				throw new Exception("Không tìm thấy đơn hàng");
+			}
+
+			if (order.RecevingOrder.HasValue && order.RecevingOrder.Value.Date == DateTime.Now.Date)
+			{
+				order.Status = 6;
+			}
+			else
+			{
+				order.Status = 2;
+			}
+
+			var invoice = _mapper.Map<Invoice>(acceptOrderDto);
+
+			if (order.Address != null)
+			{
+				invoice.CustomerName = order.Address.ConsigneeName;
+				invoice.Phone = order.Address.GuestPhone;
+				invoice.Address = order.Address.GuestAddress;
+			}
 
 
-    }
+			if (order.AccountId.HasValue)
+			{
+				invoice.AccountId = order.AccountId;
+			}
+			else
+			{
+				invoice.AccountId = null;
+			}
+
+			invoice.PaymentTime = DateTime.Now;
+			invoice.PaymentStatus = order.Deposits > 0 ? 2 : 0;
+
+			await _invoiceRepository.CreateInvoiceAsync(invoice);
+
+			order.InvoiceId = invoice.InvoiceId;
+			await _orderRepository.UpdateOrderAsync(order);
+
+			var invoiceLog = new InvoiceLog
+			{
+				InvoiceId = invoice.InvoiceId,
+				Description = acceptOrderDto.Description
+			};
+			await _invoiceRepository.CreateInvoiceLog(invoiceLog); 
+		}
+
+	}
 }
 
 	
