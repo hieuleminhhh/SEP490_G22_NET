@@ -206,7 +206,8 @@ namespace EHM_API.Models
 
             modelBuilder.Entity<Ingredient>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.DishId, e.MaterialId });
+
 
                 entity.ToTable("Ingredient");
 

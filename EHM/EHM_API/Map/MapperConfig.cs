@@ -639,8 +639,10 @@ namespace EHM_API.Map
 
             CreateMap<Order, OrderDetailForStaffType1>()
                  .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.Type))
-    .ForMember(dest => dest.ItemInOrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
-    .ForMember(dest => dest.Status, opt => opt.MapFrom<OrderStatusResolver>());
+                 .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+                 .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
+                 .ForMember(dest => dest.ItemInOrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
+                 .ForMember(dest => dest.Status, opt => opt.MapFrom<OrderStatusResolver>());
 
             // Mapping OrderDetail to ItemInOrderDetail
             CreateMap<OrderDetail, ItemInOrderDetail>()

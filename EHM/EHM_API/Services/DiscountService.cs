@@ -73,15 +73,26 @@ namespace EHM_API.Services
 			return null;
 		}
 
-		public async Task<CreateDiscountResponse> AddAsync(CreateDiscount discountDto)
-		{
-			var discount = _mapper.Map<Discount>(discountDto);
-			var addedDiscount = await _discountRepository.AddAsync(discount);
-			return _mapper.Map<CreateDiscountResponse>(addedDiscount);
-		}
+        public async Task<CreateDiscountResponse> AddAsync(CreateDiscount discountDto)
+        {
+        
+            var discount = _mapper.Map<Discount>(discountDto);
+
+            
+            if (discount.StartTime.Value.Date == discount.EndTime.Value.Date)
+            {
+                discount.StartTime = DateTime.Now;
+                discount.EndTime = discount.StartTime.Value.Date.AddDays(1).AddTicks(-1); 
+            }
+
+           
+            var addedDiscount = await _discountRepository.AddAsync(discount);
+
+            return _mapper.Map<CreateDiscountResponse>(addedDiscount);
+        }
 
 
-		public async Task<CreateDiscount?> UpdateAsync(int id, CreateDiscount discountDto)
+        public async Task<CreateDiscount?> UpdateAsync(int id, CreateDiscount discountDto)
 		{
 			var existingDiscount = await _discountRepository.GetByIdAsync(id);
 			if (existingDiscount == null)
