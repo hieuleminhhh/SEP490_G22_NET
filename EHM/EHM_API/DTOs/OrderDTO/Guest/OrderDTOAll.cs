@@ -15,6 +15,7 @@
         public string? Note { get; set; }
 		public int? Type { get; set; }
 		public int? DiscountId { get; set; }
+		public string? CancelationReason { get; set; }
 		public int? DiscountPercent { get; set; }
 		public string? DiscountName { get; set; }
 		public int? QuantityLimit { get; set; }

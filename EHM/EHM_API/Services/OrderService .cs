@@ -356,24 +356,23 @@ namespace EHM_API.Services
 		}
         public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
         {
-            // Retrieve orders including their details
+        
             var orderDetails = await _orderRepository.GetOrderDetailsForStaffType1Async();
 
-            // Map orders to DTO
+           
             var mappedOrders = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orderDetails);
 
-            // Set Status for each order based on its order details
+           
             foreach (var order in mappedOrders)
             {
                 if (order.ItemInOrderDetails.Any())
                 {
-                    // Check if all OrderDetails have Quantity == DishesServed
                     bool allDetailsCompleted = order.ItemInOrderDetails.All(detail => detail.Quantity == detail.DishesServed);
-                    order.Status = allDetailsCompleted ? 1 : 0; // Assuming 1 for true and 0 for false
+                    order.Status = allDetailsCompleted ? 1 : 0;
                 }
                 else
                 {
-                    order.Status = 0; // Default status if no details are present
+                    order.Status = 0; 
                 }
             }
 

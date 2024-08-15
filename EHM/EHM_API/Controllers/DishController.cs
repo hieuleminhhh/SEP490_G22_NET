@@ -47,7 +47,23 @@ namespace EHM_API.Controllers
 			return Ok(result);
         }
 
-        [HttpGet("{id}")]
+		[HttpGet("ListDishesActive")]
+		public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishesActive(
+		 [FromQuery] int page = 1,
+		 [FromQuery] int pageSize = 10,
+		 [FromQuery] string? search = null,
+		 [FromQuery] string? searchCategory = null)
+		{
+			if (page <= 0) page = 1;
+			if (pageSize <= 0) pageSize = 10;
+
+			var result = await _dishService.GetDishesActive(search?.Trim(), searchCategory, page, pageSize);
+
+			return Ok(result);
+		}
+
+
+		[HttpGet("{id}")]
         public async Task<ActionResult<DishDTOAll>> GetDish(int id)
         {
             var dish = await _dishService.GetDishByIdAsync(id);

@@ -27,12 +27,7 @@ namespace EHM_API.Controllers
 
             return Ok(table);
         }
-        [HttpPost]
-        public async Task <IActionResult> Create(CreateTableDTO tabledto)
-        {
-          var table = await _service.AddAsync(tabledto);
-          return Ok(table);
-        }
+        
         [HttpGet("available")]
 		public async Task<IActionResult> GetAvailableTables([FromQuery] int guestNumber)
 		{
@@ -76,8 +71,13 @@ namespace EHM_API.Controllers
 		    var updatetable = await _service.UpdateAsync(id, tabledto);
             return Ok(updatetable);
         }
+		[HttpPost]
+		public async Task<IActionResult> Create(CreateTableDTO tabledto)
+		{
+			var table = await _service.AddAsync(tabledto);
+			return Ok(table);
+		}
 
 
-
-    }
+	}
 }

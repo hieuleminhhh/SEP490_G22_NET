@@ -55,14 +55,6 @@ public class DiscountsController : ControllerBase
 		{
 			errors["discountName"] = "Tên giảm giá không được vượt quá 100 ký tự";
 		}
-		else
-		{
-			var isExisting = await _discountService.IsDiscountNameExistingAsync(discountDto.DiscountName);
-			if (isExisting)
-			{
-				errors["discountName"] = "Tên giảm giá đã tồn tại";
-			}
-		}
 
 		if (discountDto.Type < 0)
 		{
@@ -125,23 +117,6 @@ public class DiscountsController : ControllerBase
 		if (string.IsNullOrEmpty(discountDto.DiscountName))
 		{
 			errors["discountName"] = "Tên giảm giá không được để trống";
-		}
-
-
-		if (!string.IsNullOrEmpty(discountDto.DiscountName))
-		{
-			if (discountDto.DiscountName.Length > 100)
-			{
-				errors["discountName"] = "Tên giảm giá không được vượt quá 100 ký tự";
-			}
-			else
-			{
-				var isExisting = await _discountService.IsDiscountNameExistingAsync(discountDto.DiscountName);
-				if (isExisting) 
-				{
-					errors["discountName"] = "Tên giảm giá đã tồn tại";
-				}
-			}
 		}
 
 		if (discountDto.Type.HasValue && discountDto.Type < 0)
