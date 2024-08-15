@@ -156,7 +156,16 @@ public class DiscountsController : ControllerBase
 			discount = updatedDiscount
 		});
 	}
-
+	[HttpGet("GetDiscountByOrderId/{orderId}")]
+	public async Task<ActionResult<GetDiscountByOrderID>> GetDiscountByOrderId(int orderId)
+	{
+		var discount = await _discountService.GetDiscountByOrderIdAsync(orderId);
+		if (discount == null)
+		{
+			return NotFound(new { message = $"Không tìm thấy giảm giá cho đơn hàng {orderId}" });
+		}
+		return Ok(discount);
+	}
 
 	[HttpGet("search")]
     public async Task<ActionResult<IEnumerable<DiscountAllDTO>>> SearchAsync([FromQuery] string keyword)
@@ -173,15 +182,6 @@ public class DiscountsController : ControllerBase
         return Ok(discounts);
     }
 
-	[HttpGet("GetDiscountByOrderId/{orderId}")]
-	public async Task<ActionResult<GetDiscountByOrderID>> GetDiscountByOrderId(int orderId)
-	{
-		var discount = await _discountService.GetDiscountByOrderIdAsync(orderId);
-		if (discount == null)
-		{
-			return NotFound(new { message = $"Không tìm thấy giảm giá cho đơn hàng {orderId}" });
-		}
-		return Ok(discount);
-	}
+	
 
 }
