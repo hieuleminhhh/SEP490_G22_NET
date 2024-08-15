@@ -931,6 +931,7 @@ public class OrderRepository : IOrderRepository
 			.Include(o => o.OrderDetails)
 				.ThenInclude(od => od.Combo)
 			.Include(o => o.OrderTables)
+			.Include(o => o.Address)
 			.Where(o =>
 				((o.Status == 6))
 				&& ((o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)
