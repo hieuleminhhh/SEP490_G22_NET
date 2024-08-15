@@ -422,7 +422,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
@@ -446,7 +446,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 			}

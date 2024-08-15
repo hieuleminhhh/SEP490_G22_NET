@@ -28,8 +28,10 @@ namespace EHM_API.Repositories
 		Task<List<Combo>> SearchComboByNameAsync(string name);
 		Task<IEnumerable<Combo>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder);
 		Task<PagedResult<ViewComboDTO>> GetComboAsync(string search, int page, int pageSize);
+		Task<PagedResult<ViewComboDTO>> GetComboActive(string search, int page, int pageSize);
 
-        Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive);
+
+		Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive);
 		Task ClearComboDetailsAsync(int comboId);
 
     }

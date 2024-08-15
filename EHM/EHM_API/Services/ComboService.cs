@@ -105,6 +105,13 @@ namespace EHM_API.Services
 			var comboDTO = _mapper.Map<IEnumerable<ViewComboDTO>>(pagedDishes.Items);
 			return new PagedResult<ViewComboDTO>(comboDTO, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
 		}
+		public async Task<PagedResult<ViewComboDTO>> GetComboActive(string search, int page, int pageSize)
+		{
+			var pagedDishes = await _comboRepository.GetComboActive(search, page, pageSize);
+			var comboDTO = _mapper.Map<IEnumerable<ViewComboDTO>>(pagedDishes.Items);
+			return new PagedResult<ViewComboDTO>(comboDTO, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+		}
+
 		public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
 		{
 			return await _comboRepository.UpdateComboStatusAsync(comboId, isActive);

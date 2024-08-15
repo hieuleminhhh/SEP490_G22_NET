@@ -181,7 +181,44 @@ namespace EHM_API.Repositories
             return new PagedResult<ViewComboDTO>(comboDTOs, totalCombos, page, pageSize);
         }
 
-        public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
+		public async Task<PagedResult<ViewComboDTO>> GetComboActive(string search, int page, int pageSize)
+		{
+			var query = _context.Combos.AsQueryable();
+			query = query.Where(d => d.IsActive == true);
+
+			if (!string.IsNullOrEmpty(search))
+			{
+				search = search.ToLower();
+				query = query.Where(d => d.NameCombo.ToLower().Contains(search));
+			}
+
+			var totalCombos = await query.CountAsync();
+
+			var combos = await query.Include(c => c.ComboDetails)
+									.ThenInclude(cd => cd.Dish)
+									.Skip((page - 1) * pageSize)
+									.Take(pageSize)
+									.ToListAsync();
+
+			var comboDTOs = combos.Select(c => new ViewComboDTO
+			{
+				ComboId = c.ComboId,
+				NameCombo = c.NameCombo,
+				Price = c.Price,
+				Note = c.Note,
+				ImageUrl = c.ImageUrl,
+				IsActive = c.IsActive,
+				Dishes = c.ComboDetails.Select(cd => new DishDTO
+				{
+					DishId = cd.Dish.DishId,
+					ItemName = cd.Dish.ItemName,
+					Price = cd.Dish.Price
+				}).ToList()
+			}).ToList();
+
+			return new PagedResult<ViewComboDTO>(comboDTOs, totalCombos, page, pageSize);
+		}
+		public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
         {
             var cb = await _context.Combos.FindAsync(comboId);
             if (cb == null)
