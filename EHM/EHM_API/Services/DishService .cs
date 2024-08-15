@@ -66,12 +66,11 @@ namespace EHM_API.Services
             }
 
             _mapper.Map(updateDishDTO, existingDish);
-            _mapper.Map(updateDishDTO, existingDish);
             if (existingDish.Price.HasValue)
             {
                 existingDish.Price = Math.Round(existingDish.Price.Value, 2);
             }
-            var updatedDish = await _dishRepository.UpdateAsync(existingDish);
+            var updatedDish = await _dishRepository.UpdateDishe(existingDish);
             return _mapper.Map<DishDTOAll>(updatedDish);
         }
 
@@ -114,7 +113,29 @@ namespace EHM_API.Services
 
             return new PagedResult<DishDTOAll>(dishDTOs, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
         }
-        public async Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive)
+
+		public async Task<PagedResult<DishDTOAll>> GetDishesActive(string search, string categorySearch, int page, int pageSize)
+		{
+			var pagedDishes = await _dishRepository.GetDishesActive(search, categorySearch, page, pageSize);
+			var dishDTOs = _mapper.Map<IEnumerable<DishDTOAll>>(pagedDishes.Items);
+
+			foreach (var dishDto in dishDTOs)
+			{
+				if (dishDto.CategoryId.HasValue)
+				{
+					var category = await _context.Categories.FindAsync(dishDto.CategoryId.Value);
+					if (category != null)
+					{
+						dishDto.CategoryName = category.CategoryName;
+					}
+				}
+			}
+
+			return new PagedResult<DishDTOAll>(dishDTOs, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+		}
+
+
+		public async Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive)
         {
             return await _dishRepository.UpdateDishStatusAsync(dishId, isActive);
         }

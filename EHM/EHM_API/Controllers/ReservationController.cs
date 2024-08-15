@@ -194,26 +194,6 @@ namespace EHM_API.Controllers
             }
         }
 
-        [HttpPost("register-tables")]
-        public async Task<IActionResult> RegisterTables([FromBody] RegisterTablesDTO registerTablesDTO)
-        {
-            try
-            {
-                await _service.RegisterTablesAsync(registerTablesDTO);
-                return Ok(new { Message = "Bàn đã đăng ký thành công." });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Message = $"Không thể đăng ký bàn. Lỗi: {ex.Message}" });
-            }
-        }
-
-
-
 		[HttpGet("searchNameOrPhone")]
 		public async Task<IActionResult> SearchReservations([FromQuery] string? guestNameOrguestPhone)
 		{
@@ -238,6 +218,27 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
 			}
 		}
+
+		[HttpPost("register-tables")]
+        public async Task<IActionResult> RegisterTables([FromBody] RegisterTablesDTO registerTablesDTO)
+        {
+            try
+            {
+                await _service.RegisterTablesAsync(registerTablesDTO);
+                return Ok(new { Message = "Bàn đã đăng ký thành công." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = $"Không thể đăng ký bàn. Lỗi: {ex.Message}" });
+            }
+        }
+
+
+
 
 
 		[HttpGet("check-time/{reservationId}")]

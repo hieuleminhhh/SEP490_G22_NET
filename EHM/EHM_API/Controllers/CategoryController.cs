@@ -39,6 +39,18 @@ namespace EHM_API.Controllers
 			return Ok(category);
 		}
 
+		
+
+		[HttpGet("dishes/{categoryName}")]
+		public async Task<ActionResult<IEnumerable<ViewCategoryDTO>>> GetDishesByCategoryName(string categoryName)
+		{
+			var dishes = await _categoryService.GetDishesByCategoryNameAsync(categoryName);
+			if (dishes == null || !dishes.Any())
+			{
+				return NotFound("Không tìm thấy món ăn nào cho danh mục này.");
+			}
+			return Ok(dishes);
+		}
 		[HttpPost]
 		public async Task<ActionResult> CreateNewCategory([FromBody] CreateCategory categoryDTO)
 		{
@@ -57,7 +69,7 @@ namespace EHM_API.Controllers
 					errors["categoryName"] = "Tên danh mục phải ít hơn 100 ký tự.";
 				}
 
-				 if (!Regex.IsMatch(categoryDTO.CategoryName, @"^[\p{L}\p{M}\p{N} ]*$"))
+				if (!Regex.IsMatch(categoryDTO.CategoryName, @"^[\p{L}\p{M}\p{N} ]*$"))
 				{
 					errors["categoryName"] = "Tên danh mục chứa các ký tự không hợp lệ.";
 				}
@@ -87,17 +99,6 @@ namespace EHM_API.Controllers
 			{
 				return Conflict(new { message = ex.Message });
 			}
-		}
-
-		[HttpGet("dishes/{categoryName}")]
-		public async Task<ActionResult<IEnumerable<ViewCategoryDTO>>> GetDishesByCategoryName(string categoryName)
-		{
-			var dishes = await _categoryService.GetDishesByCategoryNameAsync(categoryName);
-			if (dishes == null || !dishes.Any())
-			{
-				return NotFound("Không tìm thấy món ăn nào cho danh mục này.");
-			}
-			return Ok(dishes);
 		}
 
 		[HttpPut("{id}")]

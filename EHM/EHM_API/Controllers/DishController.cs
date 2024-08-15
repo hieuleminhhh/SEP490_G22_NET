@@ -47,7 +47,23 @@ namespace EHM_API.Controllers
 			return Ok(result);
         }
 
-        [HttpGet("{id}")]
+		[HttpGet("ListDishesActive")]
+		public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishesActive(
+		 [FromQuery] int page = 1,
+		 [FromQuery] int pageSize = 10,
+		 [FromQuery] string? search = null,
+		 [FromQuery] string? searchCategory = null)
+		{
+			if (page <= 0) page = 1;
+			if (pageSize <= 0) pageSize = 10;
+
+			var result = await _dishService.GetDishesActive(search?.Trim(), searchCategory, page, pageSize);
+
+			return Ok(result);
+		}
+
+
+		[HttpGet("{id}")]
         public async Task<ActionResult<DishDTOAll>> GetDish(int id)
         {
             var dish = await _dishService.GetDishByIdAsync(id);
@@ -286,6 +302,40 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình xử lý yêu cầu. Vui lòng thử lại sau." });
 			}
 		}
+        [HttpPatch("{dishId}/status")]
+        public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
+        {
+            try
+            {
+                if (updateDishStatusDTO == null)
+                {
+                    return BadRequest(new { message = "Dữ liệu cập nhật không hợp lệ." });
+                }
+
+                var existingDish = await _dishService.GetDishByIdAsync(dishId);
+                if (existingDish == null)
+                {
+                    return NotFound(new { message = $"Không tìm thấy món ăn với ID {dishId}." });
+                }
+
+                var updatedDish = await _dishService.UpdateDishStatusAsync(dishId, updateDishStatusDTO.IsActive);
+                if (updatedDish == null)
+                {
+                    return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật trạng thái món ăn. Vui lòng thử lại sau." });
+                }
+
+                string statusMessage = updateDishStatusDTO.IsActive ? "Kích hoạt" : "Không kích hoạt";
+                return Ok(new
+                {
+                    message = $"Trạng thái món ăn đã được {statusMessage} thành công.",
+                    data = updatedDish
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau." });
+            }
+        }
 
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<DishDTOAll>>> SearchDishes([FromQuery] string? name)
@@ -312,41 +362,7 @@ namespace EHM_API.Controllers
             }
         }
 
-        [HttpPatch("{dishId}/status")]
-		public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
-		{
-			try
-			{
-				if (updateDishStatusDTO == null)
-				{
-					return BadRequest(new { message = "Dữ liệu cập nhật không hợp lệ." });
-				}
-
-				var existingDish = await _dishService.GetDishByIdAsync(dishId);
-				if (existingDish == null)
-				{
-					return NotFound(new { message = $"Không tìm thấy món ăn với ID {dishId}." });
-				}
-
-				var updatedDish = await _dishService.UpdateDishStatusAsync(dishId, updateDishStatusDTO.IsActive);
-				if (updatedDish == null)
-				{
-					return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật trạng thái món ăn. Vui lòng thử lại sau." });
-				}
-
-				string statusMessage = updateDishStatusDTO.IsActive ? "Kích hoạt" : "Không kích hoạt";
-				return Ok(new
-				{
-					message = $"Trạng thái món ăn đã được {statusMessage} thành công.",
-					data = updatedDish
-				});
-			}
-			catch (Exception ex)
-			{
-				return StatusCode(500, new { message = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau." });
-			}
-		}
-
+        
 
         [HttpPut("{discountId}/dishes")]
         public async Task<ActionResult<IEnumerable<DishDTO>>> UpdateDiscountForDishesAsync(int discountId, [FromBody] List<int> dishIds)

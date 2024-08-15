@@ -200,7 +200,8 @@ public class OrderRepository : IOrderRepository
 			GuestAddress = o.Address?.GuestAddress,
 			ConsigneeName = o.Address?.ConsigneeName,
 			PaymentStatus = o.Invoice != null ? o.Invoice.PaymentStatus : default(int),
-			Note = o.Note,
+            PaymentMethods = o.Invoice != null ? o.Invoice.PaymentMethods : default(int),
+            Note = o.Note,
 			Type = o.Type,
 			DiscountId = o.DiscountId
 		}).ToList();
@@ -422,7 +423,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
@@ -446,7 +447,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 			}
@@ -618,7 +619,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
@@ -642,7 +643,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 			}
@@ -931,6 +932,7 @@ public class OrderRepository : IOrderRepository
 			.Include(o => o.OrderDetails)
 				.ThenInclude(od => od.Combo)
 			.Include(o => o.OrderTables)
+			.Include(o => o.Address)
 			.Where(o =>
 				((o.Status == 6))
 				&& ((o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)
@@ -944,7 +946,7 @@ public class OrderRepository : IOrderRepository
         {
             return null; 
         }
-
+		order.Status = 5;
         order.CancelationReason = reason;
         _context.Orders.Update(order);
         await _context.SaveChangesAsync();
