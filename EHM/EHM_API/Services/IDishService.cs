@@ -20,6 +20,7 @@ namespace EHM_API.Services
         Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder);
         Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder);
 		Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize);
+        Task<PagedResult<DishDTOAll>> GetDishesActive(string search, string categorySearch, int page, int pageSize);
 		Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive);
         Task<IEnumerable<DishDTOAll>> UpdateDiscountForDishesAsync(int discountId, List<int> dishIds);
 
