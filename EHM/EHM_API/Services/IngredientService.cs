@@ -37,17 +37,10 @@ namespace EHM_API.Services
 
         public async Task<IngredientAllDTO> CreateIngredientAsync(CreateIngredientDTO createIngredientDTO)
         {
-            try
-            {
-                var createdIngredient = await _ingredientRepository.CreateIngredientAsync(createIngredientDTO);
-                return _mapper.Map<IngredientAllDTO>(createdIngredient);
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException(ex.Message);
-            }
+            var ingredient = _mapper.Map<Ingredient>(createIngredientDTO);
+            var createdIngredient = await _ingredientRepository.CreateIngredientAsync(createIngredientDTO);
+            return _mapper.Map<IngredientAllDTO>(createdIngredient);
         }
-
 
         public async Task<IngredientAllDTO> UpdateIngredientAsync(int dishId, int materialId, UpdateIngredientDTO updateIngredientDTO)
         {
@@ -70,9 +63,10 @@ namespace EHM_API.Services
             return _mapper.Map<IEnumerable<IngredientAllDTO>>(ingredients);
         }
 
-        public async Task<object> GetIngredientsWithQuantityAsync(string name, int quantity)
+        public async Task<IEnumerable<IngredientAllDTO>> SearchIngredientsByDishItemNameAsync(string dishItemName)
         {
-            return await _ingredientRepository.GetIngredientsWithQuantityAsync(name, quantity);
+            var ingredients = await _ingredientRepository.SearchIngredientsByDishItemNameAsync(dishItemName);
+            return _mapper.Map<IEnumerable<IngredientAllDTO>>(ingredients);
         }
     }
 }

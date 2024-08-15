@@ -661,18 +661,7 @@ namespace EHM_API.Map
 			CreateMap<AcceptOrderDTO, Invoice>()
 		   .ForMember(dest => dest.PaymentTime, opt => opt.Ignore())
 		   .ForMember(dest => dest.PaymentStatus, opt => opt.Ignore());
-
-            CreateMap<Ingredient, IngredientSearchNameDTO>()
-               .ForMember(dest => dest.MaterialName, opt => opt.MapFrom(src => src.Material.Name))
-               .ForMember(dest => dest.Quantitative, opt => opt.MapFrom(src => src.Quantitative));
-
-            CreateMap<Dish, DishSearchDTO>()
-                .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients));
-
-            CreateMap<Combo, ComboSearchDTO>()
-                .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.ComboDetails.Select(cd => cd.Dish)));
-
-        }
+		}
 
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)

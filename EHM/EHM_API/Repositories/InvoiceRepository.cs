@@ -66,7 +66,7 @@ namespace EHM_API.Repositories
 				Note = order.Discount?.Note,
 				TotalMoney = order.Discount?.TotalMoney,
 				QuantityLimit = order.Discount?.QuantityLimit,
-				Deposits = (decimal)order.Deposits,
+				Deposits = order.Deposits,
 				ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
                 {
                     DishId = od.DishId ?? 0,
