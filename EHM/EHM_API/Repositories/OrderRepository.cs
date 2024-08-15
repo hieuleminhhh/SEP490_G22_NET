@@ -200,7 +200,8 @@ public class OrderRepository : IOrderRepository
 			GuestAddress = o.Address?.GuestAddress,
 			ConsigneeName = o.Address?.ConsigneeName,
 			PaymentStatus = o.Invoice != null ? o.Invoice.PaymentStatus : default(int),
-			Note = o.Note,
+            PaymentMethods = o.Invoice != null ? o.Invoice.PaymentMethods : default(int),
+            Note = o.Note,
 			Type = o.Type,
 			DiscountId = o.DiscountId
 		}).ToList();
