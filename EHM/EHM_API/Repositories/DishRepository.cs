@@ -59,9 +59,16 @@ namespace EHM_API.Repositories
             return dish;
         }
 
+		public async Task<Dish> UpdateDishe(Dish dish)
+		{
+			var discount = await _context.Discounts.FindAsync(dish.DiscountId);
+			_context.Dishes.Update(dish);
+			await _context.SaveChangesAsync();
+			return dish;
+		}
 
 
-        public async Task DeleteIngredientsAsync(int dishId)
+		public async Task DeleteIngredientsAsync(int dishId)
         {
             var ingredients = await _context.Ingredients
                 .Where(i => i.DishId == dishId)
@@ -195,7 +202,55 @@ namespace EHM_API.Repositories
         }
 
 
-        public async Task<Dish> GetDishByIdAsync(int dishId)
+		public async Task<PagedResult<DishDTOAll>> GetDishesActive(string search, string categorySearch, int page, int pageSize)
+		{
+			var query = _context.Dishes.AsQueryable();
+			// Lọc các món ăn có IsActive = true
+			query = query.Where(d => d.IsActive);
+
+			if (!string.IsNullOrEmpty(categorySearch))
+			{
+				categorySearch = categorySearch.ToLower();
+				query = query.Where(d => d.Category.CategoryName.ToLower().Contains(categorySearch));
+			}
+
+			if (!string.IsNullOrEmpty(search))
+			{
+				search = search.ToLower();
+				query = query.Where(d => d.ItemName.ToLower().Contains(search));
+			}
+
+			var totalDishes = await query.CountAsync();
+
+			var dishes = await query
+				.Include(d => d.Category)
+				.Include(d => d.Discount)
+				.Skip((page - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
+
+			var dishDTOs = dishes.Select(d => new DishDTOAll
+			{
+				DishId = d.DishId,
+				ItemName = d.ItemName,
+				ItemDescription = d.ItemDescription,
+				Price = d.Price,
+				ImageUrl = d.ImageUrl,
+				CategoryId = d.CategoryId,
+				CategoryName = d.Category?.CategoryName,
+				IsActive = d.IsActive,
+				DiscountId = d.DishId,
+				DiscountedPrice = d.Price - (d.Price * d.Discount?.DiscountPercent / 100),
+				DiscountPercentage = d.Discount?.DiscountPercent
+			}).ToList();
+
+			return new PagedResult<DishDTOAll>(dishDTOs, totalDishes, page, pageSize);
+		}
+
+
+
+
+		public async Task<Dish> GetDishByIdAsync(int dishId)
         {
             return await _context.Dishes.FindAsync(dishId);
         }

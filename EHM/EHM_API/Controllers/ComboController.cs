@@ -258,6 +258,7 @@ namespace EHM_API.Controllers
             var combos = await _comboService.GetAllSortedAsync(sortField, sortOrder);
 			return Ok(combos);
 		}
+
 		[HttpGet("ListCombo")]
 		public async Task<ActionResult<PagedResult<ViewComboDTO>>> GetListCombo(
 		[FromQuery] int page = 1,
@@ -271,6 +272,21 @@ namespace EHM_API.Controllers
 
 			return Ok(result);
 		}
+
+		[HttpGet("ListComboActive")]
+		public async Task<ActionResult<PagedResult<ViewComboDTO>>> GetListComboActive(
+		[FromQuery] int page = 1,
+		[FromQuery] int pageSize = 10,
+		[FromQuery] string? search = null)
+		{
+			if (page <= 0) page = 1;
+			if (pageSize <= 0) pageSize = 10;
+
+			var result = await _comboService.GetComboActive(search, page, pageSize);
+
+			return Ok(result);
+		}
+
 		[HttpPatch("{comboId}/status")]
 		public async Task<IActionResult> UpdateDishStatus(int comboId, [FromBody] UpdateComboDTO updateCombo)
 		{
