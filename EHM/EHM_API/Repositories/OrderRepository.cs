@@ -618,7 +618,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 				else if (detailDto.ComboId.HasValue && detailDto.ComboId != 0)
@@ -642,7 +642,7 @@ public class OrderRepository : IOrderRepository
 						UnitPrice = unitPrice * detailDto.Quantity,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					});
 				}
 			}
@@ -944,7 +944,7 @@ public class OrderRepository : IOrderRepository
         {
             return null; 
         }
-
+		order.Status = 5;
         order.CancelationReason = reason;
         _context.Orders.Update(order);
         await _context.SaveChangesAsync();

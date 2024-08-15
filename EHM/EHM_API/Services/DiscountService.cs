@@ -31,33 +31,13 @@ namespace EHM_API.Services
 				bool statusChanged = false;
 
 
-				if (discount.StartTime.HasValue && DateTime.Now >= discount.StartTime.Value)
-				{
-					discount.DiscountStatus = true;
-					statusChanged = true;
-				}
-
-
-				if (discount.EndTime.HasValue && DateTime.Now >= discount.EndTime.Value)
+				if (discount.EndTime.HasValue && DateTime.Now.Date > discount.EndTime.Value.Date)
 				{
 					discount.DiscountStatus = false;
 					statusChanged = true;
 				}
 
-
-				if (discount.QuantityLimit.HasValue)
-				{
-					var orderCount = await _orderRepository.CountOrderByDiscountIdAsync(discount.DiscountId);
-
-					if (orderCount >= discount.QuantityLimit.Value)
-					{
-						discount.DiscountStatus = false;
-						statusChanged = true;
-					}
-				}
-
-
-				if (statusChanged)
+				if (statusChanged == true)
 				{
 					await _discountRepository.UpdateAsync(discount);
 					statusUpdated = true;
