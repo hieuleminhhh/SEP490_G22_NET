@@ -21,5 +21,6 @@ namespace EHM_API.DTOs.OrderDTO.Manager
 		public int? Type { get; set; }
         public int? DiscountId { get; set; }
         public int? PaymentStatus { get; set; }
+        public int? PaymentMethods { get; set; }
     }
 }
