@@ -153,28 +153,21 @@ namespace EHM_API.Controllers
 			return NoContent();
 		}
 
-		[HttpGet("search-by-dish-item-name")]
-		public async Task<ActionResult<IEnumerable<IngredientAllDTO>>> SearchIngredientsByDishItemName([FromQuery] string itemName)
-		{
-			var errors = new Dictionary<string, string>();
+        [HttpGet("search-by-dish-item-name")]
+        public async Task<ActionResult<object>> GetIngredientsWithQuantity([FromQuery] string name, [FromQuery] int quantity)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest(new { message = "Tên món hoặc combo không được để trống." });
+            }
 
-			if (string.IsNullOrWhiteSpace(itemName))
-			{
-				errors["itemName"] = "Tên món không được để trống hoặc chỉ có khoảng trắng.";
-			}
+            var result = await _ingredientService.GetIngredientsWithQuantityAsync(name, quantity);
+            if (result == null)
+            {
+                return NotFound(new { message = "Không tìm thấy nguyên liệu cho tên món hoặc combo đã cung cấp." });
+            }
 
-			if (errors.Any())
-			{
-				return BadRequest(errors);
-			}
-
-			var ingredients = await _ingredientService.SearchIngredientsByDishItemNameAsync(itemName.Trim());
-			if (ingredients == null || !ingredients.Any())
-			{
-				return NotFound(new { message = "Không tìm thấy nguyên liệu cho tên món đã cung cấp." });
-			}
-
-			return Ok(ingredients);
-		}
-	}
+            return Ok(result);
+        }
+    }
 }
