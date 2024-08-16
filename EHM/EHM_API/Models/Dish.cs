@@ -23,5 +23,6 @@ namespace EHM_API.Models
         public virtual Discount? Discount { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<ComboDetail> ComboDetails { get; set; }
+        public virtual ICollection<Ingredient> Ingredients { get; set; }
     }
 }

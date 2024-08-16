@@ -60,6 +60,8 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.FirstName).HasMaxLength(50);
 
+                entity.Property(e => e.IsActive).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.LastName).HasMaxLength(50);
 
                 entity.Property(e => e.Password)
@@ -128,7 +130,7 @@ namespace EHM_API.Models
             });
 
             modelBuilder.Entity<ComboDetail>()
-                          .HasKey(cd => new { cd.ComboId, cd.DishId });
+                         .HasKey(cd => new { cd.ComboId, cd.DishId });
 
             modelBuilder.Entity<ComboDetail>()
                 .HasOne(cd => cd.Combo)
@@ -216,16 +218,14 @@ namespace EHM_API.Models
                 entity.Property(e => e.MaterialId).HasColumnName("MaterialID");
 
                 entity.HasOne(d => d.Dish)
-                    .WithMany()
+                    .WithMany(r => r.Ingredients)
                     .HasForeignKey(d => d.DishId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Ingredient_Dish");
+                    .OnDelete(DeleteBehavior.ClientSetNull);
 
                 entity.HasOne(d => d.Material)
-                    .WithMany()
+                    .WithMany(r => r.Ingredients)
                     .HasForeignKey(d => d.MaterialId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Ingredient_Material");
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Invoice>(entity =>
@@ -381,6 +381,8 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.DishId).HasColumnName("DishID");
 
+                entity.Property(e => e.DishesServed).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.Note).HasMaxLength(200);
 
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
@@ -428,7 +430,6 @@ namespace EHM_API.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OrderTable_Table");
             });
-
 
             modelBuilder.Entity<Reservation>(entity =>
             {

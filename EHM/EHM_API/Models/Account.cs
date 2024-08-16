@@ -21,6 +21,7 @@ namespace EHM_API.Models
         public string? Role { get; set; }
         public string? Address { get; set; }
         public string? Phone { get; set; }
+        public bool? IsActive { get; set; }
 
         public virtual ICollection<Invoice> Invoices { get; set; }
         public virtual ICollection<News> News { get; set; }

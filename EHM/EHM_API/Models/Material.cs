@@ -9,5 +9,6 @@ namespace EHM_API.Models
         public string? Name { get; set; }
         public string? Category { get; set; }
         public string? Unit { get; set; }
+        public virtual ICollection<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
     }
 }
