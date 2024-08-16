@@ -63,10 +63,9 @@ namespace EHM_API.Services
             return _mapper.Map<IEnumerable<IngredientAllDTO>>(ingredients);
         }
 
-        public async Task<IEnumerable<IngredientAllDTO>> SearchIngredientsByDishItemNameAsync(string dishItemName)
+        public async Task<object> GetIngredientsWithQuantityAsync(string name, int quantity)
         {
-            var ingredients = await _ingredientRepository.SearchIngredientsByDishItemNameAsync(dishItemName);
-            return _mapper.Map<IEnumerable<IngredientAllDTO>>(ingredients);
+            return await _ingredientRepository.GetIngredientsWithQuantityAsync(name, quantity);
         }
     }
 }

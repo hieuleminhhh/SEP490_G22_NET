@@ -10,6 +10,6 @@ namespace EHM_API.Services
         Task<IngredientAllDTO> UpdateIngredientAsync(int dishId, int materialId, UpdateIngredientDTO updateIngredientDTO);
         Task<bool> DeleteIngredientAsync(int dishId, int materialId);
         Task<IEnumerable<IngredientAllDTO>> SearchIngredientsByDishIdAsync(int dishId);
-        Task<IEnumerable<IngredientAllDTO>> SearchIngredientsByDishItemNameAsync(string dishItemName);
+        Task<object> GetIngredientsWithQuantityAsync(string name, int quantity);
     }
 }
