@@ -953,4 +953,15 @@ public class OrderRepository : IOrderRepository
 
         return order;
     }
+
+	public async Task<Order?> GetOrderById(int orderId)
+	{
+		return await _context.Orders.FindAsync(orderId);
+	}
+
+	public async Task<IEnumerable<OrderTable>> GetOrderTablesByOrderIdAsync(int orderId)
+	{
+		return await _context.OrderTables.Where(ot => ot.OrderId == orderId).ToListAsync();
+	}
+
 }
