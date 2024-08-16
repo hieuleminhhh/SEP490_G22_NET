@@ -45,6 +45,5 @@ namespace EHM_API.Services
         Task<CancelationReasonDTO?> UpdateCancelationReasonAsync(int orderId, CancelationReasonDTO? cancelationReasonDTO);
 		Task AcceptOrderAsync(int orderId, AcceptOrderDTO acceptOrderDto);
 
-
 	}
 }

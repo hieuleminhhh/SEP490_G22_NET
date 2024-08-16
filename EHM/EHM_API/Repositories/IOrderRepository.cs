@@ -35,5 +35,9 @@ public interface IOrderRepository
     Task<int> CountOrderByDiscountIdAsync(int discountId);
     Task<IEnumerable<Order>> GetOrderDetailsForStaffType1Async();
     Task<Order?> UpdateCancelationReasonAsync(int orderId, string? reason);
+
+    Task<Order?> GetOrderById(int orderId);
+	Task<IEnumerable<OrderTable>> GetOrderTablesByOrderIdAsync(int orderId);
+
 }
 

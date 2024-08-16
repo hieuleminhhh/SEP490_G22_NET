@@ -4,6 +4,7 @@ using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 
 namespace EHM_API.Services
@@ -101,6 +102,8 @@ namespace EHM_API.Services
 			}
 
 			order.Status = dto.Status;
+
+
 			await _orderRepository.UpdateOrderAsync(order);
 		}
 

@@ -5,7 +5,9 @@ namespace EHM_API.Repositories
     public interface ITableRepository
     {
 		Task<IEnumerable<Table>> GetAllTablesAsync();
-        Task<Table> CreateAsync(Table table);
+        Task<Table?> GetByIdAsync(int tableId);
+
+		Task<Table> CreateAsync(Table table);
         Task<List<Table>> GetAvailableTablesByCapacityAsync(int capacity);
         Task<Table> GetTableByIdAsync(int tableId);
         Task<Table> UpdateTableAsync(Table table);
@@ -14,6 +16,5 @@ namespace EHM_API.Repositories
 
         Task<bool> UpdateTableStatus(int tableId, int status);
         Task<bool> ExistTable(int tableId);
-
 	}
 }
