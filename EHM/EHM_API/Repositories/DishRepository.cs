@@ -19,11 +19,23 @@ namespace EHM_API.Repositories
 
         public async Task<IEnumerable<Dish>> GetAllAsync()
         {
-            return await _context.Dishes
+            var dishes = await _context.Dishes
                 .Include(d => d.Category)
                 .Include(d => d.Discount)
                 .ToListAsync();
+
+           
+            foreach (var dish in dishes)
+            {
+                if (dish.Discount?.DiscountStatus == false) 
+                {
+                    dish.Discount = null;
+                }
+            }
+
+            return dishes;
         }
+
 
         public async Task<Dish> GetByIdAsync(int id)
         {
