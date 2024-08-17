@@ -56,7 +56,7 @@ namespace EHM_API.Repositories
         public async Task<IEnumerable<Account>> GetAccountsByRoleAsync(string role)
         {
             return await _context.Accounts
-                .Where(a => a.Role.ToLower() == role.ToLower())
+                .Where(a => a.Role.ToLower() == role.ToLower() && a.IsActive == true)
                 .ToListAsync();
         }
     }
