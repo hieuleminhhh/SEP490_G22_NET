@@ -513,6 +513,11 @@ namespace EHM_API.Services
             var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, accountId);
             return _mapper.Map<IEnumerable<OrderAccountDTO>>(orders);
         }
+        public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
+        {
+            var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
+            return order;
+        }
     }
 }
 
