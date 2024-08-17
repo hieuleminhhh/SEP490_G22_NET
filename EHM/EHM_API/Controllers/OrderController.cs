@@ -610,5 +610,15 @@ namespace EHM_API.Controllers
             }
             return Ok(orders);
         }
+        [HttpPut("{orderId}/Updatestatus")]
+        public async Task<ActionResult<Order>> UpdateOrderStatus(int orderId, [FromBody] UpdateStatusOrderDTO dto)
+        {
+            var updatedOrder = await _orderService.UpdateOrderStatusAsync(orderId, dto.Status);
+            if (updatedOrder == null)
+            {
+                return NotFound();
+            }
+            return Ok(updatedOrder);
+        }
     }
 }
