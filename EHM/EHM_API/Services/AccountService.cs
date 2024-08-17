@@ -73,6 +73,10 @@ namespace EHM_API.Services
             await _accountRepository.RemoveAccountAsync(id);
             return true;
         }
-
+        public async Task<IEnumerable<GetAccountByRole>> GetAccountsByRoleAsync(string role)
+        {
+            var accounts = await _accountRepository.GetAccountsByRoleAsync(role.ToLower());
+            return _mapper.Map<IEnumerable<GetAccountByRole>>(accounts);
+        }
     }
 }
