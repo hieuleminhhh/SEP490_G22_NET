@@ -273,7 +273,7 @@ namespace EHM_API.Services
 					ComboId = first.ComboId,
 					DishId = first.DishId,
 					Quantity = g.Sum(od => od.Quantity),
-					Dish = first.Dish, 
+					Dish = first.Dish,
 					Combo = first.Combo
 				};
 			})
@@ -338,7 +338,7 @@ namespace EHM_API.Services
 				Phone = order.Address?.GuestPhone,
 				Address = order.Address?.GuestAddress,
 
-			//	AccountId = dto.AccountId,
+				//	AccountId = dto.AccountId,
 				AmountReceived = dto.AmountReceived,
 				ReturnAmount = dto.ReturnAmount,
 				PaymentMethods = dto.PaymentMethods,
@@ -354,30 +354,30 @@ namespace EHM_API.Services
 
 			return invoice.InvoiceId;
 		}
-        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
-        {
-        
-            var orderDetails = await _orderRepository.GetOrderDetailsForStaffType1Async();
+		public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
+		{
 
-           
-            var mappedOrders = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orderDetails);
+			var orderDetails = await _orderRepository.GetOrderDetailsForStaffType1Async();
 
-           
-            foreach (var order in mappedOrders)
-            {
-                if (order.ItemInOrderDetails.Any())
-                {
-                    bool allDetailsCompleted = order.ItemInOrderDetails.All(detail => detail.Quantity == detail.DishesServed);
-                    order.Status = allDetailsCompleted ? 1 : 0;
-                }
-                else
-                {
-                    order.Status = 0; 
-                }
-            }
 
-            return mappedOrders;
-        }
+			var mappedOrders = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orderDetails);
+
+
+			foreach (var order in mappedOrders)
+			{
+				if (order.ItemInOrderDetails.Any())
+				{
+					bool allDetailsCompleted = order.ItemInOrderDetails.All(detail => detail.Quantity == detail.DishesServed);
+					order.Status = allDetailsCompleted ? 1 : 0;
+				}
+				else
+				{
+					order.Status = 0;
+				}
+			}
+
+			return mappedOrders;
+		}
 
 		public async Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto)
 		{
@@ -409,24 +409,36 @@ namespace EHM_API.Services
 			await _orderRepository.UpdateOrderAsync(order);
 		}
 
-        public async Task<CancelationReasonDTO?> UpdateCancelationReasonAsync(int orderId, CancelationReasonDTO? cancelationReasonDTO)
-        {
-            if (cancelationReasonDTO == null)
-            {
-                throw new ArgumentNullException(nameof(cancelationReasonDTO)); 
-            }
+		public async Task<CancelationReasonDTO?> UpdateCancelationReasonAsync(int orderId, CancelationReasonDTO? cancelationReasonDTO)
+		{
+			if (cancelationReasonDTO == null)
+			{
+				throw new ArgumentNullException(nameof(cancelationReasonDTO));
+			}
 
-            var order = await _orderRepository.UpdateCancelationReasonAsync(orderId, cancelationReasonDTO.CancelationReason);
-            if (order == null)
-            {
-                return null; 
-            }
+			var order = await _orderRepository.UpdateCancelationReasonAsync(orderId, cancelationReasonDTO.CancelationReason);
+			if (order == null)
+			{
+				return null;
+			}
 
-            return new CancelationReasonDTO
-            {
-                CancelationReason = order.CancelationReason
-            };
-        }
+			var orderTables = await _orderRepository.GetOrderTablesByOrderIdAsync(orderId);
+			foreach (var orderTable in orderTables)
+			{
+				var table = await _tableRepository.GetByIdAsync(orderTable.TableId);
+				if (table != null)
+				{
+					table.Status = 0;
+					await _tableRepository.UpdateTableAsync(table);
+				}
+			}
+
+			return new CancelationReasonDTO
+			{
+				CancelationReason = order.CancelationReason
+			};
+
+		}
 
 		public async Task AcceptOrderAsync(int orderId, AcceptOrderDTO acceptOrderDto)
 		{
@@ -477,11 +489,11 @@ namespace EHM_API.Services
 				InvoiceId = invoice.InvoiceId,
 				Description = acceptOrderDto.Description
 			};
-			await _invoiceRepository.CreateInvoiceLog(invoiceLog); 
+			await _invoiceRepository.CreateInvoiceLog(invoiceLog);
 		}
-
 	}
 }
+
 
 	
 
