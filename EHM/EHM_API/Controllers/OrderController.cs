@@ -589,9 +589,9 @@ namespace EHM_API.Controllers
 			}
 		}
         [HttpPut("update-account/{orderId}")]
-        public async Task<ActionResult<OrderAccountDTO?>> UpdateAccountId(int orderId, [FromBody] int accountId)
+        public async Task<ActionResult<OrderAccountDTO?>> UpdateAccountId(int orderId, [FromBody] UpdateOrderAccountDTO updateOrderAccountDTO)
         {
-            var updatedOrder = await _orderService.UpdateAccountIdAsync(orderId, accountId);
+            var updatedOrder = await _orderService.UpdateAccountIdAsync(orderId, updateOrderAccountDTO);
             if (updatedOrder == null)
             {
                 return NotFound();
@@ -599,7 +599,7 @@ namespace EHM_API.Controllers
             return Ok(updatedOrder);
         }
 
-       
+
         [HttpGet("orders/status/{status}/account/{accountId}")]
         public async Task<ActionResult<IEnumerable<OrderAccountDTO>>> GetOrdersByStatusAndAccountId(int status, int accountId)
         {
