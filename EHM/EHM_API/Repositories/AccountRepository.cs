@@ -53,5 +53,11 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
             return account;
         }
+        public async Task<IEnumerable<Account>> GetAccountsByRoleAsync(string role)
+        {
+            return await _context.Accounts
+                .Where(a => a.Role.ToLower() == role.ToLower())
+                .ToListAsync();
+        }
     }
 }
