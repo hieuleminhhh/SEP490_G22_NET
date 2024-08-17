@@ -508,10 +508,15 @@ namespace EHM_API.Services
 
             return _mapper.Map<OrderAccountDTO>(order);
         }
-        public async Task<IEnumerable<OrderAccountDTO>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
+        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
         {
             var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, accountId);
-            return _mapper.Map<IEnumerable<OrderAccountDTO>>(orders);
+            return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
+        }
+        public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
+        {
+            var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
+            return order;
         }
     }
 }
