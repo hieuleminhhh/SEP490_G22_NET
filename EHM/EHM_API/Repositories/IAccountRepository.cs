@@ -11,5 +11,6 @@ namespace EHM_API.Repositories
         Task<Account> GetAccountByIdAsync(int id);
         Task<Account> UpdateAccountAsync(Account account);
         Task<Account> RemoveAccountAsync(int id);
+        Task<IEnumerable<Account>> GetAccountsByRoleAsync(string role);
     }
 }

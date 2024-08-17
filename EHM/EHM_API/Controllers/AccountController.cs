@@ -270,5 +270,15 @@ namespace EHM_API.Controllers
                 return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.", details = ex.Message });
             }
         }
+        [HttpGet("role/{role}")]
+        public async Task<ActionResult<IEnumerable<GetAccountByRole>>> GetAccountsByRole(string role)
+        {
+            var accounts = await _accountService.GetAccountsByRoleAsync(role.ToLower());
+            if (accounts == null || !accounts.Any())
+            {
+                return NotFound();
+            }
+            return Ok(accounts);
+        }
     }
 }
