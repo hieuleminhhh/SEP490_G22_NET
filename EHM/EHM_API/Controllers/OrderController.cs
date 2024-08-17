@@ -106,10 +106,21 @@ namespace EHM_API.Controllers
             }
         }
 
+		[HttpGet]
+		public async Task<IActionResult> GetAllOrders()
+		{
+			var orders = await _orderService.GetAllOrdersAsync();
+			if (orders == null)
+			{
+				return StatusCode(500, "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.");
+			}
+
+			var orderDTOs = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
+			return Ok(orderDTOs);
+		}
 
 
-
-        [HttpDelete("{id}")]
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var existingOrder = await _orderService.GetOrderByIdAsync(id);
@@ -146,18 +157,7 @@ namespace EHM_API.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllOrders()
-        {
-            var orders = await _orderService.GetAllOrdersAsync();
-            if (orders == null)
-            {
-                return StatusCode(500, "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.");
-            }
-
-            var orderDTOs = _mapper.Map<IEnumerable<OrderDTOAll>>(orders);
-            return Ok(orderDTOs);
-        }
+        
 
 
         
@@ -588,7 +588,5 @@ namespace EHM_API.Controllers
 				return BadRequest(ex.Message);
 			}
 		}
-
-
 	}
 }

@@ -66,7 +66,7 @@ namespace EHM_API.Repositories
 				Note = order.Discount?.Note,
 				TotalMoney = order.Discount?.TotalMoney,
 				QuantityLimit = order.Discount?.QuantityLimit,
-				Deposits = order.Deposits,
+				Deposits = (decimal)order.Deposits,
 				ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
                 {
                     DishId = od.DishId ?? 0,
@@ -103,7 +103,7 @@ namespace EHM_API.Repositories
 
             var invoice = new Invoice
             {
-                PaymentTime = createInvoiceDto.PaymentTime,
+                PaymentTime = DateTime.Now,
                 PaymentAmount = createInvoiceDto.PaymentAmount,
                 Taxcode = createInvoiceDto.Taxcode,
                 PaymentStatus = createInvoiceDto.PaymentStatus,
@@ -130,6 +130,7 @@ namespace EHM_API.Repositories
 
 			order.Status = 4;
 			order.InvoiceId = invoice.InvoiceId;
+			order.RecevingOrder = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
@@ -349,10 +350,11 @@ namespace EHM_API.Repositories
 			var address = await GetOrCreateAddress(dto);
 
 			order.Status = dto.Status;
+			order.RecevingOrder = DateTime.Now;
 
 			if (order.Invoice != null)
 			{
-				order.Invoice.PaymentTime = dto.PaymentTime;
+				order.Invoice.PaymentTime = DateTime.Now;
 				order.Invoice.PaymentAmount = dto.PaymentAmount;
 				order.Invoice.Taxcode = dto.Taxcode;
 				order.Invoice.PaymentStatus = dto.PaymentStatus;
@@ -364,6 +366,8 @@ namespace EHM_API.Repositories
 				order.Invoice.AmountReceived = dto.AmountReceived;
 				order.Invoice.ReturnAmount = dto.ReturnAmount;
 				order.Invoice.PaymentMethods = dto.PaymentMethods;
+
+			
 
 				if (!string.IsNullOrEmpty(dto.Description))
 				{

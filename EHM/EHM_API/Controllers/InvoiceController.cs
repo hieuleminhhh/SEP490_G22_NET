@@ -12,7 +12,6 @@ namespace EHM_API.Controllers
 	public class InvoiceController : ControllerBase
 	{
 		private readonly IInvoiceService _invoiceService;
-
 		public InvoiceController(IInvoiceService incoiceService)
 		{
 			_invoiceService = incoiceService;

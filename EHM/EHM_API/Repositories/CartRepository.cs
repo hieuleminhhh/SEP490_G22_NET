@@ -380,6 +380,18 @@ namespace EHM_API.Repositories
 				DiscountId = takeOutDTO.DiscountId
 			};
 
+			if (order.RecevingOrder.HasValue)
+			{
+				if (order.RecevingOrder.Value.Date == DateTime.Now.Date)
+				{
+					order.Status = 6;
+				}
+				else
+				{
+					order.Status = 2;
+				}
+			}
+
 			await _context.Orders.AddAsync(order);
 			await _context.SaveChangesAsync();
 

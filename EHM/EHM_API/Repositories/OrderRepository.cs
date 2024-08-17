@@ -195,7 +195,7 @@ public class OrderRepository : IOrderRepository
 			InvoiceId = o.InvoiceId,
 			TotalAmount = o.TotalAmount,
 			GuestPhone = o.GuestPhone,
-			Deposits = o.Deposits,
+			Deposits = (decimal)o.Deposits,
 			AddressId = o.AddressId ?? 0,
 			GuestAddress = o.Address?.GuestAddress,
 			ConsigneeName = o.Address?.ConsigneeName,
@@ -953,4 +953,15 @@ public class OrderRepository : IOrderRepository
 
         return order;
     }
+
+	public async Task<Order?> GetOrderById(int orderId)
+	{
+		return await _context.Orders.FindAsync(orderId);
+	}
+
+	public async Task<IEnumerable<OrderTable>> GetOrderTablesByOrderIdAsync(int orderId)
+	{
+		return await _context.OrderTables.Where(ot => ot.OrderId == orderId).ToListAsync();
+	}
+
 }
