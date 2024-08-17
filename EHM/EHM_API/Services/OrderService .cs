@@ -354,32 +354,33 @@ namespace EHM_API.Services
 
 			return invoice.InvoiceId;
 		}
-		public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
-		{
+        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
+        {
+            var orders = await _orderRepository.GetOrderDetailsForStaffType1Async();
 
-			var orderDetails = await _orderRepository.GetOrderDetailsForStaffType1Async();
+            var mappedOrders = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
+
+            foreach (var order in mappedOrders)
+            {
+              
+                if (order.TotalAmount > 0 && order.DiscountPercent.HasValue)
+                {
+                    var discountPercentage = order.DiscountPercent.Value / 100m; 
+                    order.DiscountedPrice = order.TotalAmount * (1 - discountPercentage);
+                }
+                else
+                {
+                    order.DiscountedPrice = order.TotalAmount; 
+                }
+            }
+
+            return mappedOrders;
+        }
 
 
-			var mappedOrders = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orderDetails);
 
 
-			foreach (var order in mappedOrders)
-			{
-				if (order.ItemInOrderDetails.Any())
-				{
-					bool allDetailsCompleted = order.ItemInOrderDetails.All(detail => detail.Quantity == detail.DishesServed);
-					order.Status = allDetailsCompleted ? 1 : 0;
-				}
-				else
-				{
-					order.Status = 0;
-				}
-			}
-
-			return mappedOrders;
-		}
-
-		public async Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto)
+        public async Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto)
 		{
 			var order = await _orderRepository.GetByIdAsync(orderId);
 			if (order == null)
@@ -491,7 +492,26 @@ namespace EHM_API.Services
 			};
 			await _invoiceRepository.CreateInvoiceLog(invoiceLog);
 		}
-	}
+        public async Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, int accountId)
+        {
+            var order = await _orderRepository.GetOrderById(orderId);
+            if (order == null)
+            {
+                return null;
+            }
+
+            order.AccountId = accountId;
+            await _orderRepository.UpdateOrderAsync(order);
+
+            return _mapper.Map<OrderAccountDTO>(order);
+        }
+
+        public async Task<IEnumerable<OrderAccountDTO>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
+        {
+            var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, accountId);
+            return _mapper.Map<IEnumerable<OrderAccountDTO>>(orders);
+        }
+    }
 }
 
 

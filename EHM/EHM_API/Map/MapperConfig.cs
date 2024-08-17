@@ -648,7 +648,10 @@ namespace EHM_API.Map
                  .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
                  .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
                  .ForMember(dest => dest.ItemInOrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
-                 .ForMember(dest => dest.Status, opt => opt.MapFrom<OrderStatusResolver>());
+                 .ForMember(dest => dest.Status, opt => opt.MapFrom<OrderStatusResolver>())
+                 .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
+                   .ForMember(dest => dest.DiscountPercent, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.DiscountPercent : (decimal?)null))
+                 .ForMember(dest => dest.DiscountedPrice, opt => opt.Ignore());
 
             // Mapping OrderDetail to ItemInOrderDetail
             CreateMap<OrderDetail, ItemInOrderDetail>()
@@ -656,7 +659,8 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
-                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime));
+                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
+                .ForMember(dest => dest.ItemTotalPrice, opt => opt.MapFrom(src => (src.UnitPrice ?? 0) * (src.Quantity ?? 0)));
 
             //Account
             CreateMap<Account, GetAccountDTO>();
@@ -674,6 +678,7 @@ namespace EHM_API.Map
 
             CreateMap<Dish, DishSearchDTO>()
                 .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients));
+            CreateMap<Order, OrderAccountDTO>();
 
             CreateMap<Combo, ComboSearchDTO>()
                 .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.ComboDetails.Select(cd => cd.Dish)));
