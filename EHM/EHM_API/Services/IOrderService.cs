@@ -46,7 +46,7 @@ namespace EHM_API.Services
         Task<CancelationReasonDTO?> UpdateCancelationReasonAsync(int orderId, CancelationReasonDTO? cancelationReasonDTO);
 		Task AcceptOrderAsync(int orderId, AcceptOrderDTO acceptOrderDto);
         Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, UpdateOrderAccountDTO updateOrderAccountDTO);
-        Task<IEnumerable<OrderAccountDTO>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
+        Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
         Task<Order> UpdateForOrderStatusAsync(int orderId, int status);
     }
 }

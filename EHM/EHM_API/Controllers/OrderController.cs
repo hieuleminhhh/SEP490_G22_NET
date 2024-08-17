@@ -15,6 +15,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
 using EHM_API.Models;
+using EHM_API.DTOs.OrderDetailDTO.Manager;
 
 namespace EHM_API.Controllers
 {
@@ -601,7 +602,7 @@ namespace EHM_API.Controllers
 
 
         [HttpGet("orders/status/{status}/account/{accountId}")]
-        public async Task<ActionResult<IEnumerable<OrderAccountDTO>>> GetOrdersByStatusAndAccountId(int status, int accountId)
+        public async Task<ActionResult<IEnumerable<OrderDetailForStaffType1>>> GetOrdersByStatusAndAccountId(int status, int accountId)
         {
             var orders = await _orderService.GetOrdersByStatusAndAccountIdAsync(status, accountId);
             if (orders == null || !orders.Any())
