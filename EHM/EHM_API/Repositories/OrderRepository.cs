@@ -924,21 +924,23 @@ public class OrderRepository : IOrderRepository
 		return await _context.Orders
 			.CountAsync(order => order.DiscountId == discountId);
 	}
-	public async Task<IEnumerable<Order>> GetOrderDetailsForStaffType1Async()
-	{
-		return await _context.Orders
-			.Include(o => o.OrderDetails)
-				.ThenInclude(od => od.Dish)
-			.Include(o => o.OrderDetails)
-				.ThenInclude(od => od.Combo)
-			.Include(o => o.OrderTables)
-			.Include(o => o.Address)
-			.Where(o =>
-				((o.Status == 6))
-				&& ((o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)
-				|| (o.Type == 1 && (o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today || o.RecevingOrder == null))))
-			.ToListAsync();
-	}
+    public async Task<IEnumerable<Order>> GetOrderDetailsForStaffType1Async()
+    {
+        return await _context.Orders
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Dish)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Combo)
+            .Include(o => o.OrderTables)
+            .Include(o => o.Address)
+            .Include(o => o.Discount) 
+            .Where(o =>
+                ((o.Status == 6))
+                && ((o.Type == 2 && o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today)
+                || (o.Type == 1 && (o.RecevingOrder.HasValue && o.RecevingOrder.Value.Date == DateTime.Today || o.RecevingOrder == null))))
+            .ToListAsync();
+    }
+
     public async Task<Order?> UpdateCancelationReasonAsync(int orderId, string? reason)
     {
         var order = await _context.Orders.FindAsync(orderId);
@@ -963,5 +965,10 @@ public class OrderRepository : IOrderRepository
 	{
 		return await _context.OrderTables.Where(ot => ot.OrderId == orderId).ToListAsync();
 	}
-
+    public async Task<IEnumerable<Order>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
+    {
+        return await _context.Orders
+            .Where(o => o.Status == status && o.AccountId == accountId)
+            .ToListAsync();
+    }
 }

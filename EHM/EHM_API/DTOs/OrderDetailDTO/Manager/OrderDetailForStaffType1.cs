@@ -6,6 +6,9 @@
         public int? OrderType { get; set; }
         public int? Status { get; set; }
         public DateTime? RecevingOrder { get; set; }
+        public decimal? DiscountPercent { get; set; }
+        public decimal TotalAmount { get; set; }
+        public decimal DiscountedPrice { get; set; }
         public string? GuestPhone { get; set; }
         public decimal Deposits { get; set; }
         public string? GuestAddress { get; set; }
