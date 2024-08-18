@@ -682,8 +682,10 @@ namespace EHM_API.Map
 
             CreateMap<Combo, ComboSearchDTO>()
                 .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.ComboDetails.Select(cd => cd.Dish)));
+            
             CreateMap<Account, GetAccountByRole>();
 
+            CreateMap<Order, UpdateOrderAccountDTO>();
         }
 
 

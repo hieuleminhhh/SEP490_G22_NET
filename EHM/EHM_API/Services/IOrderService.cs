@@ -1,4 +1,5 @@
-﻿using EHM_API.DTOs.HomeDTO;
+﻿using EHM_API.DTOs.AccountDTO;
+using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
@@ -44,8 +45,8 @@ namespace EHM_API.Services
 		Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto);
         Task<CancelationReasonDTO?> UpdateCancelationReasonAsync(int orderId, CancelationReasonDTO? cancelationReasonDTO);
 		Task AcceptOrderAsync(int orderId, AcceptOrderDTO acceptOrderDto);
-        Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, int accountId);
-        Task<IEnumerable<OrderAccountDTO>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
-
+        Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, UpdateOrderAccountDTO updateOrderAccountDTO);
+        Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
+        Task<Order> UpdateForOrderStatusAsync(int orderId, int status);
     }
 }

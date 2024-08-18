@@ -968,6 +968,13 @@ public class OrderRepository : IOrderRepository
     public async Task<IEnumerable<Order>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
     {
         return await _context.Orders
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Dish)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Combo)
+            .Include(o => o.OrderTables)
+            .Include(o => o.Address)
+            .Include(o => o.Discount)
             .Where(o => o.Status == status && o.AccountId == accountId)
             .ToListAsync();
     }
