@@ -78,5 +78,10 @@ namespace EHM_API.Services
             var accounts = await _accountRepository.GetAccountsByRoleAsync(role.ToLower());
             return _mapper.Map<IEnumerable<GetAccountByRole>>(accounts);
         }
+        public async Task<bool> UpdateAccountStatusAsync(int id, bool isActive)
+        {
+            return await _accountRepository.UpdateAccountStatusAsync(id, isActive);
+        }
+
     }
 }
