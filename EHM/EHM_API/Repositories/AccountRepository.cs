@@ -59,5 +59,18 @@ namespace EHM_API.Repositories
                 .Where(a => a.Role.ToLower() == role.ToLower() && a.IsActive == true)
                 .ToListAsync();
         }
+        public async Task<bool> UpdateAccountStatusAsync(int id, bool isActive)
+        {
+            var account = await _context.Accounts.FindAsync(id);
+            if (account == null)
+            {
+                return false;
+            }
+
+            account.IsActive = isActive;
+            _context.Accounts.Update(account);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
