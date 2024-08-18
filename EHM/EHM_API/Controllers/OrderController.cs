@@ -15,6 +15,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
 using EHM_API.Models;
+using EHM_API.DTOs.OrderDetailDTO.Manager;
 
 namespace EHM_API.Controllers
 {
@@ -589,9 +590,9 @@ namespace EHM_API.Controllers
 			}
 		}
         [HttpPut("update-account/{orderId}")]
-        public async Task<ActionResult<OrderAccountDTO?>> UpdateAccountId(int orderId, [FromBody] int accountId)
+        public async Task<ActionResult<OrderAccountDTO?>> UpdateAccountId(int orderId, [FromBody] UpdateOrderAccountDTO updateOrderAccountDTO)
         {
-            var updatedOrder = await _orderService.UpdateAccountIdAsync(orderId, accountId);
+            var updatedOrder = await _orderService.UpdateAccountIdAsync(orderId, updateOrderAccountDTO);
             if (updatedOrder == null)
             {
                 return NotFound();
@@ -599,9 +600,9 @@ namespace EHM_API.Controllers
             return Ok(updatedOrder);
         }
 
-       
+
         [HttpGet("orders/status/{status}/account/{accountId}")]
-        public async Task<ActionResult<IEnumerable<OrderAccountDTO>>> GetOrdersByStatusAndAccountId(int status, int accountId)
+        public async Task<ActionResult<IEnumerable<OrderDetailForStaffType1>>> GetOrdersByStatusAndAccountId(int status, int accountId)
         {
             var orders = await _orderService.GetOrdersByStatusAndAccountIdAsync(status, accountId);
             if (orders == null || !orders.Any())
@@ -609,6 +610,16 @@ namespace EHM_API.Controllers
                 return NotFound();
             }
             return Ok(orders);
+        }
+        [HttpPut("{orderId}/Updatestatus")]
+        public async Task<ActionResult<Order>> UpdateOrderStatus(int orderId, [FromBody] UpdateStatusOrderDTO dto)
+        {
+            var updatedOrder = await _orderService.UpdateOrderStatusAsync(orderId, dto.Status);
+            if (updatedOrder == null)
+            {
+                return NotFound();
+            }
+            return Ok(updatedOrder);
         }
     }
 }

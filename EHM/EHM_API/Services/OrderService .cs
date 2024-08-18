@@ -492,7 +492,7 @@ namespace EHM_API.Services
 			};
 			await _invoiceRepository.CreateInvoiceLog(invoiceLog);
 		}
-        public async Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, int accountId)
+        public async Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, UpdateOrderAccountDTO updateOrderAccountDTO)
         {
             var order = await _orderRepository.GetOrderById(orderId);
             if (order == null)
@@ -500,16 +500,23 @@ namespace EHM_API.Services
                 return null;
             }
 
-            order.AccountId = accountId;
-            await _orderRepository.UpdateOrderAsync(order);
+            if (updateOrderAccountDTO.AccountId.HasValue)
+            {
+                order.AccountId = updateOrderAccountDTO.AccountId.Value;
+                await _orderRepository.UpdateOrderAsync(order);
+            }
 
             return _mapper.Map<OrderAccountDTO>(order);
         }
-
-        public async Task<IEnumerable<OrderAccountDTO>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
+        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
         {
             var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, accountId);
-            return _mapper.Map<IEnumerable<OrderAccountDTO>>(orders);
+            return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
+        }
+        public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
+        {
+            var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
+            return order;
         }
     }
 }
