@@ -280,5 +280,17 @@ namespace EHM_API.Controllers
             }
             return Ok(accounts);
         }
+        [HttpPut("update-status/{id}")]
+        public async Task<IActionResult> UpdateAccountStatus(int id, [FromBody] bool isActive)
+        {
+            var result = await _accountService.UpdateAccountStatusAsync(id, isActive);
+            if (!result)
+            {
+                return NotFound("Account not found");
+            }
+
+            return Ok("Account status updated successfully");
+        }
+
     }
 }
