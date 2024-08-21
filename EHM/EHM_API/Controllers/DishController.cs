@@ -5,6 +5,7 @@ using EHM_API.Enums;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Models;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -74,7 +75,9 @@ namespace EHM_API.Controllers
             return Ok(dish);
         }
 
-        [HttpPost]
+
+		[Authorize(Roles = "Manager")]
+		[HttpPost]
         public async Task<ActionResult> CreateNewDish(CreateDishDTO createDishDTO)
         {
             var errors = new Dictionary<string, string>();
@@ -170,7 +173,9 @@ namespace EHM_API.Controllers
             });
         }
 
-        [HttpPut("{dishId}")]
+
+		[Authorize(Roles = "Manager")]
+		[HttpPut("{dishId}")]
         public async Task<IActionResult> UpdateDish(int dishId, UpdateDishDTO updateDishDTO)
         {
             var errors = new Dictionary<string, string>();
@@ -302,7 +307,9 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình xử lý yêu cầu. Vui lòng thử lại sau." });
 			}
 		}
-        [HttpPatch("{dishId}/status")]
+
+		[Authorize(Roles = "Manager")]
+		[HttpPatch("{dishId}/status")]
         public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
         {
             try
@@ -362,9 +369,9 @@ namespace EHM_API.Controllers
             }
         }
 
-        
 
-        [HttpPut("{discountId}/dishes")]
+		[Authorize(Roles = "Manager")]
+		[HttpPut("{discountId}/dishes")]
         public async Task<ActionResult<IEnumerable<DishDTO>>> UpdateDiscountForDishesAsync(int discountId, [FromBody] List<int> dishIds)
         {
             try
@@ -377,6 +384,7 @@ namespace EHM_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpGet("searchDishAndCombo")]
         public async Task<ActionResult<SearchDishAndComboDTO>> SearchDishAndCombo([FromQuery] string search)
         {

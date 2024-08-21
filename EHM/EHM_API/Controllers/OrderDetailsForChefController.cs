@@ -37,6 +37,8 @@ namespace EHM_API.Controllers
 
             return NoContent();
         }
+
+
         [HttpGet("Current orderdetails")]
         public async Task<IActionResult> GetOrderDetails()
         {

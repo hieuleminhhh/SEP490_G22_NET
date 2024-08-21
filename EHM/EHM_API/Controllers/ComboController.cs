@@ -7,6 +7,7 @@ using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Repositories;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -69,6 +70,8 @@ namespace EHM_API.Controllers
 			return Ok(combos);
 		}
 
+
+		[Authorize(Roles = "Manager")]
 		[HttpPost]
 		public async Task<ActionResult> CreateCombo([FromBody] CreateComboDTO comboDTO)
 		{
@@ -139,7 +142,7 @@ namespace EHM_API.Controllers
 		}
 
 
-
+		[Authorize(Roles = "Manager")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateCombo(int id, [FromBody] ComboDTO comboDTO)
 		{
@@ -211,7 +214,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
-
+		[Authorize(Roles = "Manager")]
 		[HttpPut("{id}/cancel")]
 		public async Task<IActionResult> CancelCombo(int id)
 		{
@@ -226,6 +229,8 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
+		[Authorize(Roles = "Manager")]
 		[HttpPut("{id}/reactivate")]
 		public async Task<IActionResult> ReactivateCombo(int id)
 		{
