@@ -91,15 +91,15 @@ namespace EHM_API.Controllers
             {
                 errors["itemName"] = "Tên món ăn không được vượt quá 100 ký tự";
             }
-            else
+/*            else
             {
                 var existingDishes = await _dishService.SearchDishesAsync(createDishDTO.ItemName);
-                if (existingDishes.Any())
+                if (!existingDishes.Any())
                 {
                     errors["itemName"] = "Tên món ăn đã tồn tại";
                 }
             }
-
+*/
             if (!createDishDTO.Price.HasValue)
             {
                 errors["price"] = "Giá của món ăn không được để trống";
