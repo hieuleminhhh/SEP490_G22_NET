@@ -16,6 +16,7 @@ using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.IngredientDTO.Manager;
 using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.MaterialDTO;
+using EHM_API.DTOs.NewFolder;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
@@ -686,7 +687,9 @@ namespace EHM_API.Map
             CreateMap<Account, GetAccountByRole>();
 
             CreateMap<Order, UpdateOrderAccountDTO>();
-        }
+
+			CreateMap<News, NewsDTO>();
+		}
 
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)
