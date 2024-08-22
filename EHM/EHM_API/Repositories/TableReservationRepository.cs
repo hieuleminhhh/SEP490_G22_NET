@@ -30,5 +30,11 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
-    }
+
+		public async Task CreateOrderTablesAsync(OrderTable orderTable)
+		{
+			await _context.OrderTables.AddAsync(orderTable);
+			await _context.SaveChangesAsync();
+		}
+	}
 }
