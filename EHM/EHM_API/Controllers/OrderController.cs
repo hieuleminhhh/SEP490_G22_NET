@@ -93,7 +93,6 @@ namespace EHM_API.Controllers
             return NoContent();
         }
 
-		[Authorize(Roles = "Cashier")]
 		[HttpPut("{id}/cancel")]
         public async Task<IActionResult> CancelOrder(int id)
         {
@@ -572,7 +571,6 @@ namespace EHM_API.Controllers
 		}
 
 
-		[Authorize(Roles = "Cashier")]
 		[HttpPut("CancelOrderReason/{orderId}")]
 
 		public async Task<IActionResult> UpdateCancelationReason(int orderId, [FromBody] CancelationReasonDTO? cancelationReasonDTO)

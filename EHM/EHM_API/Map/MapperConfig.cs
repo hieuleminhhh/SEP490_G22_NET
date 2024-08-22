@@ -689,6 +689,19 @@ namespace EHM_API.Map
             CreateMap<Order, UpdateOrderAccountDTO>();
 
 			CreateMap<News, NewsDTO>();
+
+			CreateMap<Order, GetInvoiceAndOrderInfo>()
+			   .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice.PaymentTime))
+			   .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.Invoice.PaymentAmount))
+			   .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Invoice.Taxcode))
+			   .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice.PaymentStatus))
+			   .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Invoice.CustomerName))
+			   .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Invoice.Phone))
+			   .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Invoice.Address))
+			   .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice.AmountReceived))
+			   .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice.ReturnAmount))
+			   .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice.PaymentMethods));
+
 		}
 
 

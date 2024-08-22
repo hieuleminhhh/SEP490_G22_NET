@@ -90,7 +90,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ConsigneeName).HasMaxLength(50);
 
-                entity.Property(e => e.GuestAddress).HasMaxLength(50);
+                entity.Property(e => e.GuestAddress).HasMaxLength(200);
 
                 entity.Property(e => e.GuestPhone)
                     .HasMaxLength(15)

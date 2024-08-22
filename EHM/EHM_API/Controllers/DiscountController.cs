@@ -180,7 +180,6 @@ public class DiscountsController : ControllerBase
         return Ok(discounts);
     }
 
-	[Authorize(Roles = "Manager")]
 	[HttpGet("active")]
     public async Task<IActionResult> GetActiveDiscounts()
     {
