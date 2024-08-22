@@ -1,10 +1,12 @@
 ﻿using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.Models;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EHM_API.Controllers
 {
@@ -194,8 +196,21 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[HttpGet("GetAllInvoiceAndOrder")]
+		public async Task<ActionResult<IEnumerable<GetInvoiceAndOrderInfo>>> GetAllInvoicesAndOrders()
+		{
+			var result = await _invoiceService.GetAllInvoicesAndOrdersAsync();
+			return Ok(result);
+		}
 
-
+		[HttpGet("GetCancelOrder")]
+		public async Task<ActionResult<IEnumerable<GetInvoiceAndOrderInfo>>> GetInvoicesAndOrdersByStatusAndDeposit()
+		{
+			int status = 5;
+			decimal minDeposit = 0;
+			var result = await _invoiceService.GetOrdersWithStatusAndDepositAsync(status, minDeposit);
+			return Ok(result);
+		}
 
 	}
 }

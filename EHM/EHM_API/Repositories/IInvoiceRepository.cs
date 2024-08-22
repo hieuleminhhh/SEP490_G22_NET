@@ -2,6 +2,7 @@
 using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EHM_API.Repositories
 {
@@ -19,5 +20,8 @@ namespace EHM_API.Repositories
 
 		Task CreateInvoiceLog(InvoiceLog invoiceLog);
 		Task UpdateOrderAndInvoiceAsync(int orderId, InvoiceOfSitting dto);
+
+		Task<IEnumerable<Order>> GetAllOrdersWithInvoicesAsync();
+		Task<IEnumerable<Order>> GetOrdersWithInvoicesByStatusAndDepositAsync(int status, decimal minDeposit);
 	}
 }
