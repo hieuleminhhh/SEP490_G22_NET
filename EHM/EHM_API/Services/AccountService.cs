@@ -16,16 +16,19 @@ namespace EHM_API.Services
             _mapper = mapper;
         }
 
-        public async Task<CreateAccountDTO> CreateAccountAsync(CreateAccountDTO accountDTO)
-        {
-            var account = _mapper.Map<Account>(accountDTO);
-            account.Password = BCrypt.Net.BCrypt.HashPassword(accountDTO.Password); // Mã hóa mật khẩu
+		public async Task<CreateAccountDTO> CreateAccountAsync(CreateAccountDTO accountDTO)
+		{
+			var account = _mapper.Map<Account>(accountDTO);
 
-            var createdAccount = await _accountRepository.AddAccountAsync(account);
-            return _mapper.Map<CreateAccountDTO>(createdAccount);
-        }
+			var createdAccount = await _accountRepository.AddAccountAsync(account);
 
-        public async Task<bool> AccountExistsAsync(string username)
+			var createdAccountDTO = _mapper.Map<CreateAccountDTO>(createdAccount);
+
+			return createdAccountDTO;
+		}
+
+
+		public async Task<bool> AccountExistsAsync(string username)
         {
             return await _accountRepository.AccountExistsAsync(username);
         }
