@@ -171,7 +171,7 @@ namespace EHM_API.Controllers
 		}
 
 
-		/*[Authorize(Roles = "Manager")]*/
+		[Authorize(Roles = "Manager")]
 		[HttpPut("{dishId}")]
 		public async Task<IActionResult> UpdateDish(int dishId, UpdateDishDTO updateDishDTO)
 		{
