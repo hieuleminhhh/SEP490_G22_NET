@@ -90,7 +90,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ConsigneeName).HasMaxLength(50);
 
-                entity.Property(e => e.GuestAddress).HasMaxLength(50);
+                entity.Property(e => e.GuestAddress).HasMaxLength(200);
 
                 entity.Property(e => e.GuestPhone)
                     .HasMaxLength(15)
@@ -302,8 +302,9 @@ namespace EHM_API.Models
                 entity.Property(e => e.NewsContent).HasMaxLength(200);
 
                 entity.Property(e => e.NewsDate).HasColumnType("datetime");
+				entity.Property(e => e.NewsImage).HasMaxLength(100);
 
-                entity.Property(e => e.NewsTitle).HasMaxLength(50);
+				entity.Property(e => e.NewsTitle).HasMaxLength(50);
 
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.News)

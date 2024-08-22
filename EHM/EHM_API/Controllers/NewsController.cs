@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using EHM_API.DTOs;
 using EHM_API.Services;
-using EHM_API.DTOs.NewFolder;
+using EHM_API.DTOs.NewDTO;
 
 namespace EHM_API.Controllers
 {

@@ -17,7 +17,9 @@ namespace EHM_API.Services
 		Task<int> UpdateDepositAndCreateInvoiceAsync(int orderId, PrepaymentDTO dto);
 
 		Task UpdateOrderAndInvoiceAsync(int orderId, InvoiceOfSitting dto);
-		
 
+		Task<IEnumerable<GetInvoiceAndOrderInfo>> GetAllInvoicesAndOrdersAsync();
+
+		Task<IEnumerable<GetInvoiceAndOrderInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit);
 	}
 }

@@ -6,5 +6,7 @@ namespace EHM_API.Repositories
     {
         Task AddTableReservationAsync(TableReservation tableReservation);
         Task<bool> DeleteTableReservationByReservationIdAsync(int reservationId);
-    }
+		Task CreateOrderTablesAsync(OrderTable orderTable);
+
+	}
 }
