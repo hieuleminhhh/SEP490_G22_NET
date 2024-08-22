@@ -18,6 +18,8 @@ namespace EHM_API.Controllers
             _context = context;
             _jwtTokenGenerator = jwtTokenGenerator;
         }
+
+
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {

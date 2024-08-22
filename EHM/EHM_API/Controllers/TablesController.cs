@@ -58,12 +58,15 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<TableAllDTO>>> GetAllTables()
 		{
 			var tables = await _service.GetAllTablesAsync();
 			return Ok(tables);
 		}
+
+
         [HttpPut("{id}")]
         public async Task <IActionResult> UpdateAsync(int id, CreateTableDTO tabledto)
         {
@@ -71,6 +74,8 @@ namespace EHM_API.Controllers
 		    var updatetable = await _service.UpdateAsync(id, tabledto);
             return Ok(updatetable);
         }
+
+
 		[HttpPost]
 		public async Task<IActionResult> Create(CreateTableDTO tabledto)
 		{
