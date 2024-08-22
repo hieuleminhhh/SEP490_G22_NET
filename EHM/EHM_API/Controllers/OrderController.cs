@@ -93,7 +93,6 @@ namespace EHM_API.Controllers
             return NoContent();
         }
 
-		[Authorize(Roles = "Cashier")]
 		[HttpPut("{id}/cancel")]
         public async Task<IActionResult> CancelOrder(int id)
         {
