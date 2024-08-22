@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using EHM_API.DTOs;
-using EHM_API.DTOs.NewFolder;
+using EHM_API.DTOs.NewDTO;
 using EHM_API.Models;
 using EHM_API.Repositories;
 
