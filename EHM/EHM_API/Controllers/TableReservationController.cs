@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using EHM_API.Services;
+using EHM_API.DTOs.ReservationDTO.Manager;
 
 namespace EHM_API.Controllers
 {
@@ -26,6 +27,17 @@ namespace EHM_API.Controllers
             return NoContent();
         }
 
-  
-    }
+		[HttpPost("CreateOrderandTable")]
+		public async Task<IActionResult> CreateOrderTable([FromBody] CreateOrderTableDTO dto)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			await _tableReservationService.CreateOrderTablesAsync(dto);
+			return Ok(new { Message = "Đã tạo đơn hàng và bảng thành công!" });
+		}
+
+	}
 }

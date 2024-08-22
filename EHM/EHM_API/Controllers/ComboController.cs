@@ -329,7 +329,7 @@ namespace EHM_API.Controllers
 			return Ok(combo);
 		}
 
-/*		[Authorize(Roles = "Manager")]*/
+		[Authorize(Roles = "Manager")]
 		[HttpPut("UpdateComboWithDishes/{comboId}")]
 		public async Task<ActionResult<ComboDTO>> UpdateComboWithDishes(int comboId, [FromBody] UpdateComboDishDTO updateComboWithDishesDTO)
 		{

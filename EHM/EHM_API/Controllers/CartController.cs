@@ -182,7 +182,7 @@ namespace EHM_API.Controllers
 			{
 				await _cartService.Checkout(checkoutDTO);
 				 _cartService.ClearCart();
-				return Ok(new { message = "Thanh toán thành công." });
+				return Ok(new { message = "Đặt hàng thành công." });
 			}
 			catch (Exception ex)
 			{

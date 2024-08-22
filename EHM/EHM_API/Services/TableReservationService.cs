@@ -1,4 +1,6 @@
-﻿using EHM_API.Repositories;
+﻿using EHM_API.DTOs.ReservationDTO.Manager;
+using EHM_API.Models;
+using EHM_API.Repositories;
 
 namespace EHM_API.Services
 {
@@ -15,5 +17,18 @@ namespace EHM_API.Services
         {
             return await _tableReservationRepository.DeleteTableReservationByReservationIdAsync(reservationId);
         }
-    }
+
+		public async Task CreateOrderTablesAsync(CreateOrderTableDTO dto)
+		{
+			foreach (var tableId in dto.TableIds)
+			{
+				var orderTable = new OrderTable
+				{
+					OrderId = dto.OrderId,
+					TableId = tableId
+				};
+				await _tableReservationRepository.CreateOrderTablesAsync(orderTable);
+			}
+		}
+	}
 }
