@@ -7,6 +7,7 @@ using EHM_API.DTOs.HomeDTO;
 using EHM_API.Enums.EHM_API.Models;
 using EHM_API.Repositories;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -14,17 +15,15 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
 {
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
 	[ApiController]
 	public class ComboController : ControllerBase
 	{
 		private readonly IComboService _comboService;
-		private readonly IDishService _dishService;
 
-		public ComboController(IComboService comboService, IDishService dishService)
+		public ComboController(IComboService comboService)
 		{
 			_comboService = comboService;
-			_dishService = dishService;
 		}
 
 		[HttpGet]
@@ -69,6 +68,8 @@ namespace EHM_API.Controllers
 			return Ok(combos);
 		}
 
+
+		[Authorize(Roles = "Manager")]
 		[HttpPost]
 		public async Task<ActionResult> CreateCombo([FromBody] CreateComboDTO comboDTO)
 		{
@@ -139,7 +140,7 @@ namespace EHM_API.Controllers
 		}
 
 
-
+		[Authorize(Roles = "Manager")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> UpdateCombo(int id, [FromBody] ComboDTO comboDTO)
 		{
@@ -211,7 +212,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
-
+		[Authorize(Roles = "Manager")]
 		[HttpPut("{id}/cancel")]
 		public async Task<IActionResult> CancelCombo(int id)
 		{
@@ -226,6 +227,8 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
+		[Authorize(Roles = "Manager")]
 		[HttpPut("{id}/reactivate")]
 		public async Task<IActionResult> ReactivateCombo(int id)
 		{
@@ -249,13 +252,13 @@ namespace EHM_API.Controllers
 		[HttpGet("sorted-combos")]
 		public async Task<IActionResult> GetSortedCombosAsync(SortField? sortField, SortOrder? sortOrder)
 		{
-            if (!sortField.HasValue && !sortOrder.HasValue)
-            {
-                var allDishes = await _comboService.GetAllCombosAsync();
-                return Ok(allDishes);
-            }
+			if (!sortField.HasValue && !sortOrder.HasValue)
+			{
+				var allDishes = await _comboService.GetAllCombosAsync();
+				return Ok(allDishes);
+			}
 
-            var combos = await _comboService.GetAllSortedAsync(sortField, sortOrder);
+			var combos = await _comboService.GetAllSortedAsync(sortField, sortOrder);
 			return Ok(combos);
 		}
 
@@ -287,6 +290,8 @@ namespace EHM_API.Controllers
 			return Ok(result);
 		}
 
+
+		[Authorize(Roles = "Manager")]
 		[HttpPatch("{comboId}/status")]
 		public async Task<IActionResult> UpdateDishStatus(int comboId, [FromBody] UpdateComboDTO updateCombo)
 		{
@@ -312,6 +317,7 @@ namespace EHM_API.Controllers
 				message = "Trạng thái Combo được cập nhật thành công",
 			});
 		}
+
 		[HttpGet("GetComboById/{id}")]
 		public async Task<ActionResult<ComboDTO>> GetCombo(int id)
 		{
@@ -323,17 +329,17 @@ namespace EHM_API.Controllers
 			return Ok(combo);
 		}
 
-		
-        [HttpPut("UpdateComboWithDishes/{comboId}")]
-        public async Task<ActionResult<ComboDTO>> UpdateComboWithDishes(int comboId, [FromBody] UpdateComboDishDTO updateComboWithDishesDTO)
-        {
-            var errors = new Dictionary<string, string>();
+		[Authorize(Roles = "Manager")]
+		[HttpPut("UpdateComboWithDishes/{comboId}")]
+		public async Task<ActionResult<ComboDTO>> UpdateComboWithDishes(int comboId, [FromBody] UpdateComboDishDTO updateComboWithDishesDTO)
+		{
+			var errors = new Dictionary<string, string>();
 
-            if (comboId <= 0)
-            {
-                errors["comboId"] = "ID combo không hợp lệ";
-                return BadRequest(errors);
-			}  
+			if (comboId <= 0)
+			{
+				errors["comboId"] = "ID combo không hợp lệ";
+				return BadRequest(errors);
+			}
 			else if (!await _comboService.ComboExistsAsync(comboId))
 			{
 				errors["comboId"] = "Combo không tồn tại";
@@ -342,47 +348,47 @@ namespace EHM_API.Controllers
 
 
 			if (string.IsNullOrEmpty(updateComboWithDishesDTO.NameCombo))
-            {
-                errors["nameCombo"] = "Tên combo là bắt buộc";
-            }
-            else if (updateComboWithDishesDTO.NameCombo.Length > 100)
-            {
-                errors["nameCombo"] = "Tên combo không được vượt quá 100 ký tự";
-            }
+			{
+				errors["nameCombo"] = "Tên combo là bắt buộc";
+			}
+			else if (updateComboWithDishesDTO.NameCombo.Length > 100)
+			{
+				errors["nameCombo"] = "Tên combo không được vượt quá 100 ký tự";
+			}
 
-            if (!updateComboWithDishesDTO.Price.HasValue)
-            {
-                errors["price"] = "Giá của Combo là bắt buộc";
-            }
-            else if (updateComboWithDishesDTO.Price < 0 || updateComboWithDishesDTO.Price > 1000000000)
-            {
-                errors["price"] = "Giá của Combo phải nằm trong khoảng từ 0 đến 1,000,000,000";
-            }
+			if (!updateComboWithDishesDTO.Price.HasValue)
+			{
+				errors["price"] = "Giá của Combo là bắt buộc";
+			}
+			else if (updateComboWithDishesDTO.Price < 0 || updateComboWithDishesDTO.Price > 1000000000)
+			{
+				errors["price"] = "Giá của Combo phải nằm trong khoảng từ 0 đến 1,000,000,000";
+			}
 
-            if (string.IsNullOrEmpty(updateComboWithDishesDTO.Note))
-            {
-                errors["note"] = "Mô tả Combo là bắt buộc";
-            }
-            else if (updateComboWithDishesDTO.Note?.Length > 500)
-            {
-                errors["note"] = "Mô tả Combo không được vượt quá 500 ký tự";
-            }
+			if (string.IsNullOrEmpty(updateComboWithDishesDTO.Note))
+			{
+				errors["note"] = "Mô tả Combo là bắt buộc";
+			}
+			else if (updateComboWithDishesDTO.Note?.Length > 500)
+			{
+				errors["note"] = "Mô tả Combo không được vượt quá 500 ký tự";
+			}
 
-            if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
-            {
-                errors["image"] = "Hình ảnh là bắt buộc";
-            }
+			if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
+			{
+				errors["image"] = "Hình ảnh là bắt buộc";
+			}
 
-            var existingCombos = await _comboService.SearchComboByNameAsync(updateComboWithDishesDTO.NameCombo);
-            if (existingCombos.Any(c => c.ComboId != comboId))
-            {
-                errors["nameCombo"] = "Tên combo đã tồn tại";
-            }
+			var existingCombos = await _comboService.SearchComboByNameAsync(updateComboWithDishesDTO.NameCombo);
+			if (existingCombos.Any(c => c.ComboId != comboId))
+			{
+				errors["nameCombo"] = "Tên combo đã tồn tại";
+			}
 
-            if (updateComboWithDishesDTO.DishIds == null || updateComboWithDishesDTO.DishIds.Count == 0)
-            {
-                errors["dish"] = "Thông tin món ăn là bắt buộc";
-            }
+			if (updateComboWithDishesDTO.DishIds == null || updateComboWithDishesDTO.DishIds.Count == 0)
+			{
+				errors["dish"] = "Thông tin món ăn là bắt buộc";
+			}
 			if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
 			{
 				errors["image"] = "Hình ảnh không được để trống";
@@ -399,25 +405,27 @@ namespace EHM_API.Controllers
 			}
 
 			if (errors.Any())
-            {
-                return BadRequest(errors);
-            }
+			{
+				return BadRequest(errors);
+			}
 
-            try
-            {
-                var result = await _comboService.UpdateComboWithDishesAsync(comboId, updateComboWithDishesDTO);
-                return Ok(new
-                {
-                    message = "Combo đã được cập nhật thành công",
-                    result
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message, stackTrace = ex.StackTrace });
-            }
-        }
+			try
+			{
+				var result = await _comboService.UpdateComboWithDishesAsync(comboId, updateComboWithDishesDTO);
+				return Ok(new
+				{
+					message = "Combo đã được cập nhật thành công",
+					result
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = ex.Message, stackTrace = ex.StackTrace });
+			}
+		}
 
+
+		[Authorize(Roles = "Manager")]
 		[HttpPost("CreateComboWithDishes")]
 		public async Task<ActionResult<ComboDTO>> CreateComboWithDishes([FromBody] CreateComboDishDTO createComboWithDishesDTO)
 		{
@@ -489,8 +497,7 @@ namespace EHM_API.Controllers
 				var result = await _comboService.CreateComboWithDishesAsync(createComboWithDishesDTO);
 				return Ok(new
 				{
-					message = "Combo đã được tạo thành công",
-					result
+					message = "Combo đã được tạo thành công"
 				});
 			}
 			catch (Exception ex)

@@ -1,5 +1,6 @@
 ﻿using EHM_API.DTOs.GuestDTO.Manager;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -42,8 +43,8 @@ namespace EHM_API.Controllers
 			return Ok(address);
 		}
 
-        
 
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPost("CreateGuest")]
 		public async Task<IActionResult> CreateGuest(CreateGuestDTO createGuestDTO)
 		{

@@ -2,6 +2,7 @@
 using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -175,8 +176,8 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "Đã xảy ra lỗi khi lấy thông tin đặt bàn. Vui lòng thử lại sau." });
 			}
 		}
-
-        [HttpPut("{reservationId}/update-status")]
+		[Authorize(Roles = "Cashier")]
+		[HttpPut("{reservationId}/update-status")]
         public async Task<IActionResult> UpdateStatus(int reservationId, [FromBody] UpdateStatusReservationDTO updateStatusReservationDTO)
         {
             try
@@ -219,6 +220,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Cashier")]
 		[HttpPost("register-tables")]
         public async Task<IActionResult> RegisterTables([FromBody] RegisterTablesDTO registerTablesDTO)
         {
@@ -253,7 +255,9 @@ namespace EHM_API.Controllers
 			return Ok(result);
 		}
 
-        [HttpPut("{reservationId}/table/{tableId}/status")]
+
+		[Authorize(Roles = "Cashier")]
+		[HttpPut("{reservationId}/table/{tableId}/status")]
         public async Task<IActionResult> UpdateReservationAndTableStatus(int reservationId, int tableId, [FromBody] UpdateStatusReservationTable updateStatusReservationTable)
         {
             var errors = new Dictionary<string, string>();
@@ -293,6 +297,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[Authorize(Roles = "Cashier")]
 		[HttpPut("{reservationId}/tables/status")]
 		public async Task<IActionResult> UpdateTableStatuses(int reservationId, [FromBody] UpdateStatusTableByReservation dto)
 		{
@@ -305,6 +310,7 @@ namespace EHM_API.Controllers
 			return NoContent();
 		}
 
+		[Authorize(Roles = "Cashier")]
 		[HttpPut("{reservationId}/reason-cancel")]
         public async Task<IActionResult> UpdateReasonCancel(int reservationId, [FromBody] ReasonCancelDTO? reasonCancelDTO)
         {

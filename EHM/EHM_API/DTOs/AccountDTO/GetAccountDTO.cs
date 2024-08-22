@@ -13,5 +13,6 @@ namespace EHM_API.DTOs.AccountDTO
         public string? Role { get; set; }
         public string? Address { get; set; }
         public string? Phone { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

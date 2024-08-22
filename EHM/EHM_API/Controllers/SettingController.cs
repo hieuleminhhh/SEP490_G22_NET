@@ -1,5 +1,6 @@
 ﻿using EHM_API.DTOs.SettingDTO.Manager;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EHM_API.Controllers
@@ -22,7 +23,9 @@ namespace EHM_API.Controllers
             return Ok(settings);
         }
 
-        [HttpPut("{id}")]
+
+		[Authorize(Roles = "Admin")]
+		[HttpPut("{id}")]
         public async Task<ActionResult<SettingAllDTO>> UpdateAsync(int id, [FromBody] SettingAllDTO settingDto)
         {
             var updatedSetting = await _settingService.UpdateAsync(id, settingDto);
@@ -33,16 +36,17 @@ namespace EHM_API.Controllers
             return Ok(updatedSetting);
         }
 
-        [HttpPost]
+		[Authorize(Roles = "Admin")]
+		[HttpPost]
         public async Task<ActionResult<SettingAllDTO>> AddAsync([FromBody] SettingAllDTO settingDto)
         {
             var setting = await _settingService.AddAsync(settingDto);
             return Created("", setting);
         }
 
-        
 
-        [HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
+		[HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
             var success = await _settingService.DeleteAsync(id);

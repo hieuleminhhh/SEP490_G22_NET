@@ -1,6 +1,7 @@
 ﻿using EHM_API.DTOs;
 using EHM_API.DTOs.DiscountDTO.Manager;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ public class DiscountsController : ControllerBase
         return Ok(discount);
     }
 
+	[Authorize(Roles = "Manager")]
 	[HttpPost]
 	public async Task<ActionResult<CreateDiscountResponse>> AddAsync([FromBody] CreateDiscount discountDto)
 	{
@@ -98,6 +100,8 @@ public class DiscountsController : ControllerBase
 		});
 	}
 
+
+	[Authorize(Roles = "Manager")]
 	[HttpPut("{id}")]
 	public async Task<ActionResult<CreateDiscount>> UpdateAsync(int id, [FromBody] CreateDiscount discountDto)
 	{
@@ -156,6 +160,8 @@ public class DiscountsController : ControllerBase
 			discount = updatedDiscount
 		});
 	}
+
+
 	[HttpGet("GetDiscountByOrderId/{orderId}")]
 	public async Task<ActionResult<GetDiscountByOrderID>> GetDiscountByOrderId(int orderId)
 	{
@@ -174,8 +180,8 @@ public class DiscountsController : ControllerBase
         return Ok(discounts);
     }
 
-  
-    [HttpGet("active")]
+	[Authorize(Roles = "Manager")]
+	[HttpGet("active")]
     public async Task<IActionResult> GetActiveDiscounts()
     {
         var discounts = await _discountService.GetActiveDiscountsAsync();

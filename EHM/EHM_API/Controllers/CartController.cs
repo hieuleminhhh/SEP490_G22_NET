@@ -1,6 +1,7 @@
 ﻿using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -204,7 +205,8 @@ namespace EHM_API.Controllers
 
 			return Ok(checkoutSuccessInfo);
 		}
-		//staff order
+
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPost("AddNewOrder")]
         public async Task<IActionResult> AddNewOder([FromBody] TakeOutDTO checkoutDTO)
         {
@@ -240,7 +242,8 @@ namespace EHM_API.Controllers
 				});
 			}
 		}
-        [HttpPost("AddNewOrderTakeAway")]
+		[Authorize(Roles = "Cashier")]
+		[HttpPost("AddNewOrderTakeAway")]
         public async Task<IActionResult> AddNewOder2([FromBody] TakeOutDTO takeoutDTO)
         {
             var errors = new Dictionary<string, string>();
