@@ -14,39 +14,39 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DishController : ControllerBase
-    {
-        private readonly IDishService _dishService;
-        private readonly EHMDBContext _context;
-        public DishController(IDishService dishService, EHMDBContext context)
-        {
-            _dishService = dishService;
-            _context = context;
-        }
+	[Route("api/[controller]")]
+	[ApiController]
+	public class DishController : ControllerBase
+	{
+		private readonly IDishService _dishService;
+		private readonly EHMDBContext _context;
+		public DishController(IDishService dishService, EHMDBContext context)
+		{
+			_dishService = dishService;
+			_context = context;
+		}
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<DishDTOAll>>> GetDishes()
-        {
-            var dishes = await _dishService.GetAllDishesAsync();
-            return Ok(dishes);
-        }
+		[HttpGet]
+		public async Task<ActionResult<IEnumerable<DishDTOAll>>> GetDishes()
+		{
+			var dishes = await _dishService.GetAllDishesAsync();
+			return Ok(dishes);
+		}
 
-        [HttpGet("ListDishes")]
-        public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishes(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string? search = null,
+		[HttpGet("ListDishes")]
+		public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishes(
+			[FromQuery] int page = 1,
+			[FromQuery] int pageSize = 10,
+			[FromQuery] string? search = null,
 			[FromQuery] string? searchCategory = null)
 		{
-            if (page <= 0) page = 1;
-            if (pageSize <= 0) pageSize = 10;
+			if (page <= 0) page = 1;
+			if (pageSize <= 0) pageSize = 10;
 
 			var result = await _dishService.GetDishesAsync(search?.Trim(), searchCategory, page, pageSize);
 
 			return Ok(result);
-        }
+		}
 
 		[HttpGet("ListDishesActive")]
 		public async Task<ActionResult<PagedResult<DishDTOAll>>> GetListDishesActive(
@@ -65,181 +65,178 @@ namespace EHM_API.Controllers
 
 
 		[HttpGet("{id}")]
-        public async Task<ActionResult<DishDTOAll>> GetDish(int id)
-        {
-            var dish = await _dishService.GetDishByIdAsync(id);
-            if (dish == null)
-            {
-                return NotFound();
-            }
-            return Ok(dish);
-        }
+		public async Task<ActionResult<DishDTOAll>> GetDish(int id)
+		{
+			var dish = await _dishService.GetDishByIdAsync(id);
+			if (dish == null)
+			{
+				return NotFound();
+			}
+			return Ok(dish);
+		}
 
 
 		[Authorize(Roles = "Manager")]
 		[HttpPost]
-        public async Task<ActionResult> CreateNewDish(CreateDishDTO createDishDTO)
-        {
-            var errors = new Dictionary<string, string>();
+		public async Task<ActionResult> CreateNewDish(CreateDishDTO createDishDTO)
+		{
+			var errors = new Dictionary<string, string>();
 
-            createDishDTO.ItemName = createDishDTO.ItemName?.Trim();
-            createDishDTO.ItemDescription = createDishDTO.ItemDescription?.Trim();
-            createDishDTO.ImageUrl = createDishDTO.ImageUrl?.Trim();
+			createDishDTO.ItemName = createDishDTO.ItemName?.Trim();
+			createDishDTO.ItemDescription = createDishDTO.ItemDescription?.Trim();
+			createDishDTO.ImageUrl = createDishDTO.ImageUrl?.Trim();
 
-            if (string.IsNullOrEmpty(createDishDTO.ItemName))
-            {
-                errors["itemName"] = "Tên món ăn không được để trống";
-            }
-            else if (createDishDTO.ItemName.Length > 100)
-            {
-                errors["itemName"] = "Tên món ăn không được vượt quá 100 ký tự";
-            }
-/*            else
-            {
-                var existingDishes = await _dishService.SearchDishesAsync(createDishDTO.ItemName);
-                if (!existingDishes.Any())
-                {
-                    errors["itemName"] = "Tên món ăn đã tồn tại";
-                }
-            }
-*/
-            if (!createDishDTO.Price.HasValue)
-            {
-                errors["price"] = "Giá của món ăn không được để trống";
-            }
-            else if (createDishDTO.Price < 0 || createDishDTO.Price > 1000000000)
-            {
-                errors["price"] = "Giá phải nằm trong khoảng từ 0 đến 1.000.000.000";
-            }
+			if (string.IsNullOrEmpty(createDishDTO.ItemName))
+			{
+				errors["itemName"] = "Tên món ăn không được để trống";
+			}
+			else if (createDishDTO.ItemName.Length > 100)
+			{
+				errors["itemName"] = "Tên món ăn không được vượt quá 100 ký tự";
 
-            if (string.IsNullOrEmpty(createDishDTO.ItemDescription))
-            {
-                errors["itemDescription"] = "Mô tả không được để trống";
-            }
-            else if (createDishDTO.ItemDescription.Length > 500)
-            {
-                errors["itemDescription"] = "Mô tả món ăn không được vượt quá 500 ký tự";
-            }
+			}
+			else if (await _dishService.DishNameExistsAsync(createDishDTO.ItemName))
+			{
+				errors["itemName"] = "Tên món ăn đã tồn tại";
+			}
 
-            if (!createDishDTO.CategoryId.HasValue)
-            {
-                errors["categoryId"] = "Danh mục món ăn không được để trống";
-            }
-            else
-            {
-                var category = await _context.Categories.FindAsync(createDishDTO.CategoryId.Value);
-                if (category == null)
-                {
-                    errors["categoryId"] = "Danh mục món ăn không tồn tại";
-                }
-            }
+			if (!createDishDTO.Price.HasValue)
+			{
+				errors["price"] = "Giá của món ăn không được để trống";
+			}
+			else if (createDishDTO.Price < 0 || createDishDTO.Price > 1000000000)
+			{
+				errors["price"] = "Giá phải nằm trong khoảng từ 0 đến 1.000.000.000";
+			}
 
-            if (string.IsNullOrEmpty(createDishDTO.ImageUrl))
-            {
-                errors["image"] = "Hình ảnh không được để trống";
-            }
-            else
-            {
-                string extension = Path.GetExtension(createDishDTO.ImageUrl).ToLower();
-                string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+			if (string.IsNullOrEmpty(createDishDTO.ItemDescription))
+			{
+				errors["itemDescription"] = "Mô tả không được để trống";
+			}
+			else if (createDishDTO.ItemDescription.Length > 500)
+			{
+				errors["itemDescription"] = "Mô tả món ăn không được vượt quá 500 ký tự";
+			}
 
-                if (!allowedExtensions.Contains(extension))
-                {
-                    errors["image"] = "Hình ảnh không hợp lệ. Chỉ cho phép các tệp JPG, JPEG, PNG, GIF.";
-                }
-            }
+			if (!createDishDTO.CategoryId.HasValue)
+			{
+				errors["categoryId"] = "Danh mục món ăn không được để trống";
+			}
+			else
+			{
+				var category = await _context.Categories.FindAsync(createDishDTO.CategoryId.Value);
+				if (category == null)
+				{
+					errors["categoryId"] = "Danh mục món ăn không tồn tại";
+				}
+			}
+
+			if (string.IsNullOrEmpty(createDishDTO.ImageUrl))
+			{
+				errors["image"] = "Hình ảnh không được để trống";
+			}
+			else
+			{
+				string extension = Path.GetExtension(createDishDTO.ImageUrl).ToLower();
+				string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+
+				if (!allowedExtensions.Contains(extension))
+				{
+					errors["image"] = "Hình ảnh không hợp lệ. Chỉ cho phép các tệp JPG, JPEG, PNG, GIF.";
+				}
+			}
 
 			if (createDishDTO.DiscountId.HasValue)
 			{
 				var discountExists = await _dishService.DiscountExistsAsync(createDishDTO.DiscountId.Value);
 				if (!discountExists)
 				{
-					errors["discountId"] = "Mã giảm giá không tồn tại.";
+					errors["discountId"] = "Mã giảm giá không tồn tại";
 				}
 			}
 
 
 			if (errors.Any())
-            {
-                return BadRequest(errors);
-            }
+			{
+				return BadRequest(errors);
+			}
 
-            var createdDish = await _dishService.CreateDishAsync(createDishDTO);
+			var createdDish = await _dishService.CreateDishAsync(createDishDTO);
 
-            return Ok(new
-            {
-                message = "Món ăn đã được tạo thành công",
-                createdDish
-            });
-        }
+			return Ok(new
+			{
+				message = "Món ăn đã được tạo thành công",
+				createdDish
+			});
+		}
 
 
 		[Authorize(Roles = "Manager")]
 		[HttpPut("{dishId}")]
-        public async Task<IActionResult> UpdateDish(int dishId, UpdateDishDTO updateDishDTO)
-        {
-            var errors = new Dictionary<string, string>();
+		public async Task<IActionResult> UpdateDish(int dishId, UpdateDishDTO updateDishDTO)
+		{
+			var errors = new Dictionary<string, string>();
 
-            var existingDish = await _dishService.GetDishByIdAsync(dishId);
-            if (existingDish == null)
-            {
-                return NotFound(new { message = "Không tìm thấy món ăn" });
-            }
+			var existingDish = await _dishService.GetDishByIdAsync(dishId);
+			if (existingDish == null)
+			{
+				return NotFound(new { message = "Không tìm thấy món ăn" });
+			}
 
-            updateDishDTO.ItemName = updateDishDTO.ItemName?.Trim();
-            updateDishDTO.ItemDescription = updateDishDTO.ItemDescription?.Trim();
-            updateDishDTO.ImageUrl = updateDishDTO.ImageUrl?.Trim();
+			updateDishDTO.ItemName = updateDishDTO.ItemName?.Trim();
+			updateDishDTO.ItemDescription = updateDishDTO.ItemDescription?.Trim();
+			updateDishDTO.ImageUrl = updateDishDTO.ImageUrl?.Trim();
 
-            if (string.IsNullOrEmpty(updateDishDTO.ItemName))
-            {
+			if (string.IsNullOrEmpty(updateDishDTO.ItemName))
+			{
 				errors["itemName"] = "Tên món ăn không được để trống";
 			}
-            else if (updateDishDTO.ItemName.Length > 100)
-            {
+			else if (updateDishDTO.ItemName.Length > 100)
+			{
 				errors["itemName"] = "Tên món ăn không được vượt quá 100 ký tự";
 			}
-            else
-            {
-                var existingDishes = await _dishService.SearchDishesAsync(updateDishDTO.ItemName);
-                if (existingDishes.Any(d => d.DishId != dishId))
-                {
+			else
+			{
+				var existingDishes = await _dishService.SearchDishesAsync(updateDishDTO.ItemName);
+				if (existingDishes.Any(d => d.DishId != dishId))
+				{
 					errors["itemName"] = "Tên món ăn đã tồn tại";
 				}
-            }
+			}
 
-            if (!updateDishDTO.Price.HasValue)
-            {
+			if (!updateDishDTO.Price.HasValue)
+			{
 				errors["price"] = "Giá của món ăn không được để trống";
 			}
-            else if (updateDishDTO.Price < 0 || updateDishDTO.Price > 1000000000)
-            {
+			else if (updateDishDTO.Price < 0 || updateDishDTO.Price > 1000000000)
+			{
 				errors["price"] = "Giá phải nằm trong khoảng từ 0 đến 1.000.000.000";
 			}
 
-            if (string.IsNullOrEmpty(updateDishDTO.ItemDescription))
-            {
+			if (string.IsNullOrEmpty(updateDishDTO.ItemDescription))
+			{
 				errors["itemDescription"] = "Mô tả không được để trống";
 			}
-            else if (updateDishDTO.ItemDescription.Length > 500)
-            {
+			else if (updateDishDTO.ItemDescription.Length > 500)
+			{
 				errors["itemDescription"] = "Mô tả món ăn không được vượt quá 500 ký tự";
 			}
 
-            if (!updateDishDTO.CategoryId.HasValue)
-            {
+			if (!updateDishDTO.CategoryId.HasValue)
+			{
 				errors["categoryId"] = "Danh mục món ăn không được để trống";
 			}
-            else
-            {
-                var category = await _context.Categories.FindAsync(updateDishDTO.CategoryId.Value);
-                if (category == null)
-                {
+			else
+			{
+				var category = await _context.Categories.FindAsync(updateDishDTO.CategoryId.Value);
+				if (category == null)
+				{
 					errors["categoryId"] = "Danh mục món ăn không tồn tại";
 				}
-            }
+			}
 
-            if (string.IsNullOrEmpty(updateDishDTO.ImageUrl))
-            {
+			if (string.IsNullOrEmpty(updateDishDTO.ImageUrl))
+			{
 				errors["image"] = "Hình ảnh không được để trống";
 			}
 			else
@@ -254,23 +251,23 @@ namespace EHM_API.Controllers
 			}
 
 			if (errors.Any())
-            {
-                return BadRequest(errors);
-            }
+			{
+				return BadRequest(errors);
+			}
 
-            var updatedDish = await _dishService.UpdateDishAsync(dishId, updateDishDTO);
-            if (updatedDish == null)
-            {
-                return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật món ăn" });
-            }
+			var updatedDish = await _dishService.UpdateDishAsync(dishId, updateDishDTO);
+			if (updatedDish == null)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật món ăn" });
+			}
 
-            var message = "Món ăn đã được cập nhật thành công";
-            return Ok(new
-            {
-                message,
-                updatedDish
-            });
-        }
+			var message = "Món ăn đã được cập nhật thành công";
+			return Ok(new
+			{
+				message,
+				updatedDish
+			});
+		}
 
 		[HttpGet("sorted-dishes")]
 		public async Task<IActionResult> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
@@ -310,97 +307,97 @@ namespace EHM_API.Controllers
 
 		[Authorize(Roles = "Manager")]
 		[HttpPatch("{dishId}/status")]
-        public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
-        {
-            try
-            {
-                if (updateDishStatusDTO == null)
-                {
-                    return BadRequest(new { message = "Dữ liệu cập nhật không hợp lệ." });
-                }
+		public async Task<IActionResult> UpdateDishStatus(int dishId, [FromBody] UpdateDishStatusDTO updateDishStatusDTO)
+		{
+			try
+			{
+				if (updateDishStatusDTO == null)
+				{
+					return BadRequest(new { message = "Dữ liệu cập nhật không hợp lệ." });
+				}
 
-                var existingDish = await _dishService.GetDishByIdAsync(dishId);
-                if (existingDish == null)
-                {
-                    return NotFound(new { message = $"Không tìm thấy món ăn với ID {dishId}." });
-                }
+				var existingDish = await _dishService.GetDishByIdAsync(dishId);
+				if (existingDish == null)
+				{
+					return NotFound(new { message = $"Không tìm thấy món ăn với ID {dishId}." });
+				}
 
-                var updatedDish = await _dishService.UpdateDishStatusAsync(dishId, updateDishStatusDTO.IsActive);
-                if (updatedDish == null)
-                {
-                    return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật trạng thái món ăn. Vui lòng thử lại sau." });
-                }
+				var updatedDish = await _dishService.UpdateDishStatusAsync(dishId, updateDishStatusDTO.IsActive);
+				if (updatedDish == null)
+				{
+					return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật trạng thái món ăn. Vui lòng thử lại sau." });
+				}
 
-                string statusMessage = updateDishStatusDTO.IsActive ? "Kích hoạt" : "Không kích hoạt";
-                return Ok(new
-                {
-                    message = $"Trạng thái món ăn đã được {statusMessage} thành công.",
-                    data = updatedDish
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau." });
-            }
-        }
+				string statusMessage = updateDishStatusDTO.IsActive ? "Kích hoạt" : "Không kích hoạt";
+				return Ok(new
+				{
+					message = $"Trạng thái món ăn đã được {statusMessage} thành công.",
+					data = updatedDish
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau." });
+			}
+		}
 
-        [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<DishDTOAll>>> SearchDishes([FromQuery] string? name)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    return BadRequest(new { message = "Từ khóa tìm kiếm không được để trống." });
-                }
+		[HttpGet("search")]
+		public async Task<ActionResult<IEnumerable<DishDTOAll>>> SearchDishes([FromQuery] string? name)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(name))
+				{
+					return BadRequest(new { message = "Từ khóa tìm kiếm không được để trống." });
+				}
 
-                var dishes = await _dishService.SearchDishesAsync(name.Trim());
+				var dishes = await _dishService.SearchDishesAsync(name.Trim());
 
-                if (dishes == null || !dishes.Any())
-                {
-                    return NotFound(new { message = "Không tìm thấy món ăn nào phù hợp với từ khóa." });
-                }
+				if (dishes == null || !dishes.Any())
+				{
+					return NotFound(new { message = "Không tìm thấy món ăn nào phù hợp với từ khóa." });
+				}
 
-                return Ok(new { message = "Tìm kiếm thành công.", data = dishes });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình tìm kiếm. Vui lòng thử lại sau." });
-            }
-        }
+				return Ok(new { message = "Tìm kiếm thành công.", data = dishes });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "Đã xảy ra lỗi trong quá trình tìm kiếm. Vui lòng thử lại sau." });
+			}
+		}
 
 
 		[Authorize(Roles = "Manager")]
 		[HttpPut("{discountId}/dishes")]
-        public async Task<ActionResult<IEnumerable<DishDTO>>> UpdateDiscountForDishesAsync(int discountId, [FromBody] List<int> dishIds)
-        {
-            try
-            {
-                var dishes = await _dishService.UpdateDiscountForDishesAsync(discountId, dishIds);
-                return Ok(dishes);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+		public async Task<ActionResult<IEnumerable<DishDTO>>> UpdateDiscountForDishesAsync(int discountId, [FromBody] List<int> dishIds)
+		{
+			try
+			{
+				var dishes = await _dishService.UpdateDiscountForDishesAsync(discountId, dishIds);
+				return Ok(dishes);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
-        [HttpGet("searchDishAndCombo")]
-        public async Task<ActionResult<SearchDishAndComboDTO>> SearchDishAndCombo([FromQuery] string search)
-        {
-            if (string.IsNullOrWhiteSpace(search))
-            {
-                return BadRequest("Từ khóa tìm kiếm không được để trống.");
-            }
+		[HttpGet("searchDishAndCombo")]
+		public async Task<ActionResult<SearchDishAndComboDTO>> SearchDishAndCombo([FromQuery] string search)
+		{
+			if (string.IsNullOrWhiteSpace(search))
+			{
+				return BadRequest("Từ khóa tìm kiếm không được để trống.");
+			}
 
-            var result = await _dishService.SearchDishAndComboAsync(search);
+			var result = await _dishService.SearchDishAndComboAsync(search);
 
-            if (result == null || (result.Dishes.Count == 0 && result.Combos.Count == 0))
-            {
-                return NotFound("Không tìm thấy kết quả nào.");
-            }
+			if (result == null || (result.Dishes.Count == 0 && result.Combos.Count == 0))
+			{
+				return NotFound("Không tìm thấy kết quả nào.");
+			}
 
-            return Ok(result);
-        }
-    }
+			return Ok(result);
+		}
+	}
 }

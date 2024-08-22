@@ -12,86 +12,93 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-    public class DishService : IDishService
-    {
-        private readonly IDishRepository _dishRepository;
-        private readonly IMapper _mapper;
-        private readonly EHMDBContext _context;
+	public class DishService : IDishService
+	{
+		private readonly IDishRepository _dishRepository;
+		private readonly IMapper _mapper;
+		private readonly EHMDBContext _context;
 
-        public DishService(IDishRepository dishRepository, IMapper mapper, EHMDBContext context)
-        {
-            _dishRepository = dishRepository;
-            _mapper = mapper;
-            _context = context;
-        }
+		public DishService(IDishRepository dishRepository, IMapper mapper, EHMDBContext context)
+		{
+			_dishRepository = dishRepository;
+			_mapper = mapper;
+			_context = context;
+		}
 
-        public async Task<IEnumerable<DishDTOAll>> GetAllDishesAsync()
-        {
-            var dishes = await _dishRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
-        }
+		public async Task<IEnumerable<DishDTOAll>> GetAllDishesAsync()
+		{
+			var dishes = await _dishRepository.GetAllAsync();
+			return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
+		}
 
-        public async Task<DishDTOAll> GetDishByIdAsync(int id)
-        {
-            var dish = await _dishRepository.GetByIdAsync(id);
-            if (dish == null)
-            {
-                return null;
-            }
-            return _mapper.Map<DishDTOAll>(dish);
-        }
+		public async Task<DishDTOAll> GetDishByIdAsync(int id)
+		{
+			var dish = await _dishRepository.GetByIdAsync(id);
+			if (dish == null)
+			{
+				return null;
+			}
+			return _mapper.Map<DishDTOAll>(dish);
+		}
 
 		public async Task<bool> DishExistsAsync(int dishId)
 		{
 			return await _dishRepository.DishExistsAsync(dishId);
 		}
 
+		public async Task<bool> DishNameExistsAsync(string itemName)
+		{
+			return await _dishRepository.DishNameExistsAsync(itemName);
+		}
+
 		public async Task<DishDTOAll> CreateDishAsync(CreateDishDTO createDishDTO)
-        {
-            var dish = _mapper.Map<Dish>(createDishDTO);
-            if (dish.Price.HasValue)
-            {
-                dish.Price = Math.Round(dish.Price.Value, 2); 
-            }
-            var createdDish = await _dishRepository.AddAsync(dish);
-            return _mapper.Map<DishDTOAll>(createdDish);
-        }
+		{
+			var dish = _mapper.Map<Dish>(createDishDTO);
+			if (dish.Price.HasValue)
+			{
+				dish.Price = Math.Round(dish.Price.Value, 2);
+			}
+			var createdDish = await _dishRepository.AddAsync(dish);
+			return _mapper.Map<DishDTOAll>(createdDish);
+		}
 
-        public async Task<DishDTOAll> UpdateDishAsync(int id, UpdateDishDTO updateDishDTO)
-        {
-            var existingDish = await _dishRepository.GetByIdAsync(id);
-            if (existingDish == null)
-            {
-                return null;
-            }
+		public async Task<DishDTOAll> UpdateDishAsync(int id, UpdateDishDTO updateDishDTO)
+		{
+			var existingDish = await _dishRepository.GetByIdAsync(id);
+			if (existingDish == null)
+			{
+				return null;
+			}
 
-            _mapper.Map(updateDishDTO, existingDish);
-            if (existingDish.Price.HasValue)
-            {
-                existingDish.Price = Math.Round(existingDish.Price.Value, 2);
-            }
-            var updatedDish = await _dishRepository.UpdateDishe(existingDish);
-            return _mapper.Map<DishDTOAll>(updatedDish);
-        }
+			_mapper.Map(updateDishDTO, existingDish);
+			if (existingDish.Price.HasValue)
+			{
+				existingDish.Price = Math.Round(existingDish.Price.Value, 2);
+			}
+			var updatedDish = await _dishRepository.UpdateDishe(existingDish);
+			return _mapper.Map<DishDTOAll>(updatedDish);
+		}
 
-     
 
-        public async Task<IEnumerable<DishDTOAll>> SearchDishesAsync(string name)
-        {
-            var dishes = await _dishRepository.SearchAsync(name);
-            return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
-        }
 
-        public async Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder)
-        {
-            var dishes = await _dishRepository.GetAllSortedAsync(sortField, sortOrder);
-            return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
-        }
-        public async Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
-        {
-            var dishes = await _dishRepository.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
-            return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
-        }
+		public async Task<IEnumerable<DishDTOAll>> SearchDishesAsync(string name)
+		{
+			var dishes = await _dishRepository.SearchAsync(name);
+			return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
+		}
+
+
+
+		public async Task<IEnumerable<DishDTOAll>> GetAllSortedAsync(SortField? sortField, SortOrder? sortOrder)
+		{
+			var dishes = await _dishRepository.GetAllSortedAsync(sortField, sortOrder);
+			return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
+		}
+		public async Task<IEnumerable<DishDTOAll>> GetSortedDishesByCategoryAsync(string? categoryName, SortField? sortField, SortOrder? sortOrder)
+		{
+			var dishes = await _dishRepository.GetSortedDishesByCategoryAsync(categoryName, sortField, sortOrder);
+			return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
+		}
 
 
 		public async Task<PagedResult<DishDTOAll>> GetDishesAsync(string search, string categorySearch, int page, int pageSize)
@@ -99,20 +106,20 @@ namespace EHM_API.Services
 			var pagedDishes = await _dishRepository.GetDishesAsync(search, categorySearch, page, pageSize);
 			var dishDTOs = _mapper.Map<IEnumerable<DishDTOAll>>(pagedDishes.Items);
 
-            foreach (var dishDto in dishDTOs)
-            {
-                if (dishDto.CategoryId.HasValue)
-                {
-                    var category = await _context.Categories.FindAsync(dishDto.CategoryId.Value);
-                    if (category != null)
-                    {
-                        dishDto.CategoryName = category.CategoryName;
-                    }
-                }
-            }
+			foreach (var dishDto in dishDTOs)
+			{
+				if (dishDto.CategoryId.HasValue)
+				{
+					var category = await _context.Categories.FindAsync(dishDto.CategoryId.Value);
+					if (category != null)
+					{
+						dishDto.CategoryName = category.CategoryName;
+					}
+				}
+			}
 
-            return new PagedResult<DishDTOAll>(dishDTOs, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
-        }
+			return new PagedResult<DishDTOAll>(dishDTOs, pagedDishes.TotalCount, pagedDishes.Page, pagedDishes.PageSize);
+		}
 
 		public async Task<PagedResult<DishDTOAll>> GetDishesActive(string search, string categorySearch, int page, int pageSize)
 		{
@@ -136,9 +143,9 @@ namespace EHM_API.Services
 
 
 		public async Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive)
-        {
-            return await _dishRepository.UpdateDishStatusAsync(dishId, isActive);
-        }
+		{
+			return await _dishRepository.UpdateDishStatusAsync(dishId, isActive);
+		}
 
 		public async Task<bool> DiscountExistsAsync(int discountId)
 		{
@@ -157,11 +164,11 @@ namespace EHM_API.Services
 				Combos = _mapper.Map<List<SearchComboDTO>>(combos)
 			};
 		}
-        public async Task<IEnumerable<DishDTOAll>> UpdateDiscountForDishesAsync(int discountId, List<int> dishIds)
-        {
-            var dishes = await _dishRepository.UpdateDiscountForDishesAsync(discountId, dishIds);
-            return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
-        }
+		public async Task<IEnumerable<DishDTOAll>> UpdateDiscountForDishesAsync(int discountId, List<int> dishIds)
+		{
+			var dishes = await _dishRepository.UpdateDiscountForDishesAsync(discountId, dishIds);
+			return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
+		}
 
-    }
+	}
 }
