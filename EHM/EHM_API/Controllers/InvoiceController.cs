@@ -212,5 +212,12 @@ namespace EHM_API.Controllers
 			return Ok(result);
 		}
 
+		[HttpGet("Ordertoday")]
+		public async Task<IActionResult> GetOrdersToday()
+		{
+			var orders = await _invoiceService.GetOrdersTodayAsync();
+			return Ok(orders);
+		}
+
 	}
 }

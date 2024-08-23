@@ -187,5 +187,12 @@ namespace EHM_API.Services
 			return invoiceAndOrderInfoList;
 		}
 
+		public async Task<List<GetOrderTodayDTO>> GetOrdersTodayAsync()
+		{
+			var orders = await _invoiceRepository.GetOrdersTodayAsync();
+			var orderDTOs = _mapper.Map<List<GetOrderTodayDTO>>(orders);
+			return orderDTOs;
+		}
+
 	}
 }
