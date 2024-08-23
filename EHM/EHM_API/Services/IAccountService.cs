@@ -19,5 +19,9 @@ namespace EHM_API.Services
         Task<bool> RemoveAccountAsync(int id);
         Task<IEnumerable<GetAccountByRole>> GetAccountsByRoleAsync(string role);
         Task<bool> UpdateAccountStatusAsync(int id, bool isActive);
-    }
+
+        Task<bool> UpdateProfileAsync(int accountId, UpdateProfileDTO dto);
+        Task<bool> ChangePasswordAsync(int accountId, ChangePasswordDTO dto);
+
+	}
 }
