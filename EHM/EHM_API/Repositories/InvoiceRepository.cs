@@ -404,6 +404,21 @@ namespace EHM_API.Repositories
 				.ToListAsync();
 		}
 
+		public async Task<List<Order>> GetOrdersTodayAsync()
+		{
+			var today = DateTime.Today;
+
+			return await _context.Orders
+				.Include(o => o.Invoice)
+				.Include(o => o.Account)
+				.Where(o => o.RecevingOrder.HasValue
+							&& o.RecevingOrder.Value.Date == today
+							&& o.Account != null
+							&& o.Account.Role == "ship")
+				.ToListAsync();
+		}
+
+
 
 	}
 }

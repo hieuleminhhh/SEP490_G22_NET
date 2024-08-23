@@ -660,8 +660,8 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
-                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
-                .ForMember(dest => dest.ItemTotalPrice, opt => opt.MapFrom(src => (src.UnitPrice ?? 0) * (src.Quantity ?? 0)));
+                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime));
+               
 
             //Account
             CreateMap<Account, GetAccountDTO>();
@@ -703,6 +703,19 @@ namespace EHM_API.Map
 			   .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice.AmountReceived))
 			   .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice.ReturnAmount))
 			   .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice.PaymentMethods));
+
+			CreateMap<Order, GetOrderTodayDTO>()
+		   .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice.PaymentTime))
+		   .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.Invoice.PaymentAmount))
+		   .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Invoice.Taxcode))
+		   .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice.PaymentStatus))
+		   .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Invoice.CustomerName))
+		   .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Invoice.Phone))
+		   .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Invoice.Address))
+		   .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice.AmountReceived))
+		   .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice.ReturnAmount))
+		   .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice.PaymentMethods));
+
 
 		}
 

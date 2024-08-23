@@ -9,6 +9,5 @@
         public decimal? UnitPrice { get; set; }
         public int? DishesServed { get; set; }
         public DateTime? OrderTime { get; set; }
-        public decimal ItemTotalPrice { get; set; }
     }
 }
