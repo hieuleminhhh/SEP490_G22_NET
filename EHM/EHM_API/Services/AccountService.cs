@@ -16,16 +16,19 @@ namespace EHM_API.Services
             _mapper = mapper;
         }
 
-        public async Task<CreateAccountDTO> CreateAccountAsync(CreateAccountDTO accountDTO)
-        {
-            var account = _mapper.Map<Account>(accountDTO);
-            account.Password = BCrypt.Net.BCrypt.HashPassword(accountDTO.Password); // Mã hóa mật khẩu
+		public async Task<CreateAccountDTO> CreateAccountAsync(CreateAccountDTO accountDTO)
+		{
+			var account = _mapper.Map<Account>(accountDTO);
 
-            var createdAccount = await _accountRepository.AddAccountAsync(account);
-            return _mapper.Map<CreateAccountDTO>(createdAccount);
-        }
+			var createdAccount = await _accountRepository.AddAccountAsync(account);
 
-        public async Task<bool> AccountExistsAsync(string username)
+			var createdAccountDTO = _mapper.Map<CreateAccountDTO>(createdAccount);
+
+			return createdAccountDTO;
+		}
+
+
+		public async Task<bool> AccountExistsAsync(string username)
         {
             return await _accountRepository.AccountExistsAsync(username);
         }
@@ -78,5 +81,46 @@ namespace EHM_API.Services
             var accounts = await _accountRepository.GetAccountsByRoleAsync(role.ToLower());
             return _mapper.Map<IEnumerable<GetAccountByRole>>(accounts);
         }
-    }
+        public async Task<bool> UpdateAccountStatusAsync(int id, bool isActive)
+        {
+            return await _accountRepository.UpdateAccountStatusAsync(id, isActive);
+        }
+
+		public async Task<bool> UpdateProfileAsync(int accountId, UpdateProfileDTO dto)
+		{
+			var account = await _accountRepository.GetAccountByIdAsync(accountId);
+			if (account == null)
+			{
+				return false;
+			}
+
+			_mapper.Map(dto, account);
+
+			return await _accountRepository.UpdateProfileAccount(account);
+		}
+
+
+		public async Task<bool> ChangePasswordAsync(int accountId, ChangePasswordDTO dto)
+		{
+			var account = await _accountRepository.GetAccountByIdAsync(accountId);
+			if (account == null)
+			{
+				return false; 
+			}
+
+			if (account.Password != dto.CurrentPassword)
+			{
+				return false; 
+			}
+
+			if (dto.NewPassword != dto.ConfirmPassword)
+			{
+				return false; 
+			}
+
+			account.Password = dto.NewPassword;
+			return await _accountRepository.UpdateProfileAccount(account);
+		}
+
+	}
 }

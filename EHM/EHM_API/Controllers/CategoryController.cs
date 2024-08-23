@@ -2,6 +2,7 @@
 using EHM_API.DTOs.CategoryDTO.Guest;
 using EHM_API.DTOs.CategoryDTO.Manager;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +52,8 @@ namespace EHM_API.Controllers
 			}
 			return Ok(dishes);
 		}
+
+		[Authorize(Roles = "Manager")]
 		[HttpPost]
 		public async Task<ActionResult> CreateNewCategory([FromBody] CreateCategory categoryDTO)
 		{

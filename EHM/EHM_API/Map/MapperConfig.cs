@@ -16,6 +16,7 @@ using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.IngredientDTO.Manager;
 using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.MaterialDTO;
+using EHM_API.DTOs.NewDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
@@ -686,7 +687,37 @@ namespace EHM_API.Map
             CreateMap<Account, GetAccountByRole>();
 
             CreateMap<Order, UpdateOrderAccountDTO>();
-        }
+
+			CreateMap<News, NewsDTO>();
+
+			CreateMap<UpdateProfileDTO, Account>();
+
+			CreateMap<Order, GetInvoiceAndOrderInfo>()
+			   .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice.PaymentTime))
+			   .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.Invoice.PaymentAmount))
+			   .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Invoice.Taxcode))
+			   .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice.PaymentStatus))
+			   .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Invoice.CustomerName))
+			   .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Invoice.Phone))
+			   .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Invoice.Address))
+			   .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice.AmountReceived))
+			   .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice.ReturnAmount))
+			   .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice.PaymentMethods));
+
+			CreateMap<Order, GetOrderTodayDTO>()
+		   .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice.PaymentTime))
+		   .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.Invoice.PaymentAmount))
+		   .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Invoice.Taxcode))
+		   .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice.PaymentStatus))
+		   .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Invoice.CustomerName))
+		   .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Invoice.Phone))
+		   .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Invoice.Address))
+		   .ForMember(dest => dest.AmountReceived, opt => opt.MapFrom(src => src.Invoice.AmountReceived))
+		   .ForMember(dest => dest.ReturnAmount, opt => opt.MapFrom(src => src.Invoice.ReturnAmount))
+		   .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice.PaymentMethods));
+
+
+		}
 
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)

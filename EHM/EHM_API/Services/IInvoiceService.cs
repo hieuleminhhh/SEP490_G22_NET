@@ -9,15 +9,16 @@ namespace EHM_API.Services
 		Task<InvoiceDetailDTO> GetInvoiceDetailAsync(int invoiceId);
 		Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto);
 		Task<int> CreateInvoiceForOrder(int orderId, CreateInvoiceForOrder2DTO createInvoiceDto);
-
 		Task UpdateInvoiceAndOrderAsync(int orderId, UpdateInvoiceSuccessPaymentDTO dto);
 		Task UpdateOrderStatusAsync(int orderId, UpdateStatusOrderDTO dto);
 		Task UpdateInvoiceAndCreateGuestAsync(int invoiceId, UpdateInvoiceDTO dto);
 		Task<InvoiceDetailDTO> GetInvoiceByOrderIdAsync(int orderId);
 		Task<int> UpdateDepositAndCreateInvoiceAsync(int orderId, PrepaymentDTO dto);
-
 		Task UpdateOrderAndInvoiceAsync(int orderId, InvoiceOfSitting dto);
-		
+		Task<IEnumerable<GetInvoiceAndOrderInfo>> GetAllInvoicesAndOrdersAsync();
+		Task<IEnumerable<GetInvoiceAndOrderInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit);
+
+		Task<List<GetOrderTodayDTO>> GetOrdersTodayAsync();
 
 	}
 }

@@ -16,6 +16,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using EHM_API.Models;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EHM_API.Controllers
 {
@@ -41,7 +42,9 @@ namespace EHM_API.Controllers
             _comboService = comboService;
         }
 
-        [HttpPost]
+
+		[Authorize(Roles = "OrderStaff,Cashier")]
+		[HttpPost]
         public async Task<IActionResult> CreateOrder(CreateOrderDTO createOrderDTO)
         {
 
@@ -68,7 +71,9 @@ namespace EHM_API.Controllers
             return Ok(orderDTO);
         }
 
-        [HttpPut("{id}")]
+
+		[Authorize(Roles = "OrderStaff,Cashier")]
+		[HttpPut("{id}")]
         public async Task<IActionResult> PutOrder(int id, UpdateOrderDTO updateOrderDTO)
         {
 
@@ -88,7 +93,7 @@ namespace EHM_API.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}/cancel")]
+		[HttpPut("{id}/cancel")]
         public async Task<IActionResult> CancelOrder(int id)
         {
             try
@@ -106,6 +111,7 @@ namespace EHM_API.Controllers
                 return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn." });
             }
         }
+
 
 		[HttpGet]
 		public async Task<IActionResult> GetAllOrders()
@@ -219,8 +225,8 @@ namespace EHM_API.Controllers
         }
 
 
-
-        [HttpPatch("{orderId}/status")]
+		[Authorize(Roles = "OrderStaff,Cashier")]
+		[HttpPatch("{orderId}/status")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateOrderDTO updateOrder)
         {
             if (updateOrder == null)
@@ -255,6 +261,7 @@ namespace EHM_API.Controllers
             return Ok(ordersWithTables);
         }
 
+
         [HttpGet("getOrderByTableId")]
         public async Task<IActionResult> GetOrderByTableId([FromQuery] int tableId)
         {
@@ -286,6 +293,7 @@ namespace EHM_API.Controllers
             }
         }
 
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPost("updateOrderDetails/{tableId}")]
 		public async Task<IActionResult> UpdateOrderDetails(int tableId, [FromBody] UpdateTableAndGetOrderDTO dto)
 		{
@@ -316,6 +324,8 @@ namespace EHM_API.Controllers
 			return Ok(new { message = "Cập nhật thành công." });
 		}
 
+
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPost("updateOrderDetailsByOrderId/{orderId}")]
 		public async Task<IActionResult> UpdateOrderDetailsByOrderId(int orderId, [FromBody] UpdateTableAndGetOrderDTO dto)
 		{
@@ -347,7 +357,7 @@ namespace EHM_API.Controllers
 		}
 
 
-		// Create Order for Table
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPost("createOrderForTable/{tableId}")]
 		public async Task<IActionResult> CreateOrderForTable(int tableId, [FromBody] CreateOrderForTableDTO dto)
 		{
@@ -432,6 +442,7 @@ namespace EHM_API.Controllers
 
 
 		//Update status
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("update-order-status-for-table")]
 		public async Task<IActionResult> UpdateOrderStatusForTable(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)
 		{
@@ -451,6 +462,7 @@ namespace EHM_API.Controllers
 		}
 
 		[HttpPut("cancel-order")]
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		public async Task<IActionResult> CancelOrder(int tableId, int orderId, [FromBody] CancelOrderDTO dto)
 		{
 			try
@@ -492,6 +504,7 @@ namespace EHM_API.Controllers
 			return Ok(orderDetails);
 		}
 
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("CancelOrderForTable/{tableId}")]
 		public async Task<IActionResult> UpdateStatus(int tableId, [FromBody] CancelOrderTableDTO dto)
 		{
@@ -515,7 +528,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
-
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("UpdateStatusAndCreateInvoice/{orderId}")]
 		public async Task<IActionResult> UpdateStatusAndCreateInvoice(int orderId, UpdateStatusAndCInvoiceD dto)
 		{
@@ -538,6 +551,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("UpdateAmountReceiving/{orderId}")]
 		public async Task<IActionResult> UpdateAmountReceiving(int orderId, UpdateAmountReceiving dto)
 		{
@@ -556,7 +570,8 @@ namespace EHM_API.Controllers
 			}
 		}
 
-        [HttpPut("CancelOrderReason/{orderId}")]
+
+		[HttpPut("CancelOrderReason/{orderId}")]
 
 		public async Task<IActionResult> UpdateCancelationReason(int orderId, [FromBody] CancelationReasonDTO? cancelationReasonDTO)
         {
@@ -575,7 +590,7 @@ namespace EHM_API.Controllers
             return Ok(result);
         }
 
-
+		[Authorize(Roles = "Cashier")]
 		[HttpPost("AcceptOrder/{orderId}")]
 		public async Task<IActionResult> AcceptOrder(int orderId, [FromBody] AcceptOrderDTO acceptOrderDto)
 		{
@@ -589,7 +604,9 @@ namespace EHM_API.Controllers
 				return BadRequest(ex.Message);
 			}
 		}
-        [HttpPut("update-account/{orderId}")]
+
+
+		[HttpPut("update-account/{orderId}")]
         public async Task<ActionResult<OrderAccountDTO?>> UpdateAccountId(int orderId, [FromBody] UpdateOrderAccountDTO updateOrderAccountDTO)
         {
             var updatedOrder = await _orderService.UpdateAccountIdAsync(orderId, updateOrderAccountDTO);
@@ -611,6 +628,8 @@ namespace EHM_API.Controllers
             }
             return Ok(orders);
         }
+
+
         [HttpPut("{orderId}/Updatestatus")]
         public async Task<ActionResult<Order>> UpdateOrderStatus(int orderId, [FromBody] UpdateStatusOrderDTO dto)
         {

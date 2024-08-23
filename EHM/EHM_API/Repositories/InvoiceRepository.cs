@@ -388,6 +388,36 @@ namespace EHM_API.Repositories
 			await _context.SaveChangesAsync();
 		}
 
+		public async Task<IEnumerable<Order>> GetAllOrdersWithInvoicesAsync()
+		{
+			return await _context.Orders
+				.Include(o => o.Invoice)
+				.Where(o => o.InvoiceId.HasValue)
+				.ToListAsync();
+		}
+
+		public async Task<IEnumerable<Order>> GetOrdersWithInvoicesByStatusAndDepositAsync(int status, decimal minDeposit)
+		{
+			return await _context.Orders
+				.Include(o => o.Invoice)
+				.Where(o => o.Status == status && o.Deposits > minDeposit && o.InvoiceId.HasValue)
+				.ToListAsync();
+		}
+
+		public async Task<List<Order>> GetOrdersTodayAsync()
+		{
+			var today = DateTime.Today;
+
+			return await _context.Orders
+				.Include(o => o.Invoice)
+				.Include(o => o.Account)
+				.Where(o => o.RecevingOrder.HasValue
+							&& o.RecevingOrder.Value.Date == today
+							&& o.Account != null
+							&& o.Account.Role == "ship")
+				.ToListAsync();
+		}
+
 
 
 	}

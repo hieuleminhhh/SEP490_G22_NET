@@ -1,9 +1,12 @@
 ﻿using EHM_API.DTOs.CartDTO.OrderStaff;
 using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.Models;
 using EHM_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EHM_API.Controllers
 {
@@ -29,8 +32,8 @@ namespace EHM_API.Controllers
 			return Ok(invoiceDetail);
 		}
 
-
-        [HttpPost("create-invoice/{orderId}")]
+		[Authorize(Roles = "OrderStaff,Cashier")]
+		[HttpPost("create-invoice/{orderId}")]
         public async Task<IActionResult> CreateInvoiceForOrderAsync(int orderId, [FromBody] CreateInvoiceForOrderDTO createInvoiceDto)
         {
             try
@@ -48,6 +51,7 @@ namespace EHM_API.Controllers
             }
         }
 
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPost("createInvoiceForOrder/{orderId}")]
 		public async Task<IActionResult> CreateInvoiceForOrder(int orderId, [FromBody] CreateInvoiceForOrder2DTO createInvoiceDto)
 		{
@@ -68,7 +72,7 @@ namespace EHM_API.Controllers
 
 
 
-
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("updateInvoice/{invoiceId}")]
 		public async Task<IActionResult> UpdateInvoiceAndCreateGuest(int invoiceId, [FromBody] UpdateInvoiceDTO dto)
 		{
@@ -96,6 +100,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("updateSuccessPayment/{orderId}")]
 		public async Task<IActionResult> UpdateInvoiceAndOrder(int orderId, [FromBody] UpdateInvoiceSuccessPaymentDTO dto)
 		{
@@ -114,6 +119,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("updateStatus/{orderId}")]
 		public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] UpdateStatusOrderDTO dto)
 		{
@@ -132,6 +138,8 @@ namespace EHM_API.Controllers
 			}
 		}
 
+
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpGet("GetInvoiceByOrderId/{orderId}")]
 		public async Task<ActionResult<InvoiceDetailDTO>> GetInvoiceByOrderId(int orderId)
 		{
@@ -150,6 +158,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("UpdateDepositAndCreateInvoice/{orderId}")]
 		public async Task<IActionResult> UpdateDepositAndCreateInvoice(int orderId, [FromBody] PrepaymentDTO dto)
 		{
@@ -168,6 +177,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("UpdateOrderAndInvoice/{orderId}")]
 		public async Task<IActionResult> UpdateOrderAndInvoice(int orderId, InvoiceOfSitting dto)
 		{
@@ -186,8 +196,28 @@ namespace EHM_API.Controllers
 			}
 		}
 
+		[HttpGet("GetAllInvoiceAndOrder")]
+		public async Task<ActionResult<IEnumerable<GetInvoiceAndOrderInfo>>> GetAllInvoicesAndOrders()
+		{
+			var result = await _invoiceService.GetAllInvoicesAndOrdersAsync();
+			return Ok(result);
+		}
 
+		[HttpGet("GetCancelOrder")]
+		public async Task<ActionResult<IEnumerable<GetInvoiceAndOrderInfo>>> GetInvoicesAndOrdersByStatusAndDeposit()
+		{
+			int status = 5;
+			decimal minDeposit = 0;
+			var result = await _invoiceService.GetOrdersWithStatusAndDepositAsync(status, minDeposit);
+			return Ok(result);
+		}
 
+		[HttpGet("Ordertoday")]
+		public async Task<IActionResult> GetOrdersToday()
+		{
+			var orders = await _invoiceService.GetOrdersTodayAsync();
+			return Ok(orders);
+		}
 
 	}
 }

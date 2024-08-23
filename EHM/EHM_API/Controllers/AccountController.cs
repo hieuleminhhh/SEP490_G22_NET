@@ -270,6 +270,8 @@ namespace EHM_API.Controllers
                 return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.", details = ex.Message });
             }
         }
+
+
         [HttpGet("role/{role}")]
         public async Task<ActionResult<IEnumerable<GetAccountByRole>>> GetAccountsByRole(string role)
         {
@@ -280,5 +282,45 @@ namespace EHM_API.Controllers
             }
             return Ok(accounts);
         }
-    }
+
+        [HttpPut("update-status/{id}")]
+        public async Task<IActionResult> UpdateAccountStatus(int id, [FromBody] bool isActive)
+        {
+            var result = await _accountService.UpdateAccountStatusAsync(id, isActive);
+            if (!result)
+            {
+                return NotFound("Account not found");
+            }
+
+            return Ok("Account status updated successfully");
+        }
+
+		[HttpPut("{accountId}")]
+		public async Task<IActionResult> UpdateProfile(int accountId, [FromBody] UpdateProfileDTO dto)
+		{
+			var result = await _accountService.UpdateProfileAsync(accountId, dto);
+			if (!result)
+			{
+				return NotFound(new { message = "Không tìm thấy tài khoản" });
+			}
+
+			return Ok(new { message = "Cập nhật hồ sơ thành công" });
+		}
+
+
+		[HttpPut("changepassword/{accountId}")]
+		public async Task<IActionResult> ChangePassword(int accountId, [FromBody] ChangePasswordDTO dto)
+		{
+			var result = await _accountService.ChangePasswordAsync(accountId, dto);
+			if (!result)
+			{
+				return BadRequest(new { message = "Đổi mật khẩu không thành công. Vui lòng kiểm tra lại thông tin." });
+			}
+
+			return Ok(new { message = "Đổi mật khẩu thành công" });
+		}
+
+
+
+	}
 }

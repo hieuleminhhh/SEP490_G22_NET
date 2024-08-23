@@ -173,5 +173,26 @@ namespace EHM_API.Services
 			await _invoiceRepository.UpdateOrderAndInvoiceAsync(orderId, dto);
 		}
 
+		public async Task<IEnumerable<GetInvoiceAndOrderInfo>> GetAllInvoicesAndOrdersAsync()
+		{
+			var orders = await _invoiceRepository.GetAllOrdersWithInvoicesAsync();
+			var invoiceAndOrderInfoList = _mapper.Map<IEnumerable<GetInvoiceAndOrderInfo>>(orders);
+			return invoiceAndOrderInfoList;
+		}
+
+		public async Task<IEnumerable<GetInvoiceAndOrderInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit)
+		{
+			var orders = await _invoiceRepository.GetOrdersWithInvoicesByStatusAndDepositAsync(status, minDeposit);
+			var invoiceAndOrderInfoList = _mapper.Map<IEnumerable<GetInvoiceAndOrderInfo>>(orders);
+			return invoiceAndOrderInfoList;
+		}
+
+		public async Task<List<GetOrderTodayDTO>> GetOrdersTodayAsync()
+		{
+			var orders = await _invoiceRepository.GetOrdersTodayAsync();
+			var orderDTOs = _mapper.Map<List<GetOrderTodayDTO>>(orders);
+			return orderDTOs;
+		}
+
 	}
 }
