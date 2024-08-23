@@ -86,5 +86,41 @@ namespace EHM_API.Services
             return await _accountRepository.UpdateAccountStatusAsync(id, isActive);
         }
 
-    }
+		public async Task<bool> UpdateProfileAsync(int accountId, UpdateProfileDTO dto)
+		{
+			var account = await _accountRepository.GetAccountByIdAsync(accountId);
+			if (account == null)
+			{
+				return false;
+			}
+
+			_mapper.Map(dto, account);
+
+			return await _accountRepository.UpdateProfileAccount(account);
+		}
+
+
+		public async Task<bool> ChangePasswordAsync(int accountId, ChangePasswordDTO dto)
+		{
+			var account = await _accountRepository.GetAccountByIdAsync(accountId);
+			if (account == null)
+			{
+				return false; 
+			}
+
+			if (account.Password != dto.CurrentPassword)
+			{
+				return false; 
+			}
+
+			if (dto.NewPassword != dto.ConfirmPassword)
+			{
+				return false; 
+			}
+
+			account.Password = dto.NewPassword;
+			return await _accountRepository.UpdateProfileAccount(account);
+		}
+
+	}
 }
