@@ -21,5 +21,7 @@ namespace EHM_API.Services
 		Task UpdateReservationAndTableStatusAsync(int reservationId, int tableId, int reservationStatus, int tableStatus);
         Task<bool> UpdateTableStatusesAsync(int reservationId, int newStatus);
         Task<ReasonCancelDTO?> UpdateReasonCancelAsync(int reservationId, ReasonCancelDTO? reasonCancelDTO);
-    }
+
+		Task<GetReservationByOrderDTO?> GetReservationByOrderIdAsync(int orderId);
+	}
 }

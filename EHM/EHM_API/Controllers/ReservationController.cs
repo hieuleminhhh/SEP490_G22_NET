@@ -328,5 +328,19 @@ namespace EHM_API.Controllers
 
             return Ok(result);
         }
-    }
+
+
+		[HttpGet("GetReservationByOrderId/{orderId}")]
+		public async Task<IActionResult> GetReservationByOrderId(int orderId)
+		{
+			var reservation = await _service.GetReservationByOrderIdAsync(orderId);
+
+			if (reservation == null)
+			{
+				return NotFound(new { Message = $"Không tìm thấy đặt bàn cho đơn hàng {orderId}" });
+			}
+
+			return Ok(reservation);
+		}
+	}
 }
