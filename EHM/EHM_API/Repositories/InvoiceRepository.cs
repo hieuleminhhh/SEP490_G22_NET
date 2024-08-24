@@ -112,7 +112,8 @@ namespace EHM_API.Repositories
                 Phone = order.Address?.GuestPhone,
                 Address = order.Address?.GuestAddress,
 
-                AmountReceived = createInvoiceDto.AmountReceived,
+				AccountId = createInvoiceDto.AccountId != 0 ? createInvoiceDto.AccountId : (int?)null,
+				AmountReceived = createInvoiceDto.AmountReceived,
                 ReturnAmount = createInvoiceDto.ReturnAmount,
                 PaymentMethods = createInvoiceDto.PaymentMethods
             };
@@ -162,6 +163,7 @@ namespace EHM_API.Repositories
 				Phone = order.Address?.GuestPhone,
 				Address = order.Address?.GuestAddress,
 
+				AccountId = createInvoiceDto.AccountId != 0 ? createInvoiceDto.AccountId : (int?)null,
 				AmountReceived = createInvoiceDto.AmountReceived,
 				ReturnAmount = createInvoiceDto.ReturnAmount,
 				PaymentMethods = createInvoiceDto.PaymentMethods
