@@ -978,4 +978,36 @@ public class OrderRepository : IOrderRepository
             .Where(o => o.Status == status && o.AccountId == accountId)
             .ToListAsync();
     }
+    public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync()
+    {
+        var orders = await _context.Orders
+            .Where(o => o.Status == 4 && o.Invoice.PaymentStatus == 1)
+            .Include(o => o.Invoice)
+            .ToListAsync();
+
+        var totalOrders = orders.Count;
+        var totalRevenue = orders.Sum(o => o.Invoice.PaymentAmount ?? 0);
+        var revenueByPaymentMethod1 = orders
+            .Where(o => o.Invoice.PaymentMethods == 1)
+            .Sum(o => o.Invoice.PaymentAmount ?? 0);
+        var revenueByPaymentMethod2 = orders
+            .Where(o => o.Invoice.PaymentMethods == 2)
+            .Sum(o => o.Invoice.PaymentAmount ?? 0);
+
+        return new OrderStatisticsDTO
+        {
+            TotalOrders = totalOrders,
+            TotalRevenue = totalRevenue,
+            RevenueByPaymentMethod1 = revenueByPaymentMethod1,
+            RevenueByPaymentMethod2 = revenueByPaymentMethod2
+        };
+    }
+    public async Task<decimal> GetRevenueByCategoryIdAsync(int categoryId)
+    {
+        var totalRevenue = await _context.OrderDetails
+            .Where(od => od.Dish.CategoryId == categoryId && od.Order.Status == 4 && od.Order.Invoice.PaymentStatus == 1)
+            .SumAsync(od => od.UnitPrice ?? 0);
+
+        return totalRevenue;
+    }
 }

@@ -724,7 +724,11 @@ namespace EHM_API.Map
 		   .ForMember(dest => dest.PaymentMethods, opt => opt.MapFrom(src => src.Invoice.PaymentMethods));
 
 
-		}
+            CreateMap<Order, CategoryRevenueDTO>()
+             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.OrderDetails.First().Dish.CategoryId))
+             .ForMember(dest => dest.TotalRevenue, opt => opt.Ignore());
+
+        }
 
 
         private static decimal? CalculateDiscountedPrice(OrderDetail src)
