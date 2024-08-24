@@ -120,24 +120,23 @@ namespace EHM_API.Repositories
 		}
 		public async Task<Guest> GetOrCreateGuest(CheckoutDTO checkoutDTO)
 		{
-
-			if (string.IsNullOrWhiteSpace(checkoutDTO.Email) ||
-				string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone))
+			if (string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone))
 			{
-				return null;
+				throw new ArgumentException("GuestPhone cannot be empty.");
 			}
 
+			// Kiểm tra xem khách hàng đã tồn tại chưa
 			var guest = await _context.Guests
 				.FirstOrDefaultAsync(g => g.GuestPhone == checkoutDTO.GuestPhone);
 
 			if (guest != null)
 			{
-				// Cập nhật thông tin Guest nếu cần
+				// Cập nhật thông tin email nếu khách hàng đã tồn tại
 				guest.Email = checkoutDTO.Email;
 			}
 			else
 			{
-				// Tạo mới Guest
+				// Thêm mới khách hàng nếu chưa tồn tại
 				guest = new Guest
 				{
 					GuestPhone = checkoutDTO.GuestPhone,
@@ -150,16 +149,27 @@ namespace EHM_API.Repositories
 			return guest;
 		}
 
-
 		public async Task<Address?> GetOrCreateAddress(CheckoutDTO checkoutDTO)
 		{
-
 			if (string.IsNullOrWhiteSpace(checkoutDTO.GuestAddress) ||
-				string.IsNullOrWhiteSpace(checkoutDTO.Email) ||
 				string.IsNullOrWhiteSpace(checkoutDTO.ConsigneeName) ||
 				string.IsNullOrWhiteSpace(checkoutDTO.GuestPhone))
 			{
 				return null;
+			}
+
+			var guest = await _context.Guests
+				.FirstOrDefaultAsync(g => g.GuestPhone == checkoutDTO.GuestPhone);
+
+			if (guest == null)
+			{
+				guest = new Guest
+				{
+					GuestPhone = checkoutDTO.GuestPhone,
+					Email = checkoutDTO.Email 
+				};
+				await _context.Guests.AddAsync(guest);
+				await _context.SaveChangesAsync();
 			}
 
 			var address = await _context.Addresses
@@ -168,9 +178,12 @@ namespace EHM_API.Repositories
 					a.ConsigneeName == checkoutDTO.ConsigneeName &&
 					a.GuestPhone == checkoutDTO.GuestPhone);
 
-			if (address == null)
+			if (address != null)
 			{
-
+				return address;
+			}
+			else
+			{
 				address = new Address
 				{
 					GuestAddress = checkoutDTO.GuestAddress,
@@ -179,10 +192,11 @@ namespace EHM_API.Repositories
 				};
 				await _context.Addresses.AddAsync(address);
 				await _context.SaveChangesAsync();
-			}
 
-			return address;
+				return address;
+			}
 		}
+
 
 		public async Task<Dish> GetDishByIdAsync(int? dishId)
 		{
@@ -370,6 +384,7 @@ namespace EHM_API.Repositories
 				OrderDate = DateTime.Now,
 				Status = takeOutDTO.Status ?? 0,
 				RecevingOrder = takeOutDTO.RecevingOrder,
+				AccountId = takeOutDTO.AccountId ?? null,
 				GuestPhone = guest?.GuestPhone,
 				TotalAmount = totalAmount,
 				OrderDetails = orderDetails,

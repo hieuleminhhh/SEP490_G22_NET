@@ -125,25 +125,6 @@ namespace EHM_API.Services
 				}
 			}
 
-/*			if (checkoutDTO.DiscountId.HasValue)
-			{
-				var discount = await _discountRepository.GetDiscountByIdAsync(checkoutDTO.DiscountId.Value);
-				if (discount != null && discount.DiscountStatus == true)
-				{
-					if (discount.DiscountPercent.HasValue)
-					{
-						discountAmount = (totalAmount * discount.DiscountPercent.Value) / 100;
-					}
-					else if (discount.TotalMoney.HasValue)
-					{
-						discountAmount = Math.Min(totalAmount, discount.TotalMoney.Value);
-					}
-					if (discount.QuantityLimit.HasValue && discount.QuantityLimit > 0)
-					{
-						discount.QuantityLimit--;
-					}
-				}
-			}*/
 
 			var finalTotalAmount = totalAmount;
 
@@ -152,7 +133,7 @@ namespace EHM_API.Services
 				OrderDate = DateTime.Now,
 				Status = checkoutDTO.Status ?? 0,
 				RecevingOrder = checkoutDTO.RecevingOrder,
-				GuestPhone = guest?.GuestPhone,
+				GuestPhone = checkoutDTO.GuestPhone,
 				TotalAmount = finalTotalAmount,
 				OrderDetails = orderDetails,
 				Deposits = checkoutDTO.Deposits,
