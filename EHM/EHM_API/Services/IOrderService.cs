@@ -48,5 +48,7 @@ namespace EHM_API.Services
         Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, UpdateOrderAccountDTO updateOrderAccountDTO);
         Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
         Task<Order> UpdateForOrderStatusAsync(int orderId, int status);
+        Task<OrderStatisticsDTO> GetOrderStatisticsAsync();
+        Task<CategoryRevenueDTO> GetRevenueByCategoryIdAsync(int categoryId);
     }
 }
