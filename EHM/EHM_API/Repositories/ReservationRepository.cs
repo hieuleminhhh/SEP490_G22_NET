@@ -340,5 +340,14 @@ namespace EHM_API.Repositories
             return reservation;
         }
 
-    }
+
+		public async Task<Reservation?> GetReservationByOrderIdAsync(int orderId)
+		{
+			return await _context.Reservations
+				.Include(r => r.Address)
+				.ThenInclude(r => r.GuestPhoneNavigation)
+				.FirstOrDefaultAsync(r => r.OrderId == orderId);
+		}
+
+	}
 }

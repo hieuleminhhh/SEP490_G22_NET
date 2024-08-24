@@ -694,6 +694,11 @@ namespace EHM_API.Map
 
 			CreateMap<UpdateProfileDTO, Account>();
 
+			CreateMap<Reservation, GetReservationByOrderDTO>()
+		  .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+		  .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
+		  .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.Address.GuestPhone));
+
 			CreateMap<Order, GetInvoiceAndOrderInfo>()
 			   .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice.PaymentTime))
 			   .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.Invoice.PaymentAmount))
