@@ -660,8 +660,10 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.DishesServed, opt => opt.MapFrom(src => src.DishesServed))
-                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime))
-                .ForMember(dest => dest.ItemTotalPrice, opt => opt.MapFrom(src => (src.UnitPrice ?? 0) * (src.Quantity ?? 0)));
+                 .ForMember(dest => dest.ItemPrice, opt => opt.MapFrom(src => src.Dish.Price))
+                 .ForMember(dest => dest.ComboPrice, opt => opt.MapFrom(src => src.Combo.Price))
+                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.OrderTime));
+               
 
             //Account
             CreateMap<Account, GetAccountDTO>();
