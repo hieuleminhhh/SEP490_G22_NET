@@ -27,5 +27,7 @@ namespace EHM_API.Repositories
 		Task<List<(Table, DateTime?)>> GetTablesByReservationIdAsync(int reservationId);
         Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel);
 
-    }
+		Task<Reservation?> GetReservationByOrderIdAsync(int orderId);
+
+	}
 }

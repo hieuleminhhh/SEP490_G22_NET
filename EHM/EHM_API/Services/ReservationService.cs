@@ -230,5 +230,18 @@ namespace EHM_API.Services
                 ReasonCancel = updatedReservation.ReasonCancel
             };
         }
-    }
+
+		public async Task<GetReservationByOrderDTO?> GetReservationByOrderIdAsync(int orderId)
+		{
+			var reservation = await _repository.GetReservationByOrderIdAsync(orderId);
+
+			if (reservation == null)
+			{
+				return null;
+			}
+
+			var dto = _mapper.Map<GetReservationByOrderDTO>(reservation);
+			return dto;
+		}
+	}
 }

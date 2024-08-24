@@ -299,8 +299,6 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.AccountId).HasColumnName("AccountID");
 
-                entity.Property(e => e.NewsContent).HasMaxLength(200);
-
                 entity.Property(e => e.NewsDate).HasColumnType("datetime");
 				entity.Property(e => e.NewsImage).HasMaxLength(100);
 
