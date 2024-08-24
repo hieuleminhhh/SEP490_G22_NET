@@ -370,6 +370,7 @@ namespace EHM_API.Repositories
 				OrderDate = DateTime.Now,
 				Status = takeOutDTO.Status ?? 0,
 				RecevingOrder = takeOutDTO.RecevingOrder,
+				AccountId = takeOutDTO.AccountId ?? null,
 				GuestPhone = guest?.GuestPhone,
 				TotalAmount = totalAmount,
 				OrderDetails = orderDetails,
