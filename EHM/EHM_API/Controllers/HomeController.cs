@@ -20,34 +20,41 @@ namespace EHM_API.Controllers
         }
 
 
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO model)
-        {
-            if (model == null || string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
-            {
-                return BadRequest(new { Message = "Không được để trống, người dùng cần nhập đầy đủ username và password" });
-            }
-            var st = await _context.Accounts
-                .Where(t => t.Username == model.Username && t.Password == model.Password)
-                .FirstOrDefaultAsync();
+		[HttpPost("Login")]
+		public async Task<IActionResult> Login([FromBody] LoginDTO model)
+		{
+			if (model == null || string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password))
+			{
+				return BadRequest(new { Message = "Không được để trống, người dùng cần nhập đầy đủ username và password" });
+			}
 
-            if (st == null)
-            {
-                return Unauthorized(new { Message = "Username và password không hợp lệ" });
-            }
+			var st = await _context.Accounts
+				.Where(t => t.Username == model.Username && t.Password == model.Password)
+				.FirstOrDefaultAsync();
 
-            var token = _jwtTokenGenerator.GenerateJwtToken(st);
+			if (st == null)
+			{
+				return Unauthorized(new { Message = "Username và password không hợp lệ" });
+			}
 
-            return Ok(new
-            {
-                Message = "Đăng nhập thành công",
-                token,
-                st.AccountId,
-                st.Username,
-                st.Role
-            });
-        }
+			if (st.IsActive == false)
+			{
+				return Unauthorized(new { Message = "Tài khoản của bạn hiện đang bị khóa. Vui lòng liên hệ với quản trị viên để được hỗ trợ." });
+			}
+
+			var token = _jwtTokenGenerator.GenerateJwtToken(st);
+
+			return Ok(new
+			{
+				Message = "Đăng nhập thành công",
+				token,
+				st.AccountId,
+				st.Username,
+				st.Role
+			});
+		}
 
 
-    }
+
+	}
 }
