@@ -1,6 +1,6 @@
 ﻿namespace EHM_API.DTOs.InvoiceDTO
 {
-	public class GetOrderTodayDTO
+	public class GetOrderUnpaidOfShipDTO
 	{
 		public int OrderId { get; set; }
 		public DateTime? OrderDate { get; set; }
@@ -19,5 +19,7 @@
 		public int? Type { get; set; }
 		public int? DiscountId { get; set; }
 		public string? CancelationReason { get; set; }
+
+		public decimal? TotalPaid { get; set; }
 	}
 }

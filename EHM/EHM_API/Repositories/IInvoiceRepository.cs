@@ -24,7 +24,8 @@ namespace EHM_API.Repositories
 		Task<IEnumerable<Order>> GetAllOrdersWithInvoicesAsync();
 		Task<IEnumerable<Order>> GetOrdersWithInvoicesByStatusAndDepositAsync(int status, decimal minDeposit);
 
-		Task<List<Order>> GetOrdersTodayAsync();
-        Task<Order> GetOrderByIdAsync(int orderId);
+		Task<List<Order>> GetOrdersUnpaidForShipAsync();
+
+		Task<Order> GetOrderByIdAsync(int orderId);
     }
 }
