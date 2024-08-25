@@ -518,23 +518,27 @@ namespace EHM_API.Services
             var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
             return order;
         }
-        public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync()
+        public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
         {
-            return await _orderRepository.GetOrderStatisticsAsync();
+            return await _orderRepository.GetOrderStatisticsAsync(startDate, endDate);
         }
-        public async Task<CategorySalesDTO> GetSalesByCategoryIdAsync(int categoryId)
-        {
-            var totalSales = await _orderRepository.GetSalesByCategoryIdAsync(categoryId);
 
-            var salesDto = new CategorySalesDTO
+        public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
+        {
+            var salesByCategory = await _orderRepository.GetSalesByCategoryAsync(startDate, endDate);
+            var categories = await _context.Categories.ToListAsync();
+
+            var salesDtoList = categories.Select(category => new CategorySalesDTO
             {
-                CategoryId = categoryId,
-                CategoryName = (await _context.Categories.FindAsync(categoryId))?.CategoryName,
-                TotalSales = totalSales
-            };
+                CategoryId = category.CategoryId,
+                CategoryName = category.CategoryName,
+                TotalSales = salesByCategory.ContainsKey(category.CategoryId) ? salesByCategory[category.CategoryId] : 0
+            });
 
-            return salesDto;
+            return salesDtoList;
         }
+
+
 
     }
 }

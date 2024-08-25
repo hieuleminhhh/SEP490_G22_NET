@@ -978,22 +978,34 @@ public class OrderRepository : IOrderRepository
             .Where(o => o.Status == status && o.AccountId == accountId)
             .ToListAsync();
     }
-    public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync()
+    public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
     {
+      
+        endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today
+                  ? endDate.Value.Date
+                  : DateTime.Today;
+
         var orders = await _context.Orders
-            .Where(o => o.Status == 4 && o.Invoice.PaymentStatus == 1)
+            .Where(o => o.Status == 4 &&
+                        o.Invoice.PaymentStatus == 1 &&
+                        o.Invoice.PaymentTime.HasValue &&
+                        (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
+                        o.Invoice.PaymentTime.Value.Date <= endDate)
             .Include(o => o.Invoice)
             .ToListAsync();
 
         var totalOrders = orders.Count;
         var totalRevenue = orders.Sum(o => o.Invoice.PaymentAmount ?? 0);
 
+        var ordersByPaymentMethod0 = orders.Where(o => o.Invoice.PaymentMethods == 0);
         var ordersByPaymentMethod1 = orders.Where(o => o.Invoice.PaymentMethods == 1);
         var ordersByPaymentMethod2 = orders.Where(o => o.Invoice.PaymentMethods == 2);
 
+        var revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
         var revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
         var revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
 
+        var orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
         var orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
         var orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
 
@@ -1001,25 +1013,39 @@ public class OrderRepository : IOrderRepository
         {
             TotalOrders = totalOrders,
             TotalRevenue = totalRevenue,
+            RevenueByPaymentMethod0 = revenueByPaymentMethod0,
             RevenueByPaymentMethod1 = revenueByPaymentMethod1,
             RevenueByPaymentMethod2 = revenueByPaymentMethod2,
+            OrderCountByPaymentMethod0 = orderCountByPaymentMethod0,
             OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
             OrderCountByPaymentMethod2 = orderCountByPaymentMethod2
         };
     }
 
-    public async Task<int> GetSalesByCategoryIdAsync(int categoryId)
-    {
-        var today = DateTime.Today;
-        var totalSales = await _context.OrderDetails
-            .Where(od => od.Dish.CategoryId == categoryId &&
-                         od.Order.Status == 4 &&
-                         od.Order.Invoice.PaymentStatus == 1 &&
-                         od.Order.OrderDate.HasValue &&
-                         od.Order.OrderDate.Value.Date == today)
-            .SumAsync(od => od.Quantity ?? 0);
 
-        return totalSales;
+    public async Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
+    {
+        // Đảm bảo endDate không vượt quá ngày hôm nay
+        endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today
+                  ? endDate.Value.Date
+                  : DateTime.Today;
+
+        var salesByCategory = await _context.OrderDetails
+            .Where(od => od.Order.Status == 4 &&
+                         od.Order.Invoice.PaymentStatus == 1 &&
+                         od.Order.Invoice.PaymentTime.HasValue &&
+                         (!startDate.HasValue || od.Order.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
+                         od.Order.Invoice.PaymentTime.Value.Date <= endDate)
+            .GroupBy(od => od.Dish.CategoryId)
+            .Select(g => new
+            {
+                CategoryId = g.Key ?? 0,
+                TotalSales = g.Sum(od => od.Quantity ?? 0)
+            })
+            .ToDictionaryAsync(x => x.CategoryId, x => x.TotalSales);
+
+        return salesByCategory;
     }
+
 
 }

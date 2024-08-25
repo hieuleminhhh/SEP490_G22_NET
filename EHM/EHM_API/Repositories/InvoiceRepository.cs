@@ -402,7 +402,7 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Orders
 				.Include(o => o.Address)
-				.Where(o => o.Status == status && o.Deposits > minDeposit)
+				.Where(o => o.Status == status && o.Deposits > minDeposit && o.InvoiceId==null)
 				.ToListAsync();
 		}
 
@@ -419,7 +419,12 @@ namespace EHM_API.Repositories
 				.ToListAsync();
 		}
 
+        public async Task<Order> GetOrderByIdAsync(int orderId)
+        {
+            return await _context.Orders
+                .Include(o => o.Invoice)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+        }
 
-
-	}
+    }
 }

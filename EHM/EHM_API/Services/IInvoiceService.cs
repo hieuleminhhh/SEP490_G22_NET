@@ -19,6 +19,7 @@ namespace EHM_API.Services
 		Task<IEnumerable<GetOrderCancelInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit);
 
 		Task<List<GetOrderTodayDTO>> GetOrdersTodayAsync();
+        Task<bool> UpdatePaymentStatusAsync(UpdatePaymentStatusDTO dto);
 
-	}
+    }
 }
