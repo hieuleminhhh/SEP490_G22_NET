@@ -219,5 +219,17 @@ namespace EHM_API.Controllers
 			return Ok(orders);
 		}
 
-	}
+        [HttpPut("updatePaymentStatus")]
+        public async Task<IActionResult> UpdatePaymentStatus([FromBody] UpdatePaymentStatusDTO dto)
+        {
+            var result = await _invoiceService.UpdatePaymentStatusAsync(dto);
+            if (result)
+            {
+                return Ok(new { message = "Payment status updated successfully" });
+            }
+
+            return BadRequest(new { message = "Failed to update payment status" });
+        }
+
+    }
 }
