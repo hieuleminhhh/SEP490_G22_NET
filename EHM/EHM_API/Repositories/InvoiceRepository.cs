@@ -406,20 +406,21 @@ namespace EHM_API.Repositories
 				.ToListAsync();
 		}
 
-		public async Task<List<Order>> GetOrdersTodayAsync()
+		public async Task<List<Order>> GetOrdersUnpaidForShipAsync()
 		{
-			var today = DateTime.Today;
-
 			return await _context.Orders
-				.Include(o => o.Account)
-				.Where(o => o.RecevingOrder.HasValue
-							&& o.RecevingOrder.Value.Date == today
-							&& o.Account != null
-							&& o.Account.Role == "ship")
+				.Include(o => o.Account)			
+				.Include(o => o.Invoice)
+				 .Include(o => o.Discount)
+				.Where(o => o.Account != null
+							&& o.Account.Role == "ship"
+							&& o.Type == 2
+							&& o.Status == 4
+							&& o.Invoice!.PaymentStatus == 0)
 				.ToListAsync();
 		}
 
-        public async Task<Order> GetOrderByIdAsync(int orderId)
+		public async Task<Order> GetOrderByIdAsync(int orderId)
         {
             return await _context.Orders
                 .Include(o => o.Invoice)
