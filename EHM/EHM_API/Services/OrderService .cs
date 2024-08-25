@@ -522,19 +522,21 @@ namespace EHM_API.Services
         {
             return await _orderRepository.GetOrderStatisticsAsync();
         }
-        public async Task<CategorySalesDTO> GetSalesByCategoryIdAsync(int categoryId)
+        public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync()
         {
-            var totalSales = await _orderRepository.GetSalesByCategoryIdAsync(categoryId);
+            var salesByCategory = await _orderRepository.GetSalesByCategoryAsync();
+            var categories = await _context.Categories.ToListAsync();
 
-            var salesDto = new CategorySalesDTO
+            var salesDtoList = categories.Select(category => new CategorySalesDTO
             {
-                CategoryId = categoryId,
-                CategoryName = (await _context.Categories.FindAsync(categoryId))?.CategoryName,
-                TotalSales = totalSales
-            };
+                CategoryId = category.CategoryId,
+                CategoryName = category.CategoryName,
+                TotalSales = salesByCategory.ContainsKey(category.CategoryId) ? salesByCategory[category.CategoryId] : 0
+            });
 
-            return salesDto;
+            return salesDtoList;
         }
+
 
     }
 }
