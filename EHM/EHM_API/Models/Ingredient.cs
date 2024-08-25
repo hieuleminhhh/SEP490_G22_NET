@@ -9,7 +9,7 @@ namespace EHM_API.Models
         public int? MaterialId { get; set; }
 		public string? Quantitative { get; set; }
 
-        public virtual Dish? Dish { get; set; }
+		public virtual Dish? Dish { get; set; }
         public virtual Material? Material { get; set; }
     }
 }
