@@ -4319,11 +4319,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\nhant\\OneDrive\\Desktop\\ffff\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
+      "projectUniqueName": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
       "projectName": "EHM_API",
-      "projectPath": "C:\\Users\\nhant\\OneDrive\\Desktop\\ffff\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
+      "projectPath": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\EHM_API.csproj",
       "packagesPath": "C:\\Users\\nhant\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nhant\\OneDrive\\Desktop\\ffff\\SEP490_G22_NET\\EHM\\EHM_API\\obj\\",
+      "outputPath": "C:\\Users\\nhant\\OneDrive\\Desktop\\EHM_API\\SEP490_G22_NET\\EHM\\EHM_API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\nhant\\AppData\\Roaming\\NuGet\\NuGet.Config",
