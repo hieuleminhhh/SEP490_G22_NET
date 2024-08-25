@@ -523,9 +523,9 @@ namespace EHM_API.Services
             return await _orderRepository.GetOrderStatisticsAsync(startDate, endDate);
         }
 
-        public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync()
+        public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
         {
-            var salesByCategory = await _orderRepository.GetSalesByCategoryAsync();
+            var salesByCategory = await _orderRepository.GetSalesByCategoryAsync(startDate, endDate);
             var categories = await _context.Categories.ToListAsync();
 
             var salesDtoList = categories.Select(category => new CategorySalesDTO
@@ -537,6 +537,7 @@ namespace EHM_API.Services
 
             return salesDtoList;
         }
+
 
 
     }

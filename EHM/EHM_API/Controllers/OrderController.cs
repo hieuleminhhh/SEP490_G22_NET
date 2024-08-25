@@ -647,12 +647,13 @@ namespace EHM_API.Controllers
             return Ok(statistics);
         }
 
-        [HttpGet("revenue-by-category")]
-        public async Task<IActionResult> GetRevenueByCategory()
+        [HttpGet("TotalSale-by-category")]
+        public async Task<IActionResult> GetRevenueByCategory(DateTime? startDate, DateTime? endDate)
         {
-            var revenues = await _orderService.GetSalesByCategoryAsync();
+            var revenues = await _orderService.GetSalesByCategoryAsync(startDate, endDate);
             return Ok(revenues);
         }
+
 
 
     }

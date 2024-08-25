@@ -40,7 +40,7 @@ public interface IOrderRepository
 	Task<IEnumerable<OrderTable>> GetOrderTablesByOrderIdAsync(int orderId);
     Task<IEnumerable<Order>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
     Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate);
-    Task<Dictionary<int, int>> GetSalesByCategoryAsync();
+    Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate);
 
 
 }
