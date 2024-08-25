@@ -217,8 +217,6 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.MaterialId).HasColumnName("MaterialID");
 
-				entity.Property(e => e.Quantitative).HasMaxLength(200);
-
 				entity.HasOne(d => d.Dish)
                     .WithMany(r => r.Ingredients)
                     .HasForeignKey(d => d.DishId)
