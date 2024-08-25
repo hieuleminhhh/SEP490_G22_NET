@@ -16,5 +16,7 @@ namespace EHM_API.Repositories
 
         Task<bool> UpdateTableStatus(int tableId, int status);
         Task<bool> ExistTable(int tableId);
+
+        Task<bool> UpdateTableStatusByOrderId(int orderId, int status);
 	}
 }
