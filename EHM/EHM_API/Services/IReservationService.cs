@@ -23,5 +23,7 @@ namespace EHM_API.Services
         Task<ReasonCancelDTO?> UpdateReasonCancelAsync(int reservationId, ReasonCancelDTO? reasonCancelDTO);
 
 		Task<GetReservationByOrderDTO?> GetReservationByOrderIdAsync(int orderId);
+
+		Task<IEnumerable<GetReservationByOrderDTO>> GetReservationsByTableIdAsync(int tableId);
 	}
 }

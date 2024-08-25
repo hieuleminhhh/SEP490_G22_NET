@@ -349,5 +349,14 @@ namespace EHM_API.Repositories
 				.FirstOrDefaultAsync(r => r.OrderId == orderId);
 		}
 
+
+		public async Task<IEnumerable<Reservation>> GetReservationsByTableIdAsync(int tableId)
+		{
+			return await _context.Reservations
+				.Include(r => r.Address) 
+				.Where(r => r.TableReservations.Any(tr => tr.TableId == tableId) && r.Status == 3)
+				.ToListAsync();
+		}
+
 	}
 }

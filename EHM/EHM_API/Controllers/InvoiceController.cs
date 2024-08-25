@@ -204,7 +204,7 @@ namespace EHM_API.Controllers
 		}
 
 		[HttpGet("GetCancelOrder")]
-		public async Task<ActionResult<IEnumerable<GetInvoiceAndOrderInfo>>> GetInvoicesAndOrdersByStatusAndDeposit()
+		public async Task<ActionResult<IEnumerable<GetOrderCancelInfo>>> GetInvoicesAndOrdersByStatusAndDeposit()
 		{
 			int status = 5;
 			decimal minDeposit = 0;

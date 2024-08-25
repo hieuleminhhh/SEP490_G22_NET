@@ -180,10 +180,10 @@ namespace EHM_API.Services
 			return invoiceAndOrderInfoList;
 		}
 
-		public async Task<IEnumerable<GetInvoiceAndOrderInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit)
+		public async Task<IEnumerable<GetOrderCancelInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit)
 		{
 			var orders = await _invoiceRepository.GetOrdersWithInvoicesByStatusAndDepositAsync(status, minDeposit);
-			var invoiceAndOrderInfoList = _mapper.Map<IEnumerable<GetInvoiceAndOrderInfo>>(orders);
+			var invoiceAndOrderInfoList = _mapper.Map<IEnumerable<GetOrderCancelInfo>>(orders);
 			return invoiceAndOrderInfoList;
 		}
 
