@@ -217,7 +217,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.MaterialId).HasColumnName("MaterialID");
 
-                entity.HasOne(d => d.Dish)
+				entity.HasOne(d => d.Dish)
                     .WithMany(r => r.Ingredients)
                     .HasForeignKey(d => d.DishId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
@@ -286,12 +286,12 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.MaterialId).HasColumnName("MaterialID");
 
-                entity.Property(e => e.Category).HasMaxLength(50);
+				entity.Property(e => e.Category).HasMaxLength(200);
 
-                entity.Property(e => e.Name).HasMaxLength(50);
+				entity.Property(e => e.Name).HasMaxLength(200);
 
-                entity.Property(e => e.Unit).HasMaxLength(50);
-            });
+				entity.Property(e => e.Unit).HasMaxLength(200);
+			});
 
             modelBuilder.Entity<News>(entity =>
             {

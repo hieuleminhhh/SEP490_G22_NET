@@ -29,5 +29,6 @@ namespace EHM_API.Repositories
 
 		Task<Reservation?> GetReservationByOrderIdAsync(int orderId);
 
+		Task<IEnumerable<Reservation>> GetReservationsByTableIdAsync(int tableId);
 	}
 }

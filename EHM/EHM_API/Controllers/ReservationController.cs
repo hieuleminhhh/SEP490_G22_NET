@@ -342,5 +342,19 @@ namespace EHM_API.Controllers
 
 			return Ok(reservation);
 		}
+
+
+		[HttpGet("GetReservationsByTableId/{tableId}")]
+		public async Task<IActionResult> GetReservationsByTableId(int tableId)
+		{
+			var reservations = await _service.GetReservationsByTableIdAsync(tableId);
+
+			if (reservations == null || !reservations.Any())
+			{
+				return NotFound(new { Message = "Không tìm thấy đặt chỗ nào của bản này" });
+			}
+
+			return Ok(reservations);
+		}
 	}
 }
