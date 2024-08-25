@@ -1008,18 +1008,23 @@ public class OrderRepository : IOrderRepository
         };
     }
 
-    public async Task<int> GetSalesByCategoryIdAsync(int categoryId)
+    public async Task<Dictionary<int, int>> GetSalesByCategoryAsync()
     {
         var today = DateTime.Today;
-        var totalSales = await _context.OrderDetails
-            .Where(od => od.Dish.CategoryId == categoryId &&
-                         od.Order.Status == 4 &&
+        var salesByCategory = await _context.OrderDetails
+            .Where(od => od.Order.Status == 4 &&
                          od.Order.Invoice.PaymentStatus == 1 &&
                          od.Order.OrderDate.HasValue &&
                          od.Order.OrderDate.Value.Date == today)
-            .SumAsync(od => od.Quantity ?? 0);
+            .GroupBy(od => od.Dish.CategoryId)
+            .Select(g => new
+            {
+                CategoryId = g.Key ?? 0, 
+                TotalSales = g.Sum(od => od.Quantity ?? 0)
+            })
+            .ToDictionaryAsync(x => x.CategoryId, x => x.TotalSales);
 
-        return totalSales;
+        return salesByCategory;
     }
 
 }
