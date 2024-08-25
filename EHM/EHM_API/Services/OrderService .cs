@@ -518,6 +518,23 @@ namespace EHM_API.Services
             var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
             return order;
         }
+        public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync()
+        {
+            return await _orderRepository.GetOrderStatisticsAsync();
+        }
+        public async Task<CategoryRevenueDTO> GetRevenueByCategoryIdAsync(int categoryId)
+        {
+            var totalRevenue = await _orderRepository.GetRevenueByCategoryIdAsync(categoryId);
+
+       
+            var revenueDto = new CategoryRevenueDTO
+            {
+                CategoryId = categoryId,
+                TotalRevenue = totalRevenue
+            };
+
+            return revenueDto;
+        }
     }
 }
 

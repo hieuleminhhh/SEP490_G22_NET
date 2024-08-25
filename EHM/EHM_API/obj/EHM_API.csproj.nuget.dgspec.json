@@ -83,6 +83,10 @@
             "System.Drawing.Common": {
               "target": "Package",
               "version": "[9.0.0-preview.4.24267.1, )"
+            },
+            "Twilio": {
+              "target": "Package",
+              "version": "[7.2.2, )"
             }
           },
           "imports": [
