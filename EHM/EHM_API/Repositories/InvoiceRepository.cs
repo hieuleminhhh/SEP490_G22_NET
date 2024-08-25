@@ -135,9 +135,9 @@ namespace EHM_API.Repositories
 
             await _context.SaveChangesAsync();
 
-            await _tableRepository.UpdateTableStatus(orderTable.TableId, 0);
+			await _tableRepository.UpdateTableStatusByOrderId(orderId, 0);
 
-            return invoice.InvoiceId;
+			return invoice.InvoiceId;
         }
 
 

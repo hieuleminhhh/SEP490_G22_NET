@@ -203,3 +203,7 @@ C:\Users\nhant\OneDrive\Desktop\ffff\SEP490_G22_NET\EHM\EHM_API\obj\Debug\net6.0
 C:\Users\nhant\OneDrive\Desktop\ffff\SEP490_G22_NET\EHM\EHM_API\obj\Debug\net6.0\EHM_API.pdb
 C:\Users\nhant\OneDrive\Desktop\ffff\SEP490_G22_NET\EHM\EHM_API\obj\Debug\net6.0\EHM_API.genruntimeconfig.cache
 C:\Users\nhant\OneDrive\Desktop\ffff\SEP490_G22_NET\EHM\EHM_API\obj\Debug\net6.0\ref\EHM_API.dll
+C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\BCrypt.Net-Next.dll
+C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\Twilio.dll

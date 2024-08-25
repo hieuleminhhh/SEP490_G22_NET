@@ -97,6 +97,28 @@ namespace EHM_API.Repositories
             return true;
         }
 
+
+		public async Task<bool> UpdateTableStatusByOrderId(int orderId, int status)
+		{
+			var tables = await _context.OrderTables
+									   .Where(ot => ot.OrderId == orderId)
+									   .Select(ot => ot.Table)
+									   .ToListAsync();
+			if (!tables.Any())
+			{
+				throw new KeyNotFoundException($"Không tìm thấy bàn nào cho Order {orderId}.");
+			}
+
+			foreach (var table in tables)
+			{
+				table.Status = status;
+			}
+
+			await _context.SaveChangesAsync();
+			return true;
+		}
+
+
 	}
 }
 

@@ -649,7 +649,7 @@ namespace EHM_API.Controllers
         [HttpGet("revenue-by-category/{categoryId}")]
         public async Task<IActionResult> GetRevenueByCategoryId(int categoryId)
         {
-            var revenue = await _orderService.GetRevenueByCategoryIdAsync(categoryId);
+            var revenue = await _orderService.GetSalesByCategoryIdAsync(categoryId);
             return Ok(revenue);
         }
 
