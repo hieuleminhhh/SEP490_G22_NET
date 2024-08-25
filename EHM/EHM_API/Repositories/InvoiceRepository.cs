@@ -401,8 +401,8 @@ namespace EHM_API.Repositories
 		public async Task<IEnumerable<Order>> GetOrdersWithInvoicesByStatusAndDepositAsync(int status, decimal minDeposit)
 		{
 			return await _context.Orders
-				.Include(o => o.Invoice)
-				.Where(o => o.Status == status && o.Deposits > minDeposit && o.InvoiceId.HasValue)
+				.Include(o => o.Address)
+				.Where(o => o.Status == status && o.Deposits > minDeposit)
 				.ToListAsync();
 		}
 
@@ -411,7 +411,6 @@ namespace EHM_API.Repositories
 			var today = DateTime.Today;
 
 			return await _context.Orders
-				.Include(o => o.Invoice)
 				.Include(o => o.Account)
 				.Where(o => o.RecevingOrder.HasValue
 							&& o.RecevingOrder.Value.Date == today
