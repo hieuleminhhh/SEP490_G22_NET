@@ -6,5 +6,7 @@
         public decimal TotalRevenue { get; set; }
         public decimal RevenueByPaymentMethod1 { get; set; }
         public decimal RevenueByPaymentMethod2 { get; set; }
+        public int OrderCountByPaymentMethod1 { get; set; }  
+        public int OrderCountByPaymentMethod2 { get; set; }
     }
 }

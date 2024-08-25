@@ -40,7 +40,7 @@ public interface IOrderRepository
 	Task<IEnumerable<OrderTable>> GetOrderTablesByOrderIdAsync(int orderId);
     Task<IEnumerable<Order>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
     Task<OrderStatisticsDTO> GetOrderStatisticsAsync();
-    Task<decimal> GetRevenueByCategoryIdAsync(int categoryId);
+    Task<int> GetSalesByCategoryIdAsync(int categoryId);
 
 }
 

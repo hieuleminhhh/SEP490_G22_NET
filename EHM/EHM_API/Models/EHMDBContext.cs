@@ -90,7 +90,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ConsigneeName).HasMaxLength(50);
 
-                entity.Property(e => e.GuestAddress).HasMaxLength(200);
+                entity.Property(e => e.GuestAddress).HasMaxLength(50);
 
                 entity.Property(e => e.GuestPhone)
                     .HasMaxLength(15)
@@ -141,6 +141,7 @@ namespace EHM_API.Models
                 .HasOne(cd => cd.Dish)
                 .WithMany(d => d.ComboDetails)
                 .HasForeignKey(cd => cd.DishId);
+
 
             modelBuilder.Entity<Discount>(entity =>
             {
@@ -210,22 +211,13 @@ namespace EHM_API.Models
             {
                 entity.HasKey(e => new { e.DishId, e.MaterialId });
 
-
                 entity.ToTable("Ingredient");
 
                 entity.Property(e => e.DishId).HasColumnName("DishID");
 
                 entity.Property(e => e.MaterialId).HasColumnName("MaterialID");
 
-				entity.HasOne(d => d.Dish)
-                    .WithMany(r => r.Ingredients)
-                    .HasForeignKey(d => d.DishId)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-
-                entity.HasOne(d => d.Material)
-                    .WithMany(r => r.Ingredients)
-                    .HasForeignKey(d => d.MaterialId)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
+                entity.Property(e => e.Quantitative).HasColumnType("decimal(10, 5)");
             });
 
             modelBuilder.Entity<Invoice>(entity =>
@@ -286,12 +278,12 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.MaterialId).HasColumnName("MaterialID");
 
-				entity.Property(e => e.Category).HasMaxLength(200);
+                entity.Property(e => e.Category).HasMaxLength(200);
 
-				entity.Property(e => e.Name).HasMaxLength(200);
+                entity.Property(e => e.Name).HasMaxLength(200);
 
-				entity.Property(e => e.Unit).HasMaxLength(200);
-			});
+                entity.Property(e => e.Unit).HasMaxLength(200);
+            });
 
             modelBuilder.Entity<News>(entity =>
             {
@@ -300,9 +292,10 @@ namespace EHM_API.Models
                 entity.Property(e => e.AccountId).HasColumnName("AccountID");
 
                 entity.Property(e => e.NewsDate).HasColumnType("datetime");
-				entity.Property(e => e.NewsImage).HasMaxLength(100);
 
-				entity.Property(e => e.NewsTitle).HasMaxLength(50);
+                entity.Property(e => e.NewsImage).HasMaxLength(100);
+
+                entity.Property(e => e.NewsTitle).HasMaxLength(50);
 
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.News)
@@ -504,6 +497,7 @@ namespace EHM_API.Models
                     .WithMany(t => t.TableReservations)
                     .HasForeignKey(tr => tr.TableId);
             });
+
 
             OnModelCreatingPartial(modelBuilder);
         }
