@@ -193,6 +193,24 @@ namespace EHM_API.Services
 			var orderDTOs = _mapper.Map<List<GetOrderTodayDTO>>(orders);
 			return orderDTOs;
 		}
+        public async Task<bool> UpdatePaymentStatusAsync(UpdatePaymentStatusDTO dto)
+        {
+            var order = await _invoiceRepository.GetOrderByIdAsync(dto.OrderId);
+            if (order == null)
+            {
+                return false;
+            }
 
-	}
+            var invoice = order.Invoice;
+            if (invoice == null)
+            {
+                return false;
+            }
+
+            invoice.PaymentStatus = 1;
+
+            await _invoiceRepository.UpdateInvoiceAsync(invoice);
+            return true;
+        }
+    }
 }

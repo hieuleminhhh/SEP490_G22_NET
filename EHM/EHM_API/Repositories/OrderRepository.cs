@@ -988,12 +988,15 @@ public class OrderRepository : IOrderRepository
         var totalOrders = orders.Count;
         var totalRevenue = orders.Sum(o => o.Invoice.PaymentAmount ?? 0);
 
+        var ordersByPaymentMethod0 = orders.Where(o => o.Invoice.PaymentMethods == 0);
         var ordersByPaymentMethod1 = orders.Where(o => o.Invoice.PaymentMethods == 1);
         var ordersByPaymentMethod2 = orders.Where(o => o.Invoice.PaymentMethods == 2);
 
+        var revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
         var revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
         var revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
 
+        var orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
         var orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
         var orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
 
@@ -1001,8 +1004,10 @@ public class OrderRepository : IOrderRepository
         {
             TotalOrders = totalOrders,
             TotalRevenue = totalRevenue,
+            RevenueByPaymentMethod0 = revenueByPaymentMethod0,
             RevenueByPaymentMethod1 = revenueByPaymentMethod1,
             RevenueByPaymentMethod2 = revenueByPaymentMethod2,
+            OrderCountByPaymentMethod0 = orderCountByPaymentMethod0,
             OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
             OrderCountByPaymentMethod2 = orderCountByPaymentMethod2
         };
