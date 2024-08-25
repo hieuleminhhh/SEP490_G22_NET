@@ -641,11 +641,12 @@ namespace EHM_API.Controllers
             return Ok(updatedOrder);
         }
         [HttpGet("statistics")]
-        public async Task<ActionResult<OrderStatisticsDTO>> GetOrderStatistics()
+        public async Task<ActionResult<OrderStatisticsDTO>> GetOrderStatistics(DateTime? startDate, DateTime? endDate)
         {
-            var statistics = await _orderService.GetOrderStatisticsAsync();
+            var statistics = await _orderService.GetOrderStatisticsAsync(startDate, endDate);
             return Ok(statistics);
         }
+
         [HttpGet("revenue-by-category")]
         public async Task<IActionResult> GetRevenueByCategory()
         {
