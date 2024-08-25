@@ -226,7 +226,8 @@ namespace EHM_API.Services
 				return false;
 			}
 
-			invoice.PaymentStatus = 1; 
+			invoice.PaymentStatus = 1;
+			invoice.PaymentTime = DateTime.Now;
 			invoice.PaymentAmount = dto.PaymentAmount; 
 
 			await _invoiceRepository.UpdateInvoiceAsync(invoice);
