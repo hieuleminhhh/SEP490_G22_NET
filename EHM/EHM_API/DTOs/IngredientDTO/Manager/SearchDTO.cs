@@ -3,8 +3,9 @@ public class IngredientSearchNameDTO
     {
         public int? MaterialId { get; set; }
         public string? MaterialName { get; set; }
-        public int? Quantitative { get; set; }
-    }
+        public decimal? Quantitative { get; set; }
+        public string? Unit { get; set; }
+}
 
     public class DishSearchDTO
     {

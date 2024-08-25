@@ -987,27 +987,39 @@ public class OrderRepository : IOrderRepository
 
         var totalOrders = orders.Count;
         var totalRevenue = orders.Sum(o => o.Invoice.PaymentAmount ?? 0);
-        var revenueByPaymentMethod1 = orders
-            .Where(o => o.Invoice.PaymentMethods == 1)
-            .Sum(o => o.Invoice.PaymentAmount ?? 0);
-        var revenueByPaymentMethod2 = orders
-            .Where(o => o.Invoice.PaymentMethods == 2)
-            .Sum(o => o.Invoice.PaymentAmount ?? 0);
+
+        var ordersByPaymentMethod1 = orders.Where(o => o.Invoice.PaymentMethods == 1);
+        var ordersByPaymentMethod2 = orders.Where(o => o.Invoice.PaymentMethods == 2);
+
+        var revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
+        var revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
+
+        var orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
+        var orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
 
         return new OrderStatisticsDTO
         {
             TotalOrders = totalOrders,
             TotalRevenue = totalRevenue,
             RevenueByPaymentMethod1 = revenueByPaymentMethod1,
-            RevenueByPaymentMethod2 = revenueByPaymentMethod2
+            RevenueByPaymentMethod2 = revenueByPaymentMethod2,
+            OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
+            OrderCountByPaymentMethod2 = orderCountByPaymentMethod2
         };
     }
-    public async Task<decimal> GetRevenueByCategoryIdAsync(int categoryId)
-    {
-        var totalRevenue = await _context.OrderDetails
-            .Where(od => od.Dish.CategoryId == categoryId && od.Order.Status == 4 && od.Order.Invoice.PaymentStatus == 1)
-            .SumAsync(od => od.UnitPrice ?? 0);
 
-        return totalRevenue;
+    public async Task<int> GetSalesByCategoryIdAsync(int categoryId)
+    {
+        var today = DateTime.Today;
+        var totalSales = await _context.OrderDetails
+            .Where(od => od.Dish.CategoryId == categoryId &&
+                         od.Order.Status == 4 &&
+                         od.Order.Invoice.PaymentStatus == 1 &&
+                         od.Order.OrderDate.HasValue &&
+                         od.Order.OrderDate.Value.Date == today)
+            .SumAsync(od => od.Quantity ?? 0);
+
+        return totalSales;
     }
+
 }

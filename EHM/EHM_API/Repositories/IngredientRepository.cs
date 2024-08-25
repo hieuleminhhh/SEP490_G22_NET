@@ -122,7 +122,8 @@ namespace EHM_API.Repositories
                     {
                         i.MaterialId,
                         i.Material.Name,
-                        Quantitative = i.Quantitative * quantity
+                        Quantitative = i.Quantitative * quantity,
+                        Unit = i.Material.Unit
                     }).ToList()
                 };
             }
@@ -150,7 +151,8 @@ namespace EHM_API.Repositories
                         {
                             MaterialId = i.MaterialId,
                             MaterialName = i.Material.Name,
-                            Quantitative = i.Quantitative * comboDetail.QuantityDish.Value * quantity
+                            Quantitative = i.Quantitative * comboDetail.QuantityDish.Value * quantity,
+                            Unit = i.Material.Unit
                         }).ToList()
                     });
                 }
