@@ -646,12 +646,13 @@ namespace EHM_API.Controllers
             var statistics = await _orderService.GetOrderStatisticsAsync();
             return Ok(statistics);
         }
-        [HttpGet("revenue-by-category/{categoryId}")]
-        public async Task<IActionResult> GetRevenueByCategoryId(int categoryId)
+        [HttpGet("revenue-by-category")]
+        public async Task<IActionResult> GetRevenueByCategory()
         {
-            var revenue = await _orderService.GetSalesByCategoryIdAsync(categoryId);
-            return Ok(revenue);
+            var revenues = await _orderService.GetSalesByCategoryAsync();
+            return Ok(revenues);
         }
+
 
     }
 }
