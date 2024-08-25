@@ -719,7 +719,9 @@ namespace EHM_API.Map
 			   .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId));
 
             CreateMap<Order, GetOrderTodayDTO>()
-                 .ForMember(dest => dest.PaymentAmount, opt => opt.MapFrom(src => src.Invoice.PaymentAmount));
+         .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Account.FirstName))
+         .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Account.LastName))
+            .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice.PaymentStatus));
             CreateMap<Order, GetInvoiceAndOrderInfo>()
     .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
     .ForMember(dest => dest.InvoiceId, opt => opt.MapFrom(src => src.InvoiceId))
