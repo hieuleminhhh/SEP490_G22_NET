@@ -978,10 +978,19 @@ public class OrderRepository : IOrderRepository
             .Where(o => o.Status == status && o.AccountId == accountId)
             .ToListAsync();
     }
-    public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync()
+    public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
     {
+      
+        endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today
+                  ? endDate.Value.Date
+                  : DateTime.Today;
+
         var orders = await _context.Orders
-            .Where(o => o.Status == 4 && o.Invoice.PaymentStatus == 1)
+            .Where(o => o.Status == 4 &&
+                        o.Invoice.PaymentStatus == 1 &&
+                        o.Invoice.PaymentTime.HasValue &&
+                        (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
+                        o.Invoice.PaymentTime.Value.Date <= endDate)
             .Include(o => o.Invoice)
             .ToListAsync();
 
@@ -1012,6 +1021,7 @@ public class OrderRepository : IOrderRepository
             OrderCountByPaymentMethod2 = orderCountByPaymentMethod2
         };
     }
+
 
     public async Task<Dictionary<int, int>> GetSalesByCategoryAsync()
     {
