@@ -720,9 +720,10 @@ namespace EHM_API.Map
             CreateMap<Order, GetOrderTodayDTO>();
 
 
-            CreateMap<Order, CategoryRevenueDTO>()
-             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.OrderDetails.First().Dish.CategoryId))
-             .ForMember(dest => dest.TotalRevenue, opt => opt.Ignore());
+            CreateMap<Order, CategorySalesDTO>()
+       .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.OrderDetails.First().Dish.CategoryId))
+       .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.OrderDetails.First().Dish.Category.CategoryName))
+       .ForMember(dest => dest.TotalSales, opt => opt.MapFrom(src => src.OrderDetails.Sum(od => od.Quantity ?? 0)));
 
         }
 
