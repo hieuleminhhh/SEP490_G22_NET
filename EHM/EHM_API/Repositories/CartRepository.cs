@@ -277,10 +277,30 @@ namespace EHM_API.Repositories
 
 		public async Task<Address?> GetOrCreateAddressTakeOut(TakeOutDTO takeOutDTO)
 		{
-			if (string.IsNullOrWhiteSpace(takeOutDTO.GuestAddress) || string.IsNullOrWhiteSpace(takeOutDTO.Email) ||
-				string.IsNullOrWhiteSpace(takeOutDTO.ConsigneeName) || string.IsNullOrWhiteSpace(takeOutDTO.GuestPhone))
+			if (string.IsNullOrWhiteSpace(takeOutDTO.GuestAddress) ||
+				string.IsNullOrWhiteSpace(takeOutDTO.Email) ||
+				string.IsNullOrWhiteSpace(takeOutDTO.ConsigneeName) ||
+				string.IsNullOrWhiteSpace(takeOutDTO.GuestPhone))
 			{
 				return null;
+			}
+			var guest = await _context.Guests
+				.FirstOrDefaultAsync(g => g.GuestPhone == takeOutDTO.GuestPhone);
+			if (guest == null)
+			{
+				guest = new Guest
+				{
+					GuestPhone = takeOutDTO.GuestPhone,
+					Email = takeOutDTO.Email
+				};
+				await _context.Guests.AddAsync(guest);
+				await _context.SaveChangesAsync();
+			}
+			else
+			{
+				guest.Email = takeOutDTO.Email;
+				_context.Guests.Update(guest);
+				await _context.SaveChangesAsync();
 			}
 
 			var address = await _context.Addresses.FirstOrDefaultAsync(a =>
