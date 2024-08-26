@@ -10,5 +10,6 @@
         public int OrderCountByPaymentMethod0 { get; set; }
         public int OrderCountByPaymentMethod1 { get; set; }  
         public int OrderCountByPaymentMethod2 { get; set; }
+        public List<int> OrderIds { get; set; }
     }
 }

@@ -653,6 +653,16 @@ namespace EHM_API.Controllers
             var revenues = await _orderService.GetSalesByCategoryAsync(startDate, endDate);
             return Ok(revenues);
         }
+        [HttpGet("order/export/cashier/{exportorderId}")]
+        public async Task<IActionResult> ExportCashier(int exportorderId)
+        {
+            var orderDetails = await _orderService.GetOrderDetailsByIdAsync(exportorderId);
+            if (orderDetails == null)
+            {
+                return NotFound();
+            }
+            return Ok(orderDetails);
+        }
 
 
 
