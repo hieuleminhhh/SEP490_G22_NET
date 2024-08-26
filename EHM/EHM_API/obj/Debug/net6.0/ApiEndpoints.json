@@ -1619,8 +1619,8 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.InvoiceController",
-    "Method": "GetOrdersToday",
-    "RelativePath": "api/Invoice/Ordertoday",
+    "Method": "GetOrdersUnpaidForShip",
+    "RelativePath": "api/Invoice/OrderUnpaidForShip",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1685,6 +1685,27 @@
       {
         "Name": "dto",
         "Type": "EHM_API.DTOs.InvoiceDTO.InvoiceOfSitting",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.InvoiceController",
+    "Method": "UpdatePaymentStatus",
+    "RelativePath": "api/Invoice/updatePaymentStatus/{orderId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.InvoiceDTO.UpdatePaymentStatusDTO",
         "IsRequired": true
       }
     ],
@@ -2461,22 +2482,6 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
-    "Method": "GetRevenueByCategoryId",
-    "RelativePath": "api/orders/revenue-by-category/{categoryId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "categoryId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "SearchOrdersByGuestPhone",
     "RelativePath": "api/orders/search",
     "HttpMethod": "GET",
@@ -2498,7 +2503,18 @@
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "startDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "endDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [
       {
         "Type": "EHM_API.DTOs.OrderDTO.Manager.OrderStatisticsDTO",
@@ -2510,6 +2526,27 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "GetRevenueByCategory",
+    "RelativePath": "api/orders/TotalSale-by-category",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "startDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "endDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
