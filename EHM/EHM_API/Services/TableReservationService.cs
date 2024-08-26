@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.ReservationDTO.Manager;
+using EHM_API.DTOs.TBDTO;
 using EHM_API.Models;
 using EHM_API.Repositories;
 
@@ -30,5 +31,10 @@ namespace EHM_API.Services
 				await _tableReservationRepository.CreateOrderTablesAsync(orderTable);
 			}
 		}
-	}
+		public async Task<IEnumerable<FindTableByReservation>> GetTableByReservationsAsync(int reservationId)
+		{
+            return (IEnumerable<FindTableByReservation>)await _tableReservationRepository.GetTableByReservationsAsync(reservationId);
+		}
+
+    }
 }

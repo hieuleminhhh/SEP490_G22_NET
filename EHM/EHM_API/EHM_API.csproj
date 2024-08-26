@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="DTOs\TableReservationDTO\**" />
-    <Content Remove="DTOs\TableReservationDTO\**" />
-    <EmbeddedResource Remove="DTOs\TableReservationDTO\**" />
-    <None Remove="DTOs\TableReservationDTO\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
