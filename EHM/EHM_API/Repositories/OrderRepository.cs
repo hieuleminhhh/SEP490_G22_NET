@@ -1009,7 +1009,7 @@ public class OrderRepository : IOrderRepository
         var orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
         var orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
         var orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
-
+        var orderIds = orders.Select(o => o.OrderId).ToList();
         return new OrderStatisticsDTO
         {
             TotalOrders = totalOrders,
@@ -1019,7 +1019,8 @@ public class OrderRepository : IOrderRepository
             RevenueByPaymentMethod2 = revenueByPaymentMethod2,
             OrderCountByPaymentMethod0 = orderCountByPaymentMethod0,
             OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
-            OrderCountByPaymentMethod2 = orderCountByPaymentMethod2
+            OrderCountByPaymentMethod2 = orderCountByPaymentMethod2,
+            OrderIds = orderIds
         };
     }
 
@@ -1048,5 +1049,17 @@ public class OrderRepository : IOrderRepository
         return salesByCategory;
     }
 
-
+    public async Task<Order?> GetOrderByIdAsync(int orderId)
+    {
+        return await _context.Orders
+            .Include(o => o.Invoice)
+            .Include(o => o.Address)
+            .Include(o => o.GuestPhoneNavigation)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Dish)
+            .Include(o => o.Reservations)
+                .ThenInclude(r => r.TableReservations)
+                    .ThenInclude(tr => tr.Table)
+            .FirstOrDefaultAsync(o => o.OrderId == orderId);
+    }
 }

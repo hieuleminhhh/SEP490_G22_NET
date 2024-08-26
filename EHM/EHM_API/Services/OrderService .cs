@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.DishDTO;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
@@ -338,7 +339,7 @@ namespace EHM_API.Services
 				Phone = order.Address?.GuestPhone,
 				Address = order.Address?.GuestAddress,
 
-				//	AccountId = dto.AccountId,
+				AccountId = dto.AccountId != 0 ? dto.AccountId : (int?)null,
 				AmountReceived = dto.AmountReceived,
 				ReturnAmount = dto.ReturnAmount,
 				PaymentMethods = dto.PaymentMethods,
@@ -354,33 +355,33 @@ namespace EHM_API.Services
 
 			return invoice.InvoiceId;
 		}
-        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
-        {
-            var orders = await _orderRepository.GetOrderDetailsForStaffType1Async();
+		public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
+		{
+			var orders = await _orderRepository.GetOrderDetailsForStaffType1Async();
 
-            var mappedOrders = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
+			var mappedOrders = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
 
-            foreach (var order in mappedOrders)
-            {
-              
-                if (order.TotalAmount > 0 && order.DiscountPercent.HasValue)
-                {
-                    var discountPercentage = order.DiscountPercent.Value / 100m; 
-                    order.DiscountedPrice = order.TotalAmount * (1 - discountPercentage);
-                }
-                else
-                {
-                    order.DiscountedPrice = order.TotalAmount; 
-                }
-            }
+			foreach (var order in mappedOrders)
+			{
 
-            return mappedOrders;
-        }
+				if (order.TotalAmount > 0 && order.DiscountPercent.HasValue)
+				{
+					var discountPercentage = order.DiscountPercent.Value / 100m;
+					order.DiscountedPrice = order.TotalAmount * (1 - discountPercentage);
+				}
+				else
+				{
+					order.DiscountedPrice = order.TotalAmount;
+				}
+			}
 
-
+			return mappedOrders;
+		}
 
 
-        public async Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto)
+
+
+		public async Task UpdateAmountReceivingAsync(int orderId, UpdateAmountReceiving dto)
 		{
 			var order = await _orderRepository.GetByIdAsync(orderId);
 			if (order == null)
@@ -492,58 +493,64 @@ namespace EHM_API.Services
 			};
 			await _invoiceRepository.CreateInvoiceLog(invoiceLog);
 		}
-        public async Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, UpdateOrderAccountDTO updateOrderAccountDTO)
-        {
-            var order = await _orderRepository.GetOrderById(orderId);
-            if (order == null)
-            {
-                return null;
-            }
+		public async Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, UpdateOrderAccountDTO updateOrderAccountDTO)
+		{
+			var order = await _orderRepository.GetOrderById(orderId);
+			if (order == null)
+			{
+				return null;
+			}
 
-            if (updateOrderAccountDTO.AccountId.HasValue)
-            {
-                order.AccountId = updateOrderAccountDTO.AccountId.Value;
-                await _orderRepository.UpdateOrderAsync(order);
-            }
+			if (updateOrderAccountDTO.AccountId.HasValue)
+			{
+				order.AccountId = updateOrderAccountDTO.AccountId.Value;
+				await _orderRepository.UpdateOrderAsync(order);
+			}
 
-            return _mapper.Map<OrderAccountDTO>(order);
-        }
-        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
-        {
-            var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, accountId);
-            return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
-        }
-        public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
-        {
-            var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
-            return order;
-        }
-        public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
-        {
-            return await _orderRepository.GetOrderStatisticsAsync(startDate, endDate);
-        }
+			return _mapper.Map<OrderAccountDTO>(order);
+		}
+		public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
+		{
+			var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, accountId);
+			return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
+		}
+		public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
+		{
+			var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
+			return order;
+		}
+		public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
+		{
+			return await _orderRepository.GetOrderStatisticsAsync(startDate, endDate);
+		}
 
-        public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
-        {
-            var salesByCategory = await _orderRepository.GetSalesByCategoryAsync(startDate, endDate);
-            var categories = await _context.Categories.ToListAsync();
+		public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
+		{
+			var salesByCategory = await _orderRepository.GetSalesByCategoryAsync(startDate, endDate);
+			var categories = await _context.Categories.ToListAsync();
 
-            var salesDtoList = categories.Select(category => new CategorySalesDTO
-            {
-                CategoryId = category.CategoryId,
-                CategoryName = category.CategoryName,
-                TotalSales = salesByCategory.ContainsKey(category.CategoryId) ? salesByCategory[category.CategoryId] : 0
-            });
+			var salesDtoList = categories.Select(category => new CategorySalesDTO
+			{
+				CategoryId = category.CategoryId,
+				CategoryName = category.CategoryName,
+				TotalSales = salesByCategory.ContainsKey(category.CategoryId) ? salesByCategory[category.CategoryId] : 0
+			});
 
-            return salesDtoList;
-        }
+			return salesDtoList;
+		}
+		public async Task<ExportOrderDTO?> GetOrderDetailsByIdAsync(int orderId)
+		{
+			var order = await _orderRepository.GetOrderByIdAsync(orderId);
+			if (order == null)
+			{
+				return null;
+			}
 
+			return _mapper.Map<ExportOrderDTO>(order);
+		}
+	}
 
-
-    }
 }
-
-
 	
 
 
