@@ -8,6 +8,7 @@
 		public int? Status { get; set; }
 		public DateTime? RecevingOrder { get; set; }
 		public string GuestPhone { get; set; }
+		public int? AccountId { get; set; }
 		public int? AddressId { get; set; }
 		public string Note { get; set; }
 		public int? Type { get; set; }
