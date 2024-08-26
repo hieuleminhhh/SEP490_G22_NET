@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using EHM_API.Models;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using Microsoft.AspNetCore.Authorization;
+using EHM_API.DTOs.OrderDTO.Cashier;
 
 namespace EHM_API.Controllers
 {
@@ -424,6 +425,71 @@ namespace EHM_API.Controllers
 			try
 			{
 				var result = await _orderService.CreateOrderForTable(tableId, dto);
+				if (result == null)
+				{
+					return BadRequest(new { message = "Không thể tạo đơn hàng." });
+				}
+				return Ok(new
+				{
+					message = "Đã tạo đơn hàng thành công."
+				});
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Đã xảy ra lỗi khi xử lý yêu cầu.");
+				return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu.", detail = ex.ToString() });
+			}
+		}
+
+
+
+		[Authorize(Roles = "OrderStaff,Cashier")]
+		[HttpPost("createOrderForReservation/{tableId}")]
+		public async Task<IActionResult> CreateOrderForReservaion(int tableId, [FromBody] CreateOrderForReservaionDTO dto)
+		{
+			var errors = new Dictionary<string, string>();
+
+			if (tableId <= 0)
+			{
+				errors["TableId"] = "Bàn không hợp lệ.";
+				return BadRequest(errors);
+			}
+
+			var tableExists = await _tableService.ExistTable(tableId);
+			if (!tableExists)
+			{
+				errors["TableId"] = "Bàn không tồn tại.";
+				return BadRequest(errors);
+			}
+
+			foreach (var detail in dto.OrderDetails)
+			{
+				if (!detail.DishId.HasValue && detail.ComboId <= 0)
+				{
+					errors["DishId"] = "Món ăn hoặc combo không được để trống.";
+				}
+
+				// Validate UnitPrice
+				if (detail.UnitPrice <= 0)
+				{
+					errors["UnitPrice"] = "Đơn giá không hợp lệ.";
+				}
+
+				// Validate Quantity
+				if (detail.Quantity <= 0)
+				{
+					errors["Quantity"] = "Số lượng phải lớn hơn 0.";
+				}
+			}
+
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+
+			try
+			{
+				var result = await _orderService.CreateOrderForReservation(tableId, dto);
 				if (result == null)
 				{
 					return BadRequest(new { message = "Không thể tạo đơn hàng." });
