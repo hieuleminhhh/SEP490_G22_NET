@@ -540,17 +540,18 @@ namespace EHM_API.Services
 
 			return salesDtoList;
 		}
-		public async Task<ExportOrderDTO?> GetOrderDetailsByIdAsync(int orderId)
-		{
-			var order = await _orderRepository.GetOrderByIdAsync(orderId);
-			if (order == null)
-			{
-				return null;
-			}
+        public async Task<List<ExportOrderDTO?>> GetOrderDetailsByIdsAsync(List<int> orderIds)
+        {
+            var orders = await _orderRepository.GetOrderByIdAsync(orderIds);
+            if (orders == null || !orders.Any())
+            {
+                return new List<ExportOrderDTO?>();
+            }
 
-			return _mapper.Map<ExportOrderDTO>(order);
-		}
-	}
+            return _mapper.Map<List<ExportOrderDTO?>>(orders);
+        }
+
+    }
 
 }
 	

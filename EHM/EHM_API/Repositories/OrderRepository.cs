@@ -1049,7 +1049,7 @@ public class OrderRepository : IOrderRepository
         return salesByCategory;
     }
 
-    public async Task<Order?> GetOrderByIdAsync(int orderId)
+    public async Task<List<Order?>> GetOrderByIdAsync(List<int> orderIds)
     {
         return await _context.Orders
             .Include(o => o.Invoice)
@@ -1060,6 +1060,8 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.Reservations)
                 .ThenInclude(r => r.TableReservations)
                     .ThenInclude(tr => tr.Table)
-            .FirstOrDefaultAsync(o => o.OrderId == orderId);
+            .Where(o => orderIds.Contains(o.OrderId))
+            .ToListAsync();
     }
+
 }

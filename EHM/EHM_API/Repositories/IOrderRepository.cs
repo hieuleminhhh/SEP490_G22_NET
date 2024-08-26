@@ -41,7 +41,7 @@ public interface IOrderRepository
     Task<IEnumerable<Order>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
     Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate);
     Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate);
-    Task<Order?> GetOrderByIdAsync(int orderId);
+    Task<List<Order?>> GetOrderByIdAsync(List<int> orderIds);
 
 
 }
