@@ -18,7 +18,8 @@ namespace EHM_API.Services
 		Task<IEnumerable<GetInvoiceAndOrderInfo>> GetAllInvoicesAndOrdersAsync();
 		Task<IEnumerable<GetOrderCancelInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit);
 
-		Task<List<GetOrderTodayDTO>> GetOrdersTodayAsync();
+		Task<IEnumerable<GetOrderUnpaidOfShipDTO>> GetOrdersUnpaidForShipAsync();
+		Task<bool> UpdatePaymentStatusAsync(int orderId, UpdatePaymentStatusDTO dto);
 
 	}
 }

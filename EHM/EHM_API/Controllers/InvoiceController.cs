@@ -212,12 +212,26 @@ namespace EHM_API.Controllers
 			return Ok(result);
 		}
 
-		[HttpGet("Ordertoday")]
-		public async Task<IActionResult> GetOrdersToday()
+		[HttpGet("OrderUnpaidForShip")]
+		public async Task<IActionResult> GetOrdersUnpaidForShip()
 		{
-			var orders = await _invoiceService.GetOrdersTodayAsync();
+			var orders = await _invoiceService.GetOrdersUnpaidForShipAsync();
 			return Ok(orders);
 		}
+
+
+		[HttpPut("updatePaymentStatus/{orderId}")]
+		public async Task<IActionResult> UpdatePaymentStatus(int orderId, [FromBody] UpdatePaymentStatusDTO dto)
+		{
+			var result = await _invoiceService.UpdatePaymentStatusAsync(orderId, dto);
+			if (result)
+			{
+				return Ok(new { message = "Payment status updated successfully" });
+			}
+
+			return BadRequest(new { message = "Failed to update payment status" });
+		}
+
 
 	}
 }

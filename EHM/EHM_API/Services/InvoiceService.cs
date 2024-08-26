@@ -187,12 +187,51 @@ namespace EHM_API.Services
 			return invoiceAndOrderInfoList;
 		}
 
-		public async Task<List<GetOrderTodayDTO>> GetOrdersTodayAsync()
+		public async Task<IEnumerable<GetOrderUnpaidOfShipDTO>> GetOrdersUnpaidForShipAsync()
 		{
-			var orders = await _invoiceRepository.GetOrdersTodayAsync();
-			var orderDTOs = _mapper.Map<List<GetOrderTodayDTO>>(orders);
-			return orderDTOs;
+			var orders = await _invoiceRepository.GetOrdersUnpaidForShipAsync();
+
+			var orderDtos = orders.Select(order =>
+			{
+				var dto = _mapper.Map<GetOrderUnpaidOfShipDTO>(order);
+
+				if (order.Discount != null && order.Discount.DiscountPercent.HasValue)
+				{
+					var discountPercent = order.Discount.DiscountPercent.Value;
+					dto.TotalPaid = order.TotalAmount - (order.TotalAmount * discountPercent / 100);
+				}
+				else
+				{
+					dto.TotalPaid = order.TotalAmount;
+				}
+
+				return dto;
+			}).ToList();
+
+			return orderDtos;
 		}
 
+
+		public async Task<bool> UpdatePaymentStatusAsync(int orderId, UpdatePaymentStatusDTO dto)
+		{
+			var order = await _invoiceRepository.GetOrderByIdAsync(orderId);
+			if (order == null)
+			{
+				return false;
+			}
+
+			var invoice = order.Invoice;
+			if (invoice == null)
+			{
+				return false;
+			}
+
+			invoice.PaymentStatus = 1;
+			invoice.PaymentTime = DateTime.Now;
+			invoice.PaymentAmount = dto.PaymentAmount; 
+
+			await _invoiceRepository.UpdateInvoiceAsync(invoice);
+			return true;
+		}
 	}
 }
