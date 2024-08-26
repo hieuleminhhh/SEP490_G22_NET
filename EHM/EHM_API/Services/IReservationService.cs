@@ -25,5 +25,6 @@ namespace EHM_API.Services
 		Task<GetReservationByOrderDTO?> GetReservationByOrderIdAsync(int orderId);
 
 		Task<IEnumerable<GetReservationByOrderDTO>> GetReservationsByTableIdAsync(int tableId);
-	}
+        Task<bool> UpdateReservationOrderAsync(UpdateReservationOrderDTO dto);
+    }
 }

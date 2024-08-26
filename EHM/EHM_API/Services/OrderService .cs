@@ -4,6 +4,7 @@ using EHM_API.DTOs.DishDTO;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
+using EHM_API.DTOs.OrderDTO.Cashier;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
@@ -245,6 +246,11 @@ namespace EHM_API.Services
 		public Task<Order> CreateOrderForTable(int tableId, CreateOrderForTableDTO dto)
 		{
 			return _orderRepository.CreateOrderForTable(tableId, dto);
+		}
+
+		public Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto)
+		{
+			return _orderRepository.CreateOrderForReservation(tableId, dto);
 		}
 
 		public async Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)

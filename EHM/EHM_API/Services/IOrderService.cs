@@ -2,6 +2,7 @@
 using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
+using EHM_API.DTOs.OrderDTO.Cashier;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
@@ -53,5 +54,8 @@ namespace EHM_API.Services
         Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate);
         Task<List<ExportOrderDTO?>> GetOrderDetailsByIdsAsync(List<int> orderIds);
 
-    }
+        Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto);
+
+
+	}
 }

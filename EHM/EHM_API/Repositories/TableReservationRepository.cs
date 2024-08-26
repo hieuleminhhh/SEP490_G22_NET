@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using EHM_API.DTOs.TBDTO;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,5 +37,20 @@ namespace EHM_API.Repositories
 			await _context.OrderTables.AddAsync(orderTable);
 			await _context.SaveChangesAsync();
 		}
-	}
+        public async Task<IEnumerable<FindTableByReservation>> GetTableByReservationsAsync(int reservationId)
+        {
+            var tableReservations = await _context.TableReservations
+                .Where(tr => tr.ReservationId == reservationId)
+                .Select(tr => new FindTableByReservation
+                {
+                    TableId = tr.TableId
+                  
+                })
+                .ToListAsync();
+
+            return tableReservations;
+        }
+
+
+    }
 }
