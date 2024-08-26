@@ -61,8 +61,13 @@ namespace EHM_API.Controllers
 			}
 			else if (!Regex.IsMatch(createGuestDTO.GuestPhone, @"^[0-9]+$"))
 			{
-				errors["phone"] = "Số điện thoại không hợp lệ.";
+				errors["phone"] = "Số điện thoại không hợp lệ. Chỉ được chứa các chữ số.";
 			}
+			else if (createGuestDTO.GuestPhone.Length < 10 || createGuestDTO.GuestPhone.Length > 11)
+			{
+				errors["phone"] = "Số điện thoại phải có từ 10 đến 11 chữ số.";
+			}
+
 			if (errors.Any())
 			{
 				return BadRequest(errors);
