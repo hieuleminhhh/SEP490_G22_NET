@@ -696,6 +696,7 @@ public class OrderRepository : IOrderRepository
 			GuestPhone = !string.IsNullOrWhiteSpace(dto.GuestPhone) ? dto.GuestPhone : null,
 			Note = dto.Note,
 			Type = dto.Type,
+			AccountId = dto.AccountId > 0 ? dto.AccountId : (int?)null,
 			DiscountId = dto.DiscountId.HasValue && dto.DiscountId.Value > 0 ? dto.DiscountId.Value : (int?)null,
 			Address = address,
 			GuestPhoneNavigation = guest

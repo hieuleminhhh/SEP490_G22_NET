@@ -464,9 +464,7 @@ namespace EHM_API.Map
                            opt => opt.MapFrom(src => src.ComboId))
                 .ForMember(dest => dest.NameCombo,
                            opt => opt.MapFrom(src => src.NameCombo));
-            //Het search
-
-            CreateMap<CreateAccountDTO, Account>();
+            //Het sear
 
             // Danh sach mon an and  combo 
             CreateMap<Dish, SearchDishDTO>()
@@ -667,8 +665,14 @@ namespace EHM_API.Map
 
             //Account
             CreateMap<Account, GetAccountDTO>();
-            CreateMap<CreateAccountDTO, Account>();
-            CreateMap<UpdateAccountDTO, Account>();
+
+
+			CreateMap<CreateAccountDTO, Account>()
+			 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive ?? false))
+			 .ReverseMap();
+
+
+			CreateMap<UpdateAccountDTO, Account>();
 
 
 			CreateMap<AcceptOrderDTO, Invoice>()
@@ -718,11 +722,14 @@ namespace EHM_API.Map
 			   .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
 			   .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId));
 
-            CreateMap<Order, GetOrderTodayDTO>()
-         .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Account.FirstName))
-         .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Account.LastName))
-            .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice.PaymentStatus));
-            CreateMap<Order, GetInvoiceAndOrderInfo>()
+			CreateMap<Order, GetOrderUnpaidOfShipDTO>()
+			   .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Account.FirstName))
+			   .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Account.LastName))
+			   .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice.PaymentStatus))
+			   .ForMember(dest => dest.TotalPaid, opt => opt.Ignore());
+
+
+			CreateMap<Order, GetInvoiceAndOrderInfo>()
     .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
     .ForMember(dest => dest.InvoiceId, opt => opt.MapFrom(src => src.InvoiceId))
     .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice.PaymentTime))
