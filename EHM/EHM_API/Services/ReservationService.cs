@@ -249,5 +249,16 @@ namespace EHM_API.Services
 			var reservations = await _repository.GetReservationsByTableIdAsync(tableId);
 			return _mapper.Map<IEnumerable<GetReservationByOrderDTO>>(reservations);
 		}
-	}
+        public async Task<bool> UpdateReservationOrderAsync(UpdateReservationOrderDTO dto)
+        {
+            var reservation = await _repository.GetReservationByIdAsync(dto.ReservationId);
+            if (reservation == null)
+            {
+                return false;
+            }
+
+            await _repository.UpdateReservationOrderAsync(dto.ReservationId, dto.OrderId);
+            return true;
+        }
+    }
 }

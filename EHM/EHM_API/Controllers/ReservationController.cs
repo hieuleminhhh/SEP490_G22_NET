@@ -356,5 +356,15 @@ namespace EHM_API.Controllers
 
 			return Ok(reservations);
 		}
-	}
+        [HttpPut("update-order")]
+        public async Task<IActionResult> UpdateReservationOrder([FromBody] UpdateReservationOrderDTO dto)
+        {
+            var result = await _service.UpdateReservationOrderAsync(dto);
+            if (!result)
+            {
+                return NotFound("Reservation not found");
+            }
+            return Ok("OrderID updated successfully");
+        }
+    }
 }
