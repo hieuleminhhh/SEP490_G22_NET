@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using EHM_API.Services;
 using EHM_API.DTOs.ReservationDTO.Manager;
+using EHM_API.DTOs.DishDTO.Manager;
+using EHM_API.DTOs.TBDTO;
 
 namespace EHM_API.Controllers
 {
@@ -38,6 +40,11 @@ namespace EHM_API.Controllers
 			await _tableReservationService.CreateOrderTablesAsync(dto);
 			return Ok(new { Message = "Đã tạo đơn hàng và bảng thành công!" });
 		}
-
-	}
+        [HttpGet("{reservationId}")]
+        public async Task<IActionResult> GetTableByReservation(int reservationId)
+        {
+            var tables = await _tableReservationService.GetTableByReservationsAsync(reservationId);
+            return Ok(tables);
+        }
+    }
 }
