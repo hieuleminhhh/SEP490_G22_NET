@@ -338,7 +338,7 @@ namespace EHM_API.Services
 				Phone = order.Address?.GuestPhone,
 				Address = order.Address?.GuestAddress,
 
-				//	AccountId = dto.AccountId,
+				AccountId = dto.AccountId != 0 ? dto.AccountId : (int?)null,
 				AmountReceived = dto.AmountReceived,
 				ReturnAmount = dto.ReturnAmount,
 				PaymentMethods = dto.PaymentMethods,
