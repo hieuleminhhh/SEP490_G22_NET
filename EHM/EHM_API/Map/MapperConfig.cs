@@ -20,6 +20,7 @@ using EHM_API.DTOs.NewDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
+using EHM_API.DTOs.OrderTableDTO;
 using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.DTOs.SettingDTO.Manager;
@@ -773,6 +774,10 @@ namespace EHM_API.Map
 
             CreateMap<Reservation, ExportReservationDTO>()
                 .ForMember(dest => dest.TableIds, opt => opt.MapFrom(src => src.TableReservations.Select(tr => tr.TableId)));
+
+            CreateMap<OrderTable, CreateOrderTable>().ReverseMap();
+
+
         }
 
 

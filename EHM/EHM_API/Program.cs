@@ -148,7 +148,10 @@ namespace EHM_API
 			builder.Services.AddScoped<INewsRepository, NewsRepository>();
 			builder.Services.AddScoped<INewsService, NewsService>();
 
-			builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddScoped<IOrderTableRepository, OrderTableReposotory>();
+            builder.Services.AddScoped<IOrderTableService, OrderTableService>();
+
+            builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
