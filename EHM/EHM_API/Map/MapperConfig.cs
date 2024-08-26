@@ -749,7 +749,23 @@ namespace EHM_API.Map
        .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.OrderDetails.First().Dish.CategoryId))
        .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.OrderDetails.First().Dish.Category.CategoryName))
        .ForMember(dest => dest.TotalSales, opt => opt.MapFrom(src => src.OrderDetails.Sum(od => od.Quantity ?? 0)));
+           
+            CreateMap<Order, ExportOrderDTO>()
+                        .ForMember(dest => dest.Invoice, opt => opt.MapFrom(src => src.Invoice))
+                        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                        .ForMember(dest => dest.Guest, opt => opt.MapFrom(src => src.GuestPhoneNavigation))
+                        .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
+                        .ForMember(dest => dest.Reservations, opt => opt.MapFrom(src => src.Reservations));
 
+            CreateMap<Invoice, ExportInvoiceDTO>();
+            CreateMap<Address, ExportAddressDTO>();
+            CreateMap<Guest, ExportGuestDTO>();
+
+            CreateMap<OrderDetail, ExportOrderDetailDTO>()
+                .ForMember(dest => dest.DishName, opt => opt.MapFrom(src => src.Dish.ItemName));
+
+            CreateMap<Reservation, ExportReservationDTO>()
+                .ForMember(dest => dest.TableIds, opt => opt.MapFrom(src => src.TableReservations.Select(tr => tr.TableId)));
         }
 
 

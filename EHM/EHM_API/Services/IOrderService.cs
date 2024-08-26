@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.AccountDTO;
+using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
@@ -50,6 +51,7 @@ namespace EHM_API.Services
         Task<Order> UpdateForOrderStatusAsync(int orderId, int status);
         Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate);
         Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate);
+        Task<ExportOrderDTO?> GetOrderDetailsByIdAsync(int orderId);
 
     }
 }
