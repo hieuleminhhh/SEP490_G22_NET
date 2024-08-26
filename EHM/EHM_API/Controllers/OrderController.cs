@@ -727,7 +727,17 @@ namespace EHM_API.Controllers
             }
             return Ok(orderDetailsList);
         }
+        [HttpPut("update-total-amount/{orderId}")]
+        public async Task<IActionResult> UpdateTotalAmount(int orderId)
+        {
+            var result = await _orderService.UpdateTotalAmountAsync(orderId);
+            if (result == null)
+            {
+                return NotFound();
+            }
 
+            return Ok(result);
+        }
 
 
 

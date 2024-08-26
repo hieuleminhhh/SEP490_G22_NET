@@ -45,5 +45,7 @@ public interface IOrderRepository
     Task<List<Order?>> GetOrderByIdAsync(List<int> orderIds);
 
     Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto);
+    Task<Order?> GetOrderByIdAsync(int orderId);
+    Task UpdateOrderForTotalAsync(Order order);
 }
 
