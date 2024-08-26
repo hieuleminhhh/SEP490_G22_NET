@@ -357,6 +357,15 @@ namespace EHM_API.Repositories
 				.Where(r => r.TableReservations.Any(tr => tr.TableId == tableId) && r.Status == 3)
 				.ToListAsync();
 		}
-
-	}
+        public async Task UpdateReservationOrderAsync(int reservationId, int orderId)
+        {
+            var reservation = await GetReservationByIdAsync(reservationId);
+            if (reservation != null)
+            {
+                reservation.OrderId = orderId;
+                _context.Reservations.Update(reservation);
+                await _context.SaveChangesAsync();
+            }
+        }
+    }
 }
