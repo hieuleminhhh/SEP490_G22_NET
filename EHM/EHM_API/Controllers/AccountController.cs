@@ -147,7 +147,7 @@ namespace EHM_API.Controllers
                 }
 
                 var account = await _accountService.CreateAccountAsync(accountDTO);
-                var accountDTOResponse = _mapper.Map<GetAccountDTO>(account);
+                var accountDTOResponse = _mapper.Map<CreateAccountDTO>(account);
                 return Ok(new { message = "Tài khoản được tạo thành công.", account = accountDTOResponse });
             }
             catch (Exception ex)

@@ -464,9 +464,7 @@ namespace EHM_API.Map
                            opt => opt.MapFrom(src => src.ComboId))
                 .ForMember(dest => dest.NameCombo,
                            opt => opt.MapFrom(src => src.NameCombo));
-            //Het search
-
-            CreateMap<CreateAccountDTO, Account>();
+            //Het sear
 
             // Danh sach mon an and  combo 
             CreateMap<Dish, SearchDishDTO>()
@@ -667,8 +665,14 @@ namespace EHM_API.Map
 
             //Account
             CreateMap<Account, GetAccountDTO>();
-            CreateMap<CreateAccountDTO, Account>();
-            CreateMap<UpdateAccountDTO, Account>();
+
+
+			CreateMap<CreateAccountDTO, Account>()
+			 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive ?? false))
+			 .ReverseMap();
+
+
+			CreateMap<UpdateAccountDTO, Account>();
 
 
 			CreateMap<AcceptOrderDTO, Invoice>()
