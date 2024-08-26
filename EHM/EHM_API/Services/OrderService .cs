@@ -187,6 +187,8 @@ namespace EHM_API.Services
 		{
 			var orderTable = await _context.OrderTables
 				.Include(ot => ot.Order)
+					.ThenInclude(o => o.Discount)
+					.Include(ot => ot.Order)
 					.ThenInclude(o => o.OrderDetails)
 						.ThenInclude(od => od.Dish)
 							.ThenInclude(d => d.Discount)
