@@ -345,11 +345,11 @@ namespace EHM_API.Controllers
 
 
 		[HttpGet("GetReservationsByTableId/{tableId}")]
-		public async Task<IActionResult> GetReservationsByTableId(int tableId)
+		public async Task<ActionResult> GetReservationsByTableId(int tableId)
 		{
 			var reservations = await _service.GetReservationsByTableIdAsync(tableId);
 
-			if (reservations == null || !reservations.Any())
+			if (reservations == null)
 			{
 				return NotFound(new { Message = "Không tìm thấy đặt chỗ nào của bản này" });
 			}

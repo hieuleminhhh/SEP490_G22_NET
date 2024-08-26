@@ -350,13 +350,15 @@ namespace EHM_API.Repositories
 		}
 
 
-		public async Task<IEnumerable<Reservation>> GetReservationsByTableIdAsync(int tableId)
-		{
-			return await _context.Reservations
-				.Include(r => r.Address) 
-				.Where(r => r.TableReservations.Any(tr => tr.TableId == tableId) && r.Status == 3)
-				.ToListAsync();
-		}
+        public async Task<Reservation> GetReservationsByTableIdAsync(int tableId)
+        {
+            return await _context.Reservations
+                .Include(r => r.Address)
+                .Where(r => r.TableReservations.Any(tr => tr.TableId == tableId) && r.Status == 3)
+                .OrderByDescending(r => r.ReservationId)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task UpdateReservationOrderAsync(int reservationId, int orderId)
         {
             var reservation = await GetReservationByIdAsync(reservationId);

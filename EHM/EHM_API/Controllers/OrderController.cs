@@ -494,10 +494,7 @@ namespace EHM_API.Controllers
 				{
 					return BadRequest(new { message = "Không thể tạo đơn hàng." });
 				}
-				return Ok(new
-				{
-					message = "Đã tạo đơn hàng thành công."
-				});
+				return Ok(result);
 			}
 			catch (Exception ex)
 			{
