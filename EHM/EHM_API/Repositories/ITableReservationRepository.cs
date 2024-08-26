@@ -1,4 +1,5 @@
-﻿using EHM_API.Models;
+﻿using EHM_API.DTOs.TBDTO;
+using EHM_API.Models;
 
 namespace EHM_API.Repositories
 {
@@ -7,6 +8,6 @@ namespace EHM_API.Repositories
         Task AddTableReservationAsync(TableReservation tableReservation);
         Task<bool> DeleteTableReservationByReservationIdAsync(int reservationId);
 		Task CreateOrderTablesAsync(OrderTable orderTable);
-
+        Task<IEnumerable<FindTableByReservation>> GetTableByReservationsAsync(int reservationId);
 	}
 }
