@@ -357,6 +357,7 @@ public class OrderRepository : IOrderRepository
 						}
 						else
 						{
+							detail.UnitPrice = detail.UnitPrice / detail.Quantity.Value * (detail.Quantity.Value - quantityToRemove);
 							detail.Quantity -= quantityToRemove;
 							quantityToRemove = 0;
 						}
@@ -387,6 +388,7 @@ public class OrderRepository : IOrderRepository
 						}
 						else
 						{
+							detail.UnitPrice = detail.UnitPrice / detail.Quantity.Value * (detail.Quantity.Value - quantityToRemove);
 							detail.Quantity -= quantityToRemove;
 							quantityToRemove = 0;
 						}
@@ -486,6 +488,7 @@ public class OrderRepository : IOrderRepository
 		await UpdateOrderAsync(order);
 		return order;
 	}
+
 
 
 	//Update OrderDetail by OrderID
