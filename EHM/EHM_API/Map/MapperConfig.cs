@@ -476,15 +476,22 @@ namespace EHM_API.Map
 
             CreateMap<Combo, SearchComboDTO>();
 
-            // Find orders based on TableID
-            CreateMap<Order, FindTableAndGetOrderDTO>()
-             .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
-             .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
-             .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
-             .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
-             .ForMember(dest => dest.TableIds, opt => opt.Ignore());
+			CreateMap<Order, FindTableAndGetOrderDTO>()
+	   .ForMember(dest => dest.GuestAddress, opt => opt.MapFrom(src => src.Address.GuestAddress))
+	   .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
+	   .ForMember(dest => dest.GuestPhone, opt => opt.MapFrom(src => src.GuestPhone))
+	   .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
+	   .ForMember(dest => dest.TableIds, opt => opt.Ignore())
+	   .ForMember(dest => dest.TotalDiscount, opt => opt.MapFrom(src =>
+		   src.Discount != null && src.TotalAmount.HasValue
+			   ? (src.Discount.DiscountPercent.HasValue
+				   ? src.TotalAmount.Value - (src.TotalAmount.Value * src.Discount.DiscountPercent.Value / 100)
+				   : src.TotalAmount.Value - (src.Discount.TotalMoney ?? 0))
+			   : src.TotalAmount
+	   ));
 
-            CreateMap<OrderDetail, TableOfOrderDetailDTO>()
+
+			CreateMap<OrderDetail, TableOfOrderDetailDTO>()
                 .ForMember(dest => dest.Dish, opt => opt.MapFrom(src => src.Dish))
                 .ForMember(dest => dest.Combo, opt => opt.MapFrom(src => src.Combo));
 
