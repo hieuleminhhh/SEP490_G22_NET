@@ -2451,6 +2451,22 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "ExportCashier",
+    "RelativePath": "api/orders/order/export/cashier",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "exportorderIds",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "GetOrdersByStatusAndAccountId",
     "RelativePath": "api/orders/orders/status/{status}/account/{accountId}",
     "HttpMethod": "GET",
