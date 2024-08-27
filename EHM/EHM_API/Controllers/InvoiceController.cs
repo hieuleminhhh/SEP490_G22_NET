@@ -231,7 +231,17 @@ namespace EHM_API.Controllers
 
 			return BadRequest(new { message = "Failed to update payment status" });
 		}
+        [HttpPut("update-invoice")]
+        public async Task<IActionResult> UpdateInvoice([FromBody] UpdateAmountInvoiceDTO updateInvoiceDto)
+        {
+            var result = await _invoiceService.UpdateInvoiceAsync(updateInvoiceDto);
+            if (result == null)
+            {
+                return NotFound();
+            }
 
+            return Ok(result);
+        }
 
-	}
+    }
 }

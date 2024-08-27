@@ -233,5 +233,23 @@ namespace EHM_API.Services
 			await _invoiceRepository.UpdateInvoiceAsync(invoice);
 			return true;
 		}
-	}
+        public async Task<UpdateAmountInvoiceDTO?> UpdateInvoiceAsync(UpdateAmountInvoiceDTO updateAmountInvoiceDTO)
+        {
+            var invoice = await _invoiceRepository.GetInvoiceByIdAsync(updateAmountInvoiceDTO.InvoiceId);
+            if (invoice == null)
+            {
+                return null;
+            }
+
+            
+            invoice.PaymentAmount = updateAmountInvoiceDTO.PaymentAmount;
+            invoice.ReturnAmount = updateAmountInvoiceDTO.ReturnAmount;
+
+           
+            await _invoiceRepository.UpdateInvoiceAsync(invoice);
+
+            return _mapper.Map<UpdateAmountInvoiceDTO>(invoice);
+        }
+    }
 }
+
