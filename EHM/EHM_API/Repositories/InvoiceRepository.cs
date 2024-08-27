@@ -402,7 +402,8 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Orders
 				.Include(o => o.Address)
-				.Where(o => o.Status == status && o.Deposits > minDeposit && o.InvoiceId==null)
+				.Include(o => o.Invoice)
+				.Where(o => (o.Status == status && o.Deposits > minDeposit && o.InvoiceId==null) || (o.Invoice.PaymentStatus == 1|| o.Invoice.PaymentStatus == 2))
 				.ToListAsync();
 		}
 
