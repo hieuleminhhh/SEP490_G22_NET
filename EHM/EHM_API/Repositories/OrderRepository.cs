@@ -825,7 +825,7 @@ public class OrderRepository : IOrderRepository
 		{
 			OrderDate = DateTime.Now,
 			Status = dto.Status,
-			RecevingOrder = dto.RecevingOrder,
+			RecevingOrder = DateTime.Now,
 			GuestPhone = !string.IsNullOrWhiteSpace(dto.GuestPhone) ? dto.GuestPhone : null,
 			Note = dto.Note,
 			Type = dto.Type,
@@ -880,7 +880,8 @@ public class OrderRepository : IOrderRepository
 						OrderId = order.OrderId,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = DateTime.Now
+						OrderTime = DateTime.Now,
+					
 					};
 
 					_context.OrderDetails.Add(orderDetail);
