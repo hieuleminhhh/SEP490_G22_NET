@@ -1203,7 +1203,9 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders
             .Include(o => o.OrderDetails)
                 .ThenInclude(od => od.Dish)
-                    .ThenInclude(d => d.Discount) 
+                    .ThenInclude(d => d.Discount)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Combo)
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
     }
 
