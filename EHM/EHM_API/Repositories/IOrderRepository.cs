@@ -1,5 +1,6 @@
 ﻿using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.HomeDTO;
+using EHM_API.DTOs.OrderDTO.Cashier;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.Models;
@@ -41,8 +42,10 @@ public interface IOrderRepository
     Task<IEnumerable<Order>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
     Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate);
     Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate);
+    Task<List<Order?>> GetOrderByIdAsync(List<int> orderIds);
+
+    Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto);
     Task<Order?> GetOrderByIdAsync(int orderId);
-
-
+    Task UpdateOrderForTotalAsync(Order order);
 }
 

@@ -2,6 +2,7 @@
 using EHM_API.DTOs.ComboDTO.Guest;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
+using EHM_API.DTOs.OrderDTO.Cashier;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
 using EHM_API.DTOs.TableDTO.Manager;
@@ -356,6 +357,7 @@ public class OrderRepository : IOrderRepository
 						}
 						else
 						{
+							detail.UnitPrice = detail.UnitPrice / detail.Quantity.Value * (detail.Quantity.Value - quantityToRemove);
 							detail.Quantity -= quantityToRemove;
 							quantityToRemove = 0;
 						}
@@ -386,6 +388,7 @@ public class OrderRepository : IOrderRepository
 						}
 						else
 						{
+							detail.UnitPrice = detail.UnitPrice / detail.Quantity.Value * (detail.Quantity.Value - quantityToRemove);
 							detail.Quantity -= quantityToRemove;
 							quantityToRemove = 0;
 						}
@@ -485,6 +488,7 @@ public class OrderRepository : IOrderRepository
 		await UpdateOrderAsync(order);
 		return order;
 	}
+
 
 
 	//Update OrderDetail by OrderID
@@ -814,6 +818,136 @@ public class OrderRepository : IOrderRepository
 		};
 	}
 
+	//dat ban
+	public async Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto)
+	{
+		var order = new Order
+		{
+			OrderDate = DateTime.Now,
+			Status = dto.Status,
+			RecevingOrder = dto.RecevingOrder,
+			GuestPhone = !string.IsNullOrWhiteSpace(dto.GuestPhone) ? dto.GuestPhone : null,
+			Note = dto.Note,
+			Type = dto.Type,
+			AddressId = dto.AddressId,
+			AccountId = dto.AccountId > 0 ? dto.AccountId : (int?)null,
+			DiscountId = dto.DiscountId.HasValue && dto.DiscountId.Value > 0 ? dto.DiscountId.Value : (int?)null
+		};
+
+		if (string.IsNullOrWhiteSpace(dto.GuestPhone))
+		{
+			order.GuestPhone = null;
+			order.GuestPhoneNavigation = null;
+		}
+
+		_context.Orders.Add(order);
+		await _context.SaveChangesAsync();
+
+		decimal totalAmount = 0m;
+
+		if (dto.OrderDetails != null && dto.OrderDetails.Any())
+		{
+			foreach (var detailDto in dto.OrderDetails)
+			{
+				decimal unitPrice = 0m;
+
+				if (detailDto.DishId.HasValue && detailDto.DishId.Value > 0)
+				{
+					var dish = await _context.Dishes
+						.Include(d => d.Discount)
+						.FirstOrDefaultAsync(d => d.DishId == detailDto.DishId.Value);
+
+					if (dish == null)
+					{
+						throw new KeyNotFoundException($"Món ăn {detailDto.DishId} không tồn tại.");
+					}
+
+					if (dish.Discount != null)
+					{
+						unitPrice = (decimal)(dish.Price - (dish.Price * dish.Discount.DiscountPercent / 100)) * detailDto.Quantity;
+					}
+					else
+					{
+						unitPrice = (decimal)dish.Price * detailDto.Quantity;
+					}
+
+					var orderDetail = new OrderDetail
+					{
+						UnitPrice = unitPrice,
+						Quantity = detailDto.Quantity,
+						DishId = detailDto.DishId.Value,
+						ComboId = null,
+						OrderId = order.OrderId,
+						DishesServed = 0,
+						Note = detailDto.Note,
+						OrderTime = DateTime.Now
+					};
+
+					_context.OrderDetails.Add(orderDetail);
+				}
+				else if (detailDto.ComboId.HasValue && detailDto.ComboId.Value > 0)
+				{
+					var combo = await _context.Combos
+						.FirstOrDefaultAsync(c => c.ComboId == detailDto.ComboId.Value);
+
+					if (combo == null)
+					{
+						throw new KeyNotFoundException($"Combo {detailDto.ComboId} không tồn tại.");
+					}
+
+					unitPrice = (decimal)combo.Price * detailDto.Quantity;
+
+					var orderDetail = new OrderDetail
+					{
+						UnitPrice = unitPrice,
+						Quantity = detailDto.Quantity,
+						DishId = null,
+						ComboId = detailDto.ComboId.Value,
+						OrderId = order.OrderId,
+						DishesServed = 0,
+						Note = detailDto.Note,
+						OrderTime = detailDto.OrderTime
+					};
+
+					_context.OrderDetails.Add(orderDetail);
+				}
+				else
+				{
+					continue;
+				}
+
+				totalAmount += unitPrice;
+			}
+
+			await _context.SaveChangesAsync();
+		}
+
+		var orderTable = new OrderTable
+		{
+			TableId = tableId,
+			OrderId = order.OrderId
+		};
+
+		_context.OrderTables.Add(orderTable);
+		await _context.SaveChangesAsync();
+
+		order.TotalAmount = totalAmount;
+
+		await _context.SaveChangesAsync();
+		await _tableRepository.UpdateTableStatus(tableId, 1);
+		return new Order
+		{
+			OrderId = order.OrderId,
+			OrderDate = order.OrderDate,
+			Status = order.Status,
+			TotalAmount = order.TotalAmount,
+			GuestPhone = order.GuestPhone,
+			Note = order.Note
+		};
+	}
+
+
+
 	public async Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)
 	{
 		var order = await _context.Orders
@@ -1049,7 +1183,7 @@ public class OrderRepository : IOrderRepository
         return salesByCategory;
     }
 
-    public async Task<Order?> GetOrderByIdAsync(int orderId)
+    public async Task<List<Order?>> GetOrderByIdAsync(List<int> orderIds)
     {
         return await _context.Orders
             .Include(o => o.Invoice)
@@ -1060,6 +1194,27 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.Reservations)
                 .ThenInclude(r => r.TableReservations)
                     .ThenInclude(tr => tr.Table)
+            .Where(o => orderIds.Contains(o.OrderId))
+            .ToListAsync();
+    }
+    public async Task<Order?> GetOrderByIdAsync(int orderId)
+    {
+        return await _context.Orders
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Dish)
+                    .ThenInclude(d => d.Discount) 
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
+    }
+
+    public async Task UpdateOrderForTotalAsync(Order order)
+    {
+        _context.Orders.Update(order);
+
+        foreach (var orderDetail in order.OrderDetails)
+        {
+            _context.OrderDetails.Update(orderDetail);
+        }
+
+        await _context.SaveChangesAsync();
     }
 }

@@ -4,6 +4,7 @@ using EHM_API.DTOs.DishDTO;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
+using EHM_API.DTOs.OrderDTO.Cashier;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
@@ -247,6 +248,11 @@ namespace EHM_API.Services
 			return _orderRepository.CreateOrderForTable(tableId, dto);
 		}
 
+		public Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto)
+		{
+			return _orderRepository.CreateOrderForReservation(tableId, dto);
+		}
+
 		public async Task UpdateOrderStatusForTableAsync(int tableId, int orderId, UpdateOrderStatusForTableDTO dto)
 		{
 			await _orderRepository.UpdateOrderStatusForTableAsync(tableId, orderId, dto);
@@ -481,7 +487,7 @@ namespace EHM_API.Services
 			}
 
 			invoice.PaymentTime = DateTime.Now;
-			invoice.PaymentStatus = order.Deposits > 0 ? 2 : 0;
+			invoice.PaymentStatus = order.Deposits > 0 ? 1 : 0;
 
 			await _invoiceRepository.CreateInvoiceAsync(invoice);
 
@@ -540,19 +546,66 @@ namespace EHM_API.Services
 
 			return salesDtoList;
 		}
-		public async Task<ExportOrderDTO?> GetOrderDetailsByIdAsync(int orderId)
+		public async Task<List<ExportOrderDTO?>> GetOrderDetailsByIdsAsync(List<int> orderIds)
 		{
-			var order = await _orderRepository.GetOrderByIdAsync(orderId);
-			if (order == null)
+			var orders = await _orderRepository.GetOrderByIdAsync(orderIds);
+			if (orders == null || !orders.Any())
 			{
-				return null;
+				return new List<ExportOrderDTO?>();
 			}
 
-			return _mapper.Map<ExportOrderDTO>(order);
+			return _mapper.Map<List<ExportOrderDTO?>>(orders);
 		}
-	}
+        public async Task<UpdateTotalAmountDTO?> UpdateTotalAmountAsync(int orderId)
+        {
+            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                return null;
+            }
 
+            decimal totalAmount = 0;
+
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                if (orderDetail.Dish != null)
+                {
+                    // Lấy giá gốc của món ăn
+                    decimal dishPrice = orderDetail.Dish.Price ?? 0;
+
+                    // Áp dụng discount nếu có và điều kiện giảm giá hợp lệ
+                    if (orderDetail.Dish.DiscountId.HasValue)
+                    {
+                        var discount = orderDetail.Dish.Discount;
+                        if (discount != null && discount.DiscountStatus == true && discount.Type == 2)
+                        {
+                            var discountPercent = discount.DiscountPercent ?? 0;
+                            dishPrice -= dishPrice * discountPercent / 100;
+                        }
+                    }
+
+                    // Tính UnitPrice bằng giá đã discount nhân với Quantity
+                    decimal unitPrice = dishPrice * (orderDetail.Quantity ?? 1);
+                    orderDetail.UnitPrice = unitPrice;
+
+                    // Tính tổng số tiền của Order
+                    totalAmount += unitPrice;
+                }
+            }
+
+            // Cập nhật giá trị TotalAmount trong Order
+            order.TotalAmount = totalAmount;
+
+            // Cập nhật thông tin trong cơ sở dữ liệu
+            await _orderRepository.UpdateOrderAsync(order);
+
+            return new UpdateTotalAmountDTO
+            {
+                OrderId = order.OrderId,
+                TotalAmount = totalAmount
+            };
+        }
+
+
+    }
 }
-	
-
-

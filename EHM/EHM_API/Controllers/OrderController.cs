@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using EHM_API.Models;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using Microsoft.AspNetCore.Authorization;
+using EHM_API.DTOs.OrderDTO.Cashier;
 
 namespace EHM_API.Controllers
 {
@@ -441,6 +442,68 @@ namespace EHM_API.Controllers
 		}
 
 
+
+		[Authorize(Roles = "OrderStaff,Cashier")]
+		[HttpPost("createOrderForReservation/{tableId}")]
+		public async Task<IActionResult> CreateOrderForReservaion(int tableId, [FromBody] CreateOrderForReservaionDTO dto)
+		{
+			var errors = new Dictionary<string, string>();
+
+			if (tableId <= 0)
+			{
+				errors["TableId"] = "Bàn không hợp lệ.";
+				return BadRequest(errors);
+			}
+
+			var tableExists = await _tableService.ExistTable(tableId);
+			if (!tableExists)
+			{
+				errors["TableId"] = "Bàn không tồn tại.";
+				return BadRequest(errors);
+			}
+
+			foreach (var detail in dto.OrderDetails)
+			{
+				if (!detail.DishId.HasValue && detail.ComboId <= 0)
+				{
+					errors["DishId"] = "Món ăn hoặc combo không được để trống.";
+				}
+
+				// Validate UnitPrice
+				if (detail.UnitPrice <= 0)
+				{
+					errors["UnitPrice"] = "Đơn giá không hợp lệ.";
+				}
+
+				// Validate Quantity
+				if (detail.Quantity <= 0)
+				{
+					errors["Quantity"] = "Số lượng phải lớn hơn 0.";
+				}
+			}
+
+			if (errors.Any())
+			{
+				return BadRequest(errors);
+			}
+
+			try
+			{
+				var result = await _orderService.CreateOrderForReservation(tableId, dto);
+				if (result == null)
+				{
+					return BadRequest(new { message = "Không thể tạo đơn hàng." });
+				}
+				return Ok(result);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Đã xảy ra lỗi khi xử lý yêu cầu.");
+				return StatusCode(500, new { message = "Đã xảy ra lỗi khi xử lý yêu cầu.", detail = ex.ToString() });
+			}
+		}
+
+
 		//Update status
 		[Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPut("update-order-status-for-table")]
@@ -653,16 +716,29 @@ namespace EHM_API.Controllers
             var revenues = await _orderService.GetSalesByCategoryAsync(startDate, endDate);
             return Ok(revenues);
         }
-        [HttpGet("order/export/cashier/{exportorderId}")]
-        public async Task<IActionResult> ExportCashier(int exportorderId)
+        [HttpGet("order/export/cashier")]
+        public async Task<IActionResult> ExportCashier(string exportorderIds)
         {
-            var orderDetails = await _orderService.GetOrderDetailsByIdAsync(exportorderId);
-            if (orderDetails == null)
+            var orderIds = exportorderIds.Split(',').Select(int.Parse).ToList();
+            var orderDetailsList = await _orderService.GetOrderDetailsByIdsAsync(orderIds);
+            if (orderDetailsList == null || !orderDetailsList.Any())
             {
                 return NotFound();
             }
-            return Ok(orderDetails);
+            return Ok(orderDetailsList);
         }
+        [HttpPut("update-total-amount/{orderId}")]
+        public async Task<IActionResult> UpdateTotalAmount(int orderId)
+        {
+            var result = await _orderService.UpdateTotalAmountAsync(orderId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
 
 
 
