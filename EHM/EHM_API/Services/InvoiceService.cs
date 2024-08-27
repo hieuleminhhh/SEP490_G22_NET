@@ -241,14 +241,13 @@ namespace EHM_API.Services
                 return null;
             }
 
-            // Update the PaymentAmount and ReturnAmount
+            
             invoice.PaymentAmount = updateAmountInvoiceDTO.PaymentAmount;
             invoice.ReturnAmount = updateAmountInvoiceDTO.ReturnAmount;
 
-            // Save changes to the database
+           
             await _invoiceRepository.UpdateInvoiceAsync(invoice);
 
-            // Map the updated invoice to the DTO
             return _mapper.Map<UpdateAmountInvoiceDTO>(invoice);
         }
     }

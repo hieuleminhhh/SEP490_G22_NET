@@ -366,5 +366,16 @@ namespace EHM_API.Controllers
             }
             return Ok("OrderID updated successfully");
         }
+        [HttpPut("update-reservation-status")]
+        public async Task<IActionResult> UpdateReservationStatus([FromBody] UpdateReservationStatusByOrder updateReservationStatusDto)
+        {
+            var result = await _service.UpdateReservationStatusAsync(updateReservationStatusDto);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
     }
 }
