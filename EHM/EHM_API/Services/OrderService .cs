@@ -487,7 +487,7 @@ namespace EHM_API.Services
 			}
 
 			invoice.PaymentTime = DateTime.Now;
-			invoice.PaymentStatus = order.Deposits > 0 ? 2 : 0;
+			invoice.PaymentStatus = order.Deposits > 0 ? 1 : 0;
 
 			await _invoiceRepository.CreateInvoiceAsync(invoice);
 
@@ -546,20 +546,66 @@ namespace EHM_API.Services
 
 			return salesDtoList;
 		}
-        public async Task<List<ExportOrderDTO?>> GetOrderDetailsByIdsAsync(List<int> orderIds)
+		public async Task<List<ExportOrderDTO?>> GetOrderDetailsByIdsAsync(List<int> orderIds)
+		{
+			var orders = await _orderRepository.GetOrderByIdAsync(orderIds);
+			if (orders == null || !orders.Any())
+			{
+				return new List<ExportOrderDTO?>();
+			}
+
+			return _mapper.Map<List<ExportOrderDTO?>>(orders);
+		}
+        public async Task<UpdateTotalAmountDTO?> UpdateTotalAmountAsync(int orderId)
         {
-            var orders = await _orderRepository.GetOrderByIdAsync(orderIds);
-            if (orders == null || !orders.Any())
+            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
             {
-                return new List<ExportOrderDTO?>();
+                return null;
             }
 
-            return _mapper.Map<List<ExportOrderDTO?>>(orders);
+            decimal totalAmount = 0;
+
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                if (orderDetail.Dish != null)
+                {
+                    // Lấy giá gốc của món ăn
+                    decimal dishPrice = orderDetail.Dish.Price ?? 0;
+
+                    // Áp dụng discount nếu có và điều kiện giảm giá hợp lệ
+                    if (orderDetail.Dish.DiscountId.HasValue)
+                    {
+                        var discount = orderDetail.Dish.Discount;
+                        if (discount != null && discount.DiscountStatus == true && discount.Type == 2)
+                        {
+                            var discountPercent = discount.DiscountPercent ?? 0;
+                            dishPrice -= dishPrice * discountPercent / 100;
+                        }
+                    }
+
+                    // Tính UnitPrice bằng giá đã discount nhân với Quantity
+                    decimal unitPrice = dishPrice * (orderDetail.Quantity ?? 1);
+                    orderDetail.UnitPrice = unitPrice;
+
+                    // Tính tổng số tiền của Order
+                    totalAmount += unitPrice;
+                }
+            }
+
+            // Cập nhật giá trị TotalAmount trong Order
+            order.TotalAmount = totalAmount;
+
+            // Cập nhật thông tin trong cơ sở dữ liệu
+            await _orderRepository.UpdateOrderAsync(order);
+
+            return new UpdateTotalAmountDTO
+            {
+                OrderId = order.OrderId,
+                TotalAmount = totalAmount
+            };
         }
 
+
     }
-
 }
-	
-
-

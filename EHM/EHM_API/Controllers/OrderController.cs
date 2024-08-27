@@ -494,10 +494,7 @@ namespace EHM_API.Controllers
 				{
 					return BadRequest(new { message = "Không thể tạo đơn hàng." });
 				}
-				return Ok(new
-				{
-					message = "Đã tạo đơn hàng thành công."
-				});
+				return Ok(result);
 			}
 			catch (Exception ex)
 			{
@@ -730,7 +727,17 @@ namespace EHM_API.Controllers
             }
             return Ok(orderDetailsList);
         }
+        [HttpPut("update-total-amount/{orderId}")]
+        public async Task<IActionResult> UpdateTotalAmount(int orderId)
+        {
+            var result = await _orderService.UpdateTotalAmountAsync(orderId);
+            if (result == null)
+            {
+                return NotFound();
+            }
 
+            return Ok(result);
+        }
 
 
 

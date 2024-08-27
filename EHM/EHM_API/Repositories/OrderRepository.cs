@@ -1197,5 +1197,24 @@ public class OrderRepository : IOrderRepository
             .Where(o => orderIds.Contains(o.OrderId))
             .ToListAsync();
     }
+    public async Task<Order?> GetOrderByIdAsync(int orderId)
+    {
+        return await _context.Orders
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Dish)
+                    .ThenInclude(d => d.Discount) 
+            .FirstOrDefaultAsync(o => o.OrderId == orderId);
+    }
 
+    public async Task UpdateOrderForTotalAsync(Order order)
+    {
+        _context.Orders.Update(order);
+
+        foreach (var orderDetail in order.OrderDetails)
+        {
+            _context.OrderDetails.Update(orderDetail);
+        }
+
+        await _context.SaveChangesAsync();
+    }
 }

@@ -55,7 +55,7 @@ namespace EHM_API.Services
         Task<List<ExportOrderDTO?>> GetOrderDetailsByIdsAsync(List<int> orderIds);
 
         Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto);
+        Task<UpdateTotalAmountDTO?> UpdateTotalAmountAsync(int orderId);
 
-
-	}
+    }
 }
