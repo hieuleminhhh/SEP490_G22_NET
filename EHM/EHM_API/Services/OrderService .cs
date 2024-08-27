@@ -487,7 +487,7 @@ namespace EHM_API.Services
 			}
 
 			invoice.PaymentTime = DateTime.Now;
-			invoice.PaymentStatus = order.Deposits > 0 ? 2 : 0;
+			invoice.PaymentStatus = order.Deposits > 0 ? 1 : 0;
 
 			await _invoiceRepository.CreateInvoiceAsync(invoice);
 
