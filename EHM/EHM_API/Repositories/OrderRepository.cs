@@ -194,6 +194,7 @@ public class OrderRepository : IOrderRepository
 				Status = tb.Table != null ? tb.Table.Status : default(int),
 			}).ToList(),
 			InvoiceId = o.InvoiceId,
+			DiscountPercent = o.Discount.DiscountPercent,
 			TotalAmount = o.TotalAmount,
 			GuestPhone = o.GuestPhone,
 			Deposits = (decimal)o.Deposits,
