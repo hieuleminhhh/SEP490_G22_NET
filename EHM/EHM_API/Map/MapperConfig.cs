@@ -781,6 +781,7 @@ namespace EHM_API.Map
             CreateMap<UpdateReservationOrderDTO, Reservation>();
 
             CreateMap<UpdateAmountInvoiceDTO, Invoice>().ReverseMap();
+            CreateMap<Reservation, UpdateReservationStatusByOrder>().ReverseMap();
         }
 
 
