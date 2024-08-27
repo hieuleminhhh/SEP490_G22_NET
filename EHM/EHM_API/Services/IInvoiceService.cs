@@ -20,6 +20,6 @@ namespace EHM_API.Services
 
 		Task<IEnumerable<GetOrderUnpaidOfShipDTO>> GetOrdersUnpaidForShipAsync();
 		Task<bool> UpdatePaymentStatusAsync(int orderId, UpdatePaymentStatusDTO dto);
-
-	}
+        Task<UpdateAmountInvoiceDTO?> UpdateInvoiceAsync(UpdateAmountInvoiceDTO updateAmountInvoiceDTO);
+    }
 }

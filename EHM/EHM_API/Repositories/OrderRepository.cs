@@ -194,6 +194,7 @@ public class OrderRepository : IOrderRepository
 				Status = tb.Table != null ? tb.Table.Status : default(int),
 			}).ToList(),
 			InvoiceId = o.InvoiceId,
+			DiscountPercent = o.Discount.DiscountPercent,
 			TotalAmount = o.TotalAmount,
 			GuestPhone = o.GuestPhone,
 			Deposits = (decimal)o.Deposits,
@@ -1203,7 +1204,9 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders
             .Include(o => o.OrderDetails)
                 .ThenInclude(od => od.Dish)
-                    .ThenInclude(d => d.Discount) 
+                    .ThenInclude(d => d.Discount)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Combo)
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
     }
 
