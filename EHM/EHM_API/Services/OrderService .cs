@@ -568,12 +568,14 @@ namespace EHM_API.Services
 
             foreach (var orderDetail in order.OrderDetails)
             {
+                decimal unitPrice = 0;
+
                 if (orderDetail.Dish != null)
                 {
-                    // Lấy giá gốc của món ăn
+                   
                     decimal dishPrice = orderDetail.Dish.Price ?? 0;
 
-                    // Áp dụng discount nếu có và điều kiện giảm giá hợp lệ
+               
                     if (orderDetail.Dish.DiscountId.HasValue)
                     {
                         var discount = orderDetail.Dish.Discount;
@@ -584,19 +586,25 @@ namespace EHM_API.Services
                         }
                     }
 
-                    // Tính UnitPrice bằng giá đã discount nhân với Quantity
-                    decimal unitPrice = dishPrice * (orderDetail.Quantity ?? 1);
-                    orderDetail.UnitPrice = unitPrice;
-
-                    // Tính tổng số tiền của Order
-                    totalAmount += unitPrice;
+                 
+                    unitPrice = dishPrice * (orderDetail.Quantity ?? 1);
                 }
+                else if (orderDetail.Combo != null)
+                {
+                   
+                    decimal comboPrice = orderDetail.Combo.Price ?? 0;
+                    unitPrice = comboPrice * (orderDetail.Quantity ?? 1);
+                }
+
+              
+                orderDetail.UnitPrice = unitPrice;
+
+                
+                totalAmount += unitPrice;
             }
 
-            // Cập nhật giá trị TotalAmount trong Order
             order.TotalAmount = totalAmount;
 
-            // Cập nhật thông tin trong cơ sở dữ liệu
             await _orderRepository.UpdateOrderAsync(order);
 
             return new UpdateTotalAmountDTO
@@ -605,7 +613,6 @@ namespace EHM_API.Services
                 TotalAmount = totalAmount
             };
         }
-
 
     }
 }
