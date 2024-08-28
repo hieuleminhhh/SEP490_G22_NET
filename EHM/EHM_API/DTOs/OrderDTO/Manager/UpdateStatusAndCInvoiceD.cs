@@ -2,7 +2,7 @@
 {
 	public class UpdateStatusAndCInvoiceD
 	{
-		public int Status { get; set; }
+
 
 		public DateTime? PaymentTime { get; set; }
 		public decimal? PaymentAmount { get; set; }

@@ -162,17 +162,7 @@ namespace EHM_API.Services
 
 		public async Task<int> TakeOut(TakeOutDTO takeOutDTO)
 		{
-			if (takeOutDTO.RecevingOrder.HasValue)
-			{
-				if (takeOutDTO.RecevingOrder.Value.Date == DateTime.Now.Date)
-				{
-					takeOutDTO.Status = 6; 
-				}
-				else
-				{
-					takeOutDTO.Status = 2;
-				}
-			}
+			
 
 			return await _cartRepository.TakeOut(takeOutDTO);
 		}
