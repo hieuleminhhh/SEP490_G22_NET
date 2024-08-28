@@ -325,45 +325,58 @@ namespace EHM_API.Services
 				await _tableRepository.UpdateTableAsync(table);
 			}
 		}
-		public async Task<int> UpdateStatusAndCreateInvoiceAsync(int orderId, UpdateStatusAndCInvoiceD dto)
-		{
-			var order = await _orderRepository.GetByIdAsync(orderId);
-			if (order == null)
-			{
-				throw new KeyNotFoundException($"Không tìm thấy đơn hàng {orderId}");
-			}
+        public async Task<int> UpdateStatusAndCreateInvoiceAsync(int orderId, UpdateStatusAndCInvoiceD dto)
+        {
+            var order = await _orderRepository.GetByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new KeyNotFoundException($"Không tìm thấy đơn hàng {orderId}");
+            }
 
-			order.Status = dto.Status;
-			await _orderRepository.UpdateOrderAsync(order);
+            // Check if order date equals today's date
+            var dateNow = DateTime.Now.Date; // Get today's date
+            if (order.RecevingOrder.Value.Date == dateNow)
+            {
+                order.Status = 6;
+            }
+            else
+            {
+                order.Status = 2;
+            }
 
-			var invoice = new Invoice
-			{
-				PaymentTime = dto.PaymentTime,
-				PaymentAmount = dto.PaymentAmount,
-				Taxcode = dto.Taxcode,
-				PaymentStatus = dto.PaymentStatus,
+            // Update the order status
+            await _orderRepository.UpdateOrderAsync(order);
 
-				CustomerName = order.Address?.ConsigneeName,
-				Phone = order.Address?.GuestPhone,
-				Address = order.Address?.GuestAddress,
+            var invoice = new Invoice
+            {
+                PaymentTime = dto.PaymentTime,
+                PaymentAmount = dto.PaymentAmount,
+                Taxcode = dto.Taxcode,
+                PaymentStatus = dto.PaymentStatus,
 
-				AccountId = dto.AccountId != 0 ? dto.AccountId : (int?)null,
-				AmountReceived = dto.AmountReceived,
-				ReturnAmount = dto.ReturnAmount,
-				PaymentMethods = dto.PaymentMethods,
-				InvoiceLogs = new List<InvoiceLog>
-		{
-			new InvoiceLog { Description = dto.Description }
-		}
-			};
-			await _invoiceRepository.CreateInvoiceAsync(invoice);
+                CustomerName = order.Address?.ConsigneeName,
+                Phone = order.Address?.GuestPhone,
+                Address = order.Address?.GuestAddress,
 
-			order.InvoiceId = invoice.InvoiceId;
-			await _orderRepository.UpdateOrderAsync(order);
+                AccountId = dto.AccountId != 0 ? dto.AccountId : (int?)null,
+                AmountReceived = dto.AmountReceived,
+                ReturnAmount = dto.ReturnAmount,
+                PaymentMethods = dto.PaymentMethods,
+                InvoiceLogs = new List<InvoiceLog>
+        {
+            new InvoiceLog { Description = dto.Description }
+        }
+            };
+            await _invoiceRepository.CreateInvoiceAsync(invoice);
 
-			return invoice.InvoiceId;
-		}
-		public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
+            // Update the order with the new invoice ID
+            order.InvoiceId = invoice.InvoiceId;
+            await _orderRepository.UpdateOrderAsync(order);
+
+            return invoice.InvoiceId;
+        }
+
+        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrderDetailsForStaffType1Async()
 		{
 			var orders = await _orderRepository.GetOrderDetailsForStaffType1Async();
 
@@ -568,12 +581,14 @@ namespace EHM_API.Services
 
             foreach (var orderDetail in order.OrderDetails)
             {
+                decimal unitPrice = 0;
+
                 if (orderDetail.Dish != null)
                 {
-                    // Lấy giá gốc của món ăn
+                   
                     decimal dishPrice = orderDetail.Dish.Price ?? 0;
 
-                    // Áp dụng discount nếu có và điều kiện giảm giá hợp lệ
+               
                     if (orderDetail.Dish.DiscountId.HasValue)
                     {
                         var discount = orderDetail.Dish.Discount;
@@ -584,19 +599,25 @@ namespace EHM_API.Services
                         }
                     }
 
-                    // Tính UnitPrice bằng giá đã discount nhân với Quantity
-                    decimal unitPrice = dishPrice * (orderDetail.Quantity ?? 1);
-                    orderDetail.UnitPrice = unitPrice;
-
-                    // Tính tổng số tiền của Order
-                    totalAmount += unitPrice;
+                 
+                    unitPrice = dishPrice * (orderDetail.Quantity ?? 1);
                 }
+                else if (orderDetail.Combo != null)
+                {
+                   
+                    decimal comboPrice = orderDetail.Combo.Price ?? 0;
+                    unitPrice = comboPrice * (orderDetail.Quantity ?? 1);
+                }
+
+              
+                orderDetail.UnitPrice = unitPrice;
+
+                
+                totalAmount += unitPrice;
             }
 
-            // Cập nhật giá trị TotalAmount trong Order
             order.TotalAmount = totalAmount;
 
-            // Cập nhật thông tin trong cơ sở dữ liệu
             await _orderRepository.UpdateOrderAsync(order);
 
             return new UpdateTotalAmountDTO
@@ -605,7 +626,6 @@ namespace EHM_API.Services
                 TotalAmount = totalAmount
             };
         }
-
 
     }
 }

@@ -186,21 +186,22 @@ public class OrderRepository : IOrderRepository
 			Status = (int)o.Status,
 			RecevingOrder = o.RecevingOrder,
 			AccountId = o.AccountId,
-			TableIds = o.OrderTables.Select(tb => new TableAllDTO
-			{
-				TableId = tb.TableId,
-				Capacity = tb.Table != null ? tb.Table.Capacity : default(int),
-				Floor = tb.Table != null ? tb.Table.Floor : default(int),
-				Status = tb.Table != null ? tb.Table.Status : default(int),
-			}).ToList(),
-			InvoiceId = o.InvoiceId,
-			TotalAmount = o.TotalAmount,
+            TableIds = o.OrderTables.Select(tb => new TableAllDTO
+            {
+                TableId = tb.TableId,
+                Capacity = tb.Table?.Capacity ?? 0,
+                Floor = tb.Table?.Floor ?? 0,
+                Status = tb.Table?.Status ?? 0,
+            }).ToList(),
+            InvoiceId = o.InvoiceId,
+            DiscountPercent = o.Discount?.DiscountPercent ?? 0,
+            TotalAmount = o.TotalAmount,
 			GuestPhone = o.GuestPhone,
 			Deposits = (decimal)o.Deposits,
 			AddressId = o.AddressId ?? 0,
-			GuestAddress = o.Address?.GuestAddress,
-			ConsigneeName = o.Address?.ConsigneeName,
-			PaymentStatus = o.Invoice != null ? o.Invoice.PaymentStatus : default(int),
+            GuestAddress = o.Address?.GuestAddress,
+            ConsigneeName = o.Address?.ConsigneeName,
+            PaymentStatus = o.Invoice != null ? o.Invoice.PaymentStatus : default(int),
             PaymentMethods = o.Invoice != null ? o.Invoice.PaymentMethods : default(int),
             Note = o.Note,
 			Type = o.Type,
@@ -825,7 +826,7 @@ public class OrderRepository : IOrderRepository
 		{
 			OrderDate = DateTime.Now,
 			Status = dto.Status,
-			RecevingOrder = dto.RecevingOrder,
+			RecevingOrder = DateTime.Now,
 			GuestPhone = !string.IsNullOrWhiteSpace(dto.GuestPhone) ? dto.GuestPhone : null,
 			Note = dto.Note,
 			Type = dto.Type,
@@ -880,7 +881,8 @@ public class OrderRepository : IOrderRepository
 						OrderId = order.OrderId,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = DateTime.Now
+						OrderTime = DateTime.Now,
+					
 					};
 
 					_context.OrderDetails.Add(orderDetail);
@@ -1202,7 +1204,9 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders
             .Include(o => o.OrderDetails)
                 .ThenInclude(od => od.Dish)
-                    .ThenInclude(d => d.Discount) 
+                    .ThenInclude(d => d.Discount)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Combo)
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
     }
 

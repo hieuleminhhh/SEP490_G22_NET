@@ -81,7 +81,7 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentStatus : 0))
 
                 .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
-                .ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.OrderTables.Select(ot => ot.Table)));
+                .ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.OrderTables.Select(ot => ot.Table))).ReverseMap();
 
 
             CreateMap<OrderDetail, OrderDetailDTO>()
@@ -779,6 +779,9 @@ namespace EHM_API.Map
             CreateMap<OrderTable, CreateOrderTable>().ReverseMap();
             CreateMap<FindTableByReservation, TableReservation>().ReverseMap();
             CreateMap<UpdateReservationOrderDTO, Reservation>();
+
+            CreateMap<UpdateAmountInvoiceDTO, Invoice>().ReverseMap();
+            CreateMap<Reservation, UpdateReservationStatusByOrder>().ReverseMap();
         }
 
 
