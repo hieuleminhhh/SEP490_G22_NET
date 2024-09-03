@@ -79,18 +79,15 @@ namespace EHM_API
                 var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
                 options.ClientId = googleAuthNSection["ClientId"];
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
-                options.CallbackPath = "/Home/Privacy"; 
+                options.CallbackPath = "/Home/Privacy";
             });
 
             // Add CORS policy
-            builder.Services.AddCors(options =>
+            builder.Services.AddCors(opts =>
             {
-                options.AddPolicy("CORSPolicy", policy =>
+                opts.AddPolicy("CORSPolicy", builder =>
                 {
-                    policy.AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials()
-                          .WithOrigins("https://localhost:7185"); // Thay đổi nếu cần
+                    builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed((host) => true);
                 });
             });
 
@@ -150,7 +147,7 @@ namespace EHM_API
             builder.Services.AddScoped<INewsRepository, NewsRepository>();
             builder.Services.AddScoped<INewsService, NewsService>();
 
-            builder.Services.AddScoped<IOrderTableRepository, OrderTableReposotory>(); 
+            builder.Services.AddScoped<IOrderTableRepository, OrderTableReposotory>();
             builder.Services.AddScoped<IOrderTableService, OrderTableService>();
 
             builder.Services.AddScoped<IGoogleRepository, GoogleRepository>();
@@ -167,6 +164,7 @@ namespace EHM_API
             builder.Services.AddAutoMapper(typeof(Program)); // Register AutoMapper
             builder.Services.AddHttpClient();
             builder.Services.AddHttpClient();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -188,7 +186,6 @@ namespace EHM_API
             app.UseAuthorization();
             app.UseSession();
             app.MapControllers();
-          
 
             app.Run();
         }
