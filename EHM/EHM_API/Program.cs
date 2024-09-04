@@ -1,5 +1,6 @@
 ﻿using EHM_API.Models;
 using EHM_API.Services;
+using EHM_API.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
@@ -8,11 +9,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using ProjectSchedule.Authenticate;
-using ProjectSchedule.Models;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using AutoMapper;
-using EHM_API.Repositories;
+using ProjectSchedule.Models;
 
 namespace EHM_API
 {
@@ -53,6 +52,36 @@ namespace EHM_API
                 });
             });
 
+            // Add JWT Authentication
+            var jwtSettings = new JwtSetting();
+            builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
+            builder.Services.AddSingleton(jwtSettings);
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+                };
+            })
+            .AddGoogle(options =>
+            {
+                var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+                options.ClientId = googleAuthNSection["ClientId"];
+                options.ClientSecret = googleAuthNSection["ClientSecret"];
+                options.CallbackPath = "/Home/Privacy";
+            });
+
             // Add CORS policy
             builder.Services.AddCors(opts =>
             {
@@ -63,51 +92,24 @@ namespace EHM_API
             });
 
             // Register DbContext
-            var configuration = builder.Configuration;
             builder.Services.AddDbContext<EHMDBContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            // Register JwtTokenGenerator service with appropriate scope
-            builder.Services.AddScoped<JwtTokenGenerator>();
-
-            // Register JwtSetting from configuration
-            var jwtSettings = new JwtSetting();
-            configuration.GetSection("JwtSettings").Bind(jwtSettings);
-            builder.Services.AddSingleton(jwtSettings);
-
-            builder.Services.AddSingleton<IVnPayService, VnPayService>();
-            // Add Authentication
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSettings.Issuer,
-                        ValidAudience = jwtSettings.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
-                    };
-                });
-
-            builder.Services.AddAutoMapper(typeof(Program)); // Register AutoMapper
-
-            // Register necessary services
+            // Register services and repositories
             builder.Services.AddScoped<IDishService, DishService>();
             builder.Services.AddScoped<IDishRepository, DishRepository>();
 
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-          
+
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
-             builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
 
-			builder.Services.AddScoped<IComboService, ComboService>();
-			builder.Services.AddScoped<IComboRepository, ComboRepository>();
+            builder.Services.AddScoped<IComboService, ComboService>();
+            builder.Services.AddScoped<IComboRepository, ComboRepository>();
 
             builder.Services.AddScoped<IGuestRepository, GuestRepository>();
             builder.Services.AddScoped<IGuestService, GuestService>();
@@ -118,17 +120,17 @@ namespace EHM_API
             builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
             builder.Services.AddScoped<IMaterialService, MaterialService>();
 
-			builder.Services.AddScoped<ITableService, TableService>();
-			builder.Services.AddScoped<ITableRepository, TableRepository>();
+            builder.Services.AddScoped<ITableService, TableService>();
+            builder.Services.AddScoped<ITableRepository, TableRepository>();
 
-			builder.Services.AddScoped<IReservationService, ReservationService>();
-			builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+            builder.Services.AddScoped<IReservationService, ReservationService>();
+            builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
             builder.Services.AddScoped<ITableReservationRepository, TableReservationRepository>();
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
-			builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-			builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
@@ -137,19 +139,19 @@ namespace EHM_API
             builder.Services.AddScoped<ISettingService, SettingService>();
 
             builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-			builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+            builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
             builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
             builder.Services.AddScoped<IDiscountService, DiscountService>();
 
-            builder.Services.AddScoped<ITableReservationRepository, TableReservationRepository>();
-            builder.Services.AddScoped<ITableReservationService, TableReservationService>();
-
-			builder.Services.AddScoped<INewsRepository, NewsRepository>();
-			builder.Services.AddScoped<INewsService, NewsService>();
+            builder.Services.AddScoped<INewsRepository, NewsRepository>();
+            builder.Services.AddScoped<INewsService, NewsService>();
 
             builder.Services.AddScoped<IOrderTableRepository, OrderTableReposotory>();
             builder.Services.AddScoped<IOrderTableService, OrderTableService>();
+
+            builder.Services.AddScoped<IGoogleRepository, GoogleRepository>();
+            builder.Services.AddScoped<IGoogleService, GoogleService>();
 
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
@@ -159,6 +161,10 @@ namespace EHM_API
                 options.Cookie.IsEssential = true;
             });
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddAutoMapper(typeof(Program)); // Register AutoMapper
+            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -168,12 +174,18 @@ namespace EHM_API
                 app.UseSwaggerUI();
             }
 
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Remove("Cross-Origin-Opener-Policy");
+                await next();
+            });
+
             app.UseHttpsRedirection();
             app.UseCors("CORSPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
-			app.UseSession();
-			app.MapControllers();
+            app.UseSession();
+            app.MapControllers();
 
             app.Run();
         }
