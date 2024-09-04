@@ -36,8 +36,9 @@ namespace EHM_API.Models
         public virtual DbSet<Setting> Settings { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
         public virtual DbSet<TableReservation> TableReservations { get; set; } = null!;
+		public virtual DbSet<Wallet> Wallets { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
@@ -498,8 +499,31 @@ namespace EHM_API.Models
                     .HasForeignKey(tr => tr.TableId);
             });
 
+			modelBuilder.Entity<Wallet>(entity =>
+			{
+				entity.ToTable("Wallet");
 
-            OnModelCreatingPartial(modelBuilder);
+				entity.Property(e => e.WalletId).HasColumnName("WalletID");
+
+				entity.Property(e => e.Balance).HasColumnType("decimal(18, 2)");
+
+				entity.Property(e => e.GuestPhone)
+					.HasMaxLength(15)
+					.IsUnicode(false);
+
+				entity.Property(e => e.LastUpdated)
+					.HasColumnType("datetime")
+					.HasDefaultValueSql("(getdate())");
+
+				entity.HasOne(d => d.GuestPhoneNavigation)
+					.WithMany(p => p.Wallets)
+					.HasForeignKey(d => d.GuestPhone)
+					.OnDelete(DeleteBehavior.ClientSetNull)
+					.HasConstraintName("FK_Wallet_GuestPhone");
+			});
+
+
+			OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
