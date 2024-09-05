@@ -17,13 +17,13 @@ namespace EHM_API.Services
 		private readonly ITableRepository _repository;
 		private readonly IMapper _mapper;
 
-		public TableService(ITableRepository repository, IMapper mapper)
-		{
-			_repository = repository;
-			_mapper = mapper;
-		}
+        public TableService(ITableRepository repository, IMapper mapper)
+        {
+            _repository = repository;
+            _mapper = mapper;
+        }
 
-		public async Task<IEnumerable<TableAllDTO>> GetAllTablesAsync()
+        public async Task<IEnumerable<TableAllDTO>> GetAllTablesAsync()
 		{
 			var tables = await _repository.GetAllTablesAsync();
 			return _mapper.Map<IEnumerable<TableAllDTO>>(tables);
@@ -131,6 +131,9 @@ namespace EHM_API.Services
 		{
 			return await _repository.ExistTable(tableId);
 		}
-
-	}
+        public async Task DeleteTableIfNotInReservation(int tableId)
+        {
+            await _repository.DeleteTableIfNotInReservation(tableId);
+        }
+    }
 }

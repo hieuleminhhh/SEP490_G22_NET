@@ -12,6 +12,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using ProjectSchedule.Models;
+using ProjectSchedule.Authenticate;
 
 namespace EHM_API
 {
@@ -79,8 +80,9 @@ namespace EHM_API
                 var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
                 options.ClientId = googleAuthNSection["ClientId"];
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
-                options.CallbackPath = "/Home/Privacy";
+                options.CallbackPath = "/auth/callback";
             });
+   
 
             // Add CORS policy
             builder.Services.AddCors(opts =>
@@ -90,7 +92,7 @@ namespace EHM_API
                     builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed((host) => true);
                 });
             });
-
+            builder.Services.AddScoped<JwtTokenGenerator>();
             // Register DbContext
             builder.Services.AddDbContext<EHMDBContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

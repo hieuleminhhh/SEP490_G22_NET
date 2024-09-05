@@ -13,7 +13,8 @@ namespace EHM_API.Repositories
         Task<Table> UpdateTableAsync(Table table);
         Task<List<Table>> GetListTablesByIdsAsync(List<int> tableIds);
         Task UpdateListTablesAsync(List<Table> tables);
-
+        bool TableExistsInReservation(int tableId);
+        Task DeleteTableIfNotInReservation(int tableId);
         Task<bool> UpdateTableStatus(int tableId, int status);
         Task<bool> ExistTable(int tableId);
 

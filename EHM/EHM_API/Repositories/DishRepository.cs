@@ -328,6 +328,36 @@ namespace EHM_API.Repositories
 			await _context.SaveChangesAsync();
 			return dishes;
 		}
-	}
+		public bool DishExistsInOrderDetail(int dishId)
+		{
+			return _context.OrderDetails.Any(od => od.DishId == dishId);
+		}
 
+		public bool DishExistsInComboDetail(int dishId)
+		{
+			return _context.ComboDetails.Any(cd => cd.DishId == dishId);
+		}
+
+		public bool DishExistsInIngredient(int dishId)
+		{
+			return _context.Ingredients.Any(i => i.DishId == dishId);
+		}
+
+		public async Task DeleteDishIfNotReferenced(int dishId)
+		{
+			var dish = await _context.Dishes.FindAsync(dishId);
+			if (dish != null)
+			{
+				if (!DishExistsInOrderDetail(dishId) && !DishExistsInComboDetail(dishId) && !DishExistsInIngredient(dishId))
+				{
+					_context.Dishes.Remove(dish);
+					await _context.SaveChangesAsync();
+				}
+				else
+				{
+					throw new Exception("Cannot delete dish because it is referenced in OrderDetail, ComboDetail, or Ingredient.");
+				}
+			}
+		}
+	}
 }
