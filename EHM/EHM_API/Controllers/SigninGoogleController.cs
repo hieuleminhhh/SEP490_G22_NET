@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using ProjectSchedule.Authenticate;
 namespace EHM_API.Controllers
 {
     [Route("api/[controller]")]
@@ -21,37 +22,55 @@ namespace EHM_API.Controllers
         private readonly IGoogleService _accountService;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly HttpClient _httpClient;
+        private readonly JwtTokenGenerator _jwtTokenGenerator;
 
-        public GoogleAuthController(IGoogleService accountService, IHttpClientFactory httpClientFactory, System.Net.Http.HttpClient httpClient)
+        public GoogleAuthController(IGoogleService accountService, IHttpClientFactory httpClientFactory, HttpClient httpClient, JwtTokenGenerator jwtTokenGenerator)
         {
             _accountService = accountService;
             _httpClientFactory = httpClientFactory;
             _httpClient = httpClient;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
 
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> GoogleRegister([FromBody] GoogleUserInfo request)
         {
-            
+            // Kiểm tra xem tài khoản với email đã tồn tại chưa
             var account = _accountService.GetByEmail(request.Email);
+
+            // Nếu tài khoản đã tồn tại, return 200 OK và thông báo tài khoản đã tồn tại
             if (account != null)
             {
-                return BadRequest("An account with this email already exists.");
+                return Ok(new
+                {
+                    Message = "Tài khoản với email này đã tồn tại.",
+                    account.AccountId,
+                    account.Username,
+                    account.Role
+                });
             }
 
+            // Đăng ký tài khoản mới chỉ với email
+            var newAccount = await _accountService.RegisterGoogleAccountAsync(request.Email);
 
-            var newAccount = await _accountService.RegisterGoogleAccountAsync(request);
+            // Tạo JWT token cho tài khoản mới
+            var token = _jwtTokenGenerator.GenerateJwtToken(newAccount);
 
-
-            var token = _accountService.GenerateJwtToken(newAccount);
-
-            return Ok(new { Message = "Registration successful.", Token = token });
+            return Ok(new
+            {
+                Message = "Đăng ký thành công",
+                token,
+                newAccount.AccountId,
+                newAccount.Username,
+                newAccount.Role
+            });
         }
 
 
 
-            [HttpPost("login-with-credentials")]
+
+        [HttpPost("login-with-credentials")]
         [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest request)
         {
