@@ -24,12 +24,14 @@ namespace EHM_API.Repositories
 		Task<Dish> UpdateDishStatusAsync(int dishId, bool isActive);
 		Task<List<Dish>> GetDishesByIdsAsync(List<int> dishIds);
 		Task<IEnumerable<Dish>> UpdateDiscountForDishesAsync(int discountId, List<int> dishIds);
-
 		Task<bool> DiscountExistsAsync(int discountId);
-
 		Task<List<Dish>> SearchDishesAsync(string search);
 		Task<List<Combo>> SearchCombosAsync(string search);
+        bool DishExistsInOrderDetail(int dishId);
+        bool DishExistsInComboDetail(int dishId);
+        bool DishExistsInIngredient(int dishId);
+        Task DeleteDishIfNotReferenced(int dishId);
 
-	}
+    }
 }
 

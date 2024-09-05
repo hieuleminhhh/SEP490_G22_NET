@@ -35,9 +35,8 @@ namespace EHM_API.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Email, account.Email),
-                    new Claim(ClaimTypes.Name, account.FirstName + " " + account.LastName),
-                    // Add more claims if needed
+                    new Claim(ClaimTypes.Email, account.Email)
+
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 Issuer = _configuration["JwtSettings:Issuer"],
@@ -50,11 +49,14 @@ namespace EHM_API.Services
 
         public async Task<Account> RegisterGoogleAccountAsync(GoogleUserInfo userInfo)
         {
+            var existingAccount = _accountRepository.GetByEmail(userInfo.Email);
+            if (existingAccount != null)
+            {
+                throw new InvalidOperationException("An account with this email already exists.");
+            }
             var newAccount = new Account
             {
-                Email = userInfo.Email,
-                FirstName = userInfo.FirstName,
-                LastName = userInfo.LastName,
+                Email = userInfo.Email,         
                 IsActive = true,
                 Role = "User"
             };
