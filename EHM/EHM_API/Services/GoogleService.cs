@@ -47,16 +47,18 @@ namespace EHM_API.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<Account> RegisterGoogleAccountAsync(GoogleUserInfo userInfo)
+        public async Task<Account> RegisterGoogleAccountAsync(string email)
         {
-            var existingAccount = _accountRepository.GetByEmail(userInfo.Email);
+            var existingAccount = _accountRepository.GetByEmail(email);
             if (existingAccount != null)
             {
                 throw new InvalidOperationException("An account with this email already exists.");
             }
+
             var newAccount = new Account
             {
-                Email = userInfo.Email,         
+                Email = email,
+                Username = email,
                 IsActive = true,
                 Role = "User"
             };
@@ -64,5 +66,6 @@ namespace EHM_API.Services
             await _accountRepository.AddAsync(newAccount);
             return newAccount;
         }
+
     }
 }

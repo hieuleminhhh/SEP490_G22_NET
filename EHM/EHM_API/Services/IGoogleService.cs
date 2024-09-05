@@ -7,6 +7,6 @@ namespace EHM_API.Services
     {
         Account GetByEmail(string email);
         string GenerateJwtToken(Account account);
-        Task<Account> RegisterGoogleAccountAsync(GoogleUserInfo userInfo);
+        Task<Account> RegisterGoogleAccountAsync(string email);
     }
 }
