@@ -118,7 +118,20 @@ namespace EHM_API.Repositories
 			return true;
 		}
 
+        public bool TableExistsInReservation(int tableId)
+        {
+            return _context.TableReservations.Any(tr => tr.TableId == tableId);
+        }
 
-	}
+        public async Task DeleteTableIfNotInReservation(int tableId)
+        {
+            var table = await _context.Tables.FindAsync(tableId);
+            if (table != null && !TableExistsInReservation(tableId))
+            {
+                _context.Tables.Remove(table);
+                await _context.SaveChangesAsync();
+            }
+        }
+    }
 }
 
