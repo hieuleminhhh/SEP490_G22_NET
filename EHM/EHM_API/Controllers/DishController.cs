@@ -399,5 +399,18 @@ namespace EHM_API.Controllers
 
 			return Ok(result);
 		}
-	}
+      /*  [HttpDelete("delete-if-not-referenced/{dishId}")]
+        public async Task<IActionResult> DeleteDishIfNotReferenced(int dishId)
+        {
+            try
+            {
+                await _dishService.DeleteDishIfNotReferenced(dishId);
+                return Ok(new { message = "Dish deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }*/
+    }
 }

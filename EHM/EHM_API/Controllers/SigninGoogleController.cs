@@ -6,8 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using ProjectSchedule.Authenticate;
 namespace EHM_API.Controllers
 {
     [Route("api/[controller]")]
@@ -16,51 +21,55 @@ namespace EHM_API.Controllers
     {
         private readonly IGoogleService _accountService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpClient _httpClient;
+        private readonly JwtTokenGenerator _jwtTokenGenerator;
 
-        public GoogleAuthController(IGoogleService accountService, IHttpClientFactory httpClientFactory)
+        public GoogleAuthController(IGoogleService accountService, IHttpClientFactory httpClientFactory, HttpClient httpClient, JwtTokenGenerator jwtTokenGenerator)
         {
             _accountService = accountService;
             _httpClientFactory = httpClientFactory;
+            _httpClient = httpClient;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
 
-        /// <summary>
-        /// Logs in using a Google token and returns a JWT token if the account exists.
-        /// If the account does not exist, prompts for registration.
-        /// </summary>
-        /// <param name="request">Google login request containing the token ID.</param>
-        /// <returns>JWT token if the account exists, otherwise a registration prompt.</returns>
-        [HttpPost("login")]
-/*        [AllowAnonymous]*/
-        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleRegister([FromBody] GoogleUserInfo request)
         {
-            var userInfo = await GetGoogleUserInfoAsync(request.TokenId);
+            // Kiểm tra xem tài khoản với email đã tồn tại chưa
+            var account = _accountService.GetByEmail(request.Email);
 
-            if (userInfo == null)
+            // Nếu tài khoản đã tồn tại, return 200 OK và thông báo tài khoản đã tồn tại
+            if (account != null)
             {
-                return BadRequest("Invalid Google token.");
+                return Ok(new
+                {
+                    Message = "Tài khoản với email này đã tồn tại.",
+                    account.AccountId,
+                    account.Username,
+                    account.Role
+                });
             }
 
-            var account = _accountService.GetByEmail(userInfo.Email);
+            // Đăng ký tài khoản mới chỉ với email
+            var newAccount = await _accountService.RegisterGoogleAccountAsync(request.Email);
 
-            if (account == null)
+            // Tạo JWT token cho tài khoản mới
+            var token = _jwtTokenGenerator.GenerateJwtToken(newAccount);
+
+            return Ok(new
             {
-                // Account does not exist, prompt registration
-                return Ok(new { Message = "Account not found. Please register.", Email = userInfo.Email });
-            }
-            else
-            {
-                // Generate JWT token
-                var token = _accountService.GenerateJwtToken(account);
-                return Ok(new { Token = token });
-            }
+                Message = "Đăng ký thành công",
+                token,
+                newAccount.AccountId,
+                newAccount.Username,
+                newAccount.Role
+            });
         }
 
 
-        /// <summary>
-        /// Logs in using email and password and returns a JWT token if the credentials are valid.
-        /// </summary>
-        /// <param name="request">Login request containing email and password.</param>
-        /// <returns>JWT token if the credentials are valid, otherwise an Unauthorized response.</returns>
+
+
         [HttpPost("login-with-credentials")]
         [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest request)
@@ -78,9 +87,7 @@ namespace EHM_API.Controllers
 
         private bool VerifyPassword(string password, string storedPassword)
         {
-            // Implement password verification logic here
-            // Use a secure method for hashing and comparing passwords
-            return password == storedPassword; // Update this to use hashed passwords
+            return password == storedPassword; 
         }
 
         private async Task<GoogleUserInfo> GetGoogleUserInfoAsync(string tokenId)
@@ -107,5 +114,6 @@ namespace EHM_API.Controllers
                 return null;
             }
         }
+     
     }
 }

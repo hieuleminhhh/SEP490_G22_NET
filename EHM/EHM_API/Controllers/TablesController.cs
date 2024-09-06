@@ -84,6 +84,11 @@ namespace EHM_API.Controllers
 			return Ok(table);
 		}
 
-
-	}
+        [HttpDelete("delete-if-not-in-reservation/{tableId}")]
+        public async Task<IActionResult> DeleteTableIfNotInReservation(int tableId)
+        {
+            await _service.DeleteTableIfNotInReservation(tableId);
+            return Ok(new { message = "Table deleted if not in any reservation." });
+        }
+    }
 }

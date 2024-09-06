@@ -29,5 +29,6 @@ namespace EHM_API.Services
 		Task<bool> DiscountExistsAsync(int discountId);
 
 		Task<SearchDishAndComboDTO> SearchDishAndComboAsync(string search);
-	}
+     /*   Task DeleteDishIfNotReferenced(int dishId);*/
+    }
 }
