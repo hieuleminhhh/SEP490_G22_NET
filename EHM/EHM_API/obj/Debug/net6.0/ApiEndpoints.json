@@ -1233,6 +1233,38 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "EHM_API.Controllers.GoogleAuthController",
+    "Method": "GoogleLogin",
+    "RelativePath": "api/GoogleAuth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "EHM_API.DTOs.GoogleDTO.GoogleLoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.GoogleAuthController",
+    "Method": "Login",
+    "RelativePath": "api/GoogleAuth/login-with-credentials",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "EHM_API.DTOs.GoogleDTO.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "EHM_API.Controllers.GuestController",
     "Method": "GetGuestAddressInfo",
     "RelativePath": "api/Guest/{addressId}",
@@ -1625,6 +1657,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.InvoiceController",
+    "Method": "UpdateInvoice",
+    "RelativePath": "api/Invoice/update-invoice",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateInvoiceDto",
+        "Type": "EHM_API.DTOs.InvoiceDTO.UpdateAmountInvoiceDTO",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -2301,6 +2349,27 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "CreateOrderForReservaion",
+    "RelativePath": "api/orders/createOrderForReservation/{tableId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tableId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.OrderDTO.Cashier.CreateOrderForReservaionDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "CreateOrderForTable",
     "RelativePath": "api/orders/createOrderForTable/{tableId}",
     "HttpMethod": "POST",
@@ -2623,6 +2692,22 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.OrderController",
+    "Method": "UpdateTotalAmount",
+    "RelativePath": "api/orders/update-total-amount/{orderId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderController",
     "Method": "UpdateAmountReceiving",
     "RelativePath": "api/orders/UpdateAmountReceiving/{orderId}",
     "HttpMethod": "PUT",
@@ -2724,6 +2809,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.OrderTableController",
+    "Method": "CreateOrderTableAsync",
+    "RelativePath": "api/OrderTable",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createOrderTableDTO",
+        "Type": "EHM_API.DTOs.OrderTableDTO.CreateOrderTable",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "EHM_API.Controllers.ReservationsController",
@@ -2868,6 +2969,27 @@
   },
   {
     "ContainingType": "EHM_API.Controllers.ReservationsController",
+    "Method": "CheckReservation",
+    "RelativePath": "api/Reservations/check-availability",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reservationTime",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "guestNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ReservationsController",
     "Method": "GetReservationTime",
     "RelativePath": "api/Reservations/check-time/{reservationId}",
     "HttpMethod": "GET",
@@ -2958,6 +3080,38 @@
         "Name": "guestNameOrguestPhone",
         "Type": "System.String",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ReservationsController",
+    "Method": "UpdateReservationOrder",
+    "RelativePath": "api/Reservations/update-order",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "EHM_API.DTOs.ReservationDTO.Manager.UpdateReservationOrderDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.ReservationsController",
+    "Method": "UpdateReservationStatus",
+    "RelativePath": "api/Reservations/update-reservation-status",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateReservationStatusDto",
+        "Type": "EHM_API.DTOs.ReservationDTO.Manager.UpdateReservationStatusByOrder",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -3070,6 +3224,22 @@
     "Method": "DeleteTableReservation",
     "RelativePath": "api/TableReservation/{reservationId}",
     "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reservationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "EHM_API.Controllers.TableReservationController",
+    "Method": "GetTableByReservation",
+    "RelativePath": "api/TableReservation/{reservationId}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
