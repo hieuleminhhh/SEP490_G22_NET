@@ -28,10 +28,9 @@ namespace EHM_API.Repositories
 		Task<List<Dish>> SearchDishesAsync(string search);
 		Task<List<Combo>> SearchCombosAsync(string search);
         bool DishExistsInOrderDetail(int dishId);
-        bool DishExistsInComboDetail(int dishId);
-        bool DishExistsInIngredient(int dishId);
-        Task DeleteDishIfNotReferenced(int dishId);
-
+        Task DeleteIngredientsByDishIdAsync(int dishId);
+        Task DeleteComboDetailsByDishIdAsync(int dishId);
+        Task DeleteDishAsync(int dishId);
     }
 }
 

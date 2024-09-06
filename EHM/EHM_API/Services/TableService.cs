@@ -131,9 +131,28 @@ namespace EHM_API.Services
 		{
 			return await _repository.ExistTable(tableId);
 		}
-        public async Task DeleteTableIfNotInReservation(int tableId)
+        public async Task DeleteTableWithDependenciesAsync(int tableId)
         {
-            await _repository.DeleteTableIfNotInReservation(tableId);
+            var table = await _repository.GetTableByIdAsync(tableId);
+            if (table == null)
+            {
+                throw new Exception("Table not found.");
+            }
+
+            await _repository.DeleteOrderTableByTableIdAsync(tableId);
+            await _repository.DeleteTableReservationByTableIdAsync(tableId);
+
+            await _repository.DeleteTableAsync(tableId);
+        }
+        public async Task SetTablesFloorToNullAsync(int floor)
+        {
+
+            var tables = await _repository.GetTablesByFloorAsync(floor);
+
+            foreach (var table in tables)
+            {
+                await _repository.UpdateTableFloorToNullAsync(table);
+            }
         }
     }
 }
