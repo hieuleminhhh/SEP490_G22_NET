@@ -276,63 +276,83 @@ namespace EHM_API.Services
 		}
 
 
-
-
-
-		// Kien tra 
 		public string CheckReservation(DateTime reservationTime, int guestNumber)
 		{
 			if (reservationTime < DateTime.Now)
 			{
 				return "Thời gian đặt bàn không hợp lệ.";
 			}
-
 			if (guestNumber <= 0)
 			{
 				return "Số lượng khách phải lớn hơn 0.";
 			}
 
-			// Kiểm tra nếu thời gian đặt bàn là sau 3 giờ so với thời điểm hiện tại
-			if (reservationTime > DateTime.Now.AddHours(3))
+			if (reservationTime.Date == DateTime.Now.Date)
 			{
-				// Lấy tất cả các bàn có trong nhà hàng
-				var allTables = _repository.GetAllTables().ToList();
-
-				// Lấy các bàn đã được đặt trong khoảng thời gian với status = 2
-				var reservedTables = _repository.GetReservedTableIdsForTime(reservationTime).ToList();
-
-				// Loại bỏ các bàn đã được đặt ra khỏi danh sách tất cả các bàn
-				var availableTables = allTables.Where(t => !reservedTables.Contains(t.TableId)).ToList();
-
-				int totalCapacity = availableTables.Sum(t => t.Capacity ?? 0); // Tổng sức chứa của bàn còn trống
-
-				if (totalCapacity >= guestNumber)
-				{
-					return $"Có thể đặt bàn. Tổng số chỗ còn trống: {totalCapacity}.";
-				}
-				else
-				{
-					return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {totalCapacity}.";
-				}
-			}
-
-			// Đối với thời điểm trong 3 giờ tới
-			var availableTablesForNextThreeHours = _repository.GetAvailableTables(reservationTime, guestNumber).ToList();
-			int totalCapacityAvailable = availableTablesForNextThreeHours.Sum(t => t.Capacity ?? 0);
-
-			if (totalCapacityAvailable >= guestNumber)
-			{
-				return $"Có thể đặt bàn. Còn trống {totalCapacityAvailable} chỗ.";
+				return CheckReservationForToday(reservationTime, guestNumber);
 			}
 			else
 			{
-				return $"Hết bàn trong giờ này. Không đủ bàn để phục vụ cho {guestNumber} người. Còn trống {totalCapacityAvailable} chỗ.";
+				return CheckReservationForOtherDays(reservationTime, guestNumber);
 			}
 		}
 
+		private string CheckReservationForToday(DateTime reservationTime, int guestNumber)
+		{
+			var allTables = _repository.GetAllTables().ToList();
+			var reservedTableIds = _repository.GetReservedTableIdsForTime(reservationTime).ToList();
 
+			var availableTables = allTables
+				.Where(t => !reservedTableIds.Contains(t.TableId) &&
+							(t.Status == 0 || reservationTime > DateTime.Now.AddHours(3)))
+				.ToList();
 
+			int totalCapacity = availableTables.Sum(t => t.Capacity ?? 0);
 
+			// Tìm bàn phù hợp nhất cho số lượng khách
+			var suitableTable = availableTables.FirstOrDefault(t => t.Capacity >= guestNumber);
 
+			if (suitableTable != null)
+			{
+				return $"Có thể đặt bàn. Còn trống {totalCapacity} chỗ.";
+			}
+			else if (totalCapacity >= guestNumber)
+			{
+				return $"Có thể đặt bàn bằng cách ghép bàn. Còn trống {totalCapacity} chỗ.";
+			}
+			else
+			{
+				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {totalCapacity}.";
+			}
+		}
+
+		private string CheckReservationForOtherDays(DateTime reservationTime, int guestNumber)
+		{
+			var allTables = _repository.GetAllTables().ToList();
+			var reservedTableIds = _repository.GetReservedTableIdsForTime(reservationTime).ToList();
+			var existingReservations = _repository.GetReservationsForDateTime(reservationTime).ToList();
+
+			var availableTables = allTables.Where(t => !reservedTableIds.Contains(t.TableId)).ToList();
+
+			int totalCapacity = availableTables.Sum(t => t.Capacity ?? 0);
+			int reservedCapacity = existingReservations.Sum(r => r.GuestNumber ?? 0);
+			int remainingCapacity = totalCapacity - reservedCapacity;
+
+			// Tìm bàn phù hợp nhất cho số lượng khách
+			var suitableTable = availableTables.FirstOrDefault(t => t.Capacity >= guestNumber);
+
+			if (suitableTable != null)
+			{
+				return $"Có thể đặt bàn. Còn trống {remainingCapacity} chỗ.";
+			}
+			else if (remainingCapacity >= guestNumber)
+			{
+				return $"Có thể đặt bàn bằng cách ghép bàn. Còn trống {remainingCapacity} chỗ.";
+			}
+			else
+			{
+				return $"Hết bàn trong giờ này. Không đủ bàn để phục vụ cho {guestNumber} người. Còn trống {remainingCapacity} chỗ.";
+			}
+		}
 	}
 }
