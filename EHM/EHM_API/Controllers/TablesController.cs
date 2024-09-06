@@ -84,11 +84,32 @@ namespace EHM_API.Controllers
 			return Ok(table);
 		}
 
-        [HttpDelete("delete-if-not-in-reservation/{tableId}")]
-        public async Task<IActionResult> DeleteTableIfNotInReservation(int tableId)
+        [HttpDelete("{tableId}")]
+        public async Task<IActionResult> DeleteTable(int tableId)
         {
-            await _service.DeleteTableIfNotInReservation(tableId);
-            return Ok(new { message = "Table deleted if not in any reservation." });
+            try
+            {
+                await _service.DeleteTableWithDependenciesAsync(tableId);
+                return Ok(new { message = "Table and related records deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("update-floor-to-null/{floor}")]
+        public async Task<IActionResult> UpdateFloorToNull(int floor)
+        {
+            try
+            {
+                await _service.SetTablesFloorToNullAsync(floor);
+                return Ok(new { message = "Floor set to null for all tables on the given floor." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

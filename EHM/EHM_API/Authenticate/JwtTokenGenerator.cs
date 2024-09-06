@@ -23,28 +23,41 @@ namespace ProjectSchedule.Authenticate
 			}
 		}
 
-		public string GenerateJwtToken(Account ac)
-		{
-			var tokenHandler = new JwtSecurityTokenHandler();
-			var key = Encoding.UTF8.GetBytes(_jwtSettings.Secret);
+        public string GenerateJwtToken(Account ac)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_jwtSettings.Secret);
 
-			var tokenDescriptor = new SecurityTokenDescriptor
-			{
-				Subject = new ClaimsIdentity(new Claim[]
-				{
-					new Claim(ClaimTypes.NameIdentifier, ac.AccountId.ToString()),
-					new Claim(ClaimTypes.Name, ac.Username),
-					new Claim(ClaimTypes.Role, ac.Role),
-                    // Add custom claims as needed
-                }),
-				Expires = DateTime.UtcNow.AddHours(_jwtSettings.ExpiryHours),
-				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-				Issuer = _jwtSettings.Issuer,
-				Audience = _jwtSettings.Audience
-			};
+            // Kiểm tra và đảm bảo các giá trị không null
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, ac.AccountId.ToString()), // Bắt buộc AccountId phải có giá trị
+    };
 
-			var token = tokenHandler.CreateToken(tokenDescriptor);
-			return tokenHandler.WriteToken(token);
-		}
-	}
+            // Kiểm tra nếu Username không null thì thêm vào claim
+            if (!string.IsNullOrEmpty(ac.Username))
+            {
+                claims.Add(new Claim(ClaimTypes.Name, ac.Username));
+            }
+
+            // Kiểm tra nếu Role không null thì thêm vào claim
+            if (!string.IsNullOrEmpty(ac.Role))
+            {
+                claims.Add(new Claim(ClaimTypes.Role, ac.Role));
+            }
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(_jwtSettings.ExpiryHours),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = _jwtSettings.Issuer,
+                Audience = _jwtSettings.Audience
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+    }
 }

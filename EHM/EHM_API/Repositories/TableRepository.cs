@@ -132,6 +132,47 @@ namespace EHM_API.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task DeleteOrderTableByTableIdAsync(int tableId)
+        {
+            var orderTables = _context.OrderTables.Where(ot => ot.TableId == tableId);
+            if (orderTables.Any())
+            {
+                _context.OrderTables.RemoveRange(orderTables);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteTableReservationByTableIdAsync(int tableId)
+        {
+            var tableReservations = _context.TableReservations.Where(tr => tr.TableId == tableId);
+            if (tableReservations.Any())
+            {
+                _context.TableReservations.RemoveRange(tableReservations);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteTableAsync(int tableId)
+        {
+            var table = await GetTableByIdAsync(tableId);
+            if (table != null)
+            {
+                _context.Tables.Remove(table);
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task<List<Table>> GetTablesByFloorAsync(int floor)
+        {
+            return await _context.Tables.Where(t => t.Floor == floor).ToListAsync();
+        }
+
+     
+        public async Task UpdateTableFloorToNullAsync(Table table)
+        {
+            table.Floor = null;
+            _context.Tables.Update(table);
+            await _context.SaveChangesAsync();
+        }
     }
 }
 

@@ -169,5 +169,26 @@ namespace EHM_API.Services
 			var dishes = await _dishRepository.UpdateDiscountForDishesAsync(discountId, dishIds);
 			return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
 		}
+        public async Task DeleteDishWithDependenciesAsync(int dishId)
+        {
+            var dish = await _dishRepository.GetDishByIdAsync(dishId);
+            if (dish == null)
+            {
+                throw new Exception("Dish not found.");
+            }
+
+        
+            if (_dishRepository.DishExistsInOrderDetail(dishId))
+            {
+                throw new Exception("Cannot delete dish because it is referenced in OrderDetail.");
+            }
+
+    
+            await _dishRepository.DeleteIngredientsByDishIdAsync(dishId);
+            await _dishRepository.DeleteComboDetailsByDishIdAsync(dishId);
+
+   
+            await _dishRepository.DeleteDishAsync(dishId);
+        }
     }
 }
