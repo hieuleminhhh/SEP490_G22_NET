@@ -356,6 +356,8 @@ namespace EHM_API.Controllers
 
 			return Ok(reservations);
 		}
+
+
         [HttpPut("update-order")]
         public async Task<IActionResult> UpdateReservationOrder([FromBody] UpdateReservationOrderDTO dto)
         {
@@ -366,6 +368,8 @@ namespace EHM_API.Controllers
             }
             return Ok("OrderID updated successfully");
         }
+
+
         [HttpPut("update-reservation-status")]
         public async Task<IActionResult> UpdateReservationStatus([FromBody] UpdateReservationStatusByOrder updateReservationStatusDto)
         {
@@ -377,5 +381,25 @@ namespace EHM_API.Controllers
 
             return Ok(result);
         }
-    }
+
+
+		[HttpGet("check-availability")]
+		public IActionResult CheckReservation(DateTime reservationTime, int guestNumber)
+		{
+			if (reservationTime < DateTime.Now)
+			{
+				return BadRequest("Thời gian đặt bàn không hợp lệ.");
+			}
+
+			if (guestNumber <= 0)
+			{
+				return BadRequest("Số lượng khách phải lớn hơn 0.");
+			}
+
+			string result = _service.CheckReservation(reservationTime, guestNumber);
+
+			return Ok(new { Message = result });
+		}
+
+	}
 }

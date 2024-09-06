@@ -169,6 +169,5 @@ namespace EHM_API.Services
 			var dishes = await _dishRepository.UpdateDiscountForDishesAsync(discountId, dishIds);
 			return _mapper.Map<IEnumerable<DishDTOAll>>(dishes);
 		}
-
-	}
+    }
 }

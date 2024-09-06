@@ -80,7 +80,7 @@ namespace EHM_API
                 var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
                 options.ClientId = googleAuthNSection["ClientId"];
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
-                options.CallbackPath = "/signin-google";
+                options.CallbackPath = "/auth/callback";
             });
    
 

@@ -13,17 +13,17 @@ namespace EHM_API.Repositories
 		private readonly EHMDBContext _context;
 		private readonly IDishRepository _Dishrepository;
 		private readonly IComboRepository _Comborepository;
-        private readonly IOrderRepository _orderRepository;
+		private readonly IOrderRepository _orderRepository;
 
-        public ReservationRepository(EHMDBContext context, IDishRepository dishrepository, IComboRepository comborepository, IOrderRepository orderRepository)
-        {
-            _context = context;
-            _Dishrepository = dishrepository;
-            _Comborepository = comborepository;
-            _orderRepository = orderRepository;
-        }
+		public ReservationRepository(EHMDBContext context, IDishRepository dishrepository, IComboRepository comborepository, IOrderRepository orderRepository)
+		{
+			_context = context;
+			_Dishrepository = dishrepository;
+			_Comborepository = comborepository;
+			_orderRepository = orderRepository;
+		}
 
-        public async Task<Reservation> GetReservationDetailAsync(int reservationId)
+		public async Task<Reservation> GetReservationDetailAsync(int reservationId)
 		{
 			return await _context.Reservations
 				.Include(r => r.Address)
@@ -228,17 +228,17 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Tables.CountAsync();
 		}
-        public async Task UpdateReservationAsync(Reservation reservation)
-        {
-            _context.Reservations.Update(reservation);
+		public async Task UpdateReservationAsync(Reservation reservation)
+		{
+			_context.Reservations.Update(reservation);
 
-            if (reservation.Order != null)
-            {
-                _context.Orders.Update(reservation.Order);
-            }
+			if (reservation.Order != null)
+			{
+				_context.Orders.Update(reservation.Order);
+			}
 
-            await _context.SaveChangesAsync();
-        }
+			await _context.SaveChangesAsync();
+		}
 
 		public async Task<IEnumerable<Reservation>> SearchReservationsAsync(string? guestNameOrPhone)
 		{
@@ -271,7 +271,7 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Reservations
 				.AsNoTracking().Include(r => r.TableReservations)
-                .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
+				.FirstOrDefaultAsync(r => r.ReservationId == reservationId);
 		}
 		public async Task<List<Table>> GetAllTablesAsync()
 		{
@@ -320,25 +320,25 @@ namespace EHM_API.Repositories
 		}
 
 		public async Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel)
-        {
-            var reservation = await GetReservationByIdAsync(reservationId);
-            if (reservation == null)
-            {
-                return null;
-            }
+		{
+			var reservation = await GetReservationByIdAsync(reservationId);
+			if (reservation == null)
+			{
+				return null;
+			}
 
-            reservation.ReasonCancel = reasonCancel;
+			reservation.ReasonCancel = reasonCancel;
 
-            if (reservation.OrderId.HasValue)
-            {
-                await _orderRepository.UpdateCancelationReasonAsync(reservation.OrderId.Value, reasonCancel);
-            }
+			if (reservation.OrderId.HasValue)
+			{
+				await _orderRepository.UpdateCancelationReasonAsync(reservation.OrderId.Value, reasonCancel);
+			}
 
-            _context.Reservations.Update(reservation);
-            await _context.SaveChangesAsync();
+			_context.Reservations.Update(reservation);
+			await _context.SaveChangesAsync();
 
-            return reservation;
-        }
+			return reservation;
+		}
 
 
 		public async Task<Reservation?> GetReservationByOrderIdAsync(int orderId)
@@ -350,24 +350,82 @@ namespace EHM_API.Repositories
 		}
 
 
-        public async Task<Reservation> GetReservationsByTableIdAsync(int tableId)
-        {
-            return await _context.Reservations
-                .Include(r => r.Address)
-                .Where(r => r.TableReservations.Any(tr => tr.TableId == tableId) && r.Status == 3)
-                .OrderByDescending(r => r.ReservationId)
-                .FirstOrDefaultAsync();
-        }
+		public async Task<Reservation> GetReservationsByTableIdAsync(int tableId)
+		{
+			return await _context.Reservations
+				.Include(r => r.Address)
+				.Where(r => r.TableReservations.Any(tr => tr.TableId == tableId) && r.Status == 3)
+				.OrderByDescending(r => r.ReservationId)
+				.FirstOrDefaultAsync();
+		}
 
-        public async Task UpdateReservationOrderAsync(int reservationId, int orderId)
-        {
-            var reservation = await GetReservationByIdAsync(reservationId);
-            if (reservation != null)
-            {
-                reservation.OrderId = orderId;
-                _context.Reservations.Update(reservation);
-                await _context.SaveChangesAsync();
-            }
-        }
-    }
+		public async Task UpdateReservationOrderAsync(int reservationId, int orderId)
+		{
+			var reservation = await GetReservationByIdAsync(reservationId);
+			if (reservation != null)
+			{
+				reservation.OrderId = orderId;
+				_context.Reservations.Update(reservation);
+				await _context.SaveChangesAsync();
+			}
+		}
+
+		public IQueryable<Table> GetAllTables()
+		{
+			return _context.Tables;
+		}
+
+		public IQueryable<Reservation> GetReservationsForTimeAndStatus(DateTime time, int status)
+		{
+			return _context.Set<Reservation>()
+				.Where(r => r.ReservationTime.Value.Date == time.Date &&
+							r.ReservationTime.Value.Hour == time.Hour &&
+							r.Status == status);
+		}
+
+		/*		public IQueryable<Table> GetAvailableTables(DateTime reservationTime, int guestNumber)
+				{
+					var reservedTableIds = GetReservedTableIdsForTime(reservationTime).ToList();
+
+					return _context.Set<Table>()
+						.Where(t => !reservedTableIds.Contains(t.TableId) &&
+									(t.Status == 0 ||
+									 (t.Status != 0 && reservationTime > DateTime.Now.AddHours(3))) &&
+									(t.Capacity >= guestNumber)); // Include tables with capacity >= guestNumber
+				}*/
+
+		public IQueryable<Table> GetAvailableTables(DateTime reservationTime, int guestNumber)
+		{
+			// Lấy danh sách các bàn đã được đặt tại thời điểm cụ thể
+			var reservedTableIds = GetReservedTableIdsForTime(reservationTime).ToList();
+
+			return _context.Set<Table>()
+				.Where(t => !reservedTableIds.Contains(t.TableId) &&  // Không chứa bàn đã đặt
+							t.Status == 0 &&                           // Trạng thái bàn phải là trống (0)
+							t.Capacity >= guestNumber);                // Sức chứa phải lớn hơn hoặc bằng số lượng khách
+		}
+
+
+
+
+		public IQueryable<Reservation> GetReservationsForDateTime(DateTime reservationTime)
+		{
+			return _context.Set<Reservation>()
+				.Where(r => r.ReservationTime.Value.Date == reservationTime.Date &&
+							r.ReservationTime.Value.Hour == reservationTime.Hour &&
+							r.Status == 2);
+		}
+
+		public IQueryable<int> GetReservedTableIdsForTime(DateTime reservationTime)
+		{
+			return _context.Set<Reservation>()
+				.Where(r => r.ReservationTime == reservationTime && r.Status == 2)
+				.SelectMany(r => r.TableReservations.Select(tr => tr.TableId))
+				.Distinct();
+		}
+
+
+
+	}
 }
+

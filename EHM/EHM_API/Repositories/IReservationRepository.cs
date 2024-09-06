@@ -31,5 +31,13 @@ namespace EHM_API.Repositories
 
 		Task<Reservation> GetReservationsByTableIdAsync(int tableId);
         Task UpdateReservationOrderAsync(int reservationId, int orderId);
-    }
+
+		IQueryable<Reservation> GetReservationsForTimeAndStatus(DateTime time, int status);
+		IQueryable<Table> GetAvailableTables(DateTime reservationTime, int guestNumber);
+
+		IQueryable<Reservation> GetReservationsForDateTime(DateTime reservationTime);
+
+		IQueryable<int> GetReservedTableIdsForTime(DateTime reservationTime);
+		IQueryable<Table> GetAllTables();
+	}
 }
