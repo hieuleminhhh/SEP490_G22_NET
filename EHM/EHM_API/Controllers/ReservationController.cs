@@ -382,23 +382,22 @@ namespace EHM_API.Controllers
             return Ok(result);
         }
 
-
-		[HttpGet("check-availability")]
+		[HttpGet("checkAvailability")]
 		public IActionResult CheckReservation(DateTime reservationTime, int guestNumber)
 		{
 			if (reservationTime < DateTime.Now)
 			{
-				return BadRequest("Thời gian đặt bàn không hợp lệ.");
+				return BadRequest(new { CanReserve = false, Message = "Thời gian đặt bàn không hợp lệ." });
 			}
 
 			if (guestNumber <= 0)
 			{
-				return BadRequest("Số lượng khách phải lớn hơn 0.");
+				return BadRequest(new { CanReserve = false, Message = "Số lượng khách phải lớn hơn 0." });
 			}
 
-			string result = _service.CheckReservation(reservationTime, guestNumber);
+			var result = _service.CheckReservation(reservationTime, guestNumber);
 
-			return Ok(new { Message = result });
+			return Ok(new { CanReserve = result.CanReserve, Message = result.Message });
 		}
 
 	}
