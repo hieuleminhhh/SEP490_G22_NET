@@ -260,6 +260,8 @@ namespace EHM_API.Services
 			await _repository.UpdateReservationOrderAsync(dto.ReservationId, dto.OrderId);
 			return true;
 		}
+
+
 		public async Task<UpdateReservationStatusByOrder?> UpdateReservationStatusAsync(UpdateReservationStatusByOrder updateReservationStatusByOrder)
 		{
 			var reservation = await _repository.GetReservationByOrderIdAsync(updateReservationStatusByOrder.OrderId);
@@ -275,7 +277,6 @@ namespace EHM_API.Services
 			return _mapper.Map<UpdateReservationStatusByOrder>(reservation);
 		}
 
-
 		public string CheckReservation(DateTime reservationTime, int guestNumber)
 		{
 			if (reservationTime < DateTime.Now)
@@ -287,58 +288,64 @@ namespace EHM_API.Services
 				return "Số lượng khách phải lớn hơn 0.";
 			}
 
+			var allTables = _repository.GetAllTables().ToList();
+			var totalRestaurantCapacity = allTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
+
+			var existingReservations = _repository.GetReservationsForDateTime(reservationTime).ToList();
+			var totalReservedGuests = existingReservations.Sum(r => r.GuestNumber ?? 0);
+
+			if (totalReservedGuests >= totalRestaurantCapacity)
+			{
+				var nextAvailableTime = reservationTime.AddHours(3);
+				return $"Hết bàn trong giờ này. Bạn có thể đặt bàn vào lúc {nextAvailableTime:HH:mm} hoặc sau đó.";
+			}
+
 			if (reservationTime.Date == DateTime.Now.Date)
 			{
-				return CheckReservationForToday(reservationTime, guestNumber);
+				return CheckReservationForToday(reservationTime, guestNumber, allTables, existingReservations);
 			}
 			else
 			{
-				return CheckReservationForOtherDays(reservationTime, guestNumber);
+				return CheckReservationForOtherDays(reservationTime, guestNumber, allTables, existingReservations);
 			}
 		}
 
-		private string CheckReservationForToday(DateTime reservationTime, int guestNumber)
+		private string CheckReservationForToday(DateTime reservationTime, int guestNumber, List<Table> allTables, List<Reservation> existingReservations)
 		{
-			var allTables = _repository.GetAllTables().ToList();
-			var reservedTableIds = _repository.GetReservedTableIdsForTime(reservationTime).ToList();
+			if (existingReservations == null || !existingReservations.Any())
+			{
+				int availableCapacity = allTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
+
+				if (availableCapacity >= guestNumber)
+				{
+					return $"Có thể đặt bàn. Còn trống {availableCapacity} chỗ.";
+				}
+				else
+				{
+					return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {availableCapacity}.";
+				}
+			}
+
+			var reservedTableIds = existingReservations
+				.Where(r => r.TableReservations != null)
+				.SelectMany(r => r.TableReservations.Select(tr => tr.TableId))
+				.Distinct()
+				.ToList();
 
 			var availableTables = allTables
 				.Where(t => !reservedTableIds.Contains(t.TableId) &&
 							(t.Status == 0 || reservationTime > DateTime.Now.AddHours(3)))
 				.ToList();
 
-			int totalCapacity = availableTables.Sum(t => t.Capacity ?? 0);
-
-			// Tìm bàn phù hợp nhất cho số lượng khách
-			var suitableTable = availableTables.FirstOrDefault(t => t.Capacity >= guestNumber);
-
-			if (suitableTable != null)
-			{
-				return $"Có thể đặt bàn. Còn trống {totalCapacity} chỗ.";
-			}
-			else if (totalCapacity >= guestNumber)
-			{
-				return $"Có thể đặt bàn bằng cách ghép bàn. Còn trống {totalCapacity} chỗ.";
-			}
-			else
-			{
-				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {totalCapacity}.";
-			}
-		}
-
-		private string CheckReservationForOtherDays(DateTime reservationTime, int guestNumber)
-		{
-			var allTables = _repository.GetAllTables().ToList();
-			var reservedTableIds = _repository.GetReservedTableIdsForTime(reservationTime).ToList();
-			var existingReservations = _repository.GetReservationsForDateTime(reservationTime).ToList();
-
-			var availableTables = allTables.Where(t => !reservedTableIds.Contains(t.TableId)).ToList();
-
-			int totalCapacity = availableTables.Sum(t => t.Capacity ?? 0);
+			int availableCapacityToday = availableTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
 			int reservedCapacity = existingReservations.Sum(r => r.GuestNumber ?? 0);
-			int remainingCapacity = totalCapacity - reservedCapacity;
+			int remainingCapacity = availableCapacityToday - reservedCapacity;
 
-			// Tìm bàn phù hợp nhất cho số lượng khách
+			if (remainingCapacity < guestNumber)
+			{
+				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacity}.";
+			}
+
 			var suitableTable = availableTables.FirstOrDefault(t => t.Capacity >= guestNumber);
 
 			if (suitableTable != null)
@@ -351,8 +358,64 @@ namespace EHM_API.Services
 			}
 			else
 			{
-				return $"Hết bàn trong giờ này. Không đủ bàn để phục vụ cho {guestNumber} người. Còn trống {remainingCapacity} chỗ.";
+				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacity}.";
 			}
 		}
+
+		private string CheckReservationForOtherDays(DateTime reservationTime, int guestNumber, List<Table> allTables, List<Reservation> existingReservations)
+		{
+			if (existingReservations == null || !existingReservations.Any())
+			{
+				int availableCapacityOtherDays = allTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
+
+				if (availableCapacityOtherDays >= guestNumber)
+				{
+					return $"Tất cả các bàn đều trống tại thời điểm {reservationTime:HH:mm}. Còn trống {availableCapacityOtherDays} chỗ.";
+				}
+				else
+				{
+					return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {availableCapacityOtherDays}.";
+				}
+			}
+
+			var reservedTableIds = existingReservations
+				.Where(r => r.TableReservations != null)
+				.SelectMany(r => r.TableReservations.Select(tr => tr.TableId))
+				.Distinct()
+				.ToList();
+
+			var availableTables = allTables.Where(t => !reservedTableIds.Contains(t.TableId)).ToList();
+
+			if (!availableTables.Any())
+			{
+				return $"Hết bàn trong giờ này. Không đủ bàn để phục vụ cho {guestNumber} người.";
+			}
+
+			int availableCapacity = availableTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
+			int reservedCapacity = existingReservations.Sum(r => r.GuestNumber ?? 0);
+			int remainingCapacity = availableCapacity - reservedCapacity;
+
+			if (remainingCapacity < guestNumber)
+			{
+				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacity}.";
+			}
+
+			var suitableTable = availableTables.FirstOrDefault(t => t.Capacity >= guestNumber);
+
+			if (suitableTable != null)
+			{
+				return $"Có thể đặt bàn. Còn trống {remainingCapacity} chỗ.";
+			}
+			else if (remainingCapacity >= guestNumber)
+			{
+				return $"Có thể đặt bàn bằng cách ghép bàn. Còn trống {remainingCapacity} chỗ.";
+			}
+			else
+			{
+				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacity}.";
+			}
+		}
+
+
 	}
 }

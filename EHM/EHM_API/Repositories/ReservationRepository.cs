@@ -383,16 +383,28 @@ namespace EHM_API.Repositories
 							r.Status == status);
 		}
 
+		/*		public IQueryable<Table> GetAvailableTables(DateTime reservationTime, int guestNumber)
+				{
+					var reservedTableIds = GetReservedTableIdsForTime(reservationTime).ToList();
+
+					return _context.Set<Table>()
+						.Where(t => !reservedTableIds.Contains(t.TableId) &&
+									(t.Status == 0 ||
+									 (t.Status != 0 && reservationTime > DateTime.Now.AddHours(3))) &&
+									(t.Capacity >= guestNumber)); // Include tables with capacity >= guestNumber
+				}*/
+
 		public IQueryable<Table> GetAvailableTables(DateTime reservationTime, int guestNumber)
 		{
+			// Lấy danh sách các bàn đã được đặt tại thời điểm cụ thể
 			var reservedTableIds = GetReservedTableIdsForTime(reservationTime).ToList();
 
 			return _context.Set<Table>()
-				.Where(t => !reservedTableIds.Contains(t.TableId) &&
-							(t.Status == 0 ||
-							 (t.Status != 0 && reservationTime > DateTime.Now.AddHours(3))) &&
-							(t.Capacity >= guestNumber)); // Include tables with capacity >= guestNumber
+				.Where(t => !reservedTableIds.Contains(t.TableId) &&  // Không chứa bàn đã đặt
+							t.Status == 0 &&                           // Trạng thái bàn phải là trống (0)
+							t.Capacity >= guestNumber);                // Sức chứa phải lớn hơn hoặc bằng số lượng khách
 		}
+
 
 
 
