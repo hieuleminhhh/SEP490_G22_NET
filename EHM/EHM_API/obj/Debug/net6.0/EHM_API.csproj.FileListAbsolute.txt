@@ -207,3 +207,5 @@ C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net
 C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
 C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\Newtonsoft.Json.dll
 C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\Twilio.dll
+C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Google.dll
+C:\Users\nhant\OneDrive\Desktop\EHM_API\SEP490_G22_NET\EHM\EHM_API\bin\Debug\net6.0\System.Diagnostics.DiagnosticSource.dll

@@ -11,44 +11,44 @@ using System.Threading.Tasks;
 
 namespace EHM_API.Services
 {
-    public class ReservationService : IReservationService
+	public class ReservationService : IReservationService
 	{
 		private readonly IReservationRepository _repository;
-        private readonly ITableRepository _tableRepository;
-        private readonly ITableReservationRepository _tableReservationRepository;
-        private readonly IMapper _mapper;
+		private readonly ITableRepository _tableRepository;
+		private readonly ITableReservationRepository _tableReservationRepository;
+		private readonly IMapper _mapper;
 
-        public ReservationService(IReservationRepository repository,
-		
+		public ReservationService(IReservationRepository repository,
+
 			ITableRepository tableRepository,
 			ITableReservationRepository tableReservationRepository,
 			IMapper mapper)
-        {
-            _repository = repository;
-            _tableRepository = tableRepository;
-            _tableReservationRepository = tableReservationRepository;
-            _mapper = mapper;
-        }
+		{
+			_repository = repository;
+			_tableRepository = tableRepository;
+			_tableReservationRepository = tableReservationRepository;
+			_mapper = mapper;
+		}
 
-        public async Task UpdateStatusAsync(int reservationId, UpdateStatusReservationDTO updateStatusReservationDTO)
-        {
-            var reservation = await _repository.GetReservationDetailAsync(reservationId);
-            if (reservation == null)
-            {
-                throw new KeyNotFoundException("Không tìm thấy đặt bàn này");
-            }
+		public async Task UpdateStatusAsync(int reservationId, UpdateStatusReservationDTO updateStatusReservationDTO)
+		{
+			var reservation = await _repository.GetReservationDetailAsync(reservationId);
+			if (reservation == null)
+			{
+				throw new KeyNotFoundException("Không tìm thấy đặt bàn này");
+			}
 
-            reservation.Status = updateStatusReservationDTO.Status;
+			reservation.Status = updateStatusReservationDTO.Status;
 
-            if (reservation.Order != null && updateStatusReservationDTO.Status == 2)
-            {
-                reservation.Order.Status = 2;
-            }
+			if (reservation.Order != null && updateStatusReservationDTO.Status == 2)
+			{
+				reservation.Order.Status = 2;
+			}
 
-            await _repository.UpdateReservationAsync(reservation);
-        }
+			await _repository.UpdateReservationAsync(reservation);
+		}
 
-        public async Task<ReservationDetailDTO> GetReservationDetailAsync(int reservationId)
+		public async Task<ReservationDetailDTO> GetReservationDetailAsync(int reservationId)
 		{
 			var reservation = await _repository.GetReservationDetailAsync(reservationId);
 			return _mapper.Map<ReservationDetailDTO>(reservation);
@@ -99,35 +99,35 @@ namespace EHM_API.Services
 
 			return orderCountWithStatus1 >= totalTables ? 1 : 0;
 		}
-        public async Task RegisterTablesAsync(RegisterTablesDTO registerTablesDTO)
-        {
-            var reservation = await _repository.GetReservationDetailAsync(registerTablesDTO.ReservationId);
+		public async Task RegisterTablesAsync(RegisterTablesDTO registerTablesDTO)
+		{
+			var reservation = await _repository.GetReservationDetailAsync(registerTablesDTO.ReservationId);
 
-            if (reservation == null)
-            {
-                throw new KeyNotFoundException("Không tìm thấy đặt bàn này.");
-            }
+			if (reservation == null)
+			{
+				throw new KeyNotFoundException("Không tìm thấy đặt bàn này.");
+			}
 
-            foreach (var tableId in registerTablesDTO.TableIds)
-            {
-                var table = await _tableRepository.GetTableByIdAsync(tableId);
+			foreach (var tableId in registerTablesDTO.TableIds)
+			{
+				var table = await _tableRepository.GetTableByIdAsync(tableId);
 
-                if (table == null)
-                {
-                    throw new KeyNotFoundException($"Bàn không tồn tại");
-                }
+				if (table == null)
+				{
+					throw new KeyNotFoundException($"Bàn không tồn tại");
+				}
 
-                var tableReservation = new TableReservation
-                {
-                    ReservationId = reservation.ReservationId,
-                    TableId = table.TableId
-                };
+				var tableReservation = new TableReservation
+				{
+					ReservationId = reservation.ReservationId,
+					TableId = table.TableId
+				};
 
-                await _tableReservationRepository.AddTableReservationAsync(tableReservation);
-            }
+				await _tableReservationRepository.AddTableReservationAsync(tableReservation);
+			}
 
-            await _repository.UpdateReservationAsync(reservation);
-        }
+			await _repository.UpdateReservationAsync(reservation);
+		}
 
 
 		public async Task<IEnumerable<ReservationSearchDTO>> SearchReservationsAsync(string? guestNameOrPhone)
@@ -171,65 +171,65 @@ namespace EHM_API.Services
 				}).ToList()
 			};
 		}
-        public async Task UpdateReservationAndTableStatusAsync(int reservationId, int tableId, int reservationStatus, int tableStatus)
-        {
-            var reservation = await _repository.GetReservationDetailAsync(reservationId);
-            if (reservation == null)
-            {
-                throw new KeyNotFoundException("Không tìm thấy đặt bàn này");
-            }
+		public async Task UpdateReservationAndTableStatusAsync(int reservationId, int tableId, int reservationStatus, int tableStatus)
+		{
+			var reservation = await _repository.GetReservationDetailAsync(reservationId);
+			if (reservation == null)
+			{
+				throw new KeyNotFoundException("Không tìm thấy đặt bàn này");
+			}
 
-            var table = await _tableRepository.GetTableByIdAsync(tableId);
-            if (table == null)
-            {
-                throw new KeyNotFoundException("Bàn không tồn tại");
-            }
+			var table = await _tableRepository.GetTableByIdAsync(tableId);
+			if (table == null)
+			{
+				throw new KeyNotFoundException("Bàn không tồn tại");
+			}
 
-            reservation.Status = reservationStatus;
-            table.Status = tableStatus;
+			reservation.Status = reservationStatus;
+			table.Status = tableStatus;
 
-            await _repository.UpdateReservationAsync(reservation);
-            await _tableRepository.UpdateTableAsync(table);
-        }
-        public async Task<bool> UpdateTableStatusesAsync(int reservationId, int newStatus)
-        {
-            var reservation = await _repository.GetReservationByIdAsync(reservationId);
-            if (reservation == null)
-            {
-                return false;
-            }
+			await _repository.UpdateReservationAsync(reservation);
+			await _tableRepository.UpdateTableAsync(table);
+		}
+		public async Task<bool> UpdateTableStatusesAsync(int reservationId, int newStatus)
+		{
+			var reservation = await _repository.GetReservationByIdAsync(reservationId);
+			if (reservation == null)
+			{
+				return false;
+			}
 
-            var tableIds = reservation.TableReservations.Select(tr => tr.TableId).ToList();
-            var tables = await _tableRepository.GetListTablesByIdsAsync(tableIds);
+			var tableIds = reservation.TableReservations.Select(tr => tr.TableId).ToList();
+			var tables = await _tableRepository.GetListTablesByIdsAsync(tableIds);
 
-            foreach (var table in tables)
-            {
-                table.Status = newStatus;
-            }
+			foreach (var table in tables)
+			{
+				table.Status = newStatus;
+			}
 
-            await _tableRepository.UpdateListTablesAsync(tables);
+			await _tableRepository.UpdateListTablesAsync(tables);
 
-            return true;
-        }
-        public async Task<ReasonCancelDTO?> UpdateReasonCancelAsync(int reservationId, ReasonCancelDTO? reasonCancelDTO)
-        {
-            if (reasonCancelDTO == null)
-            {
-                throw new ArgumentNullException(nameof(reasonCancelDTO));
-            }
+			return true;
+		}
+		public async Task<ReasonCancelDTO?> UpdateReasonCancelAsync(int reservationId, ReasonCancelDTO? reasonCancelDTO)
+		{
+			if (reasonCancelDTO == null)
+			{
+				throw new ArgumentNullException(nameof(reasonCancelDTO));
+			}
 
-            var updatedReservation = await _repository.UpdateReasonCancelAsync(reservationId, reasonCancelDTO.ReasonCancel);
+			var updatedReservation = await _repository.UpdateReasonCancelAsync(reservationId, reasonCancelDTO.ReasonCancel);
 
-            if (updatedReservation == null)
-            {
-                return null;
-            }
+			if (updatedReservation == null)
+			{
+				return null;
+			}
 
-            return new ReasonCancelDTO
-            {
-                ReasonCancel = updatedReservation.ReasonCancel
-            };
-        }
+			return new ReasonCancelDTO
+			{
+				ReasonCancel = updatedReservation.ReasonCancel
+			};
+		}
 
 		public async Task<GetReservationByOrderDTO?> GetReservationByOrderIdAsync(int orderId)
 		{
@@ -249,30 +249,173 @@ namespace EHM_API.Services
 			var reservations = await _repository.GetReservationsByTableIdAsync(tableId);
 			return _mapper.Map<GetReservationByOrderDTO>(reservations);
 		}
-        public async Task<bool> UpdateReservationOrderAsync(UpdateReservationOrderDTO dto)
-        {
-            var reservation = await _repository.GetReservationByIdAsync(dto.ReservationId);
-            if (reservation == null)
-            {
-                return false;
-            }
+		public async Task<bool> UpdateReservationOrderAsync(UpdateReservationOrderDTO dto)
+		{
+			var reservation = await _repository.GetReservationByIdAsync(dto.ReservationId);
+			if (reservation == null)
+			{
+				return false;
+			}
 
-            await _repository.UpdateReservationOrderAsync(dto.ReservationId, dto.OrderId);
-            return true;
-        }
-        public async Task<UpdateReservationStatusByOrder?> UpdateReservationStatusAsync(UpdateReservationStatusByOrder updateReservationStatusByOrder)
-        {
-            var reservation = await _repository.GetReservationByOrderIdAsync(updateReservationStatusByOrder.OrderId);
-            if (reservation == null)
-            {
-                return null;
-            }
+			await _repository.UpdateReservationOrderAsync(dto.ReservationId, dto.OrderId);
+			return true;
+		}
 
-            reservation.Status = updateReservationStatusByOrder.Status;
 
-            await _repository.UpdateReservationAsync(reservation);
+		public async Task<UpdateReservationStatusByOrder?> UpdateReservationStatusAsync(UpdateReservationStatusByOrder updateReservationStatusByOrder)
+		{
+			var reservation = await _repository.GetReservationByOrderIdAsync(updateReservationStatusByOrder.OrderId);
+			if (reservation == null)
+			{
+				return null;
+			}
 
-            return _mapper.Map<UpdateReservationStatusByOrder>(reservation);
-        }
-    }
+			reservation.Status = updateReservationStatusByOrder.Status;
+
+			await _repository.UpdateReservationAsync(reservation);
+
+			return _mapper.Map<UpdateReservationStatusByOrder>(reservation);
+		}
+
+		public string CheckReservation(DateTime reservationTime, int guestNumber)
+		{
+			if (reservationTime < DateTime.Now)
+			{
+				return "Thời gian đặt bàn không hợp lệ.";
+			}
+			if (guestNumber <= 0)
+			{
+				return "Số lượng khách phải lớn hơn 0.";
+			}
+
+			var allTables = _repository.GetAllTables().ToList();
+			var totalRestaurantCapacity = allTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
+
+			var existingReservations = _repository.GetReservationsForDateTime(reservationTime).ToList();
+			var totalReservedGuests = existingReservations.Sum(r => r.GuestNumber ?? 0);
+
+			if (totalReservedGuests >= totalRestaurantCapacity)
+			{
+				var nextAvailableTime = reservationTime.AddHours(3);
+				return $"Hết bàn trong giờ này. Bạn có thể đặt bàn vào lúc {nextAvailableTime:HH:mm} hoặc sau đó.";
+			}
+
+			if (reservationTime.Date == DateTime.Now.Date)
+			{
+				return CheckReservationForToday(reservationTime, guestNumber, allTables, existingReservations);
+			}
+			else
+			{
+				return CheckReservationForOtherDays(reservationTime, guestNumber, allTables, existingReservations);
+			}
+		}
+
+		private string CheckReservationForToday(DateTime reservationTime, int guestNumber, List<Table> allTables, List<Reservation> existingReservations)
+		{
+			if (existingReservations == null || !existingReservations.Any())
+			{
+				int availableCapacity = allTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
+
+				if (availableCapacity >= guestNumber)
+				{
+					return $"Có thể đặt bàn. Còn trống {availableCapacity} chỗ.";
+				}
+				else
+				{
+					return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {availableCapacity}.";
+				}
+			}
+
+			var reservedTableIds = existingReservations
+				.Where(r => r.TableReservations != null)
+				.SelectMany(r => r.TableReservations.Select(tr => tr.TableId))
+				.Distinct()
+				.ToList();
+
+			var availableTables = allTables
+				.Where(t => !reservedTableIds.Contains(t.TableId) &&
+							(t.Status == 0 || reservationTime > DateTime.Now.AddHours(3)))
+				.ToList();
+
+			int availableCapacityToday = availableTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
+			int reservedCapacity = existingReservations.Sum(r => r.GuestNumber ?? 0);
+			int remainingCapacity = availableCapacityToday - reservedCapacity;
+
+			if (remainingCapacity < guestNumber)
+			{
+				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacity}.";
+			}
+
+			var suitableTable = availableTables.FirstOrDefault(t => t.Capacity >= guestNumber);
+
+			if (suitableTable != null)
+			{
+				return $"Có thể đặt bàn. Còn trống {remainingCapacity} chỗ.";
+			}
+			else if (remainingCapacity >= guestNumber)
+			{
+				return $"Có thể đặt bàn bằng cách ghép bàn. Còn trống {remainingCapacity} chỗ.";
+			}
+			else
+			{
+				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacity}.";
+			}
+		}
+
+		private string CheckReservationForOtherDays(DateTime reservationTime, int guestNumber, List<Table> allTables, List<Reservation> existingReservations)
+		{
+			if (existingReservations == null || !existingReservations.Any())
+			{
+				int availableCapacityOtherDays = allTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
+
+				if (availableCapacityOtherDays >= guestNumber)
+				{
+					return $"Tất cả các bàn đều trống tại thời điểm {reservationTime:HH:mm}. Còn trống {availableCapacityOtherDays} chỗ.";
+				}
+				else
+				{
+					return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {availableCapacityOtherDays}.";
+				}
+			}
+
+			var reservedTableIds = existingReservations
+				.Where(r => r.TableReservations != null)
+				.SelectMany(r => r.TableReservations.Select(tr => tr.TableId))
+				.Distinct()
+				.ToList();
+
+			var availableTables = allTables.Where(t => !reservedTableIds.Contains(t.TableId)).ToList();
+
+			if (!availableTables.Any())
+			{
+				return $"Hết bàn trong giờ này. Không đủ bàn để phục vụ cho {guestNumber} người.";
+			}
+
+			int availableCapacity = availableTables.Sum(t => t.Capacity ?? 0); // Đổi tên biến này
+			int reservedCapacity = existingReservations.Sum(r => r.GuestNumber ?? 0);
+			int remainingCapacity = availableCapacity - reservedCapacity;
+
+			if (remainingCapacity < guestNumber)
+			{
+				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacity}.";
+			}
+
+			var suitableTable = availableTables.FirstOrDefault(t => t.Capacity >= guestNumber);
+
+			if (suitableTable != null)
+			{
+				return $"Có thể đặt bàn. Còn trống {remainingCapacity} chỗ.";
+			}
+			else if (remainingCapacity >= guestNumber)
+			{
+				return $"Có thể đặt bàn bằng cách ghép bàn. Còn trống {remainingCapacity} chỗ.";
+			}
+			else
+			{
+				return $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacity}.";
+			}
+		}
+
+
+	}
 }
