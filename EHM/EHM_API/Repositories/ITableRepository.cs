@@ -14,10 +14,14 @@ namespace EHM_API.Repositories
         Task<List<Table>> GetListTablesByIdsAsync(List<int> tableIds);
         Task UpdateListTablesAsync(List<Table> tables);
         bool TableExistsInReservation(int tableId);
-        Task DeleteTableIfNotInReservation(int tableId);
         Task<bool> UpdateTableStatus(int tableId, int status);
         Task<bool> ExistTable(int tableId);
 
         Task<bool> UpdateTableStatusByOrderId(int orderId, int status);
-	}
+        Task DeleteTableAsync(int tableId);
+        Task DeleteOrderTableByTableIdAsync(int tableId);
+        Task DeleteTableReservationByTableIdAsync(int tableId);
+        Task<List<Table>> GetTablesByFloorAsync(int floor);
+        Task UpdateTableFloorToNullAsync(Table table);
+    }
 }

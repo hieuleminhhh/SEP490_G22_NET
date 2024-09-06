@@ -14,6 +14,7 @@ namespace EHM_API.Services
         Task<CreateTableDTO> UpdateAsync(int tableId, CreateTableDTO tabledto);
         Task<IEnumerable<FindTableDTO>> GetAvailableTablesForGuestsAsync(int guestNumber);
 		Task<bool> ExistTable(int tableId);
-        Task DeleteTableIfNotInReservation(int tableId);
+        Task DeleteTableWithDependenciesAsync(int tableId);
+        Task SetTablesFloorToNullAsync(int floor);
     }
 }
