@@ -28,6 +28,6 @@ namespace EHM_API.Services
         Task<bool> UpdateReservationOrderAsync(UpdateReservationOrderDTO dto);
         Task<UpdateReservationStatusByOrder?> UpdateReservationStatusAsync(UpdateReservationStatusByOrder updateReservationStatusByOrder);
 
-		string CheckReservation(DateTime reservationTime, int guestNumber);
+		ReservationCheckResult CheckReservation(DateTime reservationTime, int guestNumber);
 	}
 }
