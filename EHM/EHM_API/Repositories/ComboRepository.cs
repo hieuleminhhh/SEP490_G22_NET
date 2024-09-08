@@ -170,6 +170,8 @@ namespace EHM_API.Repositories
                 Note = c.Note,
                 ImageUrl = c.ImageUrl,
                 IsActive = c.IsActive,
+				QuantityCombo = c.QuantityCombo,
+				
                 Dishes = c.ComboDetails.Select(cd => new DishDTO
                 {
                     DishId = cd.Dish.DishId,

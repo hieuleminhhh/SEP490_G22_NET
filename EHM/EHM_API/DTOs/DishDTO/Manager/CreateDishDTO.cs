@@ -9,5 +9,6 @@
         public int? CategoryId { get; set; }
         public int? DiscountId { get; set; }
         public bool IsActive { get; set; }
+        public int? QuantityDish { get; set; }
     }
 }
