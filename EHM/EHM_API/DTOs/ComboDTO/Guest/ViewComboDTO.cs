@@ -8,6 +8,7 @@
         public string? Note { get; set; }
         public string? ImageUrl { get; set; }
         public bool? IsActive { get; set; }
+        public int? QuantityCombo { get; set; }
         public List<DishDTO>? Dishes { get; set; }
     }
 }

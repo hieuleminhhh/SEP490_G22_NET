@@ -237,5 +237,20 @@ namespace EHM_API.Repositories
             var sql = $"DELETE FROM [EHMDB].[dbo].[ComboDetails] WHERE [ComboID] = '{comboId}';";
             await _context.Database.ExecuteSqlRawAsync(sql);
         }
+        public async Task DeleteAsync(Combo combo)
+        {
+            _context.Combos.Remove(combo);
+            await _context.SaveChangesAsync();
+        }
+        public async Task DeleteByComboIdAsync(int comboId)
+        {
+            var comboDetails = _context.ComboDetails.Where(cd => cd.ComboId == comboId);
+            _context.ComboDetails.RemoveRange(comboDetails);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<bool> ExistsWithComboIdAsync(int comboId)
+        {
+            return await _context.OrderDetails.AnyAsync(od => od.ComboId == comboId);
+        }
     }
 }

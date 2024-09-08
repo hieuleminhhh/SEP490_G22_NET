@@ -8,5 +8,6 @@
         public string? Note { get; set; }
         public string? ImageUrl { get; set; }
         public bool? IsActive { get; set; }
+        public int? QuantityCombo { get; set; }
     }
 }

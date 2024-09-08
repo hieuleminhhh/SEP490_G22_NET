@@ -385,11 +385,12 @@ namespace EHM_API.Controllers
 				errors["nameCombo"] = "Tên combo đã tồn tại";
 			}
 
-			if (updateComboWithDishesDTO.DishIds == null || updateComboWithDishesDTO.DishIds.Count == 0)
-			{
-				errors["dish"] = "Thông tin món ăn là bắt buộc";
-			}
-			if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
+            if (updateComboWithDishesDTO.Dishes == null || updateComboWithDishesDTO.Dishes.Count == 0)
+            {
+                errors["dishes"] = "Thông tin món ăn là bắt buộc";
+            }
+
+            if (string.IsNullOrEmpty(updateComboWithDishesDTO.ImageUrl))
 			{
 				errors["image"] = "Hình ảnh không được để trống";
 			}
@@ -505,7 +506,20 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = ex.Message });
 			}
 		}
+        [HttpDelete("{comboId}")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> DeleteCombo(int comboId)
+        {
+            try
+            {
+                await _comboService.DeleteComboAsync(comboId);
+                return Ok(new { message = "Combo đã được xóa thành công." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
-
-	}
+    }
 }
