@@ -10,5 +10,6 @@
         public bool? IsActive { get; set; }
         public int? QuantityCombo { get; set; }
         public List<DishDTO>? Dishes { get; set; }
+
     }
 }
