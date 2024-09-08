@@ -170,6 +170,7 @@ namespace EHM_API.Repositories
         public async Task UpdateTableFloorToNullAsync(Table table)
         {
             table.Floor = null;
+            table.Status = 2;
             _context.Tables.Update(table);
             await _context.SaveChangesAsync();
         }
