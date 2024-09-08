@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EHM_API.DTOs.DiscountDTO.Manager;
+using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.SettingDTO.Manager;
 using EHM_API.DTOs.TableDTO;
 using EHM_API.DTOs.TableDTO.Manager;
+using EHM_API.DTOs.Table_ReservationDTO;
 using EHM_API.Models;
 using EHM_API.Repositories;
 
@@ -154,5 +156,17 @@ namespace EHM_API.Services
                 await _repository.UpdateTableFloorToNullAsync(table);
             }
         }
+        public IEnumerable<TableReservationAllDTO> GetTableReservationsByDate(DateTime reservationTime)
+        {
+            var reservations = _repository.GetByReservationTime(reservationTime);
+
+            return reservations.Select(r => new TableReservationAllDTO
+            {
+                ReservationId = r.ReservationId,
+                ReservationTime = r.ReservationTime,
+                TableId = r.TableReservations?.FirstOrDefault()?.TableId // Kiểm tra TableReservations có null hay không
+            }).ToList();
+        }
+
     }
 }
