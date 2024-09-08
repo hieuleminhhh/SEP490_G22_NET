@@ -1,5 +1,6 @@
 ﻿using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.ReservationDTO.Manager;
+using EHM_API.DTOs.Table_ReservationDTO;
 using EHM_API.Models;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -18,15 +19,17 @@ namespace EHM_API.Controllers
 		private readonly IReservationService _service;
 		private readonly IDishService _dishService;
 		private readonly IComboService _comboService;
+		private readonly ITableService _tableService;
 
-		public ReservationsController(IReservationService service, IDishService dishService, IComboService comboService)
-		{
-			_service = service;
-			_dishService = dishService;
-			_comboService = comboService;
-		}
+        public ReservationsController(IReservationService service, IDishService dishService, IComboService comboService, ITableService tableService)
+        {
+            _service = service;
+            _dishService = dishService;
+            _comboService = comboService;
+            _tableService = tableService;
+        }
 
-		[HttpGet]
+        [HttpGet]
 		public async Task<ActionResult<IEnumerable<ReservationByStatus>>> GetReservationsByStatus([FromQuery] int? status)
 		{
 			var reservations = await _service.GetReservationsByStatus(status);
@@ -382,24 +385,34 @@ namespace EHM_API.Controllers
             return Ok(result);
         }
 
-
-		[HttpGet("check-availability")]
+		[HttpGet("checkAvailability")]
 		public IActionResult CheckReservation(DateTime reservationTime, int guestNumber)
 		{
 			if (reservationTime < DateTime.Now)
 			{
-				return BadRequest("Thời gian đặt bàn không hợp lệ.");
+				return BadRequest(new { CanReserve = false, Message = "Thời gian đặt bàn không hợp lệ." });
 			}
 
 			if (guestNumber <= 0)
 			{
-				return BadRequest("Số lượng khách phải lớn hơn 0.");
+				return BadRequest(new { CanReserve = false, Message = "Số lượng khách phải lớn hơn 0." });
 			}
 
-			string result = _service.CheckReservation(reservationTime, guestNumber);
+			var result = _service.CheckReservation(reservationTime, guestNumber);
 
-			return Ok(new { Message = result });
+			return Ok(new { CanReserve = result.CanReserve, Message = result.Message });
 		}
 
-	}
+        [HttpGet]
+        [Route("byDate")]
+        public ActionResult<IEnumerable<TableReservationAllDTO>> GetByReservationTime([FromQuery] DateTime reservationTime)
+        {
+            var result = _tableService.GetTableReservationsByDate(reservationTime);
+            if (result == null || !result.Any())
+            {
+                return NotFound("No reservations found for the specified date.");
+            }
+            return Ok(result);
+        }
+    }
 }

@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EHM_API.DTOs.DiscountDTO.Manager;
+using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.SettingDTO.Manager;
 using EHM_API.DTOs.TableDTO;
 using EHM_API.DTOs.TableDTO.Manager;
+using EHM_API.DTOs.Table_ReservationDTO;
 using EHM_API.Models;
 using EHM_API.Repositories;
 
@@ -131,9 +133,40 @@ namespace EHM_API.Services
 		{
 			return await _repository.ExistTable(tableId);
 		}
-        public async Task DeleteTableIfNotInReservation(int tableId)
+        public async Task DeleteTableWithDependenciesAsync(int tableId)
         {
-            await _repository.DeleteTableIfNotInReservation(tableId);
+            var table = await _repository.GetTableByIdAsync(tableId);
+            if (table == null)
+            {
+                throw new Exception("Table not found.");
+            }
+
+            await _repository.DeleteOrderTableByTableIdAsync(tableId);
+            await _repository.DeleteTableReservationByTableIdAsync(tableId);
+
+            await _repository.DeleteTableAsync(tableId);
         }
+        public async Task SetTablesFloorToNullAsync(int floor)
+        {
+
+            var tables = await _repository.GetTablesByFloorAsync(floor);
+
+            foreach (var table in tables)
+            {
+                await _repository.UpdateTableFloorToNullAsync(table);
+            }
+        }
+        public IEnumerable<TableReservationAllDTO> GetTableReservationsByDate(DateTime reservationTime)
+        {
+            var reservations = _repository.GetByReservationTime(reservationTime);
+
+            return reservations.Select(r => new TableReservationAllDTO
+            {
+                ReservationId = r.ReservationId,
+                ReservationTime = r.ReservationTime,
+                TableId = r.TableReservations?.FirstOrDefault()?.TableId // Kiểm tra TableReservations có null hay không
+            }).ToList();
+        }
+
     }
 }

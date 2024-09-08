@@ -36,31 +36,31 @@ namespace EHM_API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GoogleRegister([FromBody] GoogleUserInfo request)
         {
-            // Kiểm tra xem tài khoản với email đã tồn tại chưa
+
             var account = _accountService.GetByEmail(request.Email);
 
-            // Nếu tài khoản đã tồn tại, return 200 OK và thông báo tài khoản đã tồn tại
             if (account != null)
             {
+                var token = _jwtTokenGenerator.GenerateJwtToken(account);
+
                 return Ok(new
                 {
                     Message = "Tài khoản với email này đã tồn tại.",
+                    token,
                     account.AccountId,
                     account.Username,
                     account.Role
                 });
             }
 
-            // Đăng ký tài khoản mới chỉ với email
             var newAccount = await _accountService.RegisterGoogleAccountAsync(request.Email);
 
-            // Tạo JWT token cho tài khoản mới
-            var token = _jwtTokenGenerator.GenerateJwtToken(newAccount);
+            var newToken = _jwtTokenGenerator.GenerateJwtToken(newAccount);
 
             return Ok(new
             {
                 Message = "Đăng ký thành công",
-                token,
+                token = newToken,
                 newAccount.AccountId,
                 newAccount.Username,
                 newAccount.Role
@@ -114,6 +114,19 @@ namespace EHM_API.Controllers
                 return null;
             }
         }
-     
+        [HttpPut("update-password")]
+        public IActionResult UpdatePassword([FromBody] UpdatePasswordDTO dto)
+        { 
+            if(dto.NewPassword.Length < 6 || dto.NewPassword.Length > 32)
+            {
+                return BadRequest("Password length 6 -> 32");
+            }
+            if (!_accountService.UpdatePassword(dto))
+            {
+                return NotFound("Account not found or update failed.");
+            }
+
+            return Ok("Password updated successfully.");
+        }
     }
 }

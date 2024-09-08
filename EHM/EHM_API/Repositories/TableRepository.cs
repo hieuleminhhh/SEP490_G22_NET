@@ -132,6 +132,72 @@ namespace EHM_API.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task DeleteOrderTableByTableIdAsync(int tableId)
+        {
+            var orderTables = _context.OrderTables.Where(ot => ot.TableId == tableId);
+            if (orderTables.Any())
+            {
+                _context.OrderTables.RemoveRange(orderTables);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteTableReservationByTableIdAsync(int tableId)
+        {
+            var tableReservations = _context.TableReservations.Where(tr => tr.TableId == tableId);
+            if (tableReservations.Any())
+            {
+                _context.TableReservations.RemoveRange(tableReservations);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteTableAsync(int tableId)
+        {
+            var table = await GetTableByIdAsync(tableId);
+            if (table != null)
+            {
+                _context.Tables.Remove(table);
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task<List<Table>> GetTablesByFloorAsync(int floor)
+        {
+            return await _context.Tables.Where(t => t.Floor == floor).ToListAsync();
+        }
+
+     
+        public async Task UpdateTableFloorToNullAsync(Table table)
+        {
+            table.Floor = null;
+            _context.Tables.Update(table);
+            await _context.SaveChangesAsync();
+        }
+        public IEnumerable<Reservation> GetByReservationTime(DateTime reservationTime)
+        {
+            // Lấy các reservation có Table gán vào (có trong TableReservation)
+            var reservationsWithTable = _context.TableReservations
+                .Include(tr => tr.Reservation)
+                .ThenInclude(r => r.TableReservations)
+                .Where(tr => tr.Reservation.ReservationTime.HasValue
+                             && tr.Reservation.ReservationTime.Value.Date == reservationTime.Date
+                             && tr.Reservation.Status == 2)
+                .Select(tr => tr.Reservation)
+                .Distinct()
+                .ToList();  // Thực thi truy vấn đầu tiên
+
+            // Lấy các reservation chưa có Table gán vào (không có trong TableReservation)
+            var reservationsWithoutTable = _context.Reservations
+                .Where(r => r.ReservationTime.HasValue
+                            && r.ReservationTime.Value.Date == reservationTime.Date
+                            && r.Status == 2
+                            && !_context.TableReservations.Any(tr => tr.ReservationId == r.ReservationId))
+                .ToList();  // Thực thi truy vấn thứ hai
+
+            // Kết hợp hai danh sách
+            return reservationsWithTable.Union(reservationsWithoutTable).ToList();
+        }
+
     }
 }
 
