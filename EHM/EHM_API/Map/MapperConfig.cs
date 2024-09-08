@@ -24,6 +24,7 @@ using EHM_API.DTOs.OrderTableDTO;
 using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.DTOs.SettingDTO.Manager;
+using EHM_API.DTOs.Table_ReservationDTO;
 using EHM_API.DTOs.TableDTO;
 using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.DTOs.TBDTO;
@@ -783,6 +784,9 @@ namespace EHM_API.Map
             CreateMap<UpdateAmountInvoiceDTO, Invoice>().ReverseMap();
             CreateMap<Reservation, UpdateReservationStatusByOrder>().ReverseMap();
             CreateMap<Table, CreateTableDTO>().ReverseMap();
+            CreateMap<TableReservation, TableReservationAllDTO>()
+                  .ForMember(dest => dest.ReservationTime, opt => opt.MapFrom(src => src.Reservation.ReservationTime))
+                .ReverseMap();
         }
 
 

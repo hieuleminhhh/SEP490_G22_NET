@@ -114,6 +114,19 @@ namespace EHM_API.Controllers
                 return null;
             }
         }
-     
+        [HttpPut("update-password")]
+        public IActionResult UpdatePassword([FromBody] UpdatePasswordDTO dto)
+        { 
+            if(dto.NewPassword.Length < 6 || dto.NewPassword.Length > 32)
+            {
+                return BadRequest("Password length 6 -> 32");
+            }
+            if (!_accountService.UpdatePassword(dto))
+            {
+                return NotFound("Account not found or update failed.");
+            }
+
+            return Ok("Password updated successfully.");
+        }
     }
 }

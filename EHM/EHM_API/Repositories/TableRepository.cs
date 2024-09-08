@@ -173,6 +173,31 @@ namespace EHM_API.Repositories
             _context.Tables.Update(table);
             await _context.SaveChangesAsync();
         }
+        public IEnumerable<Reservation> GetByReservationTime(DateTime reservationTime)
+        {
+            // Lấy các reservation có Table gán vào (có trong TableReservation)
+            var reservationsWithTable = _context.TableReservations
+                .Include(tr => tr.Reservation)
+                .ThenInclude(r => r.TableReservations)
+                .Where(tr => tr.Reservation.ReservationTime.HasValue
+                             && tr.Reservation.ReservationTime.Value.Date == reservationTime.Date
+                             && tr.Reservation.Status == 2)
+                .Select(tr => tr.Reservation)
+                .Distinct()
+                .ToList();  // Thực thi truy vấn đầu tiên
+
+            // Lấy các reservation chưa có Table gán vào (không có trong TableReservation)
+            var reservationsWithoutTable = _context.Reservations
+                .Where(r => r.ReservationTime.HasValue
+                            && r.ReservationTime.Value.Date == reservationTime.Date
+                            && r.Status == 2
+                            && !_context.TableReservations.Any(tr => tr.ReservationId == r.ReservationId))
+                .ToList();  // Thực thi truy vấn thứ hai
+
+            // Kết hợp hai danh sách
+            return reservationsWithTable.Union(reservationsWithoutTable).ToList();
+        }
+
     }
 }
 
