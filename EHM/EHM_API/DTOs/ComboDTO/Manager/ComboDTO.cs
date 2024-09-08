@@ -10,5 +10,6 @@
         public bool? IsActive { get; set; }
         public int? QuantityCombo { get; set; }
         public List<int> DishIds { get; set; }
+        public List<int> DishQuantities { get; set; }  // Add this line
     }
 }
