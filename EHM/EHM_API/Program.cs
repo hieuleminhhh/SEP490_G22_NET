@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using ProjectSchedule.Models;
 using ProjectSchedule.Authenticate;
+using EHM_API.DTOs.Email;
 
 namespace EHM_API
 {
@@ -154,6 +155,9 @@ namespace EHM_API
 
             builder.Services.AddScoped<IGoogleRepository, GoogleRepository>();
             builder.Services.AddScoped<IGoogleService, GoogleService>();
+
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
