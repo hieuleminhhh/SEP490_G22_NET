@@ -100,27 +100,47 @@ namespace EHM_API.Services
 		}
 
 
-		public async Task<bool> ChangePasswordAsync(int accountId, ChangePasswordDTO dto)
-		{
-			var account = await _accountRepository.GetAccountByIdAsync(accountId);
-			if (account == null)
-			{
-				return false; 
-			}
+        public async Task<bool> ChangePasswordAsync(int accountId, ChangePasswordDTO dto)
+        {
+            var account = await _accountRepository.GetAccountByIdAsync(accountId);
 
-			if (account.Password != dto.CurrentPassword)
-			{
-				return false; 
-			}
+            if (account == null)
+            {
+                return false;
+            }
 
-			if (dto.NewPassword != dto.ConfirmPassword)
-			{
-				return false; 
-			}
+            // Nếu tài khoản chưa có mật khẩu (Password == null), cho phép cập nhật mật khẩu mới
+            if (account.Password == null)
+            {
+                // Kiểm tra NewPassword và ConfirmPassword có khớp không
+                if (dto.NewPassword != dto.ConfirmPassword)
+                {
+                    return false; // Mật khẩu mới và xác nhận mật khẩu không khớp
+                }
 
-			account.Password = dto.NewPassword;
-			return await _accountRepository.UpdateProfileAccount(account);
-		}
+                account.Password = dto.NewPassword;
+            }
+            else
+            {
+                // Nếu mật khẩu hiện tại không khớp với mật khẩu của người dùng
+                if (account.Password != dto.CurrentPassword)
+                {
+                    return false;
+                }
 
-	}
+                // Kiểm tra NewPassword và ConfirmPassword có khớp không
+                if (dto.NewPassword != dto.ConfirmPassword)
+                {
+                    return false; // Mật khẩu mới và xác nhận mật khẩu không khớp
+                }
+
+                // Cập nhật mật khẩu mới
+                account.Password = dto.NewPassword;
+            }
+
+            // Lưu thay đổi
+            return await _accountRepository.UpdateProfileAccount(account);
+        }
+
+    }
 }

@@ -31,6 +31,7 @@ namespace EHM_API.Services
         Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive);
 		Task<bool> ComboExistsAsync(int comboId);
         Task DeleteComboAsync(int comboId);
+        Task UpdateQuantityComboAsync(int comboId, int newQuantity);
 
     }
 }
