@@ -412,5 +412,20 @@ namespace EHM_API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpPut("{dishId}/update-quantity")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> UpdateQuantityDish(int dishId, [FromBody] int newQuantity)
+        {
+            try
+            {
+                await _dishService.UpdateQuantityDishAsync(dishId, newQuantity);
+                return Ok(new { message = "Số lượng món ăn đã được cập nhật thành công." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
