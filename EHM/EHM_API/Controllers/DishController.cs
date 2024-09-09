@@ -412,5 +412,33 @@ namespace EHM_API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpPut("update-quantity")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> UpdateQuantityDish([FromBody] UpdateDishQuantityDTO dto)
+        {
+            try
+            {
+                // Kiểm tra DTO có null hoặc giá trị không hợp lệ
+                if (dto == null || dto.QuantityDish < 0)
+                {
+                    return BadRequest(new { message = "Số lượng món ăn không hợp lệ." });
+                }
+
+                // Gọi service để cập nhật số lượng
+                await _dishService.UpdateQuantityDishAsync(dto);
+
+                return Ok(new { message = "Số lượng món ăn đã được cập nhật thành công." });
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
     }
 }

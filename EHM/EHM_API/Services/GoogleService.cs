@@ -66,6 +66,16 @@ namespace EHM_API.Services
             await _accountRepository.AddAsync(newAccount);
             return newAccount;
         }
+        public bool UpdatePassword(UpdatePasswordDTO dto)
+        {
+            var account = _accountRepository.GetAccountById(dto.AccountId);
+            if (account == null)
+            {
+                return false; 
+            }
 
+            _accountRepository.UpdatePassword(dto.AccountId, dto.NewPassword);
+            return true;
+        }
     }
 }

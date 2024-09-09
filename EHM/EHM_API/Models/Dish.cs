@@ -18,9 +18,9 @@ namespace EHM_API.Models
         public int? CategoryId { get; set; }
         public int? DiscountId { get; set; }
         public bool IsActive { get; set; }
-		public int? QuantityDish { get; set; }
+        public int? QuantityDish { get; set; }
 
-		public virtual Category? Category { get; set; }
+        public virtual Category? Category { get; set; }
         public virtual Discount? Discount { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<ComboDetail> ComboDetails { get; set; }

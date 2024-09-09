@@ -8,5 +8,6 @@ namespace EHM_API.Services
         Account GetByEmail(string email);
         string GenerateJwtToken(Account account);
         Task<Account> RegisterGoogleAccountAsync(string email);
+        bool UpdatePassword(UpdatePasswordDTO dto);
     }
 }

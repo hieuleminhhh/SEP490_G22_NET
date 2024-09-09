@@ -308,19 +308,21 @@ namespace EHM_API.Controllers
 		}
 
 
-		[HttpPut("changepassword/{accountId}")]
-		public async Task<IActionResult> ChangePassword(int accountId, [FromBody] ChangePasswordDTO dto)
-		{
-			var result = await _accountService.ChangePasswordAsync(accountId, dto);
-			if (!result)
-			{
-				return BadRequest(new { message = "Đổi mật khẩu không thành công. Vui lòng kiểm tra lại thông tin." });
-			}
+        [HttpPut("changepassword/{accountId}")]
+        public async Task<IActionResult> ChangePassword(int accountId, [FromBody] ChangePasswordDTO dto)
+        {
+            var result = await _accountService.ChangePasswordAsync(accountId, dto);
 
-			return Ok(new { message = "Đổi mật khẩu thành công" });
-		}
+            if (!result)
+            {
+                return BadRequest(new { message = "Đổi mật khẩu không thành công. Vui lòng kiểm tra lại thông tin." });
+            }
+
+            return Ok(new { message = "Đổi mật khẩu thành công" });
+        }
 
 
 
-	}
+
+    }
 }
