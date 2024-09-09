@@ -21,5 +21,18 @@ namespace EHM_API.Repositories
             await _context.Accounts.AddAsync(account);
             await _context.SaveChangesAsync();
         }
+        public Account GetAccountById(int accountId)
+        {
+            return _context.Accounts.FirstOrDefault(a => a.AccountId == accountId);
+        }
+        public void UpdatePassword(int accountId, string newPassword)
+        {
+            var account = GetAccountById(accountId);
+            if (account != null)
+            {
+                account.Password = newPassword;
+                _context.SaveChanges();
+            }
+        }
     }
 }

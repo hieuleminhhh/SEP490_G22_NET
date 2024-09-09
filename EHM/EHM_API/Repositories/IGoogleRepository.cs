@@ -6,5 +6,7 @@ namespace EHM_API.Repositories
     {
         Account GetByEmail(string email);
         Task AddAsync(Account account);
+        Account GetAccountById(int accountId);
+        void UpdatePassword(int accountId, string newPassword);
     }
 }

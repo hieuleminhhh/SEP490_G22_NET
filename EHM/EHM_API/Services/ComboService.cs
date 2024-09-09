@@ -18,7 +18,8 @@ namespace EHM_API.Services
 	{
 		private readonly IComboRepository _comboRepository;
 		private readonly IDishRepository _dishRepository;
-		private readonly IMapper _mapper;
+        private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IMapper _mapper;
 
 		public ComboService(IComboRepository comboRepository, IMapper mapper, IDishRepository dishRepository)
 		{
@@ -155,8 +156,10 @@ namespace EHM_API.Services
         public async Task<ComboDTO> UpdateComboWithDishesAsync(int comboId, UpdateComboDishDTO updateComboWithDishesDTO)
         {
             // Fetch the dishes by IDs
-            var dishes = await _dishRepository.GetDishesByIdsAsync(updateComboWithDishesDTO.DishIds);
-            if (dishes == null || dishes.Count != updateComboWithDishesDTO.DishIds.Count)
+            var dishIds = updateComboWithDishesDTO.Dishes.Select(d => d.DishId).ToList();
+            var dishes = await _dishRepository.GetDishesByIdsAsync(dishIds);
+
+            if (dishes == null || dishes.Count != dishIds.Count)
             {
                 throw new Exception("Some dishes were not found.");
             }
@@ -175,16 +178,17 @@ namespace EHM_API.Services
             combo.ImageUrl = updateComboWithDishesDTO.ImageUrl;
 
             // Clear old combo details
-            await ClearComboDetailsAsync(comboId);
+            await _comboRepository.ClearComboDetailsAsync(comboId);
 
-            // Add new combo details
+            // Add new combo details with quantity
             combo.ComboDetails = new List<ComboDetail>();
-            foreach (var dishId in updateComboWithDishesDTO.DishIds)
+            foreach (var dishDto in updateComboWithDishesDTO.Dishes)
             {
                 combo.ComboDetails.Add(new ComboDetail
                 {
                     ComboId = comboId,
-                    DishId = dishId
+                    DishId = dishDto.DishId,
+                    QuantityDish = dishDto.QuantityDish  // Store dish quantity
                 });
             }
 
@@ -199,16 +203,52 @@ namespace EHM_API.Services
                 Price = combo.Price,
                 Note = combo.Note,
                 ImageUrl = combo.ImageUrl,
-                DishIds = combo.ComboDetails.Select(cd => cd.DishId).ToList()
+                DishIds = combo.ComboDetails.Select(cd => cd.DishId).ToList(),
+                DishQuantities = combo.ComboDetails.Select(cd => cd.QuantityDish ?? 0).ToList()  
             };
 
             return comboDTO;
         }
+
         public async Task ClearComboDetailsAsync(int comboId)
         {
             await _comboRepository.ClearComboDetailsAsync(comboId);
         }
 
+        public async Task DeleteComboAsync(int comboId)
+        {
+            // Kiểm tra combo có tồn tại không
+            var combo = await _comboRepository.GetByIdAsync(comboId);
+            if (combo == null)
+            {
+                throw new Exception("Combo không tồn tại.");
+            }
 
-	}
+            // Kiểm tra combo có trong order detail không
+            var existsInOrderDetail = await _comboRepository.ExistsWithComboIdAsync(comboId);
+            if (existsInOrderDetail)
+            {
+                throw new Exception("Combo đang tồn tại trong đơn hàng, không thể xóa.");
+            }
+
+            // Xóa combo details trước
+            await _comboRepository.DeleteByComboIdAsync(comboId);
+
+            // Xóa combo
+            await _comboRepository.DeleteAsync(combo);
+        }
+        public async Task UpdateQuantityComboAsync(int comboId, int newQuantity)
+        {
+           
+            var combo = await _comboRepository.GetByIdAsync(comboId);
+            if (combo == null)
+            {
+                throw new Exception("Combo không tồn tại.");
+            }
+
+            combo.QuantityCombo = newQuantity;
+
+            await _comboRepository.UpdateAsync(combo);
+        }
+    }
 }

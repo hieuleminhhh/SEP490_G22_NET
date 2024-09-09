@@ -23,5 +23,7 @@ namespace EHM_API.Repositories
         Task DeleteTableReservationByTableIdAsync(int tableId);
         Task<List<Table>> GetTablesByFloorAsync(int floor);
         Task UpdateTableFloorToNullAsync(Table table);
+        IEnumerable<Reservation> GetByReservationTime(DateTime reservationTime);
     }
 }
+
