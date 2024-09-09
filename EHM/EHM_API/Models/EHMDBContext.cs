@@ -36,9 +36,9 @@ namespace EHM_API.Models
         public virtual DbSet<Setting> Settings { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
         public virtual DbSet<TableReservation> TableReservations { get; set; } = null!;
-		public virtual DbSet<Wallet> Wallets { get; set; } = null!;
+        public virtual DbSet<Wallet> Wallets { get; set; } = null!;
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
@@ -131,7 +131,7 @@ namespace EHM_API.Models
             });
 
             modelBuilder.Entity<ComboDetail>()
-                         .HasKey(cd => new { cd.ComboId, cd.DishId });
+                          .HasKey(cd => new { cd.ComboId, cd.DishId });
 
             modelBuilder.Entity<ComboDetail>()
                 .HasOne(cd => cd.Combo)
@@ -142,7 +142,6 @@ namespace EHM_API.Models
                 .HasOne(cd => cd.Dish)
                 .WithMany(d => d.ComboDetails)
                 .HasForeignKey(cd => cd.DishId);
-
 
             modelBuilder.Entity<Discount>(entity =>
             {
@@ -334,6 +333,8 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.RecevingOrder).HasColumnType("datetime");
 
+                entity.Property(e => e.ShipId).HasColumnName("ShipID");
+
                 entity.Property(e => e.Status).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.TotalAmount).HasColumnType("money");
@@ -401,7 +402,7 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_OrderDetail_Order");
             });
 
-            modelBuilder.Entity<OrderTable>(entity =>
+           modelBuilder.Entity<OrderTable>(entity =>
             {
                 entity.HasKey(e => new { e.OrderId, e.TableId });
 
@@ -499,31 +500,30 @@ namespace EHM_API.Models
                     .HasForeignKey(tr => tr.TableId);
             });
 
-			modelBuilder.Entity<Wallet>(entity =>
-			{
-				entity.ToTable("Wallet");
+            modelBuilder.Entity<Wallet>(entity =>
+            {
+                entity.ToTable("Wallet");
 
-				entity.Property(e => e.WalletId).HasColumnName("WalletID");
+                entity.Property(e => e.WalletId).HasColumnName("WalletID");
 
-				entity.Property(e => e.Balance).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.Balance).HasColumnType("decimal(18, 2)");
 
-				entity.Property(e => e.GuestPhone)
-					.HasMaxLength(15)
-					.IsUnicode(false);
+                entity.Property(e => e.GuestPhone)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
 
-				entity.Property(e => e.LastUpdated)
-					.HasColumnType("datetime")
-					.HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.LastUpdated)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
-				entity.HasOne(d => d.GuestPhoneNavigation)
-					.WithMany(p => p.Wallets)
-					.HasForeignKey(d => d.GuestPhone)
-					.OnDelete(DeleteBehavior.ClientSetNull)
-					.HasConstraintName("FK_Wallet_GuestPhone");
-			});
+                entity.HasOne(d => d.GuestPhoneNavigation)
+                    .WithMany(p => p.Wallets)
+                    .HasForeignKey(d => d.GuestPhone)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Wallet_GuestPhone");
+            });
 
-
-			OnModelCreatingPartial(modelBuilder);
+            OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
