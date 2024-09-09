@@ -237,18 +237,18 @@ namespace EHM_API.Services
             // Xóa combo
             await _comboRepository.DeleteAsync(combo);
         }
-        public async Task UpdateQuantityComboAsync(int comboId, int newQuantity)
+        public async Task UpdateQuantityComboAsync(UpdateQuantityComboDTO updateQuantityComboDTO)
         {
-           
-            var combo = await _comboRepository.GetByIdAsync(comboId);
+            var combo = await _comboRepository.GetByIdAsync(updateQuantityComboDTO.ComboId);
             if (combo == null)
             {
                 throw new Exception("Combo không tồn tại.");
             }
 
-            combo.QuantityCombo = newQuantity;
+            combo.QuantityCombo = updateQuantityComboDTO.QuantityCombo;
 
             await _comboRepository.UpdateAsync(combo);
         }
+
     }
 }

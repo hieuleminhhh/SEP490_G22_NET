@@ -354,6 +354,12 @@ namespace EHM_API.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<Dish> Update1Async(Dish dish)
+        {
+            _context.Dishes.Update(dish);
+            await _context.SaveChangesAsync();
+            return dish;
+        }
 
         public async Task DeleteDishAsync(int dishId)
         {

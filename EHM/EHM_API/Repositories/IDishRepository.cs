@@ -31,6 +31,9 @@ namespace EHM_API.Repositories
         Task DeleteIngredientsByDishIdAsync(int dishId);
         Task DeleteComboDetailsByDishIdAsync(int dishId);
         Task DeleteDishAsync(int dishId);
+		Task<Dish> Update1Async(Dish dish);
+
+
     }
 }
 
