@@ -190,20 +190,26 @@ namespace EHM_API.Services
    
             await _dishRepository.DeleteDishAsync(dishId);
         }
-        public async Task UpdateQuantityDishAsync(int dishId, int newQuantity)
+        public async Task UpdateQuantityDishAsync(UpdateDishQuantityDTO dto)
         {
-            // Kiểm tra dish có tồn tại không
-            var dish = await _dishRepository.GetByIdAsync(dishId);
+            if (dto == null)
+            {
+                throw new ArgumentNullException(nameof(dto), "DTO cannot be null.");
+            }
+
+            // Kiểm tra món ăn có tồn tại không
+            var dish = await _dishRepository.GetByIdAsync(dto.DishId);
             if (dish == null)
             {
-                throw new Exception("Dish không tồn tại.");
+                throw new Exception("Món ăn không tồn tại.");
             }
 
             // Cập nhật số lượng món ăn
-            dish.QuantityDish = newQuantity;
+            dish.QuantityDish = dto.QuantityDish;
 
             // Lưu thay đổi vào database
-            await _dishRepository.UpdateAsync(dish);
+            await _dishRepository.Update1Async(dish);
         }
+
     }
 }

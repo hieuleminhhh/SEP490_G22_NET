@@ -30,6 +30,6 @@ namespace EHM_API.Services
 
 		Task<SearchDishAndComboDTO> SearchDishAndComboAsync(string search);
         Task DeleteDishWithDependenciesAsync(int dishId);
-        Task UpdateQuantityDishAsync(int dishId, int newQuantity);
+		Task UpdateQuantityDishAsync(UpdateDishQuantityDTO dto);
     }
 }
