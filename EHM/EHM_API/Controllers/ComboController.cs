@@ -521,13 +521,13 @@ namespace EHM_API.Controllers
             }
         }
 
-        [HttpPut("{comboId}/update-quantity")]
+        [HttpPut("update-quantity")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> UpdateQuantityCombo(int comboId, [FromBody] int newQuantity)
+        public async Task<IActionResult> UpdateQuantityCombo([FromBody] UpdateQuantityComboDTO updateQuantityComboDTO)
         {
             try
             {
-                await _comboService.UpdateQuantityComboAsync(comboId, newQuantity);
+                await _comboService.UpdateQuantityComboAsync(updateQuantityComboDTO);
                 return Ok(new { message = "Số lượng combo đã được cập nhật thành công." });
             }
             catch (Exception ex)
@@ -535,5 +535,6 @@ namespace EHM_API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
     }
 }

@@ -787,6 +787,8 @@ namespace EHM_API.Map
             CreateMap<TableReservation, TableReservationAllDTO>()
                   .ForMember(dest => dest.ReservationTime, opt => opt.MapFrom(src => src.Reservation.ReservationTime))
                 .ReverseMap();
+            CreateMap<UpdateDishQuantityDTO, Dish>()
+           .ForMember(dest => dest.QuantityDish, opt => opt.MapFrom(src => src.QuantityDish));
         }
 
 
