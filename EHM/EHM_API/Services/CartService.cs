@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
@@ -167,8 +168,23 @@ namespace EHM_API.Services
 
 			return await _cartRepository.TakeOut(takeOutDTO);
 		}
+        public async Task<OrdersByAccountDTO> GetOrdersByAccountIdAsync(int accountId)
+        {
+            var orders = await _cartRepository.GetOrdersByAccountIdAsync(accountId);
+            if (orders == null || !orders.Any())
+            {
+                throw new Exception("Không có đơn hàng nào cho tài khoản này");
+            }
+
+            var ordersByAccount = new OrdersByAccountDTO
+            {
+                AccountId = accountId,
+                Orders = _mapper.Map<List<OrderByID>>(orders)
+            };
+            return ordersByAccount;
+        }
 
 
 
-	}
+    }
 }
