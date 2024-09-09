@@ -789,6 +789,17 @@ namespace EHM_API.Map
                 .ReverseMap();
             CreateMap<UpdateDishQuantityDTO, Dish>()
            .ForMember(dest => dest.QuantityDish, opt => opt.MapFrom(src => src.QuantityDish));
+
+            CreateMap<Order, OrderByID>()
+             .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
+             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address));
+
+            CreateMap<OrderDetail, OrderDetailDTO2>()
+                .ForMember(dest => dest.DishName, opt => opt.MapFrom(src => src.Dish.ItemName))
+                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo));
+
+            // Ánh xạ từ Address sang AddressDTO1
+            CreateMap<Address, AddressDTO1>();
         }
 
 
