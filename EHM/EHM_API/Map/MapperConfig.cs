@@ -82,7 +82,8 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentTime : (DateTime?)null))
                 .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.Taxcode : null))
                 .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentStatus : 0))
-
+                 .ForMember(dest => dest.EmailOfAccount, opt => opt.MapFrom(src => src.Account != null ? src.Account.Email : null))
+                  .ForMember(dest => dest.EmailOfGuest, opt => opt.MapFrom(src => src.GuestPhoneNavigation != null ? src.GuestPhoneNavigation.Email : null))
                 .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
                 .ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.OrderTables.Select(ot => ot.Table))).ReverseMap();
 
