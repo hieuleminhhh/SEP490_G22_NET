@@ -309,9 +309,7 @@ namespace EHM_API.Models
             {
                 entity.ToTable("Notification");
 
-                entity.Property(e => e.NotificationId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("NotificationID");
+                entity.Property(e => e.NotificationId).HasColumnName("NotificationID");
 
                 entity.Property(e => e.AccountId).HasColumnName("AccountID");
 

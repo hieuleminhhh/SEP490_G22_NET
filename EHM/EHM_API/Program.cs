@@ -156,6 +156,9 @@ namespace EHM_API
             builder.Services.AddScoped<IGoogleRepository, GoogleRepository>();
             builder.Services.AddScoped<IGoogleService, GoogleService>();
 
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddScoped<IEmailService, EmailService>();
 
