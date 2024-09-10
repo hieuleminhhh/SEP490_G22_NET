@@ -30,8 +30,10 @@
 		public int PaymentStatus { get; set; }
 		public DateTime? PaymentTime { get; set; }
 		public string? Taxcode { get; set; }
-
-		public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
+        public int? ShipId { get; set; }
+        public string? CancelBy { get; set; }
+        public DateTime? ShipTime { get; set; }
+        public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
 		public IEnumerable<TableOfOrderDTO> Tables { get; set; }
 
 	}
