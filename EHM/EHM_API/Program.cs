@@ -162,6 +162,8 @@ namespace EHM_API
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddScoped<IEmailService, EmailService>();
 
+            builder.Services.AddScoped<IVnPayService, VnPayService>();
+
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
