@@ -30,11 +30,14 @@
         public int OrderDetailId { get; set; }
         public decimal? UnitPrice { get; set; }
         public int? Quantity { get; set; }
+        public int DishId { get; set; }
         public string? DishName { get; set; }
         public string? ImageUrlOfDish { get; set; }
         public string? ImageUrlOfCombo { get; set; }
+        public int ComboId { get; set; }
         public string? ComboName { get; set; } 
-        public string? Note { get; set; } 
+        public string? Note { get; set; }
+        public decimal? Price { get; set; }
     }
 
 
