@@ -404,14 +404,19 @@ namespace EHM_API.Controllers
         {
             try
             {
-                await _dishService.DeleteDishWithDependenciesAsync(dishId);
-                return Ok(new { message = "Dish and related records deleted successfully." });
+                bool isDeleted = await _dishService.DeleteDishWithDependenciesAsync(dishId);
+                if (isDeleted)
+                {
+                    return Ok(new { success = true, message = "Dish and related records deleted successfully." });
+                }
+                return BadRequest(new { success = false, message = "Dish could not be deleted." });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { success = false, message = ex.Message });
             }
         }
+
 
         [HttpPut("update-quantity")]
         [Authorize(Roles = "Manager")]
