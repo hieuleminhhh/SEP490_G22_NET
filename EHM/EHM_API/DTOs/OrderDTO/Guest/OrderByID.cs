@@ -10,8 +10,15 @@
         public int OrderId { get; set; }
         public DateTime? OrderDate { get; set; }
         public decimal? TotalAmount { get; set; }
+        public decimal? TotalAmountAfterDiscount { get; set; }
+        public decimal? Deposits { get; set; }
         public string? GuestPhone { get; set; }
         public string? Note { get; set; }
+        public int? Status { get; set; }
+        public int? Type { get; set; }
+        public int? DiscountId { get; set; }
+        public int? InvoiceId { get; set; }
+        public string? CancelationReason { get; set; }
         public AddressDTO1 Address { get; set; } 
         public List<OrderDetailDTO2> OrderDetails { get; set; } 
     }
