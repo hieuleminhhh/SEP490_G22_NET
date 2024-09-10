@@ -637,18 +637,12 @@ namespace EHM_API.Services
 
             string? email = null;
 
-            if (order.AccountId.HasValue && order.Account != null)
+       
+            if (order.GuestPhoneNavigation != null)
             {
-                // Lấy email từ Account nếu có AccountId
-                email = order.Account.Email;
-            }
-            else if (!order.AccountId.HasValue && order.GuestPhoneNavigation != null)
-            {
-                // Lấy email từ Guest nếu không có AccountId
                 email = order.GuestPhoneNavigation.Email;
             }
 
-            // Tạo đối tượng DTO để trả về
             var orderEmailDto = new OrderEmailDTO
             {
                 OrderId = order.OrderId,
