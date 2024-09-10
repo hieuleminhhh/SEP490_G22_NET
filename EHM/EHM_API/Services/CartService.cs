@@ -132,9 +132,9 @@ namespace EHM_API.Services
 			var finalTotalAmount = totalAmount;
 
 			var order = new Order
-			{   
-				AccountId = checkoutDTO.AccountId,
-				OrderDate = DateTime.Now,
+			{
+                AccountId = checkoutDTO.AccountId != 0 ? (int?)checkoutDTO.AccountId : null,
+                OrderDate = DateTime.Now,
 				Status = checkoutDTO.Status ?? 0,
 				RecevingOrder = checkoutDTO.RecevingOrder,
 				GuestPhone = checkoutDTO.GuestPhone,
