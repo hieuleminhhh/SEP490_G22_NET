@@ -5,7 +5,8 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 {
 	public class CreateReservationDTO
 	{
-		public string GuestPhone { get; set; } = null!;
+        public int? AccountId { get; set; }
+        public string GuestPhone { get; set; } = null!;
 		public string? Email { get; set; }
 		public string? GuestAddress { get; set; }
 		public string? ConsigneeName { get; set; }
