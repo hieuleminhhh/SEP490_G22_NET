@@ -221,56 +221,90 @@ namespace EHM_API.Repositories
 		}
 
 
-		public async Task<PagedResult<DishDTOAll>> GetDishesActive(string search, string categorySearch, int page, int pageSize)
-		{
-			var query = _context.Dishes.AsQueryable();
-			// Lọc các món ăn có IsActive = true
-			query = query.Where(d => d.IsActive);
+        public async Task<PagedResult<DishDTOAll>> GetDishesActive(string search, string categorySearch, int page, int pageSize)
+        {
+            var query = _context.Dishes.AsQueryable();
 
-			if (!string.IsNullOrEmpty(categorySearch))
-			{
-				categorySearch = categorySearch.ToLower();
-				query = query.Where(d => d.Category.CategoryName.ToLower().Contains(categorySearch));
-			}
+            // Lọc các món ăn có IsActive = true
+            query = query.Where(d => d.IsActive);
 
-			if (!string.IsNullOrEmpty(search))
-			{
-				search = search.ToLower();
-				query = query.Where(d => d.ItemName.ToLower().Contains(search));
-			}
+            if (!string.IsNullOrEmpty(categorySearch))
+            {
+                categorySearch = categorySearch.ToLower();
+                query = query.Where(d => d.Category.CategoryName.ToLower().Contains(categorySearch));
+            }
 
-			var totalDishes = await query.CountAsync();
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower();
+                query = query.Where(d => d.ItemName.ToLower().Contains(search));
+            }
 
-			var dishes = await query
-				.Include(d => d.Category)
-				.Include(d => d.Discount)
-				.Skip((page - 1) * pageSize)
-				.Take(pageSize)
-				.ToListAsync();
+            // Tổng số món ăn trước khi phân trang
+            var totalDishes = await query.CountAsync();
 
-			var dishDTOs = dishes.Select(d => new DishDTOAll
-			{
-				DishId = d.DishId,
-				ItemName = d.ItemName,
-				ItemDescription = d.ItemDescription,
-				Price = d.Price,
-				ImageUrl = d.ImageUrl,
-				CategoryId = d.CategoryId,
-				CategoryName = d.Category?.CategoryName,
-				IsActive = d.IsActive,
-				DiscountId = d.DishId,
-				DiscountedPrice = d.Price - (d.Price * d.Discount?.DiscountPercent / 100),
-				DiscountPercentage = d.Discount?.DiscountPercent,
+            // Lấy danh sách món ăn có phân trang
+            var dishes = await query
+                .Include(d => d.Category)
+                .Include(d => d.Discount)
+                .ToListAsync();
+
+            // Ngày hiện tại (chỉ tính phần ngày, bỏ qua thời gian)
+            var today = DateTime.Now.Date;
+
+            // Lấy danh sách OrderDetails có điều kiện:
+            // 1. RecevingOrder.Date == today hoặc RecevingOrder == null && OrderDate.Date == today
+            // 2. Order.Status là 2, 3, 4, 6, 7
+            var relevantOrderDetails = await _context.OrderDetails
+                .Include(od => od.Order)
+                .Where(od =>
+                    (od.Order.RecevingOrder.HasValue && od.Order.RecevingOrder.Value.Date == today)
+                    || (!od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue && od.Order.OrderDate.Value.Date == today)
+                )
+                .Where(od => od.Order.Status == 2 || od.Order.Status == 3 || od.Order.Status == 4 || od.Order.Status == 6 || od.Order.Status == 7)
+                .ToListAsync();
+
+            // Tính tổng số lượng món ăn trong OrderDetails
+            foreach (var dish in dishes)
+            {
+                var totalDishOrdered = relevantOrderDetails
+                    .Where(od => od.DishId == dish.DishId)
+                    .Sum(od => od.Quantity ?? 0); // Tính tổng số lượng món ăn
+
+                // Trừ số lượng món ăn đã được đặt khỏi số lượng hiện tại
+                dish.QuantityDish -= totalDishOrdered;
+
+                // Đảm bảo số lượng không âm
+                if (dish.QuantityDish < 0)
+                {
+                    dish.QuantityDish = 0;
+                }
+            }
+
+            // Phân trang
+            var pagedDishes = dishes.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Chuyển đổi danh sách món ăn sang DTO
+            var dishDTOs = pagedDishes.Select(d => new DishDTOAll
+            {
+                DishId = d.DishId,
+                ItemName = d.ItemName,
+                ItemDescription = d.ItemDescription,
+                Price = d.Price,
+                ImageUrl = d.ImageUrl,
+                CategoryId = d.CategoryId,
+                CategoryName = d.Category?.CategoryName,
+                IsActive = d.IsActive,
+                DiscountId = d.DiscountId,
+                DiscountedPrice = d.Price - (d.Price * d.Discount?.DiscountPercent / 100),
+                DiscountPercentage = d.Discount?.DiscountPercent,
                 QuantityDish = d.QuantityDish
             }).ToList();
 
-			return new PagedResult<DishDTOAll>(dishDTOs, totalDishes, page, pageSize);
-		}
+            return new PagedResult<DishDTOAll>(dishDTOs, totalDishes, page, pageSize);
+        }
 
-
-
-
-		public async Task<Dish> GetDishByIdAsync(int dishId)
+        public async Task<Dish> GetDishByIdAsync(int dishId)
 		{
 			return await _context.Dishes.FindAsync(dishId);
 		}

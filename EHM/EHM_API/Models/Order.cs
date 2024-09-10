@@ -27,6 +27,8 @@ namespace EHM_API.Models
         public int? DiscountId { get; set; }
         public string? CancelationReason { get; set; }
         public int? ShipId { get; set; }
+        public string? CancelBy { get; set; }
+        public DateTime? ShipTime { get; set; }
 
         public virtual Account? Account { get; set; }
         public virtual Address? Address { get; set; }
