@@ -809,8 +809,7 @@ namespace EHM_API.Map
             CreateMap<NotificationCreateDTO, Notification>();
             CreateMap<Address, AddressDTO1>();
 
-            CreateMap<OrderEmailDTO,Account>()
-              .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+          
             CreateMap<OrderEmailDTO, Guest>()
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
         }
