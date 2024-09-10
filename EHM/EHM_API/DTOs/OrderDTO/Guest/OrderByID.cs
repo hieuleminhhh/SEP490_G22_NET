@@ -9,6 +9,7 @@
     {
         public int OrderId { get; set; }
         public DateTime? OrderDate { get; set; }
+        public DateTime? RecevingOrder { get; set; }
         public decimal? TotalAmount { get; set; }
         public decimal? TotalAmountAfterDiscount { get; set; }
         public decimal? Deposits { get; set; }
@@ -29,7 +30,9 @@
         public int OrderDetailId { get; set; }
         public decimal? UnitPrice { get; set; }
         public int? Quantity { get; set; }
-        public string? DishName { get; set; } 
+        public string? DishName { get; set; }
+        public string? ImageUrlOfDish { get; set; }
+        public string? ImageUrlOfCombo { get; set; }
         public string? ComboName { get; set; } 
         public string? Note { get; set; } 
     }
