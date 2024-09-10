@@ -17,6 +17,7 @@ using EHM_API.DTOs.IngredientDTO.Manager;
 using EHM_API.DTOs.InvoiceDTO;
 using EHM_API.DTOs.MaterialDTO;
 using EHM_API.DTOs.NewDTO;
+using EHM_API.DTOs.NotificationDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
@@ -796,9 +797,12 @@ namespace EHM_API.Map
 
             CreateMap<OrderDetail, OrderDetailDTO2>()
                 .ForMember(dest => dest.DishName, opt => opt.MapFrom(src => src.Dish.ItemName))
-                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo));
+                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo))
+                 .ForMember(dest => dest.ImageUrlOfDish, opt => opt.MapFrom(src => src.Dish.ImageUrl))
+                .ForMember(dest => dest.ImageUrlOfCombo, opt => opt.MapFrom(src => src.Combo.ImageUrl));
 
-            // Ánh xạ từ Address sang AddressDTO1
+            CreateMap<Notification, NotificationAllDTO>().ReverseMap();
+            CreateMap<NotificationCreateDTO, Notification>();
             CreateMap<Address, AddressDTO1>();
         }
 

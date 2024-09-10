@@ -29,6 +29,7 @@ namespace EHM_API.Models
         public virtual DbSet<InvoiceLog> InvoiceLogs { get; set; } = null!;
         public virtual DbSet<Material> Materials { get; set; } = null!;
         public virtual DbSet<News> News { get; set; } = null!;
+        public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<OrderTable> OrderTables { get; set; } = null!;
@@ -142,6 +143,7 @@ namespace EHM_API.Models
                 .HasOne(cd => cd.Dish)
                 .WithMany(d => d.ComboDetails)
                 .HasForeignKey(cd => cd.DishId);
+
 
             modelBuilder.Entity<Discount>(entity =>
             {
@@ -303,6 +305,29 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_News_Staff");
             });
 
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.ToTable("Notification");
+
+                entity.Property(e => e.NotificationId).HasColumnName("NotificationID");
+
+                entity.Property(e => e.AccountId).HasColumnName("AccountID");
+
+                entity.Property(e => e.Description).HasMaxLength(500);
+
+                entity.Property(e => e.OrderId).HasColumnName("OrderID");
+
+                entity.HasOne(d => d.Order)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.OrderId)
+                    .HasConstraintName("FK_Notification_Account");
+
+                entity.HasOne(d => d.OrderNavigation)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.OrderId)
+                    .HasConstraintName("FK_Notification_Order");
+            });
+
             modelBuilder.Entity<Order>(entity =>
             {
                 entity.ToTable("Order");
@@ -402,7 +427,7 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_OrderDetail_Order");
             });
 
-           modelBuilder.Entity<OrderTable>(entity =>
+            modelBuilder.Entity<OrderTable>(entity =>
             {
                 entity.HasKey(e => new { e.OrderId, e.TableId });
 
@@ -484,6 +509,8 @@ namespace EHM_API.Models
                 entity.ToTable("Table");
 
                 entity.Property(e => e.TableId).HasColumnName("TableID");
+
+                entity.Property(e => e.Lable).HasMaxLength(200);
             });
 
             modelBuilder.Entity<TableReservation>(entity =>
@@ -499,6 +526,7 @@ namespace EHM_API.Models
                     .WithMany(t => t.TableReservations)
                     .HasForeignKey(tr => tr.TableId);
             });
+
 
             modelBuilder.Entity<Wallet>(entity =>
             {
