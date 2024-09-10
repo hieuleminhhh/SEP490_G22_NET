@@ -738,9 +738,24 @@ namespace EHM_API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("{orderId}/email")]
+        public async Task<IActionResult> GetOrderEmailByOrderId(int orderId)
+        {
+            try
+            {
+                var orderEmailDTO = await _orderService.GetEmailByOrderIdAsync(orderId);
+                if (orderEmailDTO == null)
+                {
+                    return NotFound(new { message = "Order not found or no associated email." });
+                }
 
-
-
+                return Ok(orderEmailDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
     }
 }

@@ -19,6 +19,7 @@ using EHM_API.DTOs.MaterialDTO;
 using EHM_API.DTOs.NewDTO;
 using EHM_API.DTOs.NotificationDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
+using EHM_API.DTOs.OrderDTO.Cashier;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.OrderTableDTO;
@@ -804,6 +805,11 @@ namespace EHM_API.Map
             CreateMap<Notification, NotificationAllDTO>().ReverseMap();
             CreateMap<NotificationCreateDTO, Notification>();
             CreateMap<Address, AddressDTO1>();
+
+            CreateMap<OrderEmailDTO,Account>()
+              .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+            CreateMap<OrderEmailDTO, Guest>()
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
         }
 
 
