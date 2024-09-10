@@ -800,17 +800,16 @@ namespace EHM_API.Map
             CreateMap<OrderDetail, OrderDetailDTO2>()
                 .ForMember(dest => dest.DishName, opt => opt.MapFrom(src => src.Dish.ItemName))
                 .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo))
-                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Dish.ImageUrl))
-                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Combo.Price))
-                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish.Price))
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Combo.ImageUrl));
+              .ForMember(dest => dest.DishName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
+    .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
+    .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ImageUrl : src.Combo != null ? src.Combo.ImageUrl : null))
+    .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.Price : src.Combo != null ? src.Combo.Price : (decimal?)null));
 
             CreateMap<Notification, NotificationAllDTO>().ReverseMap();
             CreateMap<NotificationCreateDTO, Notification>();
             CreateMap<Address, AddressDTO1>();
 
-            CreateMap<OrderEmailDTO,Account>()
-              .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+          
             CreateMap<OrderEmailDTO, Guest>()
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
         }
