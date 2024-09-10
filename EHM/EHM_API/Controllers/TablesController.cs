@@ -5,6 +5,7 @@ using EHM_API.DTOs.TableDTO;
 using EHM_API.Services;
 using EHM_API.DTOs.TableDTO.Manager;
 using Microsoft.AspNetCore.Authorization;
+using EHM_API.Repositories;
 
 namespace EHM_API.Controllers
 {
@@ -13,12 +14,14 @@ namespace EHM_API.Controllers
 	public class TablesController : ControllerBase
 	{
 		private readonly ITableService _service;
+        private readonly ITableRepository _tableRepository;
 
-		public TablesController(ITableService service)
-		{
-			_service = service;
-		}
-       
+        public TablesController(ITableService service, ITableRepository tableRepository)
+        {
+            _service = service;
+            _tableRepository = tableRepository;
+        }
+
         [HttpGet("{id}")]
         public async Task <IActionResult> GetById(int id)
         {
@@ -90,7 +93,7 @@ namespace EHM_API.Controllers
             try
             {
                 await _service.DeleteTableWithDependenciesAsync(tableId);
-                return Ok(new { message = "Table and related records deleted successfully." });
+                return Ok(new { message = "Table processed successfully." });
             }
             catch (Exception ex)
             {
@@ -105,6 +108,25 @@ namespace EHM_API.Controllers
             {
                 await _service.SetTablesFloorToNullAsync(floor);
                 return Ok(new { message = "Floor set to null for all tables on the given floor." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        [HttpGet("status2-floor-null")]
+        public async Task<IActionResult> GetTablesWithStatus2AndFloorNull()
+        {
+            var tables = await _tableRepository.GetTablesWithStatus2AndFloorNullAsync();
+            return Ok(tables);
+        }
+        [HttpGet("available-tables")]
+        public async Task<IActionResult> GetAvailableTables(DateTime reservationTime)
+        {
+            try
+            {
+                var availableTables = await _tableRepository.GetAvailableTablesAsync(reservationTime);
+                return Ok(availableTables);
             }
             catch (Exception ex)
             {
