@@ -9,6 +9,9 @@
         public int? InvoiceId { get; set; }
         public decimal? TotalAmount { get; set; }
         public string? GuestPhone { get; set; }
+        public string? EmailOfGuest { get; set; }
+        public int AccountId { get; set; }
+        public string? EmailOfAccount { get; set; }
         public decimal Deposits { get; set; }
         public string? GuestAddress { get; set; }
         public string? ConsigneeName { get; set; }
@@ -27,8 +30,10 @@
 		public int PaymentStatus { get; set; }
 		public DateTime? PaymentTime { get; set; }
 		public string? Taxcode { get; set; }
-
-		public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
+        public int? ShipId { get; set; }
+        public string? CancelBy { get; set; }
+        public DateTime? ShipTime { get; set; }
+        public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
 		public IEnumerable<TableOfOrderDTO> Tables { get; set; }
 
 	}

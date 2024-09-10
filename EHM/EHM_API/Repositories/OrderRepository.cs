@@ -47,6 +47,7 @@ public class OrderRepository : IOrderRepository
 			.Include(o => o.Account)
 			.Include(d => d.Discount)
 			.Include(o => o.Address)
+			.Include(o => o.GuestPhoneNavigation)
 			.Include(o => o.Invoice)
 			.Include(o => o.OrderDetails)
 				.ThenInclude(od => od.Combo)
