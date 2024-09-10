@@ -141,11 +141,23 @@ namespace EHM_API.Services
                 throw new Exception("Table not found.");
             }
 
-            await _repository.DeleteOrderTableByTableIdAsync(tableId);
-            await _repository.DeleteTableReservationByTableIdAsync(tableId);
+            // Kiểm tra xem bàn có trong OrderTable hoặc TableReservation không
+            bool hasOrderTable = await _repository.HasOrderTableAsync(tableId);
+            bool hasTableReservation = await _repository.HasTableReservationAsync(tableId);
 
-            await _repository.DeleteTableAsync(tableId);
+            if (hasOrderTable || hasTableReservation)
+            {
+                // Nếu bàn có trong OrderTable hoặc TableReservation, chỉ cập nhật status lên 2
+                table.Status = 2;
+                await _repository.UpdateTableAsync(table); // Hàm cập nhật thông tin của Table
+            }
+            else
+            {
+                // Nếu không có, xóa bàn
+                await _repository.DeleteTableAsync(tableId);
+            }
         }
+
         public async Task SetTablesFloorToNullAsync(int floor)
         {
 

@@ -7,6 +7,7 @@ namespace EHM_API.Models
     {
         public Order()
         {
+            Notifications = new HashSet<Notification>();
             OrderDetails = new HashSet<OrderDetail>();
             Reservations = new HashSet<Reservation>();
         }
@@ -32,6 +33,7 @@ namespace EHM_API.Models
         public virtual Discount? Discount { get; set; }
         public virtual Guest? GuestPhoneNavigation { get; set; }
         public virtual Invoice? Invoice { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<Reservation> Reservations { get; set; }
         public virtual ICollection<OrderTable> OrderTables { get; set; }

@@ -123,35 +123,20 @@ namespace EHM_API.Repositories
             return _context.TableReservations.Any(tr => tr.TableId == tableId);
         }
 
-        public async Task DeleteTableIfNotInReservation(int tableId)
+        public async Task<bool> HasOrderTableAsync(int tableId)
         {
-            var table = await _context.Tables.FindAsync(tableId);
-            if (table != null && !TableExistsInReservation(tableId))
-            {
-                _context.Tables.Remove(table);
-                await _context.SaveChangesAsync();
-            }
-        }
-        public async Task DeleteOrderTableByTableIdAsync(int tableId)
-        {
-            var orderTables = _context.OrderTables.Where(ot => ot.TableId == tableId);
-            if (orderTables.Any())
-            {
-                _context.OrderTables.RemoveRange(orderTables);
-                await _context.SaveChangesAsync();
-            }
+            return await _context.OrderTables.AnyAsync(ot => ot.TableId == tableId);
         }
 
-        public async Task DeleteTableReservationByTableIdAsync(int tableId)
+        public async Task<bool> HasTableReservationAsync(int tableId)
         {
-            var tableReservations = _context.TableReservations.Where(tr => tr.TableId == tableId);
-            if (tableReservations.Any())
-            {
-                _context.TableReservations.RemoveRange(tableReservations);
-                await _context.SaveChangesAsync();
-            }
+            return await _context.TableReservations.AnyAsync(tr => tr.TableId == tableId);
         }
 
+        public async Task<List<Table>> GetTablesByFloorAsync(int floor)
+        {
+            return await _context.Tables.Where(t => t.Floor == floor).ToListAsync();
+        }
         public async Task DeleteTableAsync(int tableId)
         {
             var table = await GetTableByIdAsync(tableId);
@@ -161,12 +146,7 @@ namespace EHM_API.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task<List<Table>> GetTablesByFloorAsync(int floor)
-        {
-            return await _context.Tables.Where(t => t.Floor == floor).ToListAsync();
-        }
 
-     
         public async Task UpdateTableFloorToNullAsync(Table table)
         {
             table.Floor = null;
@@ -198,7 +178,51 @@ namespace EHM_API.Repositories
             // Kết hợp hai danh sách
             return reservationsWithTable.Union(reservationsWithoutTable).ToList();
         }
+        public async Task<List<Table>> GetTablesWithStatus2AndFloorNullAsync()
+        {
+            return await _context.Tables
+                .Where(t => t.Status == 2 && t.Floor == null)
+                .ToListAsync();
+        }
+        public async Task<List<Table>> GetAvailableTablesAsync(DateTime reservationTime)
+        {
+            // Khoảng thời gian +/- 3 tiếng so với reservationTime
+            var timeRangeStart = reservationTime.AddHours(-3);
+            var timeRangeEnd = reservationTime.AddHours(3);
+            var now = DateTime.Now;
 
+            // Lấy các bàn chưa có trong bất kỳ đơn đặt bàn nào (bàn trống)
+            var freeTables = await _context.Tables
+                .Where(t => !t.TableReservations.Any()) // Bàn chưa được xếp cho đơn nào
+                .ToListAsync();
+
+            // Lấy các bàn có đơn đặt bàn trong khoảng thời gian +/- 3 tiếng so với reservationTime
+            var reservedTablesInRange = await _context.TableReservations
+                .Where(tr => tr.Reservation.ReservationTime >= timeRangeStart
+                          && tr.Reservation.ReservationTime <= timeRangeEnd)
+                .Select(tr => tr.TableId)
+                .ToListAsync();
+
+            // Lọc ra các bàn đang hoạt động nếu reservationTime gần thời gian hiện tại
+            var activeTables = new List<int>();
+            if ((reservationTime - now).TotalHours < 3)
+            {
+                activeTables = await _context.Tables
+                    .Where(t => t.Status == 1) // Status 1: Đang hoạt động
+                    .Select(t => t.TableId)
+                    .ToListAsync();
+            }
+
+            // Lấy tất cả các bàn
+            var allTables = await _context.Tables.ToListAsync();
+
+            // Chọn những bàn không có trong reservedTablesInRange và activeTables
+            var availableTables = allTables
+                .Where(t => !reservedTablesInRange.Contains(t.TableId) && !activeTables.Contains(t.TableId))
+                .ToList();
+
+            return availableTables;
+        }
     }
 }
 
