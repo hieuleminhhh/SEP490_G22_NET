@@ -24,6 +24,6 @@ namespace EHM_API.Repositories
 		Task<Address?> GetOrCreateAddressTakeOut(TakeOutDTO takeOutDTO);
 
 		Task<int> TakeOut(TakeOutDTO takeOutDTO);
-
+		Task<List<Order>> GetOrdersByAccountIdAsync(int accountId);
     }
 }

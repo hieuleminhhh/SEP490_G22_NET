@@ -626,6 +626,35 @@ namespace EHM_API.Services
                 TotalAmount = totalAmount
             };
         }
+        public async Task<OrderEmailDTO> GetEmailByOrderIdAsync(int orderId)
+        {
+            var order = await _orderRepository.GetOrderById1Async(orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found.");
+            }
 
+            string? email = null;
+
+            if (order.AccountId.HasValue && order.Account != null)
+            {
+                // Lấy email từ Account nếu có AccountId
+                email = order.Account.Email;
+            }
+            else if (!order.AccountId.HasValue && order.GuestPhoneNavigation != null)
+            {
+                // Lấy email từ Guest nếu không có AccountId
+                email = order.GuestPhoneNavigation.Email;
+            }
+
+            // Tạo đối tượng DTO để trả về
+            var orderEmailDto = new OrderEmailDTO
+            {
+                OrderId = order.OrderId,
+                Email = email
+            };
+
+            return orderEmailDto;
+        }
     }
 }

@@ -271,9 +271,19 @@ namespace EHM_API.Controllers
                 });
             }
         }
-
-
-
+        [HttpGet("account/{accountId}")]
+        public async Task<IActionResult> GetOrdersByAccountId(int accountId)
+        {
+            try
+            {
+                var orders = await _cartService.GetOrdersByAccountIdAsync(accountId);
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
     }
 

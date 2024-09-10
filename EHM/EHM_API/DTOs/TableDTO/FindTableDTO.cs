@@ -6,8 +6,9 @@
 		public int? Status { get; set; }
 		public int? Capacity { get; set; }
 		public int? Floor { get; set; }
+        public string? Lable { get; set; }
 
-		// Danh sách các bàn được ghép
-		public List<FindTableDTO> CombinedTables { get; set; }
+        // Danh sách các bàn được ghép
+        public List<FindTableDTO> CombinedTables { get; set; }
 	}
 }

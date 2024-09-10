@@ -1190,6 +1190,7 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders
             .Include(o => o.Invoice)
             .Include(o => o.Address)
+			.Include(o => o.Account)
             .Include(o => o.GuestPhoneNavigation)
             .Include(o => o.OrderDetails)
                 .ThenInclude(od => od.Dish)
@@ -1221,4 +1222,12 @@ public class OrderRepository : IOrderRepository
 
         await _context.SaveChangesAsync();
     }
+    public async Task<Order?> GetOrderById1Async(int orderId)
+    {
+        return await _context.Orders
+            .Include(o => o.Account)
+            .Include(o => o.GuestPhoneNavigation)
+            .FirstOrDefaultAsync(o => o.OrderId == orderId);
+    }
+
 }
