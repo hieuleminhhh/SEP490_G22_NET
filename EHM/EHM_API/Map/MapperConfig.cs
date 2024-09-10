@@ -19,6 +19,7 @@ using EHM_API.DTOs.MaterialDTO;
 using EHM_API.DTOs.NewDTO;
 using EHM_API.DTOs.NotificationDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
+using EHM_API.DTOs.OrderDTO.Cashier;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.OrderTableDTO;
@@ -81,7 +82,8 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentTime : (DateTime?)null))
                 .ForMember(dest => dest.Taxcode, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.Taxcode : null))
                 .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice != null ? src.Invoice.PaymentStatus : 0))
-
+                 .ForMember(dest => dest.EmailOfAccount, opt => opt.MapFrom(src => src.Account != null ? src.Account.Email : null))
+                  .ForMember(dest => dest.EmailOfGuest, opt => opt.MapFrom(src => src.GuestPhoneNavigation != null ? src.GuestPhoneNavigation.Email : null))
                 .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
                 .ForMember(dest => dest.Tables, opt => opt.MapFrom(src => src.OrderTables.Select(ot => ot.Table))).ReverseMap();
 
@@ -804,6 +806,11 @@ namespace EHM_API.Map
             CreateMap<Notification, NotificationAllDTO>().ReverseMap();
             CreateMap<NotificationCreateDTO, Notification>();
             CreateMap<Address, AddressDTO1>();
+
+            CreateMap<OrderEmailDTO,Account>()
+              .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+            CreateMap<OrderEmailDTO, Guest>()
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
         }
 
 

@@ -9,6 +9,9 @@
         public int? InvoiceId { get; set; }
         public decimal? TotalAmount { get; set; }
         public string? GuestPhone { get; set; }
+        public string? EmailOfGuest { get; set; }
+        public int AccountId { get; set; }
+        public string? EmailOfAccount { get; set; }
         public decimal Deposits { get; set; }
         public string? GuestAddress { get; set; }
         public string? ConsigneeName { get; set; }
