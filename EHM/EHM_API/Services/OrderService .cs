@@ -458,8 +458,9 @@ namespace EHM_API.Services
 
 			return new CancelationReasonDTO
 			{
-				CancelationReason = order.CancelationReason
-			};
+				CancelationReason = order.CancelationReason,
+                CancelBy = order.CancelBy
+            };
 
 		}
 
