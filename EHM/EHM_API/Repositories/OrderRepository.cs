@@ -1079,7 +1079,7 @@ public class OrderRepository : IOrderRepository
             .ToListAsync();
     }
 
-    public async Task<Order?> UpdateCancelationReasonAsync(int orderId, string? reason)
+    public async Task<Order?> UpdateCancelationReasonAsync(int orderId, string? reason, string? cancelBy)
     {
         var order = await _context.Orders.FindAsync(orderId);
         if (order == null)
@@ -1088,6 +1088,7 @@ public class OrderRepository : IOrderRepository
         }
 		order.Status = 5;
         order.CancelationReason = reason;
+		order.CancelBy = cancelBy;
         _context.Orders.Update(order);
         await _context.SaveChangesAsync();
 

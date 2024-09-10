@@ -319,7 +319,7 @@ namespace EHM_API.Repositories
 				.ContinueWith(task => task.Result.Select(x => (x.Table, x.ReservationTime)).ToList());
 		}
 
-		public async Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel)
+		public async Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel, string? cancelBy)
 		{
 			var reservation = await GetReservationByIdAsync(reservationId);
 			if (reservation == null)
@@ -331,7 +331,7 @@ namespace EHM_API.Repositories
 
 			if (reservation.OrderId.HasValue)
 			{
-				await _orderRepository.UpdateCancelationReasonAsync(reservation.OrderId.Value, reasonCancel);
+				await _orderRepository.UpdateCancelationReasonAsync(reservation.OrderId.Value, reasonCancel, cancelBy);
 			}
 
 			_context.Reservations.Update(reservation);

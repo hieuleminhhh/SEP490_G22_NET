@@ -218,7 +218,7 @@ namespace EHM_API.Services
 				throw new ArgumentNullException(nameof(reasonCancelDTO));
 			}
 
-			var updatedReservation = await _repository.UpdateReasonCancelAsync(reservationId, reasonCancelDTO.ReasonCancel);
+			var updatedReservation = await _repository.UpdateReasonCancelAsync(reservationId, reasonCancelDTO.ReasonCancel, reasonCancelDTO.ReasonCancel);
 
 			if (updatedReservation == null)
 			{

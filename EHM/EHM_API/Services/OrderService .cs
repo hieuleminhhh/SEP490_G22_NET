@@ -439,7 +439,7 @@ namespace EHM_API.Services
 				throw new ArgumentNullException(nameof(cancelationReasonDTO));
 			}
 
-			var order = await _orderRepository.UpdateCancelationReasonAsync(orderId, cancelationReasonDTO.CancelationReason);
+			var order = await _orderRepository.UpdateCancelationReasonAsync(orderId, cancelationReasonDTO.CancelationReason, cancelationReasonDTO.CancelBy);
 			if (order == null)
 			{
 				return null;
