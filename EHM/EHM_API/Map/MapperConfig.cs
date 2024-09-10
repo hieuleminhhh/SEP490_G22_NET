@@ -801,6 +801,8 @@ namespace EHM_API.Map
                 .ForMember(dest => dest.DishName, opt => opt.MapFrom(src => src.Dish.ItemName))
                 .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo))
                  .ForMember(dest => dest.ImageUrlOfDish, opt => opt.MapFrom(src => src.Dish.ImageUrl))
+                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Combo.Price))
+                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish.Price))
                 .ForMember(dest => dest.ImageUrlOfCombo, opt => opt.MapFrom(src => src.Combo.ImageUrl));
 
             CreateMap<Notification, NotificationAllDTO>().ReverseMap();

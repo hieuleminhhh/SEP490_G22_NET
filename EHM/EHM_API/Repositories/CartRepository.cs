@@ -431,6 +431,7 @@ namespace EHM_API.Repositories
                     .ThenInclude(od => od.Combo)
                 .Include(o => o.Address)
                 .Where(o => o.AccountId == accountId)
+				.OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
 
