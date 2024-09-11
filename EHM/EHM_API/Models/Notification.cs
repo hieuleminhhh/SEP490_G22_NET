@@ -10,6 +10,7 @@ namespace EHM_API.Models
         public int? AccountId { get; set; }
         public int? OrderId { get; set; }
         public int? Type { get; set; }
+        public DateTime? Time {  get; set; } 
 
         public virtual Account? Order { get; set; }
         public virtual Order? OrderNavigation { get; set; }
