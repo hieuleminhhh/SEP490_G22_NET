@@ -204,7 +204,15 @@ namespace EHM_API.Services
             {
                 ReservationId = r.ReservationId,
                 ReservationTime = r.ReservationTime,
-                TableId = r.TableReservations?.FirstOrDefault()?.TableId // Kiểm tra TableReservations có null hay không
+                GuestNumber = r.GuestNumber,
+                Note = r.Note,
+                Status = r.Status,
+                ReasonCancel = r.ReasonCancel,
+                TableId = r.TableReservations?.FirstOrDefault()?.TableId, // Lấy TableId từ TableReservation
+
+                // Lấy thông tin từ Address
+                ConsigneeName = r.Address.ConsigneeName,
+                GuestPhone = r.Address.GuestPhone
             }).ToList();
         }
 
