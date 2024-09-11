@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.AccountDTO;
+using EHM_API.DTOs.Email;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,6 +23,5 @@ namespace EHM_API.Services
 
         Task<bool> UpdateProfileAsync(int accountId, UpdateProfileDTO dto);
         Task<bool> ChangePasswordAsync(int accountId, ChangePasswordDTO dto);
-
-	}
+    }
 }

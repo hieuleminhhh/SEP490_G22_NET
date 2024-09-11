@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.AccountDTO;
+using EHM_API.DTOs.Email;
 using EHM_API.Models;
 using EHM_API.Repositories;
+using System.Net.Mail;
+using System.Net;
 
 namespace EHM_API.Services
 {
@@ -10,13 +13,14 @@ namespace EHM_API.Services
         private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
 
+
         public AccountService(IAccountRepository accountRepository, IMapper mapper)
         {
             _accountRepository = accountRepository;
             _mapper = mapper;
         }
 
-		public async Task<CreateAccountDTO> CreateAccountAsync(CreateAccountDTO accountDTO)
+        public async Task<CreateAccountDTO> CreateAccountAsync(CreateAccountDTO accountDTO)
 		{
 			var account = _mapper.Map<Account>(accountDTO);
 
@@ -141,6 +145,5 @@ namespace EHM_API.Services
             // Lưu thay đổi
             return await _accountRepository.UpdateProfileAccount(account);
         }
-
     }
 }

@@ -183,44 +183,85 @@ namespace EHM_API.Repositories
             return new PagedResult<ViewComboDTO>(comboDTOs, totalCombos, page, pageSize);
         }
 
-		public async Task<PagedResult<ViewComboDTO>> GetComboActive(string search, int page, int pageSize)
-		{
-			var query = _context.Combos.AsQueryable();
-			query = query.Where(d => d.IsActive == true);
+        public async Task<PagedResult<ViewComboDTO>> GetComboActive(string search, int page, int pageSize)
+        {
+            var query = _context.Combos.AsQueryable();
 
-			if (!string.IsNullOrEmpty(search))
-			{
-				search = search.ToLower();
-				query = query.Where(d => d.NameCombo.ToLower().Contains(search));
-			}
+            // Lọc các combo có IsActive = true
+            query = query.Where(c => c.IsActive == true);
 
-			var totalCombos = await query.CountAsync();
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower();
+                query = query.Where(c => c.NameCombo.ToLower().Contains(search));
+            }
 
-			var combos = await query.Include(c => c.ComboDetails)
-									.ThenInclude(cd => cd.Dish)
-									.Skip((page - 1) * pageSize)
-									.Take(pageSize)
-									.ToListAsync();
+            // Tổng số combo trước khi phân trang
+            var totalCombos = await query.CountAsync();
 
-			var comboDTOs = combos.Select(c => new ViewComboDTO
-			{
-				ComboId = c.ComboId,
-				NameCombo = c.NameCombo,
-				Price = c.Price,
-				Note = c.Note,
-				ImageUrl = c.ImageUrl,
-				IsActive = c.IsActive,
-				Dishes = c.ComboDetails.Select(cd => new DishDTO
-				{
-					DishId = cd.Dish.DishId,
-					ItemName = cd.Dish.ItemName,
-					Price = cd.Dish.Price
-				}).ToList()
-			}).ToList();
+            // Lấy danh sách combo có phân trang
+            var combos = await query
+                .Include(c => c.ComboDetails)
+                .ThenInclude(cd => cd.Dish)
+                .ToListAsync();
 
-			return new PagedResult<ViewComboDTO>(comboDTOs, totalCombos, page, pageSize);
-		}
-		public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
+            // Ngày hiện tại (chỉ tính phần ngày, bỏ qua thời gian)
+            var today = DateTime.Now.Date;
+
+            // Lấy danh sách OrderDetails có điều kiện:
+            // 1. RecevingOrder.Date == today hoặc RecevingOrder == null && OrderDate.Date == today
+            // 2. Order.Status là 2, 3, 4, 6, 7
+            var relevantOrderDetails = await _context.OrderDetails
+                .Include(od => od.Order)
+                .Where(od =>
+                    (od.Order.RecevingOrder.HasValue && od.Order.RecevingOrder.Value.Date == today)
+                    || (!od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue && od.Order.OrderDate.Value.Date == today)
+                )
+                .Where(od => od.Order.Status == 2 || od.Order.Status == 3 || od.Order.Status == 4 || od.Order.Status == 6 || od.Order.Status == 7)
+                .ToListAsync();
+
+            // Tính tổng số lượng combo trong OrderDetails
+            foreach (var combo in combos)
+            {
+                var totalComboOrdered = relevantOrderDetails
+                    .Where(od => od.ComboId == combo.ComboId)
+                    .Sum(od => od.Quantity ?? 0); // Tính tổng số lượng combo
+
+                // Trừ số lượng combo đã được đặt khỏi số lượng hiện tại
+                combo.QuantityCombo -= totalComboOrdered;
+
+                // Đảm bảo số lượng không âm
+                if (combo.QuantityCombo < 0)
+                {
+                    combo.QuantityCombo = 0;
+                }
+            }
+
+            // Phân trang
+            var pagedCombos = combos.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            // Chuyển đổi danh sách combo sang DTO
+            var comboDTOs = pagedCombos.Select(c => new ViewComboDTO
+            {
+                ComboId = c.ComboId,
+                NameCombo = c.NameCombo,
+                Price = c.Price,
+                Note = c.Note,
+                ImageUrl = c.ImageUrl,
+                IsActive = c.IsActive,
+                QuantityCombo = c.QuantityCombo, // Thêm QuantityCombo vào DTO
+                Dishes = c.ComboDetails.Select(cd => new DishDTO
+                {
+                    DishId = cd.Dish.DishId,
+                    ItemName = cd.Dish.ItemName,
+                    Price = cd.Dish.Price
+                }).ToList()
+            }).ToList();
+
+            return new PagedResult<ViewComboDTO>(comboDTOs, totalCombos, page, pageSize);
+        }
+
+        public async Task<Combo> UpdateComboStatusAsync(int comboId, bool isActive)
         {
             var cb = await _context.Combos.FindAsync(comboId);
             if (cb == null)

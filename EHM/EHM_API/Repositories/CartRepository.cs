@@ -422,7 +422,19 @@ namespace EHM_API.Repositories
 
 			return order.OrderId;
 		}
+        public async Task<List<Order>> GetOrdersByAccountIdAsync(int accountId)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Dish)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Combo)
+                .Include(o => o.Address)
+                .Where(o => o.AccountId == accountId)
+				.OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
 
 
-	}
+    }
 }

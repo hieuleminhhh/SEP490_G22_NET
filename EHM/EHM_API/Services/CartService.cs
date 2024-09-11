@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
 using EHM_API.Repositories;
@@ -18,16 +19,18 @@ namespace EHM_API.Services
 		private readonly IComboRepository _comboRepository;
 		private readonly IDiscountRepository _discountRepository;
 		private readonly IMapper _mapper;
+		private readonly EHMDBContext _context;
 
-		public CartService(ICartRepository cartRepository, IComboRepository comboRepository, IMapper mapper, IDiscountRepository discountRepository)
-		{
-			_cartRepository = cartRepository;
-			_comboRepository = comboRepository;
-			_mapper = mapper;
-			_discountRepository = discountRepository;
-		}
+        public CartService(ICartRepository cartRepository, IComboRepository comboRepository, IDiscountRepository discountRepository, IMapper mapper, EHMDBContext context)
+        {
+            _cartRepository = cartRepository;
+            _comboRepository = comboRepository;
+            _discountRepository = discountRepository;
+            _mapper = mapper;
+            _context = context;
+        }
 
-		public List<Cart2DTO> GetCart()
+        public List<Cart2DTO> GetCart()
 		{
 			return _cartRepository.GetCart();
 		}
@@ -129,9 +132,9 @@ namespace EHM_API.Services
 			var finalTotalAmount = totalAmount;
 
 			var order = new Order
-			{   
-				AccountId = checkoutDTO.AccountId,
-				OrderDate = DateTime.Now,
+			{
+                AccountId = checkoutDTO.AccountId != 0 ? (int?)checkoutDTO.AccountId : null,
+                OrderDate = DateTime.Now,
 				Status = checkoutDTO.Status ?? 0,
 				RecevingOrder = checkoutDTO.RecevingOrder,
 				GuestPhone = checkoutDTO.GuestPhone,
@@ -167,8 +170,55 @@ namespace EHM_API.Services
 
 			return await _cartRepository.TakeOut(takeOutDTO);
 		}
+        public async Task<OrdersByAccountDTO> GetOrdersByAccountIdAsync(int accountId)
+        {
+            var orders = await _cartRepository.GetOrdersByAccountIdAsync(accountId);
+            if (orders == null || !orders.Any())
+            {
+                throw new Exception("Không có đơn hàng nào cho tài khoản này");
+            }
+
+            var ordersByAccount = new OrdersByAccountDTO
+            {
+                AccountId = accountId,
+                Orders = orders.Select(order =>
+                {
+                    // Lấy discount dựa trên DiscountId nếu có
+                    var discount = order.DiscountId.HasValue
+                        ? _context.Discounts.FirstOrDefault(d => d.DiscountId == order.DiscountId)
+                        : null;
+
+                    // Tính toán totalAmountAfterDiscount
+                    var totalAmountAfterDiscount = order.TotalAmount;
+
+                    if (discount != null && discount.DiscountPercent.HasValue)
+                    {
+                        totalAmountAfterDiscount = order.TotalAmount * (1 - (discount.DiscountPercent.Value / 100m));
+                    }
+
+                    // Mapping dữ liệu từ Order entity sang DTO
+                    return new OrderByID
+                    {
+                        OrderId = order.OrderId,
+                        OrderDate = order.OrderDate,
+                        TotalAmount = order.TotalAmount,
+                        TotalAmountAfterDiscount = totalAmountAfterDiscount,
+                        GuestPhone = order.GuestPhone,
+                        Note = order.Note,
+                        Status = order.Status,
+                        Type = order.Type,
+                        DiscountId = order.DiscountId,
+                        CancelationReason = order.CancelationReason,
+                        Address = _mapper.Map<AddressDTO1>(order.Address),
+                        OrderDetails = _mapper.Map<List<OrderDetailDTO2>>(order.OrderDetails)
+                    };
+                }).ToList()
+            };
+
+            return ordersByAccount;
+        }
 
 
 
-	}
+    }
 }

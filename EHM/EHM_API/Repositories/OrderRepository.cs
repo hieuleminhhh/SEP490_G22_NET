@@ -47,6 +47,7 @@ public class OrderRepository : IOrderRepository
 			.Include(o => o.Account)
 			.Include(d => d.Discount)
 			.Include(o => o.Address)
+			.Include(o => o.GuestPhoneNavigation)
 			.Include(o => o.Invoice)
 			.Include(o => o.OrderDetails)
 				.ThenInclude(od => od.Combo)
@@ -1078,7 +1079,7 @@ public class OrderRepository : IOrderRepository
             .ToListAsync();
     }
 
-    public async Task<Order?> UpdateCancelationReasonAsync(int orderId, string? reason)
+    public async Task<Order?> UpdateCancelationReasonAsync(int orderId, string? reason, string? cancelBy)
     {
         var order = await _context.Orders.FindAsync(orderId);
         if (order == null)
@@ -1087,6 +1088,7 @@ public class OrderRepository : IOrderRepository
         }
 		order.Status = 5;
         order.CancelationReason = reason;
+		order.CancelBy = cancelBy;
         _context.Orders.Update(order);
         await _context.SaveChangesAsync();
 
@@ -1190,6 +1192,7 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders
             .Include(o => o.Invoice)
             .Include(o => o.Address)
+			.Include(o => o.Account)
             .Include(o => o.GuestPhoneNavigation)
             .Include(o => o.OrderDetails)
                 .ThenInclude(od => od.Dish)
@@ -1221,4 +1224,12 @@ public class OrderRepository : IOrderRepository
 
         await _context.SaveChangesAsync();
     }
+    public async Task<Order?> GetOrderById1Async(int orderId)
+    {
+        return await _context.Orders
+            .Include(o => o.Account)
+            .Include(o => o.GuestPhoneNavigation)
+            .FirstOrDefaultAsync(o => o.OrderId == orderId);
+    }
+
 }

@@ -18,6 +18,7 @@ using EHM_API.Models;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using Microsoft.AspNetCore.Authorization;
 using EHM_API.DTOs.OrderDTO.Cashier;
+using Microsoft.EntityFrameworkCore;
 
 namespace EHM_API.Controllers
 {
@@ -29,22 +30,22 @@ namespace EHM_API.Controllers
 		private readonly ITableService _tableService;
 		private readonly IComboService _comboService;
 		private readonly IDishService _dishService;
-
+		private readonly EHMDBContext _context;
 		private readonly ILogger<OrderController> _logger;
         private readonly IMapper _mapper;
 
-        public OrderController(IOrderService orderService, IMapper mapper, ILogger<OrderController> logger, ITableService tableService, IComboService comboService, IDishService dishService)
+        public OrderController(IOrderService orderService, ITableService tableService, IComboService comboService, IDishService dishService, EHMDBContext context, ILogger<OrderController> logger, IMapper mapper)
         {
             _orderService = orderService;
-            _mapper = mapper;
-            _logger = logger;
-            _dishService = dishService;
             _tableService = tableService;
             _comboService = comboService;
+            _dishService = dishService;
+            _context = context;
+            _logger = logger;
+            _mapper = mapper;
         }
 
-
-		[Authorize(Roles = "OrderStaff,Cashier")]
+        [Authorize(Roles = "OrderStaff,Cashier")]
 		[HttpPost]
         public async Task<IActionResult> CreateOrder(CreateOrderDTO createOrderDTO)
         {
@@ -738,9 +739,38 @@ namespace EHM_API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("{orderId}/email")]
+        public async Task<IActionResult> GetOrderEmailByOrderId(int orderId)
+        {
+            try
+            {
+                var orderEmailDTO = await _orderService.GetEmailByOrderIdAsync(orderId);
+                if (orderEmailDTO == null)
+                {
+                    return NotFound(new { message = "Order not found or no associated email." });
+                }
 
+                return Ok(orderEmailDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
-
-
+        [HttpGet("CheckDishInOrderDetails/{dishId}")]
+        public async Task<ActionResult<bool>> CheckDishInOrderDetails(int dishId)
+        {
+            var dishExistsInOrder = await _context.OrderDetails
+                .AnyAsync(od => od.DishId == dishId);
+            return Ok(dishExistsInOrder);
+        }
+        [HttpGet("CheckComboInOrderDetails/{comboId}")]
+        public async Task<ActionResult<bool>> CheckComboInOrderDetails(int comboId)
+        {
+            var comboExistsInOrder = await _context.OrderDetails
+                .AnyAsync(od => od.ComboId == comboId);
+            return Ok(comboExistsInOrder);
+        }
     }
 }

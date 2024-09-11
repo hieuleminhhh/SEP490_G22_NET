@@ -35,7 +35,7 @@ public interface IOrderRepository
     Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int tableId);
     Task<int> CountOrderByDiscountIdAsync(int discountId);
     Task<IEnumerable<Order>> GetOrderDetailsForStaffType1Async();
-    Task<Order?> UpdateCancelationReasonAsync(int orderId, string? reason);
+    Task<Order?> UpdateCancelationReasonAsync(int orderId, string? reason, string? cancelBy);
 
     Task<Order?> GetOrderById(int orderId);
 	Task<IEnumerable<OrderTable>> GetOrderTablesByOrderIdAsync(int orderId);
@@ -47,5 +47,6 @@ public interface IOrderRepository
     Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto);
     Task<Order?> GetOrderByIdAsync(int orderId);
     Task UpdateOrderForTotalAsync(Order order);
+    Task<Order?> GetOrderById1Async(int orderId);
 }
 

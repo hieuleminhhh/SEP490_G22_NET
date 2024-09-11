@@ -9,6 +9,7 @@ namespace EHM_API.Models
         {
             Invoices = new HashSet<Invoice>();
             News = new HashSet<News>();
+            Notifications = new HashSet<Notification>();
             Orders = new HashSet<Order>();
         }
 
@@ -25,6 +26,7 @@ namespace EHM_API.Models
 
         public virtual ICollection<Invoice> Invoices { get; set; }
         public virtual ICollection<News> News { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
     }
 }

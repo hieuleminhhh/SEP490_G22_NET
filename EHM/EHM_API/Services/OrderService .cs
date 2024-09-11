@@ -439,7 +439,7 @@ namespace EHM_API.Services
 				throw new ArgumentNullException(nameof(cancelationReasonDTO));
 			}
 
-			var order = await _orderRepository.UpdateCancelationReasonAsync(orderId, cancelationReasonDTO.CancelationReason);
+			var order = await _orderRepository.UpdateCancelationReasonAsync(orderId, cancelationReasonDTO.CancelationReason, cancelationReasonDTO.CancelBy);
 			if (order == null)
 			{
 				return null;
@@ -458,8 +458,9 @@ namespace EHM_API.Services
 
 			return new CancelationReasonDTO
 			{
-				CancelationReason = order.CancelationReason
-			};
+				CancelationReason = order.CancelationReason,
+                CancelBy = order.CancelBy
+            };
 
 		}
 
@@ -626,6 +627,29 @@ namespace EHM_API.Services
                 TotalAmount = totalAmount
             };
         }
+        public async Task<OrderEmailDTO> GetEmailByOrderIdAsync(int orderId)
+        {
+            var order = await _orderRepository.GetOrderById1Async(orderId);
+            if (order == null)
+            {
+                throw new Exception("Order not found.");
+            }
 
+            string? email = null;
+
+       
+            if (order.GuestPhoneNavigation != null)
+            {
+                email = order.GuestPhoneNavigation.Email;
+            }
+
+            var orderEmailDto = new OrderEmailDTO
+            {
+                OrderId = order.OrderId,
+                Email = email
+            };
+
+            return orderEmailDto;
+        }
     }
 }
