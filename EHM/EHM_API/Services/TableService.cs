@@ -11,6 +11,7 @@ using EHM_API.DTOs.TableDTO.Manager;
 using EHM_API.DTOs.Table_ReservationDTO;
 using EHM_API.Models;
 using EHM_API.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace EHM_API.Services
 {
@@ -18,11 +19,13 @@ namespace EHM_API.Services
 	{
 		private readonly ITableRepository _repository;
 		private readonly IMapper _mapper;
+		private readonly EHMDBContext _context;
 
-        public TableService(ITableRepository repository, IMapper mapper)
+        public TableService(ITableRepository repository, IMapper mapper, EHMDBContext context)
         {
             _repository = repository;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<IEnumerable<TableAllDTO>> GetAllTablesAsync()
@@ -158,16 +161,41 @@ namespace EHM_API.Services
             }
         }
 
-        public async Task SetTablesFloorToNullAsync(int floor)
+        public async Task SetTablesFloorAsync(UpdateFloorDTO updateFloorDTO)
         {
+            var currentFloor = updateFloorDTO.CurrentFloor;
+            var newFloor = updateFloorDTO.NewFloor;
 
-            var tables = await _repository.GetTablesByFloorAsync(floor);
-
-            foreach (var table in tables)
+            // Lấy danh sách các bàn ở tầng hiện tại
+            var tables = await _repository.GetTablesByFloorAsync(currentFloor);
+            if (tables == null || !tables.Any())
             {
-                await _repository.UpdateTableFloorToNullAsync(table);
+                throw new Exception($"Không có bàn nào ở tầng {currentFloor}");
             }
+
+            if (newFloor == null || newFloor == 0)
+            {
+                // Nếu tầng mới là null hoặc 0, cập nhật Floor = null và Status = 2
+                foreach (var table in tables)
+                {
+                    table.Floor = null;
+                    table.Status = 2;
+                    _context.Tables.Update(table);
+                }
+            }
+            else
+            {
+                // Nếu tầng mới khác null và khác 0, cập nhật tầng mới và giữ nguyên Status
+                foreach (var table in tables)
+                {
+                    table.Floor = newFloor; // Loại bỏ .Value vì newFloor là kiểu int
+                    _context.Tables.Update(table);
+                }
+            }
+
+            await _context.SaveChangesAsync();
         }
+
         public IEnumerable<TableReservationAllDTO> GetTableReservationsByDate(DateTime reservationTime)
         {
             var reservations = _repository.GetByReservationTime(reservationTime);
