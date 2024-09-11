@@ -101,19 +101,23 @@ namespace EHM_API.Controllers
             }
         }
 
-        [HttpPut("update-floor-to-null/{floor}")]
-        public async Task<IActionResult> UpdateFloorToNull(int floor)
+        [HttpPut("update-floor")]
+        public async Task<IActionResult> UpdateFloor([FromBody] UpdateFloorDTO updateFloorDTO)
         {
             try
             {
-                await _service.SetTablesFloorToNullAsync(floor);
-                return Ok(new { message = "Floor set to null for all tables on the given floor." });
+                await _service.SetTablesFloorAsync(updateFloorDTO);
+                return Ok(new { message = "Cập nhật tầng thành công" });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+
+
+
         [HttpGet("status2-floor-null")]
         public async Task<IActionResult> GetTablesWithStatus2AndFloorNull()
         {

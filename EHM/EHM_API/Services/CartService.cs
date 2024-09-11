@@ -132,9 +132,9 @@ namespace EHM_API.Services
 			var finalTotalAmount = totalAmount;
 
 			var order = new Order
-			{   
-				AccountId = checkoutDTO.AccountId,
-				OrderDate = DateTime.Now,
+			{
+                AccountId = checkoutDTO.AccountId != 0 ? (int?)checkoutDTO.AccountId : null,
+                OrderDate = DateTime.Now,
 				Status = checkoutDTO.Status ?? 0,
 				RecevingOrder = checkoutDTO.RecevingOrder,
 				GuestPhone = checkoutDTO.GuestPhone,
@@ -190,13 +190,29 @@ namespace EHM_API.Services
 
                     // Tính toán totalAmountAfterDiscount
                     var totalAmountAfterDiscount = order.TotalAmount;
-
                     if (discount != null && discount.DiscountPercent.HasValue)
                     {
                         totalAmountAfterDiscount = order.TotalAmount * (1 - (discount.DiscountPercent.Value / 100m));
                     }
 
-                    // Mapping dữ liệu từ Order entity sang DTO
+                    ReservationDTO? reservation = null;
+                    if (order.Type == 3 && order.Reservations != null)
+                    {
+                        var res = order.Reservations.FirstOrDefault(); 
+                        if (res != null)
+                        {
+                            reservation = new ReservationDTO
+                            {
+                                ReservationId = res.ReservationId,
+                                ReservationTime = res.ReservationTime,
+                                GuestNumber = res.GuestNumber,
+                                Note = res.Note,
+                                Status = res.Status
+                            };
+                        }
+                    }
+
+                  
                     return new OrderByID
                     {
                         OrderId = order.OrderId,
@@ -210,15 +226,14 @@ namespace EHM_API.Services
                         DiscountId = order.DiscountId,
                         CancelationReason = order.CancelationReason,
                         Address = _mapper.Map<AddressDTO1>(order.Address),
-                        OrderDetails = _mapper.Map<List<OrderDetailDTO2>>(order.OrderDetails)
+                        OrderDetails = _mapper.Map<List<OrderDetailDTO2>>(order.OrderDetails),
+                        Reservation = reservation
                     };
                 }).ToList()
             };
 
             return ordersByAccount;
         }
-
-
 
     }
 }

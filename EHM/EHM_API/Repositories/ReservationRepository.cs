@@ -1,4 +1,5 @@
-﻿using EHM_API.DTOs.ReservationDTO.Guest;
+﻿using EHM_API.DTOs.CartDTO.Guest;
+using EHM_API.DTOs.ReservationDTO.Guest;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -168,9 +169,10 @@ namespace EHM_API.Repositories
 
 				if (orderDetails.Any())
 				{
-					var order = new Order
-					{
-						OrderDate = DateTime.Now,
+                    var order = new Order
+                    {
+                        AccountId = reservationDTO.AccountId != 0 ? (int?)reservationDTO.AccountId : null,
+                        OrderDate = DateTime.Now,
 						Status = reservationDTO.Status ?? 0,
 						RecevingOrder = reservationDTO.RecevingOrder,
 						TotalAmount = reservationDTO.TotalAmount,
