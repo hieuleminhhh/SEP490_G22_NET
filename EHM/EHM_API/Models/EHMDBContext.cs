@@ -132,7 +132,7 @@ namespace EHM_API.Models
             });
 
             modelBuilder.Entity<ComboDetail>()
-                            .HasKey(cd => new { cd.ComboId, cd.DishId });
+                             .HasKey(cd => new { cd.ComboId, cd.DishId });
 
             modelBuilder.Entity<ComboDetail>()
                 .HasOne(cd => cd.Combo)
@@ -455,7 +455,6 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_OrderTable_Table");
             });
 
-
             modelBuilder.Entity<Reservation>(entity =>
             {
                 entity.ToTable("Reservation");
@@ -532,6 +531,7 @@ namespace EHM_API.Models
                     .WithMany(t => t.TableReservations)
                     .HasForeignKey(tr => tr.TableId);
             });
+
 
             modelBuilder.Entity<Wallet>(entity =>
             {

@@ -35,8 +35,9 @@
         public DateTime? ShipTime { get; set; }
         public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
 		public IEnumerable<TableOfOrderDTO> Tables { get; set; }
+        public ReservationDTOByOrderId? Reservation { get; set; }
 
-	}
+    }
 	public class TableOfOrderDTO
 	{
 		public int TableId { get; set; }
@@ -44,5 +45,13 @@
 		public int? Capacity { get; set; }
 		public int? Floor { get; set; }
 	}
-
+    public class ReservationDTOByOrderId
+    {
+        public int ReservationId { get; set; }
+        public DateTime? ReservationTime { get; set; }
+        public int? GuestNumber { get; set; }
+        public string? Note { get; set; }
+        public int? Status { get; set; }
+        public string? ReasonCancel { get; set; }
+    }
 }

@@ -41,28 +41,39 @@ public class OrderRepository : IOrderRepository
 	}
 
 
-	public async Task<Order> GetByIdAsync(int id)
-	{
-		return await _context.Orders
-			.Include(o => o.Account)
-			.Include(d => d.Discount)
-			.Include(o => o.Address)
-			.Include(o => o.GuestPhoneNavigation)
-			.Include(o => o.Invoice)
-			.Include(o => o.OrderDetails)
-				.ThenInclude(od => od.Combo)
-			.Include(o => o.OrderDetails)
-				.ThenInclude(od => od.Dish)
-				.ThenInclude(d => d.Discount)
-			.Include(o => o.OrderTables)
-				.ThenInclude(ot => ot.Table)
-			.FirstOrDefaultAsync(o => o.OrderId == id);
-	}
+    public async Task<Order> GetByIdAsync(int id)
+    {
+        var order = await _context.Orders
+            .Include(o => o.Account)
+            .Include(d => d.Discount)
+            .Include(o => o.Address)
+            .Include(o => o.GuestPhoneNavigation)
+            .Include(o => o.Invoice)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Combo)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Dish)
+                .ThenInclude(d => d.Discount)
+            .Include(o => o.OrderTables)
+                .ThenInclude(ot => ot.Table)
+            .FirstOrDefaultAsync(o => o.OrderId == id);
+
+        // Conditionally load the Reservations if the Order Type is 3
+        if (order != null && order.Type == 3)
+        {
+            await _context.Entry(order)
+                .Collection(o => o.Reservations)  // Use Collection() for collections
+                .LoadAsync();
+        }
+
+        return order;
+    }
 
 
 
 
-	public async Task<Order> AddAsync(Order order)
+
+    public async Task<Order> AddAsync(Order order)
 	{
 		_context.Orders.Add(order);
 		await _context.SaveChangesAsync();
