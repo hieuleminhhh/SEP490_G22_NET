@@ -1,4 +1,5 @@
-﻿using EHM_API.DTOs.GoogleDTO;
+﻿using EHM_API.DTOs.Email;
+using EHM_API.DTOs.GoogleDTO;
 using EHM_API.Models;
 using EHM_API.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ namespace EHM_API.Services
     {
         private readonly IGoogleRepository _accountRepository;
         private readonly IConfiguration _configuration;
-
+        private readonly Dictionary<string, string> _otpStore = new Dictionary<string, string>();
         public GoogleService(IGoogleRepository accountRepository, IConfiguration configuration)
         {
             _accountRepository = accountRepository;
@@ -77,5 +78,53 @@ namespace EHM_API.Services
             _accountRepository.UpdatePassword(dto.AccountId, dto.NewPassword);
             return true;
         }
+        public string GenerateOTP(string email)
+        {
+            var otp = new Random().Next(100000, 999999).ToString();
+            _otpStore[email] = otp; // Lưu OTP tạm thời
+            Console.WriteLine($"Generated OTP for {email}: {otp}"); // Thêm thông báo gỡ lỗi
+            return otp;
+        }
+
+
+
+
+        public async Task<bool> SendOtpToEmail(string email, string otp)
+        {
+            var emailDto = new SendEmailRequestDTO
+            {
+                ToEmail = email,
+                Subject = "OTP Verification",
+                Body = $"Your OTP code is {otp}"
+            };
+            return await _accountRepository.SendEmailAsync(emailDto);
+        }
+
+
+        public bool VerifyOtp(string email, string otp)
+        {
+            otp = otp.Trim();
+            if (_otpStore.ContainsKey(email))
+            {
+                var storedOtp = _otpStore[email].Trim();
+                if (storedOtp == otp)
+                {
+                    _otpStore.Remove(email); // Xóa OTP sau khi xác minh thành công
+                    Console.WriteLine($"OTP verified for {email}: {otp}"); // Thêm thông báo gỡ lỗi
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine($"OTP mismatch for {email}. Expected: {storedOtp}, Provided: {otp}"); // Thêm thông báo gỡ lỗi
+                }
+            }
+            else
+            {
+                Console.WriteLine($"No OTP found for {email}"); // Thêm thông báo gỡ lỗi
+            }
+            return false;
+        }
+
+
     }
 }

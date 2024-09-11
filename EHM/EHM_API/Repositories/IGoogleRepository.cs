@@ -1,4 +1,5 @@
-﻿using EHM_API.Models;
+﻿using EHM_API.DTOs.Email;
+using EHM_API.Models;
 
 namespace EHM_API.Repositories
 {
@@ -8,5 +9,6 @@ namespace EHM_API.Repositories
         Task AddAsync(Account account);
         Account GetAccountById(int accountId);
         void UpdatePassword(int accountId, string newPassword);
+        Task<bool> SendEmailAsync(SendEmailRequestDTO emailDto);
     }
 }
