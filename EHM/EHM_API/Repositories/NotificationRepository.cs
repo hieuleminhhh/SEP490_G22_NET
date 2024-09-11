@@ -16,8 +16,11 @@ namespace EHM_API.Repositories
 
         public async Task<List<Notification>> GetAllNotificationsAsync()
         {
-            return await _context.Notifications.ToListAsync();
+            return await _context.Notifications
+                .OrderByDescending(n => n.Time)  
+                .ToListAsync();
         }
+
 
         public async Task<Notification?> GetNotificationByIdAsync(int id)
         {
@@ -26,6 +29,7 @@ namespace EHM_API.Repositories
 
         public async Task CreateNotificationAsync(Notification notification)
         {
+            notification.Time = DateTime.Now;
             await _context.Notifications.AddAsync(notification);
             await _context.SaveChangesAsync();
         }
@@ -44,6 +48,23 @@ namespace EHM_API.Repositories
                 _context.Notifications.Remove(notification);
                 await _context.SaveChangesAsync();
             }
+        }
+        public async Task<bool> UpdateIsViewAsync(int notificationId)
+        {
+            var notification = await _context.Notifications.FindAsync(notificationId);
+
+            if (notification == null)
+            {
+                return false; // Không tìm thấy Notification
+            }
+
+            // Cập nhật IsView
+            notification.IsView = true;
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await _context.SaveChangesAsync();
+
+            return true; // Cập nhật thành công
         }
     }
 }
