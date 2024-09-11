@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using ProjectSchedule.Authenticate;
+using EHM_API.DTOs.Email;
 namespace EHM_API.Controllers
 {
     [Route("api/[controller]")]
@@ -31,18 +32,20 @@ namespace EHM_API.Controllers
             _httpClient = httpClient;
             _jwtTokenGenerator = jwtTokenGenerator;
         }
-
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> GoogleRegister([FromBody] GoogleUserInfo request)
         {
+            if (string.IsNullOrEmpty(request.Email))
+            {
+                return BadRequest("Email không được để trống.");
+            }
 
             var account = _accountService.GetByEmail(request.Email);
 
             if (account != null)
             {
                 var token = _jwtTokenGenerator.GenerateJwtToken(account);
-
                 return Ok(new
                 {
                     Message = "Tài khoản với email này đã tồn tại.",
@@ -53,8 +56,38 @@ namespace EHM_API.Controllers
                 });
             }
 
-            var newAccount = await _accountService.RegisterGoogleAccountAsync(request.Email);
+            var otp = _accountService.GenerateOTP(request.Email);
+            var sendOtpResult = await _accountService.SendOtpToEmail(request.Email, otp);
 
+            if (!sendOtpResult)
+            {
+                return BadRequest("Gửi OTP thất bại.");
+            }
+
+            return Ok(new
+            {
+                Message = "OTP đã được gửi đến email của bạn. Vui lòng xác nhận OTP.",
+                Otp = otp // Trả về OTP để kiểm tra
+            });
+        }
+
+
+        [HttpPost("verify-otp")]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Otp))
+            {
+                return BadRequest("Email và OTP không được để trống.");
+            }
+
+            var isOtpValid = _accountService.VerifyOtp(request.Email, request.Otp);
+            if (!isOtpValid)
+            {
+                return BadRequest("OTP không hợp lệ.");
+            }
+
+            var newAccount = await _accountService.RegisterGoogleAccountAsync(request.Email);
             var newToken = _jwtTokenGenerator.GenerateJwtToken(newAccount);
 
             return Ok(new
@@ -66,8 +99,6 @@ namespace EHM_API.Controllers
                 newAccount.Role
             });
         }
-
-
 
 
         [HttpPost("login-with-credentials")]

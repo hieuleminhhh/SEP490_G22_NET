@@ -27,7 +27,6 @@ namespace EHM_API.Controllers
                 return BadRequest(new { message = "Địa chỉ email không được để trống." });
             }
 
-            // Gửi email với nội dung từ emailRequest
             await _emailService.SendEmailAsync(emailRequest.ToEmail, emailRequest.Subject, emailRequest.Body);
 
             return Ok(new { message = "Email đã được gửi thành công." });
