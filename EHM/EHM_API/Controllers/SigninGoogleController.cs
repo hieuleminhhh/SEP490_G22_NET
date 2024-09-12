@@ -80,14 +80,11 @@ namespace EHM_API.Controllers
 
             if (account != null)
             {
-                var token = _jwtTokenGenerator.GenerateJwtToken(account);
+             
                 return Ok(new
                 {
                     Message = "Tài khoản với email này đã tồn tại.",
-                    token,
-                    account.AccountId,
-                    account.Username,
-                    account.Role
+                    account.Email,
                 });
             }
 
