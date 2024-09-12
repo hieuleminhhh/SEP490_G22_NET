@@ -254,7 +254,8 @@ namespace EHM_API.Map
                     {
                         TableId = tr.Table.TableId,
                         Capacity = tr.Table.Capacity,
-                        Floor = tr.Table.Floor
+                        Floor = tr.Table.Floor,
+                        Lable = tr.Table.Lable
                     })))
                 .ForMember(dest => dest.GuestNumber,
                            opt => opt.MapFrom(src => src.GuestNumber))
@@ -352,7 +353,8 @@ namespace EHM_API.Map
               {
                   TableId = tr.Table.TableId,
                   Capacity = tr.Table.Capacity,
-                  Floor = tr.Table.Floor
+                  Floor = tr.Table.Floor,
+                  Lable = tr.Table.Lable
               })))
                          .ForMember(dest => dest.GuestNumber, opt => opt.MapFrom(src => src.GuestNumber))
                          .ForMember(dest => dest.Note, opt => opt.MapFrom(src => src.Note))
