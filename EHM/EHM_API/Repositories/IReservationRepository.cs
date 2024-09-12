@@ -25,7 +25,7 @@ namespace EHM_API.Repositories
 
 		Task<List<(Table, DateTime?)>> GetTablesWithCurrentDayReservationsAsync(int reservationId);
 		Task<List<(Table, DateTime?)>> GetTablesByReservationIdAsync(int reservationId);
-        Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel, string? cancelBy);
+        Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel);
 
 		Task<Reservation?> GetReservationByOrderIdAsync(int orderId);
 

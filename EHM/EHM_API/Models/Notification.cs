@@ -13,7 +13,7 @@ namespace EHM_API.Models
         public DateTime? Time { get; set; }
         public bool? IsView { get; set; }
 
-        public virtual Account? Order { get; set; }
-        public virtual Order? OrderNavigation { get; set; }
+        public virtual Account? Account { get; set; }
+        public virtual Order? Order { get; set; }
     }
 }
