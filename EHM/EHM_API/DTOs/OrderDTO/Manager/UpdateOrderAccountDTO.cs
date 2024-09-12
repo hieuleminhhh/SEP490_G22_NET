@@ -2,6 +2,6 @@
 {
     public class UpdateOrderAccountDTO
     {
-        public int? AccountId { get; set; }
+        public int? StaffId { get; set; }
     }
 }
