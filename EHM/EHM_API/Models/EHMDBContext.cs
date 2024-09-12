@@ -318,15 +318,15 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.Time).HasColumnType("datetime");
 
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_Notification_Account1");
+
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.Notifications)
                     .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK_Notification_Account");
-
-                entity.HasOne(d => d.OrderNavigation)
-                    .WithMany(p => p.Notifications)
-                    .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK_Notification_Order");
+                    .HasConstraintName("FK_Notification_Order1");
             });
 
             modelBuilder.Entity<Order>(entity =>

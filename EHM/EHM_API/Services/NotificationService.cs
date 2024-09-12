@@ -25,10 +25,10 @@ namespace EHM_API.Services
             return _mapper.Map<List<NotificationAllDTO>>(notifications);
         }
 
-        public async Task<NotificationAllDTO?> GetNotificationByIdAsync(int id)
+        public async Task<List<NotificationAllDTO>> GetNotificationsByAccountIdAsync(int accountId)
         {
-            var notification = await _repository.GetNotificationByIdAsync(id);
-            return _mapper.Map<NotificationAllDTO>(notification);
+            var notifications = await _repository.GetNotificationsByAccountIdAsync(accountId);
+            return _mapper.Map<List<NotificationAllDTO>>(notifications);
         }
 
         public async Task CreateNotificationAsync(NotificationCreateDTO notificationDto)
@@ -37,17 +37,7 @@ namespace EHM_API.Services
             await _repository.CreateNotificationAsync(notification);
         }
 
-        public async Task UpdateNotificationAsync(int id, NotificationCreateDTO notificationDto)
-        {
-            var notification = await _repository.GetNotificationByIdAsync(id);
-            if (notification == null)
-            {
-                throw new Exception("Notification not found");
-            }
 
-            _mapper.Map(notificationDto, notification);
-            await _repository.UpdateNotificationAsync(notification);
-        }
 
         public async Task DeleteNotificationAsync(int id)
         {
