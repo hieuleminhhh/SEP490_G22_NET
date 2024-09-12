@@ -534,9 +534,9 @@ namespace EHM_API.Services
 				return null;
 			}
 
-			if (updateOrderAccountDTO.AccountId.HasValue)
+			if (updateOrderAccountDTO.StaffId.HasValue)
 			{
-				order.AccountId = updateOrderAccountDTO.AccountId.Value;
+				order.StaffId = updateOrderAccountDTO.StaffId.Value;
 				await _orderRepository.UpdateOrderAsync(order);
 			}
 
