@@ -194,9 +194,9 @@ namespace EHM_API.Repositories
             var timeRangeEnd = reservationTime.AddHours(3);
             var now = DateTime.Now;
 
-            // Lấy các bàn chưa có trong bất kỳ đơn đặt bàn nào (bàn trống)
+            // Lấy các bàn chưa có trong bất kỳ đơn đặt bàn nào (bàn trống) và có Status khác 2 và Floor khác null
             var freeTables = await _context.Tables
-                .Where(t => !t.TableReservations.Any()) // Bàn chưa được xếp cho đơn nào
+                .Where(t => !t.TableReservations.Any() && t.Status != 2 && t.Floor != null)
                 .ToListAsync();
 
             // Lấy các bàn có đơn đặt bàn trong khoảng thời gian +/- 3 tiếng so với reservationTime
@@ -216,8 +216,10 @@ namespace EHM_API.Repositories
                     .ToListAsync();
             }
 
-            // Lấy tất cả các bàn
-            var allTables = await _context.Tables.ToListAsync();
+            // Lấy tất cả các bàn có Status khác 2 và Floor khác null
+            var allTables = await _context.Tables
+                .Where(t => t.Status != 2 && t.Floor != null)
+                .ToListAsync();
 
             // Chọn những bàn không có trong reservedTablesInRange và activeTables
             var availableTables = allTables
@@ -226,6 +228,7 @@ namespace EHM_API.Repositories
 
             return availableTables;
         }
+
     }
 }
 
