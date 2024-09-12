@@ -17,18 +17,26 @@ namespace EHM_API.Repositories
         public async Task<List<Notification>> GetAllNotificationsAsync()
         {
             return await _context.Notifications
-                .OrderByDescending(n => n.Time)  
+                .Include(n => n.Order)  
+                .Include(o => o.Account)  
+                .Where(n => n.Account.Role != "User")  
+                .OrderByDescending(n => n.Time) 
                 .ToListAsync();
         }
 
 
-        public async Task<Notification?> GetNotificationByIdAsync(int id)
+
+        public async Task<List<Notification>> GetNotificationsByAccountIdAsync(int accountId)
         {
-            return await _context.Notifications.FindAsync(id);
+            return await _context.Notifications
+                .Where(n => n.AccountId == accountId)
+                .OrderByDescending(n => n.Time)
+                .ToListAsync();
         }
 
         public async Task CreateNotificationAsync(Notification notification)
         {
+            notification.IsView = false;
             notification.Time = DateTime.Now;
             await _context.Notifications.AddAsync(notification);
             await _context.SaveChangesAsync();
