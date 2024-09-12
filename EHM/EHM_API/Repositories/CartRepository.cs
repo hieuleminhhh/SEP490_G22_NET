@@ -430,8 +430,9 @@ namespace EHM_API.Repositories
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Combo)
                 .Include(o => o.Address)
+                .Include(o => o.Reservations)
                 .Where(o => o.AccountId == accountId)
-				.OrderByDescending(o => o.OrderDate)
+                .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
 

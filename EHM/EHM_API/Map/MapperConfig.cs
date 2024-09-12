@@ -812,6 +812,8 @@ namespace EHM_API.Map
           
             CreateMap<OrderEmailDTO, Guest>()
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+            CreateMap<Reservation, ReservationDTOByOrderId>();
+            CreateMap<HashSet<Reservation>, IEnumerable<ReservationDTOByOrderId>>();
         }
 
 

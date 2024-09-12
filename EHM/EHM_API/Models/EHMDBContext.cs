@@ -92,7 +92,7 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ConsigneeName).HasMaxLength(50);
 
-                entity.Property(e => e.GuestAddress).HasMaxLength(50);
+                entity.Property(e => e.GuestAddress).HasMaxLength(500);
 
                 entity.Property(e => e.GuestPhone)
                     .HasMaxLength(15)
@@ -132,7 +132,7 @@ namespace EHM_API.Models
             });
 
             modelBuilder.Entity<ComboDetail>()
-                           .HasKey(cd => new { cd.ComboId, cd.DishId });
+                             .HasKey(cd => new { cd.ComboId, cd.DishId });
 
             modelBuilder.Entity<ComboDetail>()
                 .HasOne(cd => cd.Combo)
@@ -316,6 +316,8 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
+                entity.Property(e => e.Time).HasColumnType("datetime");
+
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.Notifications)
                     .HasForeignKey(d => d.OrderId)
@@ -359,9 +361,9 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.RecevingOrder).HasColumnType("datetime");
 
-                entity.Property(e => e.ShipId).HasColumnName("ShipID");
-
                 entity.Property(e => e.ShipTime).HasColumnType("datetime");
+
+                entity.Property(e => e.StaffId).HasColumnName("StaffID");
 
                 entity.Property(e => e.Status).HasDefaultValueSql("((0))");
 
@@ -453,7 +455,6 @@ namespace EHM_API.Models
                     .HasConstraintName("FK_OrderTable_Table");
             });
 
-
             modelBuilder.Entity<Reservation>(entity =>
             {
                 entity.ToTable("Reservation");
@@ -530,6 +531,7 @@ namespace EHM_API.Models
                     .WithMany(t => t.TableReservations)
                     .HasForeignKey(tr => tr.TableId);
             });
+
 
             modelBuilder.Entity<Wallet>(entity =>
             {

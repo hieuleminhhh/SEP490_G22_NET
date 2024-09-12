@@ -52,22 +52,33 @@ namespace EHM_API.Services
 			return orderDtos;
 		}
 
-		public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
-		{
-			var order = await _orderRepository.GetByIdAsync(id);
-			if (order == null)
-			{
-				return null;
-			}
+        public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
+        {
+            var order = await _orderRepository.GetByIdAsync(id);
+            if (order == null)
+            {
+                return null;
+            }
 
-			var combinedOrderDetails = CombineOrderDetails(order.OrderDetails);
-			var orderDto = _mapper.Map<OrderDTOAll>(order);
-			orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(combinedOrderDetails);
+            var combinedOrderDetails = CombineOrderDetails(order.OrderDetails);
+            var orderDto = _mapper.Map<OrderDTOAll>(order);
+            orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(combinedOrderDetails);
 
-			return orderDto;
-		}
+            // Kiểm tra nếu type là 3 và có thông tin Reservations thì ánh xạ
+            // Nếu chỉ cần một đối tượng duy nhất
+            if (order.Type == 3 && order.Reservations != null && order.Reservations.Any())
+            {
+                // Gán đối tượng đầu tiên từ danh sách Reservations
+                orderDto.Reservation = _mapper.Map<ReservationDTOByOrderId>(order.Reservations.First());
+            }
 
-		private IEnumerable<OrderDetail> CombineOrderDetails(IEnumerable<OrderDetail> orderDetails)
+
+            return orderDto;
+        }
+
+
+
+        private IEnumerable<OrderDetail> CombineOrderDetails(IEnumerable<OrderDetail> orderDetails)
 		{
 			return orderDetails
 				.GroupBy(od => new { od.DishId, od.ComboId })
