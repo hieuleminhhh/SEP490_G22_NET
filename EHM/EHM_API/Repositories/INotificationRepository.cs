@@ -9,5 +9,6 @@ namespace EHM_API.Repositories
         Task CreateNotificationAsync(Notification notification);
         Task UpdateNotificationAsync(Notification notification);
         Task DeleteNotificationAsync(int id);
+        Task<bool> UpdateIsViewAsync(int notificationId);
     }
 }

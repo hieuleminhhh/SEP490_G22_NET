@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using EHM_API.DTOs.NotificationDTO;
+using EHM_API.Repositories;
 
 namespace EHM_API.Controllers
 {
@@ -12,11 +13,15 @@ namespace EHM_API.Controllers
     public class NotificationsController : ControllerBase
     {
         private readonly INotificationService _notificationService;
+        private readonly INotificationRepository _notificationRepository;
 
-        public NotificationsController(INotificationService notificationService)
+        public NotificationsController(INotificationService notificationService, INotificationRepository notificationRepository)
         {
             _notificationService = notificationService;
+            _notificationRepository = notificationRepository;
         }
+
+
 
         // GET: api/Notification
         [HttpGet] 
@@ -58,6 +63,19 @@ namespace EHM_API.Controllers
         {
             await _notificationService.DeleteNotificationAsync(id);
             return NoContent();
+        }
+
+        [HttpPut("UpdateIsView/{notificationId}")]
+        public async Task<IActionResult> UpdateIsView(int notificationId)
+        {
+            var result = await _notificationRepository.UpdateIsViewAsync(notificationId);
+
+            if (!result)
+            {
+                return NotFound(new { Message = "Notification not found." });
+            }
+
+            return Ok(new { Message = "Notification updated successfully." });
         }
     }
 }
