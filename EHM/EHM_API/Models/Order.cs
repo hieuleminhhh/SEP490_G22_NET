@@ -29,6 +29,7 @@ namespace EHM_API.Models
         public int? StaffId { get; set; }
         public string? CancelBy { get; set; }
         public DateTime? ShipTime { get; set; }
+        public int? CollectedBy { get; set; }
 
         public virtual Account? Account { get; set; }
         public virtual Address? Address { get; set; }
@@ -39,7 +40,7 @@ namespace EHM_API.Models
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<Reservation> Reservations { get; set; }
         public virtual ICollection<OrderTable> OrderTables { get; set; }
-        public virtual Account? Staff { get; set; } // Thêm mối quan hệ với Account cho Staff
-
+        public virtual Account? Staff { get; set; }
+        public virtual Account? Collected { get; set; }
     }
 }

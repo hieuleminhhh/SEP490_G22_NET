@@ -20,5 +20,7 @@
 		public int? DiscountId { get; set; }
 		public string? CancelationReason { get; set; }
         public decimal? TotalPaid { get; set; }
-	}
+        public string? CollectedFirstName { get; set; }
+        public string? CollectedLastName { get; set; }
+    }
 }

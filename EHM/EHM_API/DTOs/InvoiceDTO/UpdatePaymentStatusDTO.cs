@@ -3,6 +3,6 @@
 	public class UpdatePaymentStatusDTO
 	{
 		public decimal PaymentAmount { get; set; }
-
-	}
+        public int CollectedBy { get; set; }
+    }
 }
