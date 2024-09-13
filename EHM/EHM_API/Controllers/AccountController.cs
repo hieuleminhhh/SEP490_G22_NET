@@ -320,6 +320,29 @@ namespace EHM_API.Controllers
 
             return Ok(new { message = "Đổi mật khẩu thành công" });
         }
+        // PUT: api/Account/{id}/role
+        [HttpPut("{id}/role")]
+        public async Task<IActionResult> UpdateRole(int id, [FromBody] RoleUpdateDTO roleUpdateDto)
+        {
+            if (string.IsNullOrEmpty(roleUpdateDto.Role))
+            {
+                return BadRequest("Role cannot be empty.");
+            }
+
+            try
+            {
+                var result = await _accountService.UpdateRoleAsync(id, roleUpdateDto);
+                if (!result)
+                {
+                    return NotFound($"Account with ID {id} not found.");
+                }
+                return Ok($"Role updated to {roleUpdateDto.Role} for Account ID {id}");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
 
 

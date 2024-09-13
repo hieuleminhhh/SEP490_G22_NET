@@ -682,10 +682,10 @@ namespace EHM_API.Controllers
         }
 
 
-        [HttpGet("orders/status/{status}/account/{accountId}")]
-        public async Task<ActionResult<IEnumerable<OrderDetailForStaffType1>>> GetOrdersByStatusAndAccountId(int status, int accountId)
+        [HttpGet("orders/status/{status}/staff/{staffId}")]
+        public async Task<ActionResult<IEnumerable<OrderDetailForStaffType1>>> GetOrdersByStatusAndAccountId(int status, int staffId)
         {
-            var orders = await _orderService.GetOrdersByStatusAndAccountIdAsync(status, accountId);
+            var orders = await _orderService.GetOrdersByStatusAndAccountIdAsync(status, staffId);
             if (orders == null || !orders.Any())
             {
                 return NotFound();

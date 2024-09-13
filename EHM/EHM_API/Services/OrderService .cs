@@ -534,17 +534,17 @@ namespace EHM_API.Services
 				return null;
 			}
 
-			if (updateOrderAccountDTO.AccountId.HasValue)
+			if (updateOrderAccountDTO.StaffId.HasValue)
 			{
-				order.AccountId = updateOrderAccountDTO.AccountId.Value;
+				order.StaffId = updateOrderAccountDTO.StaffId.Value;
 				await _orderRepository.UpdateOrderAsync(order);
 			}
 
 			return _mapper.Map<OrderAccountDTO>(order);
 		}
-		public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
+		public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
 		{
-			var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, accountId);
+			var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, staffId);
 			return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
 		}
 		public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
