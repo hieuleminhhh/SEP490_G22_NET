@@ -1242,5 +1242,13 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.GuestPhoneNavigation)
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
     }
-
+    public async Task<Order?> GetOrderByStaffIdAsync(int staffId)
+    {
+        return await _context.Orders
+            .FirstOrDefaultAsync(o => o.StaffId == staffId);
+    }
+    public async Task SaveAsync()
+    {
+        await _context.SaveChangesAsync();
+    }
 }

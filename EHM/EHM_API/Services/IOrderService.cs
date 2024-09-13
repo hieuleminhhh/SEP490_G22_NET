@@ -57,5 +57,6 @@ namespace EHM_API.Services
         Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto);
         Task<UpdateTotalAmountDTO?> UpdateTotalAmountAsync(int orderId);
         Task<OrderEmailDTO> GetEmailByOrderIdAsync(int orderId);
+        Task<bool> UpdateStaffByOrderIdAsync(UpdateStaffDTO updateStaffDTO);
     }
 }
