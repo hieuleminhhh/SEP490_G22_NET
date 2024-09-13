@@ -16,7 +16,5 @@
         public int? AccountId { get; set; }
         public int? OrderId { get; set; }
         public int? Type { get; set; }
-        public DateTime? Time { get; set; }
-        public bool? IsView { get; set; }
     }
 }
