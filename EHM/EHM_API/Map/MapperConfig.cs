@@ -250,6 +250,10 @@ namespace EHM_API.Map
                            opt => opt.MapFrom(src => src.ReservationTime))
                 .ForMember(dest => dest.Status,
                            opt => opt.MapFrom(src => src.Status))
+                 .ForMember(dest => dest.GuestAddress,
+                           opt => opt.MapFrom(src => src.Address.GuestAddress))
+                  .ForMember(dest => dest.Email,
+              opt => opt.MapFrom(src => src.Address.GuestPhoneNavigation.Email))
                     .ForMember(dest => dest.TableOfReservation, opt => opt.MapFrom(src => src.TableReservations.Select(tr => new TabledetailDTO
                     {
                         TableId = tr.Table.TableId,

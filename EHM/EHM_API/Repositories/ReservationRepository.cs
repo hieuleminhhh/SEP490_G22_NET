@@ -28,7 +28,8 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Reservations
 				.Include(r => r.Address)
-				.Include(r => r.Order)
+                  .ThenInclude(a => a.GuestPhoneNavigation)
+                .Include(r => r.Order)
 					.ThenInclude(o => o.OrderDetails)
 						.ThenInclude(od => od.Dish)
 							.ThenInclude(d => d.Discount)

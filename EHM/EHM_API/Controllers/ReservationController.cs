@@ -179,7 +179,7 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "Đã xảy ra lỗi khi lấy thông tin đặt bàn. Vui lòng thử lại sau." });
 			}
 		}
-		[Authorize(Roles = "Cashier")]
+		[Authorize(Roles = "Cashier, User")]
 		[HttpPut("{reservationId}/update-status")]
         public async Task<IActionResult> UpdateStatus(int reservationId, [FromBody] UpdateStatusReservationDTO updateStatusReservationDTO)
         {
@@ -313,7 +313,7 @@ namespace EHM_API.Controllers
 			return NoContent();
 		}
 
-		[Authorize(Roles = "Cashier")]
+		[Authorize(Roles = "Cashier, User")]
 		[HttpPut("{reservationId}/reason-cancel")]
         public async Task<IActionResult> UpdateReasonCancel(int reservationId, [FromBody] ReasonCancelDTO? reasonCancelDTO)
         {
