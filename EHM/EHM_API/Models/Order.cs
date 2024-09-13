@@ -39,5 +39,7 @@ namespace EHM_API.Models
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<Reservation> Reservations { get; set; }
         public virtual ICollection<OrderTable> OrderTables { get; set; }
+        public virtual Account? Staff { get; set; } // Thêm mối quan hệ với Account cho Staff
+
     }
 }
