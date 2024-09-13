@@ -201,6 +201,11 @@ namespace EHM_API.Services
                     dto.FirstName = order.Staff.FirstName;
                     dto.LastName = order.Staff.LastName;
                 }
+                if (order.Collected != null)
+                {
+                    dto.CollectedFirstName = order.Collected.FirstName;
+                    dto.CollectedLastName = order.Collected.LastName;
+                }
 
                 // Tính toán lại TotalPaid với Discount nếu có
                 if (order.Discount != null && order.Discount.DiscountPercent.HasValue)
@@ -222,26 +227,32 @@ namespace EHM_API.Services
 
 
         public async Task<bool> UpdatePaymentStatusAsync(int orderId, UpdatePaymentStatusDTO dto)
-		{
-			var order = await _invoiceRepository.GetOrderByIdAsync(orderId);
-			if (order == null)
-			{
-				return false;
-			}
+        {
+            var order = await _invoiceRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                return false;
+            }
 
-			var invoice = order.Invoice;
-			if (invoice == null)
-			{
-				return false;
-			}
+            var invoice = order.Invoice;
+            if (invoice == null)
+            {
+                return false;
+            }
 
-			invoice.PaymentStatus = 1;
-			invoice.PaymentTime = DateTime.Now;
-			invoice.PaymentAmount = dto.PaymentAmount; 
+            invoice.PaymentStatus = 1;
+            invoice.PaymentTime = DateTime.Now;
+            invoice.PaymentAmount = dto.PaymentAmount;
 
-			await _invoiceRepository.UpdateInvoiceAsync(invoice);
-			return true;
-		}
+         
+            order.CollectedBy = dto.CollectedBy;
+
+            await _invoiceRepository.UpdateInvoiceAsync(invoice);
+            await _orderRepository.UpdateOrderAsync(order); 
+
+            return true;
+        }
+
         public async Task<UpdateAmountInvoiceDTO?> UpdateInvoiceAsync(UpdateAmountInvoiceDTO updateAmountInvoiceDTO)
         {
             var invoice = await _invoiceRepository.GetInvoiceByIdAsync(updateAmountInvoiceDTO.InvoiceId);

@@ -782,6 +782,17 @@ namespace EHM_API.Controllers
             }
             return Ok("StaffId updated successfully");
         }
+        [HttpGet("Get-OrderStatus-8")]
+        public async Task<IActionResult> GetOrdersWithStatus8()
+        {
+            var orders = await _orderService.GetOrdersWithStatus8Async();
 
+            if (orders == null || !orders.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(orders);
+        }
     }
 }

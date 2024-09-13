@@ -5,6 +5,7 @@ using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Cashier;
+using EHM_API.DTOs.OrderDTO.Cashier.EHM_API.DTOs.OrderDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
@@ -537,7 +538,7 @@ namespace EHM_API.Services
 			if (updateOrderAccountDTO.StaffId.HasValue)
 			{
 				order.StaffId = updateOrderAccountDTO.StaffId.Value;
-				await _orderRepository.UpdateOrderAsync(order);
+				await _orderRepository.UpdateOrderShipTimeAsync(order);
 			}
 
 			return _mapper.Map<OrderAccountDTO>(order);
@@ -676,5 +677,55 @@ namespace EHM_API.Services
 
             return true;
         }
+        public async Task<List<OrderDetailWithStaffDTO>> GetOrdersWithStatus8Async()
+        {
+            // Chỉ lấy các order có Status = 8
+            var orders = await _orderRepository.GetOrdersByStatusAsync(8);
+
+            return orders.Select(o => new OrderDetailWithStaffDTO
+            {
+                OrderId = o.OrderId,
+                OrderDate = o.OrderDate,
+                Status = o.Status,
+                RecevingOrder = o.RecevingOrder,
+                TotalAmount = o.TotalAmount,
+                GuestPhone = o.GuestPhone,
+                Deposits = o.Deposits,
+                Note = o.Note,
+                CancelationReason = o.CancelationReason,
+                ShipTime = o.ShipTime,
+                AccountFirstName = o.Account?.FirstName,
+                AccountLastName = o.Account?.LastName,
+                StaffFirstName = o.Staff?.FirstName,
+                StaffLastName = o.Staff?.LastName,
+                Address = o.Address != null ? new AddressWithStaffDTO
+                {
+                    GuestAddress = o.Address.GuestAddress,
+                    ConsigneeName = o.Address.ConsigneeName,
+                    GuestPhone = o.Address.GuestPhone
+                } : null,
+                Discount = o.Discount != null ? new DiscountWithStaffDTO
+                {
+                    DiscountId = o.Discount.DiscountId,
+                    DiscountAmount = o.Discount?.TotalMoney // Sử dụng TotalMoney thay cho DiscountAmount
+                } : null,
+                OrderDetails = o.OrderDetails.Select(od => new OrderDetailStaffDTO
+                {
+                    OrderDetailId = od.OrderDetailId,
+                    UnitPrice = od.UnitPrice,
+                    Quantity = od.Quantity,
+                    DishName = od.Dish?.ItemName, // Sử dụng ItemName thay cho DishName
+                    ComboName = od.Combo?.NameCombo, // Sử dụng NameCombo thay cho ComboName
+                    Note = od.Note
+                }).ToList(),
+                Reservations = o.Reservations.Select(r => new ReservationWithStaffDTO
+                {
+                    ReservationId = r.ReservationId,
+                    ReservationTime = r.ReservationTime,
+                    GuestNumber = r.GuestNumber
+                }).ToList()
+            }).ToList();
+        }
+
     }
 }
