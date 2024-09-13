@@ -48,5 +48,7 @@ public interface IOrderRepository
     Task<Order?> GetOrderByIdAsync(int orderId);
     Task UpdateOrderForTotalAsync(Order order);
     Task<Order?> GetOrderById1Async(int orderId);
+    Task<Order?> GetOrderByStaffIdAsync(int staffId);
+    Task SaveAsync();
 }
 
