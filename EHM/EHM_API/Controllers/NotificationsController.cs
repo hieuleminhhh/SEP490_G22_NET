@@ -31,17 +31,18 @@ namespace EHM_API.Controllers
             return Ok(notifications);
         }
 
-        // GET: api/Notification/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<NotificationAllDTO>> GetNotificationById(int id)
+        // GET: api/Notification/account/{accountId}
+        [HttpGet("account/{accountId}")]
+        public async Task<ActionResult<List<NotificationAllDTO>>> GetNotificationsByAccountId(int accountId)
         {
-            var notification = await _notificationService.GetNotificationByIdAsync(id);
-            if (notification == null)
+            var notifications = await _notificationService.GetNotificationsByAccountIdAsync(accountId);
+            if (notifications == null || !notifications.Any())
             {
-                return NotFound();
+                return NotFound("No notifications found for this account.");
             }
-            return Ok(notification);
+            return Ok(notifications);
         }
+
         [HttpPost]
         public async Task<ActionResult> CreateNotification([FromBody] NotificationCreateDTO notificationDto)
         {
@@ -49,14 +50,7 @@ namespace EHM_API.Controllers
             return Ok(new { message = "Notification created successfully" });
         }
 
-        // PUT: api/Notification/{id}
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateNotification(int id, [FromBody] NotificationCreateDTO notificationDto)
-        {
-            await _notificationService.UpdateNotificationAsync(id, notificationDto);
-            return Ok(new { message = "Notification updated successfully" });
-        }
-
+    
         // DELETE: api/Notification/{id}
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteNotification(int id)

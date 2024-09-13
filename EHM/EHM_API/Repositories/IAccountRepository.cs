@@ -14,6 +14,7 @@ namespace EHM_API.Repositories
         Task<IEnumerable<Account>> GetAccountsByRoleAsync(string role);
         Task<bool> UpdateAccountStatusAsync(int id, bool isActive);
         Task<bool> UpdateProfileAccount(Account account);
+        Task SaveAsync();
 
-	}
+    }
 }

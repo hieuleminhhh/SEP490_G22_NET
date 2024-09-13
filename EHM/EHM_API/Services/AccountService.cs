@@ -68,7 +68,7 @@ namespace EHM_API.Services
             return _mapper.Map<UpdateAccountDTO>(updatedAccount);
         }
 
-        // In AccountService.cs
+ 
         public async Task<bool> RemoveAccountAsync(int id)
         {
             var account = await _accountRepository.GetAccountByIdAsync(id);
@@ -113,37 +113,50 @@ namespace EHM_API.Services
                 return false;
             }
 
-            // Nếu tài khoản chưa có mật khẩu (Password == null), cho phép cập nhật mật khẩu mới
+           
             if (account.Password == null)
             {
-                // Kiểm tra NewPassword và ConfirmPassword có khớp không
+              
                 if (dto.NewPassword != dto.ConfirmPassword)
                 {
-                    return false; // Mật khẩu mới và xác nhận mật khẩu không khớp
+                    return false; 
                 }
 
                 account.Password = dto.NewPassword;
             }
             else
             {
-                // Nếu mật khẩu hiện tại không khớp với mật khẩu của người dùng
+               
                 if (account.Password != dto.CurrentPassword)
                 {
                     return false;
                 }
 
-                // Kiểm tra NewPassword và ConfirmPassword có khớp không
+                
                 if (dto.NewPassword != dto.ConfirmPassword)
                 {
-                    return false; // Mật khẩu mới và xác nhận mật khẩu không khớp
+                    return false; 
                 }
 
-                // Cập nhật mật khẩu mới
+             
                 account.Password = dto.NewPassword;
             }
 
-            // Lưu thay đổi
             return await _accountRepository.UpdateProfileAccount(account);
+        }
+        public async Task<bool> UpdateRoleAsync(int accountId, RoleUpdateDTO roleUpdateDto)
+        {
+            var account = await _accountRepository.GetAccountByIdAsync(accountId);
+            if (account == null)
+            {
+                return false;  
+            }
+
+         
+            account.Role = roleUpdateDto.Role;
+
+            await _accountRepository.SaveAsync();  
+            return true;
         }
     }
 }

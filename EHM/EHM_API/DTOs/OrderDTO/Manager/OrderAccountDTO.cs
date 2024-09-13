@@ -7,5 +7,6 @@
         public int? Status { get; set; }
         public int? AccountId { get; set; }
         public decimal? TotalAmount { get; set; }
+        public int? StaffId { get; set; }
     }
 }
