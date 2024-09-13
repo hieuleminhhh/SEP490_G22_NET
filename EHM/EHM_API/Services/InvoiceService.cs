@@ -270,6 +270,7 @@ namespace EHM_API.Services
 
             return _mapper.Map<UpdateAmountInvoiceDTO>(invoice);
         }
+
     }
 }
 
