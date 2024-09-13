@@ -187,32 +187,41 @@ namespace EHM_API.Services
 			return invoiceAndOrderInfoList;
 		}
 
-		public async Task<IEnumerable<GetOrderUnpaidOfShipDTO>> GetOrdersUnpaidForShipAsync()
-		{
-			var orders = await _invoiceRepository.GetOrdersUnpaidForShipAsync();
+        public async Task<IEnumerable<GetOrderUnpaidOfShipDTO>> GetOrdersUnpaidForShipAsync()
+        {
+            var orders = await _invoiceRepository.GetOrdersUnpaidForShipAsync();
 
-			var orderDtos = orders.Select(order =>
-			{
-				var dto = _mapper.Map<GetOrderUnpaidOfShipDTO>(order);
+            var orderDtos = orders.Select(order =>
+            {
+                var dto = _mapper.Map<GetOrderUnpaidOfShipDTO>(order);
 
-				if (order.Discount != null && order.Discount.DiscountPercent.HasValue)
-				{
-					var discountPercent = order.Discount.DiscountPercent.Value;
-					dto.TotalPaid = order.TotalAmount - (order.TotalAmount * discountPercent / 100);
-				}
-				else
-				{
-					dto.TotalPaid = order.TotalAmount;
-				}
+                // Lấy thông tin Staff (FirstName, LastName)
+                if (order.Staff != null)
+                {
+                    dto.FirstName = order.Staff.FirstName;
+                    dto.LastName = order.Staff.LastName;
+                }
 
-				return dto;
-			}).ToList();
+                // Tính toán lại TotalPaid với Discount nếu có
+                if (order.Discount != null && order.Discount.DiscountPercent.HasValue)
+                {
+                    var discountPercent = order.Discount.DiscountPercent.Value;
+                    dto.TotalPaid = order.TotalAmount - (order.TotalAmount * discountPercent / 100);
+                }
+                else
+                {
+                    dto.TotalPaid = order.TotalAmount;
+                }
 
-			return orderDtos;
-		}
+                return dto;
+            }).ToList();
+
+            return orderDtos;
+        }
 
 
-		public async Task<bool> UpdatePaymentStatusAsync(int orderId, UpdatePaymentStatusDTO dto)
+
+        public async Task<bool> UpdatePaymentStatusAsync(int orderId, UpdatePaymentStatusDTO dto)
 		{
 			var order = await _invoiceRepository.GetOrderByIdAsync(orderId);
 			if (order == null)
