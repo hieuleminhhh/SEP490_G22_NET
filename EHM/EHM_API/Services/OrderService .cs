@@ -662,5 +662,19 @@ namespace EHM_API.Services
 
             return orderEmailDto;
         }
+        public async Task<bool> UpdateStaffByOrderIdAsync(UpdateStaffDTO updateStaffDTO)
+        {
+            var order = await _orderRepository.GetOrderByIdAsync(updateStaffDTO.OrderId);
+            if (order == null)
+            {
+                return false;
+            }
+
+            order.StaffId = updateStaffDTO.StaffId;
+            await _orderRepository.UpdateOrderAsync(order);
+            await _orderRepository.SaveAsync();
+
+            return true;
+        }
     }
 }
