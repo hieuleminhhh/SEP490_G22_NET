@@ -78,7 +78,10 @@ namespace EHM_API.Repositories
 			_context.Accounts.Update(account);
 			return await _context.SaveChangesAsync() > 0;
 		}
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
 
-
-	}
+    }
 }

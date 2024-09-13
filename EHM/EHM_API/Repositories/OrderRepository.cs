@@ -1115,7 +1115,7 @@ public class OrderRepository : IOrderRepository
 	{
 		return await _context.OrderTables.Where(ot => ot.OrderId == orderId).ToListAsync();
 	}
-    public async Task<IEnumerable<Order>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId)
+    public async Task<IEnumerable<Order>> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
     {
         return await _context.Orders
             .Include(o => o.OrderDetails)
@@ -1125,7 +1125,7 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.OrderTables)
             .Include(o => o.Address)
             .Include(o => o.Discount)
-            .Where(o => o.Status == status && o.AccountId == accountId)
+            .Where(o => o.Status == status && o.StaffId == staffId)
             .ToListAsync();
     }
     public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
