@@ -518,6 +518,8 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.TableId).HasColumnName("TableID");
 
+                entity.Property(e => e.Floor).HasMaxLength(500);
+
                 entity.Property(e => e.Lable).HasMaxLength(200);
             });
 

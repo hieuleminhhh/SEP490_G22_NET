@@ -295,5 +295,11 @@ namespace EHM_API.Repositories
         {
             return await _context.OrderDetails.AnyAsync(od => od.ComboId == comboId);
         }
+        public async Task<List<Combo>> GetCombosByIdsAsync(List<int> comboIds)
+        {
+            return await _context.Combos
+                .Where(c => comboIds.Contains(c.ComboId))
+                .ToListAsync();
+        }
     }
 }
