@@ -18,8 +18,10 @@
 		public int? Type { get; set; }
 		public int? DiscountId { get; set; }
 		public string? CancelationReason { get; set; }
+        public int? StaffId { get; set; }
+        public string? StaffFirstName { get; set; }
+        public string? StaffLastName { get; set; }
 
 
-
-	}
+    }
 }
