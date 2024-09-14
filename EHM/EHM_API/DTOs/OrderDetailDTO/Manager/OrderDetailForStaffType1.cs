@@ -13,6 +13,7 @@
         public decimal Deposits { get; set; }
         public string? GuestAddress { get; set; }
         public string? ConsigneeName { get; set; }
+        public int? AccountId { get; set; }
         public virtual ICollection<ItemInOrderDetail> ItemInOrderDetails { get; set; }
     }
 }

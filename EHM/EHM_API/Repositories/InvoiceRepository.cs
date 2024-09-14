@@ -402,8 +402,11 @@ namespace EHM_API.Repositories
 		{
 			return await _context.Orders
 				.Include(o => o.Address)
+				.Include(o => o.Staff)
+				.Include(o => o.Collected)
 				.Include(o => o.Invoice)
-				.Where(o => (o.Status == status && o.Deposits > minDeposit && o.InvoiceId==null) || (o.Invoice.PaymentStatus == 1|| o.Invoice.PaymentStatus == 2))
+				.Where(o => ((o.Status == status || o.Status == 8) && o.Deposits > minDeposit && (o.InvoiceId==null || (o.InvoiceId.HasValue && (o.Invoice.PaymentStatus == 2 || o.Invoice.PaymentStatus == 1)))))
+				.OrderByDescending(o => o.OrderDate)
 				.ToListAsync();
 		}
 
@@ -416,6 +419,7 @@ namespace EHM_API.Repositories
                 .Include(o => o.Invoice)
                 .Include(o => o.Discount)
                 .Where(o => o.Type == 2 && o.Status == 4)
+                .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
 
@@ -426,6 +430,15 @@ namespace EHM_API.Repositories
                 .Include(o => o.Invoice)
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
         }
-
+        public async Task<decimal> GetTotalPaymentAmountAsync(DateTime startDate, DateTime endDate)
+        {
+            return await _context.Invoices
+                .Where(i => i.PaymentStatus == 1
+                            && i.PaymentMethods == 0
+                            && i.Orders.Any(o => o.Status == 4) 
+                            && i.PaymentTime >= startDate
+                            && i.PaymentTime <= endDate)
+                .SumAsync(i => i.PaymentAmount ?? 0); 
+        }
     }
 }
