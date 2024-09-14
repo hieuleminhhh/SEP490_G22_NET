@@ -21,7 +21,7 @@ namespace EHM_API.Repositories
         Task<bool> HasOrderTableAsync(int tableId);
         Task<bool> HasTableReservationAsync(int tableId);
         Task DeleteTableAsync(int tableId);
-        Task<List<Table>> GetTablesByFloorAsync(int floor);
+        Task<List<Table>> GetTablesByFloorAsync(string floor);
         Task UpdateTableFloorToNullAsync(Table table);
         IEnumerable<Reservation> GetByReservationTime(DateTime reservationTime);
         Task<List<Table>> GetTablesWithStatus2AndFloorNullAsync();
