@@ -312,8 +312,6 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.AccountId).HasColumnName("AccountID");
 
-                entity.Property(e => e.Description).HasMaxLength(500);
-
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
                 entity.Property(e => e.Time).HasColumnType("datetime");
@@ -393,6 +391,11 @@ namespace EHM_API.Models
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.InvoiceId)
                     .HasConstraintName("FK_Order_Invoice");
+                modelBuilder.Entity<Order>()
+       .HasOne(o => o.Collected)
+       .WithMany()
+       .HasForeignKey(o => o.CollectedBy)
+       .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<OrderDetail>(entity =>

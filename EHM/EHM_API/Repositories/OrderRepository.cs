@@ -277,8 +277,14 @@ public class OrderRepository : IOrderRepository
 		_context.Orders.Update(order);
 		await _context.SaveChangesAsync();
 	}
+    public async Task UpdateOrderShipTimeAsync(Order order)
+    {
+        order.ShipTime = DateTime.Now;
+        _context.Orders.Update(order);
+        await _context.SaveChangesAsync();
+    }
 
-	public async Task<Address?> GetOrCreateAddress2(CheckoutDTO checkoutDTO)
+    public async Task<Address?> GetOrCreateAddress2(CheckoutDTO checkoutDTO)
 	{
 		if (string.IsNullOrWhiteSpace(checkoutDTO.GuestAddress) ||
 			string.IsNullOrWhiteSpace(checkoutDTO.ConsigneeName) ||
@@ -1241,6 +1247,30 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.Account)
             .Include(o => o.GuestPhoneNavigation)
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
+    }
+    public async Task<Order?> GetOrderByStaffIdAsync(int staffId)
+    {
+        return await _context.Orders
+            .FirstOrDefaultAsync(o => o.StaffId == staffId);
+    }
+    public async Task SaveAsync()
+    {
+        await _context.SaveChangesAsync();
+    }
+    public async Task<List<Order>> GetOrdersByStatusAsync(int status)
+    {
+        return await _context.Orders
+            .Where(o => o.Status == status)
+            .Include(o => o.Account)
+            .Include(o => o.Staff)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Dish)
+            .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Combo)
+            .Include(o => o.Reservations)
+            .Include(o => o.Address)
+            .Include(o => o.Discount)
+            .ToListAsync();
     }
 
 }

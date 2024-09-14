@@ -3,6 +3,7 @@ using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.HomeDTO;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Cashier;
+using EHM_API.DTOs.OrderDTO.Cashier.EHM_API.DTOs.OrderDTO;
 using EHM_API.DTOs.OrderDTO.Guest;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.DTOs.TableDTO;
@@ -57,5 +58,7 @@ namespace EHM_API.Services
         Task<Order> CreateOrderForReservation(int tableId, CreateOrderForReservaionDTO dto);
         Task<UpdateTotalAmountDTO?> UpdateTotalAmountAsync(int orderId);
         Task<OrderEmailDTO> GetEmailByOrderIdAsync(int orderId);
+        Task<bool> UpdateStaffByOrderIdAsync(UpdateStaffDTO updateStaffDTO);
+        Task<List<OrderDetailWithStaffDTO>> GetOrdersWithStatus8Async();
     }
 }

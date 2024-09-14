@@ -772,5 +772,27 @@ namespace EHM_API.Controllers
                 .AnyAsync(od => od.ComboId == comboId);
             return Ok(comboExistsInOrder);
         }
+        [HttpPut("update-staff")]
+        public async Task<IActionResult> UpdateStaffByOrderId([FromBody] UpdateStaffDTO updateStaffDTO)
+        {
+            var result = await _orderService.UpdateStaffByOrderIdAsync(updateStaffDTO);
+            if (!result)
+            {
+                return NotFound("Order not found");
+            }
+            return Ok("StaffId updated successfully");
+        }
+        [HttpGet("Get-OrderStatus-8")]
+        public async Task<IActionResult> GetOrdersWithStatus8()
+        {
+            var orders = await _orderService.GetOrdersWithStatus8Async();
+
+            if (orders == null || !orders.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(orders);
+        }
     }
 }
