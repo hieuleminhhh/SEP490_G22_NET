@@ -202,7 +202,7 @@ public class OrderRepository : IOrderRepository
             {
                 TableId = tb.TableId,
                 Capacity = tb.Table?.Capacity ?? 0,
-                Floor = tb.Table?.Floor ?? 0,
+                Floor = tb.Table?.Floor ?? null,
                 Status = tb.Table?.Status ?? 0,
             }).ToList(),
             InvoiceId = o.InvoiceId,

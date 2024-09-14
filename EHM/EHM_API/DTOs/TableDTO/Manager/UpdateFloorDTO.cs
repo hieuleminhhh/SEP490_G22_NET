@@ -2,8 +2,8 @@
 {
     public class UpdateFloorDTO
     {
-        public int CurrentFloor { get; set; }  // Tầng hiện tại
-        public int NewFloor { get; set; }
+        public string CurrentFloor { get; set; }  // Tầng hiện tại
+        public string NewFloor { get; set; }
        
     }
 }

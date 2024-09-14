@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using EHM_API.DTOs.CartDTO.OrderStaff;
+using EHM_API.DTOs.ComboDTO.Guest;
+using EHM_API.DTOs.ComboDTO.Manager;
 using EHM_API.DTOs.OrderDetailDTO.Manager;
 using EHM_API.DTOs.OrderDTO.Manager;
 using EHM_API.Models;
@@ -12,13 +15,17 @@ namespace EHM_API.Services
     {
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IMapper _mapper;
+        private readonly IComboRepository _comboRepository;
+        private readonly IDishRepository _dishRepository;
 
-      
-        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IMapper mapper)
+        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IMapper mapper, IComboRepository comboRepository, IDishRepository dishRepository)
         {
             _orderDetailRepository = orderDetailRepository;
             _mapper = mapper;
+            _comboRepository = comboRepository;
+            _dishRepository = dishRepository;
         }
+
         public async Task<bool> UpdateOrderDetailQuantityAsync(int orderDetailId, int quantity)
         {
             var orderDetail = await _orderDetailRepository.GetOrderDetailByIdAsync(orderDetailId);
@@ -78,6 +85,55 @@ namespace EHM_API.Services
             var orderDetails = await _orderDetailRepository.SearchByDishOrComboNameAsync(keyword);
             return _mapper.Map<IEnumerable<OrderDetailForStaff>>(orderDetails);
         }
-   
+        public async Task<GetRemainingItemsResponseDTO> GetRemainingItemsAsync(List<int> comboIds, List<int> dishIds)
+        {
+            var today = DateTime.Now.Date;
+            var combos = await _comboRepository.GetCombosByIdsAsync(comboIds);
+            var dishes = await _dishRepository.GetDishesByIdsAsync(dishIds);
+            var relevantOrderDetails = await _orderDetailRepository.GetRelevantOrderDetailsAsync(today);
+
+            // Tính số lượng còn lại của từng Combo
+            foreach (var combo in combos)
+            {
+                var totalComboOrdered = relevantOrderDetails
+                    .Where(od => od.ComboId == combo.ComboId)
+                    .Sum(od => od.Quantity ?? 0);
+
+                combo.QuantityCombo -= totalComboOrdered;
+                combo.QuantityCombo = combo.QuantityCombo < 0 ? 0 : combo.QuantityCombo;
+            }
+
+            // Tính số lượng còn lại của từng Dish
+            foreach (var dish in dishes)
+            {
+                var totalDishOrdered = relevantOrderDetails
+                    .Where(od => od.DishId == dish.DishId)
+                    .Sum(od => od.Quantity ?? 0);
+
+                dish.QuantityDish -= totalDishOrdered;
+                dish.QuantityDish = dish.QuantityDish < 0 ? 0 : dish.QuantityDish;
+            }
+
+            // Map dữ liệu sang DTO để trả về
+            var response = new GetRemainingItemsResponseDTO
+            {
+                Combos = combos.Select(c => new ComboRemainingDTO
+                {
+                    ComboId = c.ComboId,
+                    Name = c.NameCombo,
+                    QuantityRemaining = c.QuantityCombo
+                }).ToList(),
+
+                Dishes = dishes.Select(d => new DishRemainingDTO
+                {
+                    DishId = d.DishId,
+                    Name = d.ItemName,
+                    QuantityRemaining = d.QuantityDish
+                }).ToList()
+            };
+
+            return response;
+        }
+
     }
 }
