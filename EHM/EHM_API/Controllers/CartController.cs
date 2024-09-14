@@ -18,15 +18,17 @@ namespace EHM_API.Controllers
 		private readonly ICartService _cartService;
 		private readonly IComboService _comboService;
 		private readonly IDishService _dishService;
+        private readonly IOrderDetailService _orderDetailService;
 
-		public CartController(ICartService cartService, IComboService comboService, IDishService dishService)
-		{
-			_cartService = cartService;
-			_comboService = comboService;
-			_dishService = dishService;
-		}
+        public CartController(ICartService cartService, IComboService comboService, IDishService dishService, IOrderDetailService orderDetailService)
+        {
+            _cartService = cartService;
+            _comboService = comboService;
+            _dishService = dishService;
+            _orderDetailService = orderDetailService;
+        }
 
-		[HttpGet("view")]
+        [HttpGet("view")]
 		public IActionResult ViewCart()
 		{
 			var cart = _cartService.GetCart();
@@ -284,7 +286,17 @@ namespace EHM_API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpPost("GetRemainingItems")]
+        public async Task<IActionResult> GetRemainingItems([FromBody] GetRemainingItemsRequestDTO request)
+        {
+            if ((request.ComboIds == null || !request.ComboIds.Any()) && (request.DishIds == null || !request.DishIds.Any()))
+            {
+                return BadRequest("ComboIds or DishIds must be provided.");
+            }
 
+            var result = await _orderDetailService.GetRemainingItemsAsync(request.ComboIds, request.DishIds);
+            return Ok(result);
+        }
     }
 
     public static class SessionExtensions
