@@ -180,12 +180,31 @@ namespace EHM_API.Services
 			return invoiceAndOrderInfoList;
 		}
 
-		public async Task<IEnumerable<GetOrderCancelInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit)
-		{
-			var orders = await _invoiceRepository.GetOrdersWithInvoicesByStatusAndDepositAsync(status, minDeposit);
-			var invoiceAndOrderInfoList = _mapper.Map<IEnumerable<GetOrderCancelInfo>>(orders);
-			return invoiceAndOrderInfoList;
-		}
+        public async Task<IEnumerable<GetOrderCancelInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit)
+        {
+            // Lấy danh sách orders từ repository
+            var orders = await _invoiceRepository.GetOrdersWithInvoicesByStatusAndDepositAsync(status, minDeposit);
+
+            // Map từ Order sang DTO
+            var invoiceAndOrderInfoList = orders.Select(order =>
+            {
+                var dto = _mapper.Map<GetOrderCancelInfo>(order);
+
+                // Lấy thông tin Staff (FirstName, LastName) nếu có
+                if (order.Staff != null)
+                {
+                    dto.StaffFirstName = order.Staff.FirstName;
+                    dto.StaffLastName = order.Staff.LastName;
+                }
+
+            
+
+                return dto;
+            }).ToList();
+
+            return invoiceAndOrderInfoList;
+        }
+
 
         public async Task<IEnumerable<GetOrderUnpaidOfShipDTO>> GetOrdersUnpaidForShipAsync()
         {
