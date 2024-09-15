@@ -173,7 +173,7 @@ namespace EHM_API.Services
                 throw new Exception($"Không có bàn nào ở tầng {currentFloor}");
             }
 
-            if (newFloor == null || newFloor == 0)
+            if (newFloor == null)
             {
                 // Nếu tầng mới là null hoặc 0, cập nhật Floor = null và Status = 2
                 foreach (var table in tables)

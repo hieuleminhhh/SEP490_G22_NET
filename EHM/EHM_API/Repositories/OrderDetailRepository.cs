@@ -217,6 +217,16 @@ namespace EHM_API.Repositories
                 && od.Quantity > od.DishesServed)
                 .ToListAsync();
         }
-      
+        public async Task<List<OrderDetail>> GetRelevantOrderDetailsAsync(DateTime today)
+        {
+            return await _context.OrderDetails
+                .Include(od => od.Order)
+                .Where(od =>
+                    (od.Order.RecevingOrder.HasValue && od.Order.RecevingOrder.Value.Date == today)
+                    || (!od.Order.RecevingOrder.HasValue && od.Order.OrderDate.HasValue && od.Order.OrderDate.Value.Date == today)
+                )
+                .Where(od => od.Order.Status == 2 || od.Order.Status == 3 || od.Order.Status == 4 || od.Order.Status == 6 || od.Order.Status == 7)
+                .ToListAsync();
+        }
     }
 }
