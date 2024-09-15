@@ -50,7 +50,11 @@ namespace EHM_API.Repositories
 
             return tableReservations;
         }
-
+        public async Task AddMultipleTableReservationsAsync(List<TableReservation> tableReservations)
+        {
+            await _context.Set<TableReservation>().AddRangeAsync(tableReservations);
+            await _context.SaveChangesAsync();
+        }
 
     }
 }
