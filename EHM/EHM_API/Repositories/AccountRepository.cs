@@ -82,6 +82,23 @@ namespace EHM_API.Repositories
         {
             await _context.SaveChangesAsync();
         }
+        public Account GetByEmail(string email)
+        {
+            return _context.Accounts.FirstOrDefault(a => a.Email == email);
+        }
+        public async Task UpdatePasswordByEmailAsync(string email, string newPassword)
+        {
+            var account = GetByEmail(email);
+            if (account != null)
+            {
+                // Không mã hóa mật khẩu, lưu trực tiếp mật khẩu thô
+                account.Password = newPassword;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
+
 
     }
 }

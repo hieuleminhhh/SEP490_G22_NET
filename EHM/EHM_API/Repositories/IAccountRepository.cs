@@ -15,6 +15,7 @@ namespace EHM_API.Repositories
         Task<bool> UpdateAccountStatusAsync(int id, bool isActive);
         Task<bool> UpdateProfileAccount(Account account);
         Task SaveAsync();
-
+        Task UpdatePasswordByEmailAsync(string email, string newPassword);
+        Account GetByEmail(string email);
     }
 }
