@@ -180,59 +180,98 @@ namespace EHM_API.Services
 			return invoiceAndOrderInfoList;
 		}
 
-		public async Task<IEnumerable<GetOrderCancelInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit)
-		{
-			var orders = await _invoiceRepository.GetOrdersWithInvoicesByStatusAndDepositAsync(status, minDeposit);
-			var invoiceAndOrderInfoList = _mapper.Map<IEnumerable<GetOrderCancelInfo>>(orders);
-			return invoiceAndOrderInfoList;
-		}
+        public async Task<IEnumerable<GetOrderCancelInfo>> GetOrdersWithStatusAndDepositAsync(int status, decimal minDeposit)
+        {
+            // Lấy danh sách orders từ repository
+            var orders = await _invoiceRepository.GetOrdersWithInvoicesByStatusAndDepositAsync(status, minDeposit);
 
-		public async Task<IEnumerable<GetOrderUnpaidOfShipDTO>> GetOrdersUnpaidForShipAsync()
-		{
-			var orders = await _invoiceRepository.GetOrdersUnpaidForShipAsync();
+            // Map từ Order sang DTO
+            var invoiceAndOrderInfoList = orders.Select(order =>
+            {
+                var dto = _mapper.Map<GetOrderCancelInfo>(order);
 
-			var orderDtos = orders.Select(order =>
-			{
-				var dto = _mapper.Map<GetOrderUnpaidOfShipDTO>(order);
+                // Lấy thông tin Staff (FirstName, LastName) nếu có
+                if (order.Staff != null)
+                {
+                    dto.StaffFirstName = order.Staff.FirstName;
+                    dto.StaffLastName = order.Staff.LastName;
+                }
 
-				if (order.Discount != null && order.Discount.DiscountPercent.HasValue)
-				{
-					var discountPercent = order.Discount.DiscountPercent.Value;
-					dto.TotalPaid = order.TotalAmount - (order.TotalAmount * discountPercent / 100);
-				}
-				else
-				{
-					dto.TotalPaid = order.TotalAmount;
-				}
+            
 
-				return dto;
-			}).ToList();
+                return dto;
+            }).ToList();
 
-			return orderDtos;
-		}
+            return invoiceAndOrderInfoList;
+        }
 
 
-		public async Task<bool> UpdatePaymentStatusAsync(int orderId, UpdatePaymentStatusDTO dto)
-		{
-			var order = await _invoiceRepository.GetOrderByIdAsync(orderId);
-			if (order == null)
-			{
-				return false;
-			}
+        public async Task<IEnumerable<GetOrderUnpaidOfShipDTO>> GetOrdersUnpaidForShipAsync()
+        {
+            var orders = await _invoiceRepository.GetOrdersUnpaidForShipAsync();
 
-			var invoice = order.Invoice;
-			if (invoice == null)
-			{
-				return false;
-			}
+            var orderDtos = orders.Select(order =>
+            {
+                var dto = _mapper.Map<GetOrderUnpaidOfShipDTO>(order);
 
-			invoice.PaymentStatus = 1;
-			invoice.PaymentTime = DateTime.Now;
-			invoice.PaymentAmount = dto.PaymentAmount; 
+                // Lấy thông tin Staff (FirstName, LastName)
+                if (order.Staff != null)
+                {
+                    dto.FirstName = order.Staff.FirstName;
+                    dto.LastName = order.Staff.LastName;
+                }
+                if (order.Collected != null)
+                {
+                    dto.CollectedFirstName = order.Collected.FirstName;
+                    dto.CollectedLastName = order.Collected.LastName;
+                }
 
-			await _invoiceRepository.UpdateInvoiceAsync(invoice);
-			return true;
-		}
+                // Tính toán lại TotalPaid với Discount nếu có
+                if (order.Discount != null && order.Discount.DiscountPercent.HasValue)
+                {
+                    var discountPercent = order.Discount.DiscountPercent.Value;
+                    dto.TotalPaid = order.TotalAmount - (order.TotalAmount * discountPercent / 100);
+                }
+                else
+                {
+                    dto.TotalPaid = order.TotalAmount;
+                }
+
+                return dto;
+            }).ToList();
+
+            return orderDtos;
+        }
+
+
+
+        public async Task<bool> UpdatePaymentStatusAsync(int orderId, UpdatePaymentStatusDTO dto)
+        {
+            var order = await _invoiceRepository.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                return false;
+            }
+
+            var invoice = order.Invoice;
+            if (invoice == null)
+            {
+                return false;
+            }
+
+            invoice.PaymentStatus = 1;
+            invoice.PaymentTime = DateTime.Now;
+            invoice.PaymentAmount = dto.PaymentAmount;
+
+         
+            order.CollectedBy = dto.CollectedBy;
+
+            await _invoiceRepository.UpdateInvoiceAsync(invoice);
+            await _orderRepository.UpdateOrderAsync(order); 
+
+            return true;
+        }
+
         public async Task<UpdateAmountInvoiceDTO?> UpdateInvoiceAsync(UpdateAmountInvoiceDTO updateAmountInvoiceDTO)
         {
             var invoice = await _invoiceRepository.GetInvoiceByIdAsync(updateAmountInvoiceDTO.InvoiceId);
@@ -250,6 +289,7 @@ namespace EHM_API.Services
 
             return _mapper.Map<UpdateAmountInvoiceDTO>(invoice);
         }
+
     }
 }
 

@@ -4,6 +4,7 @@ using EHM_API.Services;
 using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.DTOs.DishDTO.Manager;
 using EHM_API.DTOs.TBDTO;
+using EHM_API.DTOs.Table_ReservationDTO.EHM_API.DTOs;
 
 namespace EHM_API.Controllers
 {
@@ -45,6 +46,17 @@ namespace EHM_API.Controllers
         {
             var tables = await _tableReservationService.GetTableByReservationsAsync(reservationId);
             return Ok(tables);
+        }
+
+        [HttpPut("update-reservation-tables")]
+        public async Task<IActionResult> UpdateTableReservations([FromBody] UpdateTableReservationDTO updateTableReservationDTO)
+        {
+            var result = await _tableReservationService.UpdateTableReservationsAsync(updateTableReservationDTO);
+            if (!result)
+            {
+                return BadRequest("Unable to update table reservations");
+            }
+            return Ok("Table reservations updated successfully");
         }
     }
 }

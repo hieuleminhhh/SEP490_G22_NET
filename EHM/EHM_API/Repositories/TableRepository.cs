@@ -133,7 +133,7 @@ namespace EHM_API.Repositories
             return await _context.TableReservations.AnyAsync(tr => tr.TableId == tableId);
         }
 
-        public async Task<List<Table>> GetTablesByFloorAsync(int floor)
+        public async Task<List<Table>> GetTablesByFloorAsync(string floor)
         {
             return await _context.Tables.Where(t => t.Floor == floor).ToListAsync();
         }

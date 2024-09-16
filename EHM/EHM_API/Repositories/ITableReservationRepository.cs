@@ -9,5 +9,6 @@ namespace EHM_API.Repositories
         Task<bool> DeleteTableReservationByReservationIdAsync(int reservationId);
 		Task CreateOrderTablesAsync(OrderTable orderTable);
         Task<IEnumerable<FindTableByReservation>> GetTableByReservationsAsync(int reservationId);
-	}
+        Task AddMultipleTableReservationsAsync(List<TableReservation> tableReservations);
+    }
 }

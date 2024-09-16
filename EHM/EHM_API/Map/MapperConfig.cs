@@ -250,6 +250,10 @@ namespace EHM_API.Map
                            opt => opt.MapFrom(src => src.ReservationTime))
                 .ForMember(dest => dest.Status,
                            opt => opt.MapFrom(src => src.Status))
+                 .ForMember(dest => dest.GuestAddress,
+                           opt => opt.MapFrom(src => src.Address.GuestAddress))
+                  .ForMember(dest => dest.Email,
+              opt => opt.MapFrom(src => src.Address.GuestPhoneNavigation.Email))
                     .ForMember(dest => dest.TableOfReservation, opt => opt.MapFrom(src => src.TableReservations.Select(tr => new TabledetailDTO
                     {
                         TableId = tr.Table.TableId,
@@ -738,13 +742,13 @@ namespace EHM_API.Map
 			   .ForMember(dest => dest.DiscountId, opt => opt.MapFrom(src => src.DiscountId));
 
 			CreateMap<Order, GetOrderUnpaidOfShipDTO>()
-			   .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Account.FirstName))
-			   .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Account.LastName))
+
 			   .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.Invoice.PaymentStatus))
 			   .ForMember(dest => dest.TotalPaid, opt => opt.Ignore());
 
+                  
 
-			CreateMap<Order, GetInvoiceAndOrderInfo>()
+            CreateMap<Order, GetInvoiceAndOrderInfo>()
     .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.OrderId))
     .ForMember(dest => dest.InvoiceId, opt => opt.MapFrom(src => src.InvoiceId))
     .ForMember(dest => dest.PaymentTime, opt => opt.MapFrom(src => src.Invoice.PaymentTime))
