@@ -1,4 +1,5 @@
 ﻿using EHM_API.DTOs.ReservationDTO.Guest;
+using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.Models;
 
 namespace EHM_API.Repositories
@@ -25,7 +26,7 @@ namespace EHM_API.Repositories
 
 		Task<List<(Table, DateTime?)>> GetTablesWithCurrentDayReservationsAsync(int reservationId);
 		Task<List<(Table, DateTime?)>> GetTablesByReservationIdAsync(int reservationId);
-        Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel);
+        Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel, string? cancelBy);
 
 		Task<Reservation?> GetReservationByOrderIdAsync(int orderId);
 
@@ -41,6 +42,6 @@ namespace EHM_API.Repositories
 		IQueryable<Table> GetAllTables();
         Task SaveChangesAsync();
         void CreateNotification(Notification notification);
-
+		Task<bool> UpdateReservationAcceptByAsync(UpdateReservationAcceptByDTO dto);
     }
 }

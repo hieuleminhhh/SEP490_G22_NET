@@ -94,8 +94,8 @@ namespace EHM_API.Services
             var emailDto = new SendEmailRequestDTO
             {
                 ToEmail = email,
-                Subject = "OTP Verification",
-                Body = $"Your OTP code is {otp}"
+                Subject = "Xác thực OTP",
+                Body = $"Mã OTP của bạn là {otp}"
             };
             return await _accountRepository.SendEmailAsync(emailDto);
         }

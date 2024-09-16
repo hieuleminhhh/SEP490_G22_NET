@@ -4,7 +4,6 @@
     {
         private static readonly Random random = new Random();
         private const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        private const string specialChars = "!@#$%^&*()_+";
 
         public static string GeneratePassword()
         {
@@ -16,7 +15,7 @@
                                           .Select(s => s[random.Next(s.Length)]).ToList();
 
             // Thêm ký tự đặc biệt và số vào mật khẩu
-            passwordChars.Add(specialChars[random.Next(specialChars.Length)]); // Special character
+
             passwordChars.Add(chars[random.Next(10)]); // Number
 
             // Trộn ngẫu nhiên các ký tự
