@@ -12,12 +12,13 @@ namespace EHM_API.Services
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
 
-
-        public AccountService(IAccountRepository accountRepository, IMapper mapper)
+        public AccountService(IAccountRepository accountRepository, IMapper mapper, IEmailService emailService)
         {
             _accountRepository = accountRepository;
             _mapper = mapper;
+            _emailService = emailService;
         }
 
         public async Task<CreateAccountDTO> CreateAccountAsync(CreateAccountDTO accountDTO)
@@ -59,16 +60,17 @@ namespace EHM_API.Services
 
             _mapper.Map(accountDTO, existingAccount);
 
+            // Không mã hóa mật khẩu, lưu trực tiếp mật khẩu thô
             if (!string.IsNullOrWhiteSpace(accountDTO.Password))
             {
-                existingAccount.Password = BCrypt.Net.BCrypt.HashPassword(accountDTO.Password);
+                existingAccount.Password = accountDTO.Password;
             }
 
             var updatedAccount = await _accountRepository.UpdateAccountAsync(existingAccount);
             return _mapper.Map<UpdateAccountDTO>(updatedAccount);
         }
 
- 
+
         public async Task<bool> RemoveAccountAsync(int id)
         {
             var account = await _accountRepository.GetAccountByIdAsync(id);
@@ -158,5 +160,28 @@ namespace EHM_API.Services
             await _accountRepository.SaveAsync();  
             return true;
         }
+        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestDTO request)
+        {
+            var account = _accountRepository.GetByEmail(request.Email);
+            if (account == null)
+            {
+                return false; 
+            }
+
+            string newPassword = PasswordGenerator.GeneratePassword(); 
+
+            await _accountRepository.UpdatePasswordByEmailAsync(request.Email, newPassword);
+
+            var emailDto = new SendEmailRequestDTO
+            {
+                ToEmail = request.Email,
+                Subject = "Mật khẩu mới",
+                Body = $"Mật khẩu mới của bạn là: {newPassword}"
+            };
+            await _emailService.SendEmailAsync(emailDto.ToEmail, emailDto.Subject, emailDto.Body);
+
+            return true;
+        }
+
     }
 }

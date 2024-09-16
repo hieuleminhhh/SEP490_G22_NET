@@ -52,5 +52,6 @@ public interface IOrderRepository
     Task<List<Order>> GetOrdersByStatusAsync(int status);
     Task SaveAsync();
     Task UpdateOrderShipTimeAsync(Order order);
+    Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto);
 }
 

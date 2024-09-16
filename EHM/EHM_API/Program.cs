@@ -164,6 +164,9 @@ namespace EHM_API
 
             builder.Services.AddScoped<IVnPayService, VnPayService>();
 
+            builder.Services.AddScoped<ITableReservationRepository, TableReservationRepository>();
+            builder.Services.AddScoped<ITableReservationService, TableReservationService>();
+
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {

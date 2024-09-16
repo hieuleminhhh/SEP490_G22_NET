@@ -60,5 +60,6 @@ namespace EHM_API.Services
         Task<OrderEmailDTO> GetEmailByOrderIdAsync(int orderId);
         Task<bool> UpdateStaffByOrderIdAsync(UpdateStaffDTO updateStaffDTO);
         Task<List<OrderDetailWithStaffDTO>> GetOrdersWithStatus8Async();
+        Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto);
     }
 }

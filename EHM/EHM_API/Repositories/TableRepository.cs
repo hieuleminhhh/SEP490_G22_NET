@@ -16,10 +16,14 @@ namespace EHM_API.Repositories
 			_context = context;
 		}
 
-		public async Task<IEnumerable<Table>> GetAllTablesAsync()
-		{
-			return await _context.Tables.ToListAsync();
-		}
+        public async Task<IEnumerable<Table>> GetAllTablesAsync()
+        {
+            return await _context.Tables
+                .Include(t => t.TableReservations)
+                    .ThenInclude(tr => tr.Reservation)
+                .ToListAsync();
+        }
+
         public async Task<Table> CreateAsync(Table table)
         {
             _context.Tables.Add(table);

@@ -17,20 +17,18 @@ namespace EHM_API.Services
 		private readonly ITableRepository _tableRepository;
 		private readonly ITableReservationRepository _tableReservationRepository;
 		private readonly IMapper _mapper;
+		private readonly IEmailService _emailService;
 
-		public ReservationService(IReservationRepository repository,
+        public ReservationService(IReservationRepository repository, ITableRepository tableRepository, ITableReservationRepository tableReservationRepository, IMapper mapper, IEmailService emailService)
+        {
+            _repository = repository;
+            _tableRepository = tableRepository;
+            _tableReservationRepository = tableReservationRepository;
+            _mapper = mapper;
+            _emailService = emailService;
+        }
 
-			ITableRepository tableRepository,
-			ITableReservationRepository tableReservationRepository,
-			IMapper mapper)
-		{
-			_repository = repository;
-			_tableRepository = tableRepository;
-			_tableReservationRepository = tableReservationRepository;
-			_mapper = mapper;
-		}
-
-		public async Task UpdateStatusAsync(int reservationId, UpdateStatusReservationDTO updateStatusReservationDTO)
+        public async Task UpdateStatusAsync(int reservationId, UpdateStatusReservationDTO updateStatusReservationDTO)
 		{
 			var reservation = await _repository.GetReservationDetailAsync(reservationId);
 			if (reservation == null)
@@ -71,21 +69,69 @@ namespace EHM_API.Services
 			return await _repository.GetTotalTablesAsync();
 		}
 
-		public async Task<IEnumerable<ReservationByStatus>> GetReservationsByStatus(int? status)
-		{
-			var reservations = await _repository.GetReservationsByStatus(status);
-			var result = new List<ReservationByStatus>();
+        public async Task<IEnumerable<ReservationByStatus>> GetReservationsByStatus(int? status)
+        {
+            var reservations = await _repository.GetReservationsByStatus(status);
+            var result = new List<ReservationByStatus>();
 
-			foreach (var reservation in reservations)
-			{
-				var mappedReservation = _mapper.Map<ReservationByStatus>(reservation);
-				result.Add(mappedReservation);
-			}
+            foreach (var reservation in reservations)
+            {
+                if (reservation.ReservationTime.HasValue && reservation.ReservationTime.Value < DateTime.Now)
+                {
+                    // Nếu ReservationTime đã quá hạn, cập nhật trạng thái thành "Đã hủy"
+                    reservation.Status = 5; // Trạng thái hủy
+                    reservation.ReasonCancel = "Quá ngày nhận bàn, Khách không đến nhận đơn";
+                    reservation.CancelBy = "Hệ thống";
 
-			return result;
-		}
+                    if (reservation.Order != null)
+                    {
+                        reservation.Order.Status = 5;
+                        reservation.Order.CancelBy = "Hệ thống";
+                        reservation.Order.CancelationReason = reservation.ReasonCancel;
+                    }
 
-		public async Task<int?> CalculateStatusOfTable(Reservation reservation)
+                    // Lưu thay đổi vào cơ sở dữ liệu
+                    await _repository.SaveChangesAsync();
+
+                    // Gửi email thông báo cho khách hàng
+                    var email = reservation.Address.GuestPhoneNavigation?.Email;
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        var emailSubject = "Thông báo từ Eating House";
+                        var emailBody = $@"
+                    <p>Kính gửi Quý Khách,</p>
+                    <p>Chúng tôi rất tiếc phải thông báo rằng đơn đặt bàn của Quý Khách với mã đặt bàn <strong>{reservation.ReservationId}</strong> tại Eating House đã bị hủy.</p>
+                    <p>Lý do: {reservation.ReasonCancel}</p>
+                    <p>Cảm ơn Quý Khách đã tin tưởng và lựa chọn Eating House!</p>
+                    <p>Trân trọng,</p>
+                    <p>Eating House</p>";
+
+                        await _emailService.SendEmailAsync(email, emailSubject, emailBody);
+                    }
+
+                    // Tạo thông báo cho khách hàng (có thể lưu vào hệ thống thông báo)
+                    var notification = new Notification
+                    {
+                        Description = $"Đơn đặt bàn {reservation.ReservationId} đã bị hủy. Lý do: {reservation.ReasonCancel}",
+                        AccountId = reservation.AccountId,
+                        OrderId = reservation.Order?.OrderId,
+                        Time = DateTime.Now
+                    };
+
+                    _repository.CreateNotification(notification);
+
+                    await _repository.SaveChangesAsync();
+                }
+
+                var mappedReservation = _mapper.Map<ReservationByStatus>(reservation);
+                result.Add(mappedReservation);
+            }
+
+            return result;
+        }
+
+
+        public async Task<int?> CalculateStatusOfTable(Reservation reservation)
 		{
 			if (reservation.ReservationTime == null)
 			{
@@ -218,7 +264,7 @@ namespace EHM_API.Services
 				throw new ArgumentNullException(nameof(reasonCancelDTO));
 			}
 
-			var updatedReservation = await _repository.UpdateReasonCancelAsync(reservationId, reasonCancelDTO.ReasonCancel);
+			var updatedReservation = await _repository.UpdateReasonCancelAsync(reservationId, reasonCancelDTO.ReasonCancel, reasonCancelDTO.CancelBy);
 
 			if (updatedReservation == null)
 			{
@@ -227,7 +273,8 @@ namespace EHM_API.Services
 
 			return new ReasonCancelDTO
 			{
-				ReasonCancel = updatedReservation.ReasonCancel
+				ReasonCancel = updatedReservation.ReasonCancel,
+				CancelBy = updatedReservation.CancelBy
 			};
 		}
 
@@ -455,6 +502,10 @@ namespace EHM_API.Services
 
 			return result;
 		}
+        public async Task<bool> UpdateReservationAcceptByAsync(UpdateReservationAcceptByDTO dto)
+        {
+            return await _repository.UpdateReservationAcceptByAsync(dto);
+        }
 
-	}
+    }
 }
