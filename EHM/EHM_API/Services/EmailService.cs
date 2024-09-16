@@ -1,5 +1,5 @@
 ﻿using MimeKit;
-using MailKit.Net.Smtp; // Đảm bảo bạn chỉ sử dụng SmtpClient của MailKit
+using MailKit.Net.Smtp; 
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using EHM_API.DTOs.Email;
