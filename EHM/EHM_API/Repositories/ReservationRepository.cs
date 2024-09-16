@@ -201,27 +201,37 @@ namespace EHM_API.Repositories
 		}
 
 
-		public async Task<IEnumerable<Reservation>> GetReservationsByStatus(int? status)
-		{
-			return await _context.Reservations
-				.Include(r => r.Address)
-					.ThenInclude(a => a.GuestPhoneNavigation)
-				.Include(r => r.Order)
-					.ThenInclude(o => o.OrderDetails)
-						.ThenInclude(od => od.Dish)
-				.Include(r => r.Order)
-					.ThenInclude(o => o.OrderDetails)
-						.ThenInclude(od => od.Combo)
-				.Include(r => r.Order)
-					.ThenInclude(o => o.Address)
-				.Include(r => r.TableReservations)
-					.ThenInclude(tr => tr.Table)
-				.Where(r => !status.HasValue || r.Status == status)
-				.ToListAsync();
-		}
+        public async Task<IEnumerable<Reservation>> GetReservationsByStatus(int? status)
+        {
+            return await _context.Reservations
+                .Include(r => r.Address)
+                    .ThenInclude(a => a.GuestPhoneNavigation)
+                .Include(r => r.Order)
+                    .ThenInclude(o => o.OrderDetails)
+                        .ThenInclude(od => od.Dish)
+                .Include(r => r.Order)
+                    .ThenInclude(o => o.OrderDetails)
+                        .ThenInclude(od => od.Combo)
+                .Include(r => r.Order)
+                    .ThenInclude(o => o.Address)
+                .Include(r => r.TableReservations)
+                    .ThenInclude(tr => tr.Table)
+                .Where(r => !status.HasValue || r.Status == status)
+                .ToListAsync();
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        public void CreateNotification(Notification notification)
+        {
+            _context.Notifications.Add(notification);
+        }
 
 
-		public async Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status)
+        public async Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status)
 		{
 			return await _context.Reservations
 				.CountAsync(o => o.ReservationTime.Value.Date == date.Date && o.Status == status);

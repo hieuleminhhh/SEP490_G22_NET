@@ -39,5 +39,8 @@ namespace EHM_API.Repositories
 
 		IQueryable<int> GetReservedTableIdsForTime(DateTime reservationTime);
 		IQueryable<Table> GetAllTables();
-	}
+        Task SaveChangesAsync();
+        void CreateNotification(Notification notification);
+
+    }
 }

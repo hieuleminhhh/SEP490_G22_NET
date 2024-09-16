@@ -24,5 +24,6 @@ namespace EHM_API.Services
         Task<bool> UpdateProfileAsync(int accountId, UpdateProfileDTO dto);
         Task<bool> ChangePasswordAsync(int accountId, ChangePasswordDTO dto);
         Task<bool> UpdateRoleAsync(int accountId, RoleUpdateDTO roleUpdateDto);
+        Task<bool> ForgotPasswordAsync(ForgotPasswordRequestDTO request);
     }
 }
