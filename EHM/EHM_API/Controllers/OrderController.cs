@@ -654,7 +654,7 @@ namespace EHM_API.Controllers
             return Ok(result);
         }
 
-		[Authorize(Roles = "Cashier")]
+		[Authorize(Roles = "OrderStaff")]
 		[HttpPost("AcceptOrder/{orderId}")]
 		public async Task<IActionResult> AcceptOrder(int orderId, [FromBody] AcceptOrderDTO acceptOrderDto)
 		{

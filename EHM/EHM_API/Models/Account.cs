@@ -11,6 +11,7 @@ namespace EHM_API.Models
             News = new HashSet<News>();
             Notifications = new HashSet<Notification>();
             Orders = new HashSet<Order>();
+            Reservations = new HashSet<Reservation>();
         }
 
         public int AccountId { get; set; }
@@ -28,5 +29,6 @@ namespace EHM_API.Models
         public virtual ICollection<News> News { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }
