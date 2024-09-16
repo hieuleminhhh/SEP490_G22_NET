@@ -726,6 +726,10 @@ namespace EHM_API.Services
                 }).ToList()
             }).ToList();
         }
+        public async Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto)
+        {
+            return await _orderRepository.UpdateAcceptByAsync(dto);
+        }
 
     }
 }

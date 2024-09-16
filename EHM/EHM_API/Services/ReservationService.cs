@@ -264,7 +264,7 @@ namespace EHM_API.Services
 				throw new ArgumentNullException(nameof(reasonCancelDTO));
 			}
 
-			var updatedReservation = await _repository.UpdateReasonCancelAsync(reservationId, reasonCancelDTO.ReasonCancel);
+			var updatedReservation = await _repository.UpdateReasonCancelAsync(reservationId, reasonCancelDTO.ReasonCancel, reasonCancelDTO.CancelBy);
 
 			if (updatedReservation == null)
 			{
@@ -273,7 +273,8 @@ namespace EHM_API.Services
 
 			return new ReasonCancelDTO
 			{
-				ReasonCancel = updatedReservation.ReasonCancel
+				ReasonCancel = updatedReservation.ReasonCancel,
+				CancelBy = updatedReservation.CancelBy
 			};
 		}
 
@@ -501,6 +502,10 @@ namespace EHM_API.Services
 
 			return result;
 		}
+        public async Task<bool> UpdateReservationAcceptByAsync(UpdateReservationAcceptByDTO dto)
+        {
+            return await _repository.UpdateReservationAcceptByAsync(dto);
+        }
 
-	}
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using EHM_API.DTOs.CartDTO.Guest;
 using EHM_API.DTOs.ReservationDTO.Guest;
+using EHM_API.DTOs.ReservationDTO.Manager;
 using EHM_API.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -332,7 +333,7 @@ namespace EHM_API.Repositories
 				.ContinueWith(task => task.Result.Select(x => (x.Table, x.ReservationTime)).ToList());
 		}
 
-		public async Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel)
+		public async Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel, string? cancelBy)
 		{
 			var reservation = await GetReservationByIdAsync(reservationId);
 			if (reservation == null)
@@ -341,6 +342,7 @@ namespace EHM_API.Repositories
 			}
 
 			reservation.ReasonCancel = reasonCancel;
+			reservation.CancelBy = cancelBy;
                 reservation.Status = 5;
                 reservation.ReasonCancel = reasonCancel;
                 await _context.SaveChangesAsync();
@@ -434,8 +436,26 @@ namespace EHM_API.Repositories
 				.Distinct();
 		}
 
+        public async Task<bool> UpdateReservationAcceptByAsync(UpdateReservationAcceptByDTO dto)
+        {
+            // Tìm Reservation theo ReservationId
+            var reservation = await _context.Reservations.FindAsync(dto.ReservationId);
+
+            if (reservation == null)
+            {
+                return false; // Trả về false nếu không tìm thấy Reservation
+            }
+
+            // Cập nhật AcceptBy từ DTO
+            reservation.AcceptBy = dto.AcceptBy;
+
+            // Lưu thay đổi vào database
+            await _context.SaveChangesAsync();
+
+            return true; // Trả về true nếu cập nhật thành công
+        }
 
 
-	}
+    }
 }
 

@@ -392,10 +392,10 @@ namespace EHM_API.Models
                     .HasForeignKey(d => d.InvoiceId)
                     .HasConstraintName("FK_Order_Invoice");
                 modelBuilder.Entity<Order>()
-     .HasOne(o => o.Collected)
-     .WithMany()
-     .HasForeignKey(o => o.CollectedBy)
-     .OnDelete(DeleteBehavior.Restrict);
+   .HasOne(o => o.Collected)
+   .WithMany()
+   .HasForeignKey(o => o.CollectedBy)
+   .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<OrderDetail>(entity =>

@@ -165,21 +165,18 @@ namespace EHM_API.Services
             var account = _accountRepository.GetByEmail(request.Email);
             if (account == null)
             {
-                return false; // Tài khoản không tồn tại
+                return false; 
             }
 
-            // Tạo mật khẩu mới sử dụng PasswordGenerator
-            string newPassword = PasswordGenerator.GeneratePassword(); // Gọi hàm không truyền tham số
+            string newPassword = PasswordGenerator.GeneratePassword(); 
 
-            // Cập nhật mật khẩu mới
             await _accountRepository.UpdatePasswordByEmailAsync(request.Email, newPassword);
 
-            // Gửi email chứa mật khẩu mới
             var emailDto = new SendEmailRequestDTO
             {
                 ToEmail = request.Email,
-                Subject = "Your New Password",
-                Body = $"Your new password is: {newPassword}"
+                Subject = "Mật khẩu mới",
+                Body = $"Mật khẩu mới của bạn là: {newPassword}"
             };
             await _emailService.SendEmailAsync(emailDto.ToEmail, emailDto.Subject, emailDto.Body);
 
