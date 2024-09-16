@@ -244,7 +244,7 @@ namespace EHM_API.Controllers
 				});
 			}
 		}
-		[Authorize(Roles = "Cashier")]
+		[Authorize(Roles = "OrderStaff")]
 		[HttpPost("AddNewOrderTakeAway")]
         public async Task<IActionResult> AddNewOder2([FromBody] TakeOutDTO takeoutDTO)
         {

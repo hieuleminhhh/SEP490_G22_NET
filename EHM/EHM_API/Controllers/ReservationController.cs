@@ -30,14 +30,14 @@ namespace EHM_API.Controllers
         }
 
         [HttpGet]
-		public async Task<ActionResult<IEnumerable<ReservationByStatus>>> GetReservationsByStatus([FromQuery] int? status)
-		{
-			var reservations = await _service.GetReservationsByStatus(status);
-			return Ok(reservations);
-		}
+        public async Task<ActionResult<IEnumerable<ReservationByStatus>>> GetReservationsByStatus([FromQuery] int? status)
+        {
+            var reservations = await _service.GetReservationsByStatus(status);
+            return Ok(reservations);
+        }
 
-		//Create Reservation
-		[HttpPost("create")]
+        //Create Reservation
+        [HttpPost("create")]
 		public async Task<IActionResult> CreateReservation(CreateReservationDTO createDto)
 		{
 			var errors = new Dictionary<string, string>();

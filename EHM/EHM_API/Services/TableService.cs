@@ -29,11 +29,39 @@ namespace EHM_API.Services
         }
 
         public async Task<IEnumerable<TableAllDTO>> GetAllTablesAsync()
-		{
-			var tables = await _repository.GetAllTablesAsync();
-			return _mapper.Map<IEnumerable<TableAllDTO>>(tables);
-		}
-		public async Task<CreateTableDTO> AddAsync(CreateTableDTO tabledto) 
+        {
+            var tables = await _repository.GetAllTablesAsync();
+
+            return tables.Select(t => new TableAllDTO
+            {
+                TableId = t.TableId,
+                Status = t.Status,
+                Capacity = t.Capacity,
+                Floor = t.Floor,
+                Lable = t.Lable,
+                TableReservations = t.TableReservations
+                    .Select(tr =>
+                    {
+                        if (tr.Reservation.ReservationTime >= DateTime.Now)
+                        {
+                            return new TableReservationDetailDTO
+                            {
+                                ReservationId = tr.Reservation.ReservationId,
+                                ReservationTime = tr.Reservation.ReservationTime,
+                                GuestNumber = tr.Reservation.GuestNumber,
+                                Status = tr.Reservation.Status
+                            };
+                        }
+                        else
+                        {
+                            return null; // Đơn đặt bàn quá khứ được gán giá trị null
+                        }
+                    })
+                    .ToList()
+            }).ToList();
+        }
+
+        public async Task<CreateTableDTO> AddAsync(CreateTableDTO tabledto) 
 		{
 
 			var table = _mapper.Map<Table>(tabledto);

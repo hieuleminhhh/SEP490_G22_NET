@@ -16,7 +16,10 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 		public decimal Deposits { get; set; }
 		public string? Note { get; set; }
 		public int? Status { get; set; }
-		public OrderDetailDTO3 Order { get; set; }
+        public int? AccountId { get; set; }
+        public string? CancelBy { get; set; }
+        public int? AcceptBy { get; set; }
+        public OrderDetailDTO3 Order { get; set; }
 		public ICollection<TableReservationDTO> TableOfReservation { get; set; }
 
 	}
@@ -36,7 +39,8 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 		public int? Status { get; set; }
 		public decimal? TotalAmount { get; set; }
 		public string? Note { get; set; }
-		public ICollection<OrderItemDTO3> OrderDetails { get; set; }
+        public string? CancelBy { get; set; }
+        public ICollection<OrderItemDTO3> OrderDetails { get; set; }
 	}
 
 	public class OrderItemDTO3
