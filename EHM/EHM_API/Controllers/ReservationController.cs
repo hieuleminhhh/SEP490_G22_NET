@@ -414,5 +414,19 @@ namespace EHM_API.Controllers
             }
             return Ok(result);
         }
+
+        [HttpPut("UpdateReservationAcceptBy")]
+        public async Task<IActionResult> UpdateReservationAcceptBy([FromBody] UpdateReservationAcceptByDTO dto)
+        {
+            var result = await _service.UpdateReservationAcceptByAsync(dto);
+
+            if (!result)
+            {
+                return NotFound("Reservation not found.");
+            }
+
+            return Ok("AcceptBy updated successfully.");
+        }
+
     }
 }

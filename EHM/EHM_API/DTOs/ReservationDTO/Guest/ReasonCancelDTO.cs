@@ -3,5 +3,6 @@
     public class ReasonCancelDTO
     {
        public string? ReasonCancel { get; set; }
+        public string? CancelBy { get; set; }
     }
 }

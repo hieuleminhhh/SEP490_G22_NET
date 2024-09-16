@@ -353,13 +353,22 @@ namespace EHM_API.Controllers
         [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO request)
         {
+           
             var result = await _accountService.ForgotPasswordAsync(request);
             if (!result)
             {
-                return BadRequest("Email not found.");
+                return Ok(new
+                {
+                    success = false,
+                    message = "Email not found."
+                });
             }
 
-            return Ok("A new password has been sent to your email.");
+            return Ok(new
+            {
+                success = true,
+                message = "A new password has been sent to your email."
+            });
         }
 
     }

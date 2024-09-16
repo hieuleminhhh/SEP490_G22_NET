@@ -12,6 +12,5 @@ namespace EHM_API.Models
         public string? Lable { get; set; }
         public virtual ICollection<TableReservation> TableReservations { get; set; }
         public virtual ICollection<OrderTable> OrderTables { get; set; }
-
     }
 }

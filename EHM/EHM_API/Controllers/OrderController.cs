@@ -794,5 +794,19 @@ namespace EHM_API.Controllers
 
             return Ok(orders);
         }
+
+        [HttpPut("UpdateAcceptBy")]
+        public async Task<IActionResult> UpdateAcceptBy([FromBody] UpdateAcceptByDTO dto)
+        {
+            var result = await _orderService.UpdateAcceptByAsync(dto);
+
+            if (!result)
+            {
+                return NotFound("Order not found.");
+            }
+
+            return Ok("AcceptBy updated successfully.");
+        }
+
     }
 }
