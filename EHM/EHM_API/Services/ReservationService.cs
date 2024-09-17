@@ -373,66 +373,82 @@ namespace EHM_API.Services
 		{
 			var result = new ReservationCheckResult(); // Tạo một đối tượng kết quả
 
-			if (existingReservations == null || !existingReservations.Any())
+			// Kiểm tra nếu tất cả các bàn đều bận (status = 1) và thời gian đặt bàn chưa đủ 1 tiếng
+			bool isAllTablesBusy = allTables.All(t => t.Status == 1);
+			bool isReservationTooSoon = (reservationTime - DateTime.Now).TotalMinutes < 60;
+
+			if (isAllTablesBusy && isReservationTooSoon)
 			{
-				int totalAvailableCapacity = allTables.Sum(t => t.Capacity ?? 0);
-
-				if (totalAvailableCapacity >= guestNumber)
-				{
-					result.Message = $"Có thể đặt bàn. Còn trống {totalAvailableCapacity} chỗ.";
-					result.CanReserve = true; // Giả sử bạn có thuộc tính IsSuccess trong ReservationCheckResult
-				}
-				else
-				{
-					result.Message = $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {totalAvailableCapacity}.";
-					result.CanReserve = false;
-				}
-
+				result.Message = "Bạn phải đặt bàn ít nhất trước 1 tiếng từ thời điểm hiện tại.";
+				result.CanReserve = false;
 				return result;
 			}
 
+			// Lọc các bàn đã được đặt (status = 1) và các bàn bảo trì (status = 2)
 			var reservedTableIds = existingReservations
 				.Where(r => r.TableReservations != null)
 				.SelectMany(r => r.TableReservations.Select(tr => tr.TableId))
 				.Distinct()
 				.ToList();
 
-			var availableTables = allTables
-				.Where(t => !reservedTableIds.Contains(t.TableId) &&
-							(t.Status == 0 || reservationTime > DateTime.Now.AddHours(3)))
+			var tablesToConsider = allTables
+				.Where(t => t.Status != 2) // Loại bỏ các bàn bảo trì (status = 2)
 				.ToList();
 
-			int totalAvailableCapacityToday = availableTables.Sum(t => t.Capacity ?? 0);
-			int totalReservedCapacity = existingReservations.Sum(r => r.GuestNumber ?? 0);
-			int remainingCapacityToday = totalAvailableCapacityToday - totalReservedCapacity;
-
-			if (remainingCapacityToday < guestNumber)
+			if (isReservationTooSoon)
 			{
-				result.Message = $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacityToday}.";
-				result.CanReserve = false;
-				return result;
-			}
+				// Khi đặt bàn ít hơn 1 tiếng, chỉ tính các bàn đang trống (status = 0)
+				var availableTables = tablesToConsider
+					.Where(t => t.Status == 0 && !reservedTableIds.Contains(t.TableId)) // Chỉ lấy các bàn đang trống (status = 0)
+					.ToList();
 
-			var suitableTable = availableTables.FirstOrDefault(t => t.Capacity >= guestNumber);
+				int totalAvailableCapacity = availableTables
+					.Sum(t => t.Capacity ?? 0);
 
-			if (suitableTable != null)
-			{
-				result.Message = $"Có thể đặt bàn. Còn trống {remainingCapacityToday} chỗ.";
-				result.CanReserve = true;
-			}
-			else if (remainingCapacityToday >= guestNumber)
-			{
-				result.Message = $"Có thể đặt bàn bằng cách ghép bàn. Còn trống {remainingCapacityToday} chỗ.";
-				result.CanReserve = true;
+				if (totalAvailableCapacity >= guestNumber)
+				{
+					result.Message = $"Có thể đặt bàn. Còn trống {totalAvailableCapacity} chỗ.";
+					result.CanReserve = true;
+				}
+				else
+				{
+					result.Message = $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {totalAvailableCapacity}.";
+					result.CanReserve = false;
+				}
 			}
 			else
 			{
-				result.Message = $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacityToday}.";
-				result.CanReserve = false;
+				// Khi đặt bàn cách 1 tiếng trở lên, tính tổng số chỗ trống cho tất cả các bàn không bị bảo trì
+				int totalAvailableCapacity = tablesToConsider
+					.Sum(t => t.Capacity ?? 0);
+
+				// Trừ đi số lượng bàn đã được đặt tại thời điểm đó
+				var reservationsAtReservationTime = existingReservations
+					.Where(r => r.ReservationTime == reservationTime)
+					.ToList();
+
+				// Trừ đi số chỗ trống bị ảnh hưởng bởi các đơn đặt bàn có status = 2
+				int totalReservedCapacity = reservationsAtReservationTime
+					.Where(r => r.Status == 2) // Chỉ trừ các đơn đặt bàn có status = 2
+					.Sum(r => r.GuestNumber ?? 0);
+
+				int remainingCapacity = totalAvailableCapacity - totalReservedCapacity;
+
+				if (remainingCapacity >= guestNumber)
+				{
+					result.Message = $"Có thể đặt bàn. Còn trống {remainingCapacity} chỗ.";
+					result.CanReserve = true;
+				}
+				else
+				{
+					result.Message = $"Không đủ bàn để phục vụ cho {guestNumber} người. Tổng số chỗ trống: {remainingCapacity}.";
+					result.CanReserve = false;
+				}
 			}
 
 			return result;
 		}
+
 
 		private ReservationCheckResult CheckReservationForOtherDays(DateTime reservationTime, int guestNumber, List<Table> allTables, List<Reservation> existingReservations)
 		{
@@ -440,7 +456,10 @@ namespace EHM_API.Services
 
 			if (existingReservations == null || !existingReservations.Any())
 			{
-				int totalAvailableCapacityOtherDays = allTables.Sum(t => t.Capacity ?? 0);
+				// Loại bỏ các bàn có status = 2 (bảo trì) khi tính tổng sức chứa
+				int totalAvailableCapacityOtherDays = allTables
+					.Where(t => t.Status != 2) // Loại bỏ các bàn đang bảo trì
+					.Sum(t => t.Capacity ?? 0);
 
 				if (totalAvailableCapacityOtherDays >= guestNumber)
 				{
@@ -462,7 +481,10 @@ namespace EHM_API.Services
 				.Distinct()
 				.ToList();
 
-			var availableTables = allTables.Where(t => !reservedTableIds.Contains(t.TableId)).ToList();
+			// Loại bỏ các bàn đã được đặt và bàn có trạng thái bảo trì (status = 2)
+			var availableTables = allTables
+				.Where(t => !reservedTableIds.Contains(t.TableId) && t.Status != 2) // Loại bỏ bàn bảo trì
+				.ToList();
 
 			if (!availableTables.Any())
 			{
@@ -471,7 +493,9 @@ namespace EHM_API.Services
 				return result;
 			}
 
+			// Tính tổng sức chứa của các bàn trống
 			int totalAvailableCapacity = availableTables.Sum(t => t.Capacity ?? 0);
+
 			int totalReservedCapacity = existingReservations.Sum(r => r.GuestNumber ?? 0);
 			int remainingCapacity = totalAvailableCapacity - totalReservedCapacity;
 
@@ -482,6 +506,7 @@ namespace EHM_API.Services
 				return result;
 			}
 
+			// Tìm bàn phù hợp với số lượng khách
 			var suitableTable = availableTables.FirstOrDefault(t => t.Capacity >= guestNumber);
 
 			if (suitableTable != null)
@@ -502,7 +527,9 @@ namespace EHM_API.Services
 
 			return result;
 		}
-        public async Task<bool> UpdateReservationAcceptByAsync(UpdateReservationAcceptByDTO dto)
+
+
+		public async Task<bool> UpdateReservationAcceptByAsync(UpdateReservationAcceptByDTO dto)
         {
             return await _repository.UpdateReservationAcceptByAsync(dto);
         }
