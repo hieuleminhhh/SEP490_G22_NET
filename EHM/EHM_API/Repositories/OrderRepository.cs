@@ -1272,5 +1272,23 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.Discount)
             .ToListAsync();
     }
+    public async Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto)
+    {
+        // Tìm Order theo OrderId
+        var order = await _context.Orders.FindAsync(dto.OrderId);
+
+        if (order == null)
+        {
+            return false; // Trả về false nếu không tìm thấy Order
+        }
+
+        // Cập nhật AcceptBy từ DTO
+        order.AcceptBy = dto.AcceptBy;
+
+        // Lưu thay đổi vào database
+        await _context.SaveChangesAsync();
+
+        return true; // Trả về true nếu cập nhật thành công
+    }
 
 }

@@ -13,7 +13,11 @@ namespace EHM_API.Models
         public int AddressId { get; set; }
         public int? OrderId { get; set; }
         public string? ReasonCancel { get; set; }
+        public int? AccountId { get; set; }
+        public string? CancelBy { get; set; }
+        public int? AcceptBy { get; set; }
 
+        public virtual Account? Account { get; set; }
         public virtual Address Address { get; set; } = null!;
         public virtual Order? Order { get; set; }
         public virtual ICollection<TableReservation> TableReservations { get; set; }

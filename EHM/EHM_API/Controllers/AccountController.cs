@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.AccountDTO;
+using EHM_API.Repositories;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -16,11 +17,17 @@ namespace EHM_API.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
+        private readonly IGoogleRepository _googleRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IEmailService _emailService;
 
-        public AccountController(IAccountService accountService, IMapper mapper)
+        public AccountController(IAccountService accountService, IMapper mapper, IGoogleRepository googleRepository, IAccountRepository accountRepository, IEmailService emailService)
         {
             _accountService = accountService;
             _mapper = mapper;
+            _googleRepository = googleRepository;
+            _accountRepository = accountRepository;
+            _emailService = emailService;
         }
 
         [HttpGet("getAll")]
@@ -343,9 +350,29 @@ namespace EHM_API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO request)
+        {
+           
+            var result = await _accountService.ForgotPasswordAsync(request);
+            if (!result)
+            {
+                return Ok(new
+                {
+                    success = false,
+                    message = "Email not found."
+                });
+            }
 
-
-
+            return Ok(new
+            {
+                success = true,
+                message = "A new password has been sent to your email."
+            });
+        }
 
     }
+
+
+
 }

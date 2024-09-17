@@ -132,7 +132,7 @@ namespace EHM_API.Models
             });
 
             modelBuilder.Entity<ComboDetail>()
-                             .HasKey(cd => new { cd.ComboId, cd.DishId });
+                               .HasKey(cd => new { cd.ComboId, cd.DishId });
 
             modelBuilder.Entity<ComboDetail>()
                 .HasOne(cd => cd.Combo)
@@ -392,10 +392,10 @@ namespace EHM_API.Models
                     .HasForeignKey(d => d.InvoiceId)
                     .HasConstraintName("FK_Order_Invoice");
                 modelBuilder.Entity<Order>()
-       .HasOne(o => o.Collected)
-       .WithMany()
-       .HasForeignKey(o => o.CollectedBy)
-       .OnDelete(DeleteBehavior.Restrict);
+   .HasOne(o => o.Collected)
+   .WithMany()
+   .HasForeignKey(o => o.CollectedBy)
+   .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<OrderDetail>(entity =>
@@ -464,6 +464,10 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ReservationId).HasColumnName("ReservationID");
 
+                entity.Property(e => e.AccountId).HasColumnName("AccountID");
+
+                entity.Property(e => e.CancelBy).HasMaxLength(100);
+
                 entity.Property(e => e.Note).HasMaxLength(255);
 
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
@@ -471,6 +475,11 @@ namespace EHM_API.Models
                 entity.Property(e => e.ReasonCancel).HasMaxLength(200);
 
                 entity.Property(e => e.ReservationTime).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Reservations)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_Reservation_Account");
 
                 entity.HasOne(d => d.Address)
                     .WithMany(p => p.Reservations)
@@ -536,7 +545,6 @@ namespace EHM_API.Models
                     .WithMany(t => t.TableReservations)
                     .HasForeignKey(tr => tr.TableId);
             });
-
 
             modelBuilder.Entity<Wallet>(entity =>
             {
