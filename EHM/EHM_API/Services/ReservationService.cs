@@ -69,99 +69,133 @@ namespace EHM_API.Services
 			return await _repository.GetTotalTablesAsync();
 		}
 
-        public async Task<IEnumerable<ReservationByStatus>> GetReservationsByStatus(int? status)
+      public async Task<IEnumerable<ReservationByStatus>> GetReservationsByStatus(int? status)
+{
+    var reservations = await _repository.GetReservationsByStatus(status);
+    var result = new List<ReservationByStatus>();
+
+    // Lưu lại các thay đổi về Reservation và Order để cập nhật một lần
+    var reservationsToUpdate = new List<Reservation>();
+    var ordersToUpdate = new List<Order>();
+
+    // Lưu lại các tác vụ email và thông báo để chạy song song
+    var emailTasks = new List<Task>();
+    var notificationTasks = new List<Task>();
+
+    // Biến lưu trữ thời gian delay giữa các email
+    var delay = TimeSpan.FromSeconds(1);
+
+    foreach (var reservation in reservations)
+    {
+        bool isExpired = false;
+
+        // Kiểm tra trạng thái và quyết định cách so sánh ngày
+        if (reservation.Status == 1)
         {
-            var reservations = await _repository.GetReservationsByStatus(status);
-            var result = new List<ReservationByStatus>();
-
-            // Lưu lại các thay đổi về Reservation và Order để cập nhật một lần
-            var reservationsToUpdate = new List<Reservation>();
-            var ordersToUpdate = new List<Order>();
-
-            // Lưu lại các tác vụ email và thông báo để chạy song song
-            var emailTasks = new List<Task>();
-            var notificationTasks = new List<Task>();
-
-            foreach (var reservation in reservations)
+            // Nếu trạng thái = 1, so sánh với DateTime.Now
+            if (reservation.ReservationTime.HasValue && reservation.ReservationTime.Value < DateTime.Now)
             {
-                if (reservation.Status == 2)
-                {
-                    // Kiểm tra nếu ReservationTime đã quá hạn
-                    if (reservation.ReservationTime.HasValue && reservation.ReservationTime.Value.Date < DateTime.Now.Date)
-                    {
-                        // Cập nhật trạng thái thành "Đã hủy" (status = 5)
-                        reservation.Status = 5;
-                        reservation.ReasonCancel = "Quá ngày nhận bàn, Khách không đến nhận đơn";
-                        reservation.CancelBy = "Hệ thống";
-
-                        if (reservation.Order != null)
-                        {
-                            reservation.Order.Status = 5;
-                            reservation.Order.CancelBy = "Hệ thống";
-                            reservation.Order.CancelationReason = reservation.ReasonCancel;
-                            ordersToUpdate.Add(reservation.Order);
-                        }
-
-                        reservationsToUpdate.Add(reservation);
-
-                        // Gửi email thông báo cho khách hàng
-                        var email = reservation.Address.GuestPhoneNavigation?.Email;
-
-                        // Kiểm tra nếu email null hoặc không hợp lệ
-                        if (!string.IsNullOrEmpty(email) && IsValidEmail(email))
-                        {
-                            var emailSubject = "Thông báo từ Eating House";
-                            var emailBody = $@"
-    <p>Kính gửi Quý Khách,</p>
-    <p>Chúng tôi rất tiếc phải thông báo rằng đơn đặt bàn của Quý Khách với mã đặt bàn <strong>{reservation.ReservationId}</strong> tại Eating House đã bị hủy.</p>
-    <p>Lý do: {reservation.ReasonCancel}</p>
-    <p>Cảm ơn Quý Khách đã tin tưởng và lựa chọn Eating House!</p>
-    <p>Trân trọng,</p>
-    <p>Eating House</p>";
-
-                            // Thêm tác vụ gửi email vào danh sách
-                            emailTasks.Add(_emailService.SendEmailAsync(email, emailSubject, emailBody));
-                        }
-
-
-                        // Tạo thông báo cho khách hàng (có thể lưu vào hệ thống thông báo)
-                        var notification = new Notification
-                        {
-                            Description = $"Đơn đặt bàn {reservation.ReservationId} đã bị hủy. Lý do: {reservation.ReasonCancel}",
-                            AccountId = reservation.AccountId,
-                            OrderId = reservation.Order?.OrderId,
-                            Time = DateTime.Now
-                        };
-
-                        // Thêm tác vụ tạo thông báo vào danh sách
-                        notificationTasks.Add(Task.Run(() => _repository.CreateNotification(notification)));
-                    }
-                }
-
-                // Ánh xạ reservation sang ReservationByStatus và thêm vào kết quả
-                var mappedReservation = _mapper.Map<ReservationByStatus>(reservation);
-                result.Add(mappedReservation);
+                isExpired = true;
             }
-
-            // Cập nhật tất cả thay đổi về Reservation và Order trong một lần
-            if (reservationsToUpdate.Any())
-            {
-                _repository.UpdateReservations(reservationsToUpdate);
-            }
-            if (ordersToUpdate.Any())
-            {
-                _repository.UpdateOrders(ordersToUpdate);
-            }
-
-            // Lưu tất cả thay đổi vào cơ sở dữ liệu một lần duy nhất
-            await _repository.SaveChangesAsync();
-
-            // Chạy song song các tác vụ gửi email và tạo thông báo
-            await Task.WhenAll(emailTasks);
-            await Task.WhenAll(notificationTasks);
-
-            return result;
         }
+        else if (reservation.Status == 2)
+        {
+            // Nếu trạng thái = 2, so sánh với ngày hiện tại
+            if (reservation.ReservationTime.HasValue && reservation.ReservationTime.Value.Date < DateTime.Now.Date)
+            {
+                isExpired = true;
+            }
+        }
+
+        if (isExpired)
+        {
+            // Cập nhật trạng thái thành "Đã hủy" (status = 5)
+            reservation.Status = 5;
+            reservation.ReasonCancel = "Quá ngày nhận bàn, Khách không đến nhận đơn";
+            reservation.CancelBy = "Hệ thống";
+
+            if (reservation.Order != null)
+            {
+                reservation.Order.Status = 5;
+                reservation.Order.CancelBy = "Hệ thống";
+                reservation.Order.CancelationReason = reservation.ReasonCancel;
+                ordersToUpdate.Add(reservation.Order);
+            }
+
+            reservationsToUpdate.Add(reservation);
+
+            // Gửi email thông báo cho khách hàng
+            var email = reservation.Address.GuestPhoneNavigation?.Email;
+
+            // Kiểm tra nếu email null hoặc không hợp lệ
+            if (!string.IsNullOrEmpty(email) && IsValidEmail(email))
+            {
+                var emailSubject = "Thông báo từ Eating House";
+                var emailBody = $@"
+                <p>Kính gửi Quý Khách,</p>
+                <p>Chúng tôi rất tiếc phải thông báo rằng đơn đặt bàn của Quý Khách với mã đặt bàn <strong>{reservation.ReservationId}</strong> tại Eating House đã bị hủy.</p>
+                <p>Lý do: {reservation.ReasonCancel}</p>
+                <p>Cảm ơn Quý Khách đã tin tưởng và lựa chọn Eating House!</p>
+                <p>Trân trọng,</p>
+                <p>Eating House</p>";
+
+                // Thêm tác vụ gửi email vào danh sách
+                emailTasks.Add(SendEmailWithDelayAsync(email, emailSubject, emailBody, delay));
+            }
+
+            // Tạo thông báo cho khách hàng (có thể lưu vào hệ thống thông báo)
+            var notification = new Notification
+            {
+                Description = $"Đơn đặt bàn {reservation.ReservationId} đã bị hủy. Lý do: {reservation.ReasonCancel}",
+                AccountId = reservation.AccountId,
+                OrderId = reservation.Order?.OrderId,
+                Time = DateTime.Now
+            };
+
+            // Thêm tác vụ tạo thông báo vào danh sách
+            notificationTasks.Add(Task.Run(() => _repository.CreateNotification(notification)));
+        }
+
+        // Ánh xạ reservation sang ReservationByStatus và thêm vào kết quả
+        var mappedReservation = _mapper.Map<ReservationByStatus>(reservation);
+        result.Add(mappedReservation);
+    }
+
+    // Cập nhật tất cả thay đổi về Reservation và Order trong một lần
+    if (reservationsToUpdate.Any())
+    {
+        _repository.UpdateReservations(reservationsToUpdate);
+    }
+    if (ordersToUpdate.Any())
+    {
+        _repository.UpdateOrders(ordersToUpdate);
+    }
+
+    // Lưu tất cả thay đổi vào cơ sở dữ liệu một lần duy nhất
+    await _repository.SaveChangesAsync();
+
+    // Chạy song song các tác vụ gửi email và tạo thông báo
+    await Task.WhenAll(emailTasks);
+    await Task.WhenAll(notificationTasks);
+
+    return result;
+}
+
+// Phương thức gửi email với delay
+private async Task SendEmailWithDelayAsync(string email, string subject, string body, TimeSpan delay)
+{
+    try
+    {
+        await _emailService.SendEmailAsync(email, subject, body);
+        await Task.Delay(delay); // Delay giữa các email
+    }
+    catch (Exception ex)
+    {
+        // Xử lý lỗi gửi email
+        Console.WriteLine($"Lỗi gửi email cho {email}: {ex.Message}");
+    }
+}
+
 
 
 

@@ -176,7 +176,8 @@ namespace EHM_API.Repositories
                 {
                     DishId = cd.Dish.DishId,
                     ItemName = cd.Dish.ItemName,
-                    Price = cd.Dish.Price
+                    Price = cd.Dish.Price,
+                    QuantityDish = cd.QuantityDish
                 }).ToList()
             }).ToList();
 
