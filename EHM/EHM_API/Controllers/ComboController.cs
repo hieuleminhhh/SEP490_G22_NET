@@ -333,7 +333,7 @@ namespace EHM_API.Controllers
 
 		[Authorize(Roles = "Manager")]
 		[HttpPut("UpdateComboWithDishes/{comboId}")]
-		public async Task<ActionResult<ComboDTO>> UpdateComboWithDishes(int comboId, [FromBody] UpdateComboDishDTO updateComboWithDishesDTO)
+		public async Task<ActionResult<UpdateComboDishDTO>> UpdateComboWithDishes(int comboId, [FromBody] UpdateComboDishDTO updateComboWithDishesDTO)
 		{
 			var errors = new Dictionary<string, string>();
 

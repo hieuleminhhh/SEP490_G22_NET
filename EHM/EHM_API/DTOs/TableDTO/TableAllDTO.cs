@@ -14,4 +14,6 @@ public class TableReservationDetailDTO
     public DateTime? ReservationTime { get; set; }
     public int? GuestNumber { get; set; }
     public int? Status { get; set; }
+    public string? ConsigneeName { get; set; }
+    public string? GuestPhone { get; set; }
 }
