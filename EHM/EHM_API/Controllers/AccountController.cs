@@ -18,14 +18,16 @@ namespace EHM_API.Controllers
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
         private readonly IGoogleRepository _googleRepository;
+        private readonly IGoogleService _googleService;
         private readonly IAccountRepository _accountRepository;
         private readonly IEmailService _emailService;
 
-        public AccountController(IAccountService accountService, IMapper mapper, IGoogleRepository googleRepository, IAccountRepository accountRepository, IEmailService emailService)
+        public AccountController(IAccountService accountService, IMapper mapper, IGoogleRepository googleRepository, IGoogleService googleService, IAccountRepository accountRepository, IEmailService emailService)
         {
             _accountService = accountService;
             _mapper = mapper;
             _googleRepository = googleRepository;
+            _googleService = googleService;
             _accountRepository = accountRepository;
             _emailService = emailService;
         }
@@ -369,6 +371,72 @@ namespace EHM_API.Controllers
                 success = true,
                 message = "A new password has been sent to your email."
             });
+        }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterAccountDTO registerDto)
+        {
+            // Tạo dictionary để chứa các lỗi
+            var errors = new Dictionary<string, string>();
+
+            // Kiểm tra mật khẩu và xác nhận mật khẩu
+            if (string.IsNullOrWhiteSpace(registerDto.Password) || registerDto.Password.Length < 6)
+            {
+                errors["Password"] = "Mật khẩu phải có độ dài ít nhất 6 ký tự.";
+            }
+
+            if (registerDto.Password != registerDto.ConfirmPassword)
+            {
+                errors["ConfirmPassword"] = "Mật khẩu và Xác nhận mật khẩu không khớp.";
+            }
+
+            // Kiểm tra xem username đã tồn tại chưa
+            var existingUsername = await _accountService.AccountExistsAsync(registerDto.Username);
+            if (existingUsername)
+            {
+                errors["Username"] = "Tên tài khoản đã tồn tại.";
+            }
+
+            var existingEmail = await _accountService.EmailExistsAsync(registerDto.Email);
+            if (existingEmail)
+            {
+                errors["Email"] = "Email đã tồn tại.";
+            }
+
+            // Nếu có lỗi, trả về tất cả lỗi
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+
+            try
+            {
+                // Tạo tài khoản mới
+                var newAccount = new CreateAccountDTO
+                {
+                    Username = registerDto.Username,
+                    Password = registerDto.Password,
+                    Email = registerDto.Email,
+                    Role = "User", // Role mặc định
+                    IsActive = true // Tài khoản kích hoạt ngay lập tức
+                };
+
+                // Gọi service để lưu tài khoản vào database
+                await _accountService.CreateAccountAsync(newAccount);
+
+                // Tạo mã OTP (chỉ để hiển thị)
+                var otp = _googleService.GenerateOTP(registerDto.Email);
+
+                // Trả về thông báo tạo tài khoản thành công kèm OTP
+                return Ok(new
+                {
+                    message = "Tài khoản đã được tạo thành công.",
+                    otp = otp // OTP được trả về kèm với thông báo thành công
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.", details = ex.Message });
+            }
         }
 
     }
