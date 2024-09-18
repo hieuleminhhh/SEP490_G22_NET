@@ -40,15 +40,19 @@ namespace EHM_API.Services
                 Floor = t.Floor,
                 Lable = t.Lable,
                 TableReservations = t.TableReservations
-                    .Where(tr => tr.Reservation.ReservationTime >= DateTime.Now) // Lọc các reservation ở hiện tại và tương lai
-                    .Select(tr => new TableReservationDetailDTO
-                    {
-                        ReservationId = tr.Reservation.ReservationId,
-                        ReservationTime = tr.Reservation.ReservationTime,
-                        GuestNumber = tr.Reservation.GuestNumber,
-                        Status = tr.Reservation.Status
-                    })
-                    .ToList()
+    .Where(tr => tr.Reservation != null && tr.Reservation.ReservationTime >= DateTime.Now) 
+    .OrderBy(tr => tr.Reservation.ReservationTime)
+    .Select(tr => new TableReservationDetailDTO
+    {
+        ReservationId = tr.Reservation?.ReservationId ?? 0, 
+        ReservationTime = tr.Reservation?.ReservationTime ?? DateTime.MinValue, 
+        GuestNumber = tr.Reservation?.GuestNumber ?? 0, 
+        Status = tr.Reservation?.Status ?? 0, 
+        GuestPhone = tr.Reservation?.Address?.GuestPhone ?? string.Empty, 
+        ConsigneeName = tr.Reservation?.Address?.ConsigneeName ?? string.Empty 
+    })
+    .ToList()
+
             }).ToList();
         }
 
