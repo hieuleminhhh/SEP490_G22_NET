@@ -14,6 +14,7 @@ using AutoMapper;
 using ProjectSchedule.Models;
 using ProjectSchedule.Authenticate;
 using EHM_API.DTOs.Email;
+using System.Net.WebSockets;
 
 namespace EHM_API
 {
@@ -83,14 +84,17 @@ namespace EHM_API
                 options.ClientSecret = googleAuthNSection["ClientSecret"];
                 options.CallbackPath = "/auth/callback";
             });
-   
+
 
             // Add CORS policy
             builder.Services.AddCors(opts =>
             {
                 opts.AddPolicy("CORSPolicy", builder =>
                 {
-                    builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed((host) => true);
+                    builder.AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowCredentials()
+                           .SetIsOriginAllowed((host) => true);
                 });
             });
             builder.Services.AddScoped<JwtTokenGenerator>();
@@ -180,7 +184,21 @@ namespace EHM_API
             builder.Services.AddHttpClient();
 
             var app = builder.Build();
+            app.UseWebSockets();
 
+            // Endpoint cho WebSocket tại /ws
+            app.Map("/ws", async context =>
+            {
+                if (context.WebSockets.IsWebSocketRequest)
+                {
+                    var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                    await HandleWebSocketConnectionAsync(webSocket);
+                }
+                else
+                {
+                    context.Response.StatusCode = 400;
+                }
+            });
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -202,6 +220,38 @@ namespace EHM_API
             app.MapControllers();
 
             app.Run();
+        }
+        private static List<WebSocket> _clients = new List<WebSocket>();
+
+        private static async Task HandleWebSocketConnectionAsync(WebSocket webSocket)
+        {
+            // Thêm kết nối mới vào danh sách
+            _clients.Add(webSocket);
+
+            var buffer = new byte[1024 * 4];
+            WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+
+            while (!result.CloseStatus.HasValue)
+            {
+                // Xử lý dữ liệu nhận từ client
+                var clientMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                Console.WriteLine("Received: " + clientMessage);
+
+                // Gửi thông điệp đến tất cả các client
+                foreach (var client in _clients)
+                {
+                    if (client.State == WebSocketState.Open) // Kiểm tra trạng thái kết nối
+                    {
+                        await client.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
+                    }
+                }
+
+                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            }
+
+            // Xóa kết nối khi đóng
+            _clients.Remove(webSocket);
+            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
     }
 }

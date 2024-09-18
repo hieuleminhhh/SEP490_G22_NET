@@ -156,7 +156,7 @@ namespace EHM_API.Services
             return comboDTO;
         }
 
-        public async Task<ComboDTO> UpdateComboWithDishesAsync(int comboId, UpdateComboDishDTO updateComboWithDishesDTO)
+        public async Task<UpdateComboDishDTO> UpdateComboWithDishesAsync(int comboId, UpdateComboDishDTO updateComboWithDishesDTO)
         {
             // Fetch the dishes by IDs
             var dishIds = updateComboWithDishesDTO.Dishes.Select(d => d.DishId).ToList();
@@ -171,7 +171,7 @@ namespace EHM_API.Services
             var combo = await _comboRepository.GetByIdAsync(comboId);
             if (combo == null)
             {
-                throw new Exception("Combo not found");
+                throw new Exception("Combo not found.");
             }
 
             // Update combo properties
@@ -191,27 +191,30 @@ namespace EHM_API.Services
                 {
                     ComboId = comboId,
                     DishId = dishDto.DishId,
-                    QuantityDish = dishDto.QuantityDish  // Store dish quantity
+                    QuantityDish = dishDto.QuantityDish ?? 1 // Use a default value if QuantityDish is null
                 });
             }
 
             // Update combo in the repository
             await _comboRepository.UpdateAsync(combo);
 
-            // Prepare and return the ComboDTO
-            var comboDTO = new ComboDTO
+            // Prepare and return the updated DTO
+            var updatedComboDTO = new UpdateComboDishDTO
             {
-                ComboId = combo.ComboId,
                 NameCombo = combo.NameCombo,
                 Price = combo.Price,
                 Note = combo.Note,
                 ImageUrl = combo.ImageUrl,
-                DishIds = combo.ComboDetails.Select(cd => cd.DishId).ToList(),
-                DishQuantities = combo.ComboDetails.Select(cd => cd.QuantityDish ?? 0).ToList()  
+                Dishes = combo.ComboDetails.Select(cd => new DishComboDTO
+                {
+                    DishId = cd.DishId,
+                    QuantityDish = cd.QuantityDish
+                }).ToList()
             };
 
-            return comboDTO;
+            return updatedComboDTO;
         }
+
 
         public async Task ClearComboDetailsAsync(int comboId)
         {
