@@ -182,6 +182,11 @@ namespace EHM_API.Services
 
             return true;
         }
-
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            // Gọi repository hoặc context để kiểm tra xem email đã tồn tại chưa
+            var account = await _accountRepository.GetAccountByEmailAsync(email);
+            return account != null;
+        }
     }
 }
