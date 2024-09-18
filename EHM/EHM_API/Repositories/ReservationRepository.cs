@@ -387,24 +387,13 @@ namespace EHM_API.Repositories
 			return _context.Tables;
 		}
 
-		public IQueryable<Reservation> GetReservationsForTimeAndStatus(DateTime time, int status)
+		public IQueryable<Reservation> GetReservationsForTimeAndStatus(DateTime reservationTime, int status)
 		{
 			return _context.Set<Reservation>()
-				.Where(r => r.ReservationTime.Value.Date == time.Date &&
-							r.ReservationTime.Value.Hour == time.Hour &&
+				.Where(r => r.ReservationTime.Value.Date == reservationTime.Date &&
+							r.ReservationTime.Value >= reservationTime &&  // Kiểm tra thời gian đặt >= thời gian yêu cầu
 							r.Status == status);
 		}
-
-		/*		public IQueryable<Table> GetAvailableTables(DateTime reservationTime, int guestNumber)
-				{
-					var reservedTableIds = GetReservedTableIdsForTime(reservationTime).ToList();
-
-					return _context.Set<Table>()
-						.Where(t => !reservedTableIds.Contains(t.TableId) &&
-									(t.Status == 0 ||
-									 (t.Status != 0 && reservationTime > DateTime.Now.AddHours(3))) &&
-									(t.Capacity >= guestNumber)); // Include tables with capacity >= guestNumber
-				}*/
 
 		public IQueryable<Table> GetAvailableTables(DateTime reservationTime, int guestNumber)
 		{
@@ -417,6 +406,13 @@ namespace EHM_API.Repositories
 							t.Capacity >= guestNumber);                // Sức chứa phải lớn hơn hoặc bằng số lượng khách
 		}
 
+		public IQueryable<int> GetReservedTableIdsForTime(DateTime reservationTime)
+		{
+			return _context.Set<Reservation>()
+				.Where(r => r.ReservationTime == reservationTime && r.Status == 1) // Chỉ lấy bàn có trạng thái 'đang được đặt' (Status = 1)
+				.SelectMany(r => r.TableReservations.Select(tr => tr.TableId))
+				.Distinct();
+		}
 
 
 
@@ -428,15 +424,10 @@ namespace EHM_API.Repositories
 							r.Status == 2);
 		}
 
-		public IQueryable<int> GetReservedTableIdsForTime(DateTime reservationTime)
-		{
-			return _context.Set<Reservation>()
-				.Where(r => r.ReservationTime == reservationTime && r.Status == 2)
-				.SelectMany(r => r.TableReservations.Select(tr => tr.TableId))
-				.Distinct();
-		}
 
-        public async Task<bool> UpdateReservationAcceptByAsync(UpdateReservationAcceptByDTO dto)
+
+
+		public async Task<bool> UpdateReservationAcceptByAsync(UpdateReservationAcceptByDTO dto)
         {
             // Tìm Reservation theo ReservationId
             var reservation = await _context.Reservations.FindAsync(dto.ReservationId);
@@ -453,9 +444,22 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
 
             return true; // Trả về true nếu cập nhật thành công
+		}
+
+		public Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel)
+		{
+			throw new NotImplementedException();
+		}
+        public void UpdateReservations(IEnumerable<Reservation> reservations)
+        {
+            _context.Reservations.UpdateRange(reservations);
         }
 
-
+        
+        public void UpdateOrders(IEnumerable<Order> orders)
+        {
+            _context.Orders.UpdateRange(orders);
+        }
     }
 }
 

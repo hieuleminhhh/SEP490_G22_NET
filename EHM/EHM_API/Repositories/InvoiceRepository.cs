@@ -418,7 +418,7 @@ namespace EHM_API.Repositories
                 .Include(o => o.Collected)
                 .Include(o => o.Invoice)
                 .Include(o => o.Discount)
-                .Where(o => o.Type == 2 && o.Status == 4)
+                .Where(o => o.Type == 2 && o.Status == 4 && o.Deposits == 0)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
