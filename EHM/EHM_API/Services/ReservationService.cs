@@ -384,12 +384,12 @@ namespace EHM_API.Services
 				return result;
 			}
 
-			// Lọc các bàn không bị bảo trì (status != 2)
+			// Lọc các bàn trống (status = 0) và không bị bảo trì (status != 2)
 			var tablesToConsider = allTables
-				.Where(t => t.Status != 2) // Loại bỏ các bàn bảo trì (status = 2)
+				.Where(t => t.Status == 0 && t.Status != 2) // Chỉ lấy bàn trống (status = 0) và loại bỏ bàn bảo trì (status = 2)
 				.ToList();
 
-			// Tính tổng số chỗ trống cho tất cả các bàn không bị bảo trì
+			// Tính tổng số chỗ trống cho tất cả các bàn trống
 			int totalAvailableCapacity = tablesToConsider
 				.Sum(t => t.Capacity ?? 0);
 
@@ -398,11 +398,11 @@ namespace EHM_API.Services
 				.Where(r => r.ReservationTime.HasValue && r.ReservationTime.Value.Date == reservationTime.Date && r.Status == 2) // Chỉ lấy đơn đặt bàn có status = 2
 				.ToList();
 
-			// Tính tổng số chỗ trống bị ảnh hưởng bởi các đơn đặt bàn có status = 2
+			// Tính tổng số chỗ đã bị đặt bởi các đơn đặt bàn có status = 2
 			int totalReservedCapacity = reservationsAtReservationTime
 				.Sum(r => r.GuestNumber ?? 0);
 
-			// Số chỗ còn trống sau khi trừ đi số chỗ bị ảnh hưởng bởi các đơn đặt bàn có status = 2
+			// Số chỗ còn trống sau khi trừ đi số chỗ bị đặt
 			int remainingCapacity = totalAvailableCapacity - totalReservedCapacity;
 
 			if (remainingCapacity >= guestNumber)
@@ -418,8 +418,6 @@ namespace EHM_API.Services
 
 			return result;
 		}
-
-
 
 
 		private ReservationCheckResult CheckReservationForOtherDays(DateTime reservationTime, int guestNumber, List<Table> allTables, List<Reservation> existingReservations)
