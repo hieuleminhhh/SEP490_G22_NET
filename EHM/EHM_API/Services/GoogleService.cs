@@ -81,8 +81,8 @@ namespace EHM_API.Services
         public string GenerateOTP(string email)
         {
             var otp = new Random().Next(100000, 999999).ToString();
-            _otpStore[email] = otp; // Lưu OTP tạm thời
-            Console.WriteLine($"Generated OTP for {email}: {otp}"); // Thêm thông báo gỡ lỗi
+            _otpStore[email] = otp;
+            Console.WriteLine($"Generated OTP for {email}: {otp}"); 
             return otp;
         }
 
@@ -109,18 +109,18 @@ namespace EHM_API.Services
                 var storedOtp = _otpStore[email].Trim();
                 if (storedOtp == otp)
                 {
-                    _otpStore.Remove(email); // Xóa OTP sau khi xác minh thành công
-                    Console.WriteLine($"OTP verified for {email}: {otp}"); // Thêm thông báo gỡ lỗi
+                    _otpStore.Remove(email); 
+                    Console.WriteLine($"OTP verified for {email}: {otp}"); 
                     return true;
                 }
                 else
                 {
-                    Console.WriteLine($"OTP mismatch for {email}. Expected: {storedOtp}, Provided: {otp}"); // Thêm thông báo gỡ lỗi
+                    Console.WriteLine($"OTP mismatch for {email}. Expected: {storedOtp}, Provided: {otp}"); 
                 }
             }
             else
             {
-                Console.WriteLine($"No OTP found for {email}"); // Thêm thông báo gỡ lỗi
+                Console.WriteLine($"No OTP found for {email}"); 
             }
             return false;
         }

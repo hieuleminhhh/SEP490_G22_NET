@@ -6,7 +6,7 @@
         public decimal? Price { get; set; }
         public string? Note { get; set; }
         public string? ImageUrl { get; set; }
-        public List<DishComboDTO> Dishes { get; set; }  // Assuming you have a DishDTO that includes DishId and QuantityDish
+        public List<DishComboDTO> Dishes { get; set; } 
     }
 
     public class DishComboDTO

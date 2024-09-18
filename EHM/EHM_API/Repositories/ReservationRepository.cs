@@ -444,12 +444,22 @@ namespace EHM_API.Repositories
             await _context.SaveChangesAsync();
 
             return true; // Trả về true nếu cập nhật thành công
-        }
+		}
 
 		public Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel)
 		{
 			throw new NotImplementedException();
 		}
-	}
+        public void UpdateReservations(IEnumerable<Reservation> reservations)
+        {
+            _context.Reservations.UpdateRange(reservations);
+        }
+
+        
+        public void UpdateOrders(IEnumerable<Order> orders)
+        {
+            _context.Orders.UpdateRange(orders);
+        }
+    }
 }
 

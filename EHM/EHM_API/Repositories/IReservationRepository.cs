@@ -43,5 +43,7 @@ namespace EHM_API.Repositories
         Task SaveChangesAsync();
         void CreateNotification(Notification notification);
 		Task<bool> UpdateReservationAcceptByAsync(UpdateReservationAcceptByDTO dto);
+        void UpdateReservations(IEnumerable<Reservation> reservations);
+        void UpdateOrders(IEnumerable<Order> orders);
     }
 }

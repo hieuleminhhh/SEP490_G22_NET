@@ -17,5 +17,6 @@ namespace EHM_API.Repositories
         Task SaveAsync();
         Task UpdatePasswordByEmailAsync(string email, string newPassword);
         Account GetByEmail(string email);
+        Task<Account> GetAccountByEmailAsync(string email);
     }
 }

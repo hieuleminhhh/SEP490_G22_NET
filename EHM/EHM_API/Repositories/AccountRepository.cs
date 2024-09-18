@@ -96,9 +96,10 @@ namespace EHM_API.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
-
-
+        public async Task<Account> GetAccountByEmailAsync(string email)
+        {
+            return await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
+        }
 
     }
 }

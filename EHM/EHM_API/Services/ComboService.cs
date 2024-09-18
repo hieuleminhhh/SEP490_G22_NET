@@ -117,42 +117,45 @@ namespace EHM_API.Services
 		{
 			return await _comboRepository.UpdateComboStatusAsync(comboId, isActive);
 		}
-		public async Task<ComboDTO> CreateComboWithDishesAsync(CreateComboDishDTO createComboWithDishesDTO)
-		{
-			var dishes = await _dishRepository.GetDishesByIdsAsync(createComboWithDishesDTO.DishIds);
-			if (dishes.Count != createComboWithDishesDTO.DishIds.Count)
-			{
-				throw new Exception("Some dishes were not found.");
-			}
+        public async Task<ComboDTO> CreateComboWithDishesAsync(UpdateComboDishDTO createComboWithDishesDTO)
+        {
+            var dishes = await _dishRepository.GetDishesByIdsAsync(createComboWithDishesDTO.Dishes.Select(d => d.DishId).ToList());
 
-			var combo = new Combo
-			{
-				NameCombo = createComboWithDishesDTO.NameCombo,
-				Price = createComboWithDishesDTO.Price,
-				Note = createComboWithDishesDTO.Note,
-				ImageUrl = createComboWithDishesDTO.ImageUrl,
-                IsActive = createComboWithDishesDTO.IsActive ?? true,
-                ComboDetails = createComboWithDishesDTO.DishIds.Select(dishId => new ComboDetail
-				{
-					DishId = dishId,
-				}).ToList() 
-			};
+            if (dishes.Count != createComboWithDishesDTO.Dishes.Count)
+            {
+                throw new Exception("Some dishes were not found.");
+            }
 
-			await _comboRepository.AddAsync(combo);
+            var combo = new Combo
+            {
+                NameCombo = createComboWithDishesDTO.NameCombo,
+                Price = createComboWithDishesDTO.Price,
+                Note = createComboWithDishesDTO.Note,
+                ImageUrl = createComboWithDishesDTO.ImageUrl,
+                IsActive = true, // Hoặc giá trị khác tùy thuộc vào yêu cầu của bạn
+                ComboDetails = createComboWithDishesDTO.Dishes.Select(d => new ComboDetail
+                {
+                    DishId = d.DishId,
+                    QuantityDish = d.QuantityDish ?? 1 // Sử dụng giá trị mặc định nếu không có số lượng
+                }).ToList()
+            };
 
-			var comboDTO = new ComboDTO
-			{
-				ComboId = combo.ComboId,
-				NameCombo = combo.NameCombo,
-				Price = combo.Price,
-				Note = combo.Note,
-				ImageUrl = combo.ImageUrl,
-				IsActive = combo.IsActive,
-				DishIds = combo.ComboDetails.Select(cd => cd.DishId).ToList()
-			};
+            await _comboRepository.AddAsync(combo);
 
-			return comboDTO;
-		}
+            var comboDTO = new ComboDTO
+            {
+                ComboId = combo.ComboId,
+                NameCombo = combo.NameCombo,
+                Price = combo.Price,
+                Note = combo.Note,
+                ImageUrl = combo.ImageUrl,
+                IsActive = combo.IsActive,
+                DishIds = combo.ComboDetails.Select(cd => cd.DishId).ToList()
+            };
+
+            return comboDTO;
+        }
+
         public async Task<ComboDTO> UpdateComboWithDishesAsync(int comboId, UpdateComboDishDTO updateComboWithDishesDTO)
         {
             // Fetch the dishes by IDs
