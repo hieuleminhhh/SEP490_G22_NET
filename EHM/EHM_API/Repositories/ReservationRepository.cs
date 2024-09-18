@@ -204,7 +204,7 @@ namespace EHM_API.Repositories
 
         public async Task<IEnumerable<Reservation>> GetReservationsByStatus(int? status)
         {
-            return await _context.Reservations
+            var query = _context.Reservations
                 .Include(r => r.Address)
                     .ThenInclude(a => a.GuestPhoneNavigation)
                 .Include(r => r.Order)
@@ -217,9 +217,23 @@ namespace EHM_API.Repositories
                     .ThenInclude(o => o.Address)
                 .Include(r => r.TableReservations)
                     .ThenInclude(tr => tr.Table)
-                .Where(r => !status.HasValue || r.Status == status)
-                .ToListAsync();
+                .AsQueryable();
+
+            // Thêm điều kiện Where nếu status có giá trị
+            if (status.HasValue)
+            {
+                query = query.Where(r => r.Status == status.Value);
+            }
+
+            // Sắp xếp theo ReservationTime nếu status == 2
+            if (status == 2)
+            {
+                query = query.OrderBy(r => r.ReservationTime);
+            }
+
+            return await query.ToListAsync();
         }
+
 
         public async Task SaveChangesAsync()
         {
