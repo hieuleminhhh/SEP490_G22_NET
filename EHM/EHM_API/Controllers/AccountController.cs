@@ -375,34 +375,45 @@ namespace EHM_API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterAccountDTO registerDto)
         {
-            // Tạo dictionary để chứa các lỗi
             var errors = new Dictionary<string, string>();
 
-            // Kiểm tra mật khẩu và xác nhận mật khẩu
+            // Kiểm tra email rỗng hoặc định dạng sai
+            if (string.IsNullOrWhiteSpace(registerDto.Email))
+            {
+                errors["Email"] = "Email không được để trống.";
+            }
+            else if (!new EmailAddressAttribute().IsValid(registerDto.Email)) // Kiểm tra định dạng email hợp lệ
+            {
+                errors["Email"] = "Email không hợp lệ.";
+            }
+
+            // Kiểm tra mật khẩu
             if (string.IsNullOrWhiteSpace(registerDto.Password) || registerDto.Password.Length < 6)
             {
                 errors["Password"] = "Mật khẩu phải có độ dài ít nhất 6 ký tự.";
             }
 
+            // Kiểm tra mật khẩu và xác nhận mật khẩu
             if (registerDto.Password != registerDto.ConfirmPassword)
             {
                 errors["ConfirmPassword"] = "Mật khẩu và Xác nhận mật khẩu không khớp.";
             }
 
-            // Kiểm tra xem username đã tồn tại chưa
+            // Kiểm tra xem tài khoản đã tồn tại chưa
             var existingUsername = await _accountService.AccountExistsAsync(registerDto.Username);
             if (existingUsername)
             {
                 errors["Username"] = "Tên tài khoản đã tồn tại.";
             }
 
+            // Kiểm tra email đã tồn tại
             var existingEmail = await _accountService.EmailExistsAsync(registerDto.Email);
             if (existingEmail)
             {
                 errors["Email"] = "Email đã tồn tại.";
             }
 
-            // Nếu có lỗi, trả về tất cả lỗi
+            // Nếu có lỗi, trả về BadRequest
             if (errors.Any())
             {
                 return BadRequest(errors);
@@ -438,6 +449,7 @@ namespace EHM_API.Controllers
                 return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.", details = ex.Message });
             }
         }
+
 
     }
 
