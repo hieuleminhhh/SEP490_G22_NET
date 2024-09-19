@@ -30,6 +30,11 @@ namespace EHM_API.Services
             var notifications = await _repository.GetNotificationsByAccountIdAsync(accountId);
             return _mapper.Map<List<NotificationAllDTO>>(notifications);
         }
+        public async Task<List<NotificationAllDTO>> GetNotificationsByTypeAsync(int type)
+        {
+            var notifications = await _repository.GetNotificationsByTypeAsync(type);
+            return _mapper.Map<List<NotificationAllDTO>>(notifications);
+        }
 
         public async Task CreateNotificationAsync(NotificationCreateDTO notificationDto)
         {

@@ -6,6 +6,7 @@ namespace EHM_API.Repositories
     {
         Task<List<Notification>> GetAllNotificationsAsync();
         Task<List<Notification>> GetNotificationsByAccountIdAsync(int accountId);
+        Task<List<Notification>> GetNotificationsByTypeAsync(int type);
         Task CreateNotificationAsync(Notification notification);
         Task UpdateNotificationAsync(Notification notification);
         Task DeleteNotificationAsync(int id);
