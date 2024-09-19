@@ -62,7 +62,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
-		[Authorize(Roles = "OrderStaff,Cashier,Manager")]
+	/*	[Authorize(Roles = "OrderStaff,Cashier,Manager")]*/
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<TableAllDTO>>> GetAllTables()
 		{

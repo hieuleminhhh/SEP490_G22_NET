@@ -21,6 +21,7 @@ namespace EHM_API.Repositories
             return await _context.Tables
                 .Include(t => t.TableReservations)
                     .ThenInclude(tr => tr.Reservation)
+                    .ThenInclude(a => a.Address)
                 .ToListAsync();
         }
 

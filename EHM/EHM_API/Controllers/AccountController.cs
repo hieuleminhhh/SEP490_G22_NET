@@ -372,37 +372,124 @@ namespace EHM_API.Controllers
                 message = "A new password has been sent to your email."
             });
         }
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterAccountDTO registerDto)
+        [HttpPost("verify")]
+        public async Task<IActionResult> Verify(RegisterAccountDTO registerDto)
         {
-            // Tạo dictionary để chứa các lỗi
             var errors = new Dictionary<string, string>();
 
-            // Kiểm tra mật khẩu và xác nhận mật khẩu
+            // Kiểm tra email rỗng hoặc định dạng sai
+            if (string.IsNullOrWhiteSpace(registerDto.Email))
+            {
+                errors["Email"] = "Email không được để trống.";
+            }
+            else if (!new EmailAddressAttribute().IsValid(registerDto.Email)) // Kiểm tra định dạng email hợp lệ
+            {
+                errors["Email"] = "Email không hợp lệ.";
+            }
+
+            // Kiểm tra mật khẩu
             if (string.IsNullOrWhiteSpace(registerDto.Password) || registerDto.Password.Length < 6)
             {
                 errors["Password"] = "Mật khẩu phải có độ dài ít nhất 6 ký tự.";
             }
 
+            // Kiểm tra mật khẩu và xác nhận mật khẩu
             if (registerDto.Password != registerDto.ConfirmPassword)
             {
                 errors["ConfirmPassword"] = "Mật khẩu và Xác nhận mật khẩu không khớp.";
             }
 
-            // Kiểm tra xem username đã tồn tại chưa
+            // Kiểm tra xem tài khoản đã tồn tại chưa
             var existingUsername = await _accountService.AccountExistsAsync(registerDto.Username);
             if (existingUsername)
             {
                 errors["Username"] = "Tên tài khoản đã tồn tại.";
             }
 
+            // Kiểm tra email đã tồn tại
             var existingEmail = await _accountService.EmailExistsAsync(registerDto.Email);
             if (existingEmail)
             {
                 errors["Email"] = "Email đã tồn tại.";
             }
 
-            // Nếu có lỗi, trả về tất cả lỗi
+            // Nếu có lỗi, trả về BadRequest
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
+
+            try
+            {
+                // Tạo tài khoản mới
+                var newAccount = new CreateAccountDTO
+                {
+                    Username = registerDto.Username,
+                    Password = registerDto.Password,
+                    Email = registerDto.Email,
+                    Role = "User", // Role mặc định
+                    IsActive = true // Tài khoản kích hoạt ngay lập tức
+                };
+
+
+
+                // Tạo mã OTP (chỉ để hiển thị)
+                var otp = _googleService.GenerateOTP(registerDto.Email);
+
+                // Trả về thông báo tạo tài khoản thành công kèm OTP
+                return Ok(new
+                {
+                 
+                    otp = otp // OTP được trả về kèm với thông báo thành công
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.", details = ex.Message });
+            }
+        }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterAccountDTO registerDto)
+        {
+            var errors = new Dictionary<string, string>();
+
+            // Kiểm tra email rỗng hoặc định dạng sai
+            if (string.IsNullOrWhiteSpace(registerDto.Email))
+            {
+                errors["Email"] = "Email không được để trống.";
+            }
+            else if (!new EmailAddressAttribute().IsValid(registerDto.Email)) // Kiểm tra định dạng email hợp lệ
+            {
+                errors["Email"] = "Email không hợp lệ.";
+            }
+
+            // Kiểm tra mật khẩu
+            if (string.IsNullOrWhiteSpace(registerDto.Password) || registerDto.Password.Length < 6)
+            {
+                errors["Password"] = "Mật khẩu phải có độ dài ít nhất 6 ký tự.";
+            }
+
+            // Kiểm tra mật khẩu và xác nhận mật khẩu
+            if (registerDto.Password != registerDto.ConfirmPassword)
+            {
+                errors["ConfirmPassword"] = "Mật khẩu và Xác nhận mật khẩu không khớp.";
+            }
+
+            // Kiểm tra xem tài khoản đã tồn tại chưa
+            var existingUsername = await _accountService.AccountExistsAsync(registerDto.Username);
+            if (existingUsername)
+            {
+                errors["Username"] = "Tên tài khoản đã tồn tại.";
+            }
+
+            // Kiểm tra email đã tồn tại
+            var existingEmail = await _accountService.EmailExistsAsync(registerDto.Email);
+            if (existingEmail)
+            {
+                errors["Email"] = "Email đã tồn tại.";
+            }
+
+            // Nếu có lỗi, trả về BadRequest
             if (errors.Any())
             {
                 return BadRequest(errors);
