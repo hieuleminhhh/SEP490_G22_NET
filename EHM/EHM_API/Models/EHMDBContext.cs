@@ -476,6 +476,8 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.ReservationTime).HasColumnType("datetime");
 
+                entity.Property(e => e.TimeIn).HasColumnType("datetime");
+
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.Reservations)
                     .HasForeignKey(d => d.AccountId)

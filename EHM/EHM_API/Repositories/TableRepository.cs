@@ -21,7 +21,8 @@ namespace EHM_API.Repositories
             return await _context.Tables
                 .Include(t => t.TableReservations)
                     .ThenInclude(tr => tr.Reservation)
-                    .ThenInclude(a => a.Address)
+                    .ThenInclude(r => r.Address)
+                .Where(t => t.TableReservations.Any(tr => tr.Reservation.Status == 2))
                 .ToListAsync();
         }
 

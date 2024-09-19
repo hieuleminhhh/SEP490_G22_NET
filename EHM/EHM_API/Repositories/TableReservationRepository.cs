@@ -21,18 +21,32 @@ namespace EHM_API.Repositories
         }
         public async Task<bool> DeleteTableReservationByReservationIdAsync(int reservationId)
         {
-            var tableReservation = await _context.TableReservations
-                .FirstOrDefaultAsync(tr => tr.ReservationId == reservationId);
+            try
+            {
+                // Thực thi câu lệnh SQL để xóa tất cả các TableReservation có ReservationId
+                var rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                    "DELETE FROM TableReservation WHERE ReservationId = {0}", reservationId);
 
-            if (tableReservation == null)
+                // Kiểm tra xem có bản ghi nào bị xóa không
+                if (rowsAffected == 0)
+                {
+                    return false; // Không có bản ghi nào bị xóa
+                }
+
+                return true; 
+            }
+            catch (Exception ex)
+            {
+               
+                Console.WriteLine($"Error while deleting TableReservation by ReservationId: {ex.Message}");
                 return false;
-
-            _context.TableReservations.Remove(tableReservation);
-            await _context.SaveChangesAsync();
-            return true;
+            }
         }
 
-		public async Task CreateOrderTablesAsync(OrderTable orderTable)
+
+
+
+        public async Task CreateOrderTablesAsync(OrderTable orderTable)
 		{
 			await _context.OrderTables.AddAsync(orderTable);
 			await _context.SaveChangesAsync();
