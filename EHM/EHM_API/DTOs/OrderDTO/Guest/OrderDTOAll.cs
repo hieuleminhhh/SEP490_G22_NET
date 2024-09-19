@@ -54,5 +54,6 @@
         public string? Note { get; set; }
         public int? Status { get; set; }
         public string? ReasonCancel { get; set; }
+        public DateTime? TimeIn { get; set; }
     }
 }

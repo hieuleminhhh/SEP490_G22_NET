@@ -16,6 +16,7 @@ namespace EHM_API.Models
         public int? AccountId { get; set; }
         public string? CancelBy { get; set; }
         public int? AcceptBy { get; set; }
+        public DateTime? TimeIn { get; set; }
 
         public virtual Account? Account { get; set; }
         public virtual Address Address { get; set; } = null!;
