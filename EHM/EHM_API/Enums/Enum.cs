@@ -14,5 +14,13 @@
             Ascending,
             Descending
         }
+        public enum AccountRole
+        {
+            User = 1,
+            OrderStaff = 2,
+            Cashier = 3,
+            Chef = 4
+        }
+
     }
 }
