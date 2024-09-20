@@ -339,6 +339,8 @@ namespace EHM_API.Models
 
                 entity.Property(e => e.CancelBy).HasMaxLength(100);
 
+                entity.Property(e => e.CancelDate).HasColumnType("datetime");
+
                 entity.Property(e => e.CancelationReason).HasMaxLength(200);
 
                 entity.Property(e => e.Deposits)
@@ -358,6 +360,8 @@ namespace EHM_API.Models
                 entity.Property(e => e.OrderDate).HasColumnType("datetime");
 
                 entity.Property(e => e.RecevingOrder).HasColumnType("datetime");
+
+                entity.Property(e => e.RefundDate).HasColumnType("datetime");
 
                 entity.Property(e => e.ShipTime).HasColumnType("datetime");
 
@@ -392,10 +396,10 @@ namespace EHM_API.Models
                     .HasForeignKey(d => d.InvoiceId)
                     .HasConstraintName("FK_Order_Invoice");
                 modelBuilder.Entity<Order>()
-   .HasOne(o => o.Collected)
-   .WithMany()
-   .HasForeignKey(o => o.CollectedBy)
-   .OnDelete(DeleteBehavior.Restrict);
+  .HasOne(o => o.Collected)
+  .WithMany()
+  .HasForeignKey(o => o.CollectedBy)
+  .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<OrderDetail>(entity =>

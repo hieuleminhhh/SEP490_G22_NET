@@ -21,7 +21,7 @@
         public int? StaffId { get; set; }
         public string? StaffFirstName { get; set; }
         public string? StaffLastName { get; set; }
-
-
+        public DateTime? CancelDate { get; set; }
+        public DateTime? RefundDate { get; set; }
     }
 }
