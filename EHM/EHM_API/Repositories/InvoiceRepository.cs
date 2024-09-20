@@ -418,10 +418,16 @@ namespace EHM_API.Repositories
                 .Include(o => o.Collected)
                 .Include(o => o.Invoice)
                 .Include(o => o.Discount)
-                .Where(o => o.Type == 2 && o.Status == 4 && o.Deposits == 0)
+                .Include(o => o.Reservations) 
+                .Where(o => o.Type == 2 && o.Status == 4 && o.Deposits == 0
+                            && !o.Reservations.Any(r => r.Status == 5 &&
+                                                        r.ReservationTime.Value.Date < DateTime.Now.Date &&
+                                                        r.Order.Status == 5 &&
+                                                        r.Order.Deposits > 0)) 
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
+
 
 
         public async Task<Order> GetOrderByIdAsync(int orderId)
