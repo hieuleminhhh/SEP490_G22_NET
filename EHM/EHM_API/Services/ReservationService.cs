@@ -29,24 +29,30 @@ namespace EHM_API.Services
         }
 
         public async Task UpdateStatusAsync(int reservationId, UpdateStatusReservationDTO updateStatusReservationDTO)
-		{
-			var reservation = await _repository.GetReservationDetailAsync(reservationId);
-			if (reservation == null)
-			{
-				throw new KeyNotFoundException("Không tìm thấy đặt bàn này");
-			}
+        {
+            var reservation = await _repository.GetReservationDetailAsync(reservationId);
+            if (reservation == null)
+            {
+                throw new KeyNotFoundException("Không tìm thấy đặt bàn này");
+            }
 
-			reservation.Status = updateStatusReservationDTO.Status;
+            reservation.Status = updateStatusReservationDTO.Status;
 
-			if (reservation.Order != null && updateStatusReservationDTO.Status == 2)
-			{
-				reservation.Order.Status = 2;
-			}
+            if (reservation.Order != null && updateStatusReservationDTO.Status == 2)
+            {
+                reservation.Order.Status = 2;
+            }
 
-			await _repository.UpdateReservationAsync(reservation);
-		}
+            if (reservation.Status == 3)
+            {
+                reservation.TimeIn = DateTime.Now; 
+            }
 
-		public async Task<ReservationDetailDTO> GetReservationDetailAsync(int reservationId)
+            await _repository.UpdateReservationAsync(reservation);
+        }
+
+
+        public async Task<ReservationDetailDTO> GetReservationDetailAsync(int reservationId)
 		{
 			var reservation = await _repository.GetReservationDetailAsync(reservationId);
 			return _mapper.Map<ReservationDetailDTO>(reservation);

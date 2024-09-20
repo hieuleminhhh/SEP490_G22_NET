@@ -40,11 +40,12 @@
     }
 	public class TableOfOrderDTO
 	{
-		public int TableId { get; set; }
-		public int? Status { get; set; }
-		public int? Capacity { get; set; }
-		public int? Floor { get; set; }
-	}
+        public int TableId { get; set; }
+        public int? Status { get; set; }
+        public int? Capacity { get; set; }
+        public string? Floor { get; set; }
+        public string? Lable { get; set; }
+    }
     public class ReservationDTOByOrderId
     {
         public int ReservationId { get; set; }
@@ -53,5 +54,6 @@
         public string? Note { get; set; }
         public int? Status { get; set; }
         public string? ReasonCancel { get; set; }
+        public DateTime? TimeIn { get; set; }
     }
 }

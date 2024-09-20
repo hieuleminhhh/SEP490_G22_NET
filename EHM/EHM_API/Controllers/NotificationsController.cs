@@ -42,7 +42,16 @@ namespace EHM_API.Controllers
             }
             return Ok(notifications);
         }
-
+        [HttpGet("type/{type}")]
+        public async Task<ActionResult<List<NotificationAllDTO>>> GetNotificationsByType(int type)
+        {
+            var notifications = await _notificationService.GetNotificationsByTypeAsync(type);
+            if (notifications == null || !notifications.Any())
+            {
+                return NotFound("No notifications found for this account.");
+            }
+            return Ok(notifications);
+        }
         [HttpPost]
         public async Task<ActionResult> CreateNotification([FromBody] NotificationCreateDTO notificationDto)
         {
