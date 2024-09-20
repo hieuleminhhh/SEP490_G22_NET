@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using EHM_API.DTOs.AccountDTO;
+using EHM_API.Enums.EHM_API.Models;
+using EHM_API.Models;
 using EHM_API.Repositories;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,8 +24,9 @@ namespace EHM_API.Controllers
         private readonly IGoogleService _googleService;
         private readonly IAccountRepository _accountRepository;
         private readonly IEmailService _emailService;
+        private readonly EHMDBContext _context;
 
-        public AccountController(IAccountService accountService, IMapper mapper, IGoogleRepository googleRepository, IGoogleService googleService, IAccountRepository accountRepository, IEmailService emailService)
+        public AccountController(IAccountService accountService, IMapper mapper, IGoogleRepository googleRepository, IGoogleService googleService, IAccountRepository accountRepository, IEmailService emailService, EHMDBContext context)
         {
             _accountService = accountService;
             _mapper = mapper;
@@ -30,6 +34,7 @@ namespace EHM_API.Controllers
             _googleService = googleService;
             _accountRepository = accountRepository;
             _emailService = emailService;
+            _context = context;
         }
 
         [HttpGet("getAll")]
@@ -523,6 +528,33 @@ namespace EHM_API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Đã xảy ra sự cố khi xử lý yêu cầu của bạn.", details = ex.Message });
+            }
+        }
+        [HttpGet("GetTypeNotificationByAccountId/{accountId}")]
+        public async Task<IActionResult> GetRoleByAccountId(int accountId)
+        {
+            // Tìm account dựa trên AccountId
+            var account = await _context.Accounts.FindAsync(accountId);
+
+            // Kiểm tra xem account có tồn tại không
+            if (account == null)
+            {
+                return NotFound("Account không tồn tại");
+            }
+
+            // Kiểm tra Role và trả về số tương ứng
+            switch (account.Role)
+            {
+                case "User":
+                    return Ok((int)AccountRole.User);
+                case "OrderStaff":
+                    return Ok((int)AccountRole.OrderStaff);
+                case "Cashier":
+                    return Ok((int)AccountRole.Cashier);
+                case "Chef":
+                    return Ok((int)AccountRole.Chef);
+                default:
+                    return BadRequest("Vai trò không hợp lệ");
             }
         }
 

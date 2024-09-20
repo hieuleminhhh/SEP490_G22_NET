@@ -33,6 +33,13 @@ namespace EHM_API.Repositories
                 .OrderByDescending(n => n.Time)
                 .ToListAsync();
         }
+        public async Task<List<Notification>> GetNotificationsByTypeAsync(int type)
+        {
+            return await _context.Notifications
+                .Where(n => n.Type == type)
+                .OrderByDescending(n => n.Time)
+                .ToListAsync();
+        }
 
         public async Task CreateNotificationAsync(Notification notification)
         {

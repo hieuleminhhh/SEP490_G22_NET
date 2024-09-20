@@ -21,9 +21,21 @@ namespace EHM_API.Repositories
             return await _context.Tables
                 .Include(t => t.TableReservations)
                     .ThenInclude(tr => tr.Reservation)
-                    .ThenInclude(a => a.Address)
+                    .ThenInclude(r => r.Address)
+                .Select(t => new Table
+                {
+                    TableId = t.TableId,
+                    Status = t.Status,
+                    Capacity = t.Capacity,
+                    Floor = t.Floor,
+                    Lable = t.Lable,
+                    TableReservations = t.TableReservations
+                        .Where(tr => tr.Reservation.Status == 2) 
+                        .ToList()
+                })
                 .ToListAsync();
         }
+
 
         public async Task<Table> CreateAsync(Table table)
         {
