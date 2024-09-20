@@ -410,14 +410,16 @@ namespace EHM_API.Repositories
                     (o.Status == status || o.Status == 8)
                     && o.Deposits > minDeposit
                     && (o.InvoiceId == null || (o.InvoiceId.HasValue && (o.Invoice.PaymentStatus == 2 || o.Invoice.PaymentStatus == 1)))
-                
+
                     && o.Reservations.All(r =>
-                        r.Status != 5 || (r.ReservationTime >= DateTime.Now.Date || r.Order.Status != 5 || r.Order.Deposits <= 0)
+                        (r.OrderId != null) 
+                        && (r.Status != 5 || (r.ReservationTime.Value.Date < DateTime.Now.Date || r.Order.Status != 5 || r.Order.Deposits <= 0))
                     )
                 )
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
+
 
 
         public async Task<List<Order>> GetOrdersUnpaidForShipAsync()
