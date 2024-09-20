@@ -347,27 +347,43 @@ namespace EHM_API.Repositories
 				.ContinueWith(task => task.Result.Select(x => (x.Table, x.ReservationTime)).ToList());
 		}
 
-		public async Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel, string? cancelBy)
-		{
-			var reservation = await GetReservationByIdAsync(reservationId);
-			if (reservation == null)
-			{
-				return null;
-			}
+        public async Task<Reservation?> UpdateReasonCancelAsync(int reservationId, string? reasonCancel, string? cancelBy)
+        {
+           
+            var reservation = await GetReservationByIdAsync(reservationId);
+            if (reservation == null)
+            {
+                return null;
+            }
 
-			reservation.ReasonCancel = reasonCancel;
-			reservation.CancelBy = cancelBy;
-                reservation.Status = 5;
-                reservation.ReasonCancel = reasonCancel;
-                await _context.SaveChangesAsync();
-            _context.Reservations.Update(reservation);
-			await _context.SaveChangesAsync();
+            reservation.ReasonCancel = reasonCancel;
+            reservation.CancelBy = cancelBy;
+            reservation.Status = 5;
 
-			return reservation;
-		}
+           
+            if (reservation.OrderId.HasValue)
+            {
+               
+                var order = await _context.Orders.FindAsync(reservation.OrderId.Value);
+                if (order != null)
+                {
+                    
+                    order.CancelationReason = reasonCancel;
+                    order.CancelBy = cancelBy;
+                    order.CancelDate = DateTime.Now;
+
+                    _context.Orders.Update(order); 
+                }
+            }
+
+            _context.Reservations.Update(reservation); 
+            await _context.SaveChangesAsync(); 
+
+            return reservation;
+        }
 
 
-		public async Task<Reservation?> GetReservationByOrderIdAsync(int orderId)
+        public async Task<Reservation?> GetReservationByOrderIdAsync(int orderId)
 		{
 			return await _context.Reservations
 				.Include(r => r.Address)
