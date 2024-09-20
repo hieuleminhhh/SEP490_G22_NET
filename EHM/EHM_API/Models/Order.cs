@@ -31,6 +31,8 @@ namespace EHM_API.Models
         public DateTime? ShipTime { get; set; }
         public int? CollectedBy { get; set; }
         public int? AcceptBy { get; set; }
+        public DateTime? CancelDate { get; set; }
+        public DateTime? RefundDate { get; set; }
 
         public virtual Account? Account { get; set; }
         public virtual Address? Address { get; set; }

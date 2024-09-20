@@ -33,6 +33,14 @@
         public int? ShipId { get; set; }
         public string? CancelBy { get; set; }
         public DateTime? ShipTime { get; set; }
+        public int? StaffId { get; set; }
+        public string? StaffFirstName { get; set; }
+        public string? StaffLastName { get; set; }
+        public int? AcceptBy { get; set; }
+        public string? AcceptByFirstName { get; set; }
+        public string? AcceptByLastName { get; set; }
+        public DateTime? CancelDate { get; set; }
+        public DateTime? RefundDate { get; set; }
         public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
 		public IEnumerable<TableOfOrderDTO> Tables { get; set; }
         public ReservationDTOByOrderId? Reservation { get; set; }

@@ -57,12 +57,12 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.OrderTables)
                 .ThenInclude(ot => ot.Table)
             .FirstOrDefaultAsync(o => o.OrderId == id);
-
-        // Conditionally load the Reservations if the Order Type is 3
+		
+        
         if (order != null && order.Type == 3)
         {
             await _context.Entry(order)
-                .Collection(o => o.Reservations)  // Use Collection() for collections
+                .Collection(o => o.Reservations)
                 .LoadAsync();
         }
 
@@ -226,22 +226,32 @@ public class OrderRepository : IOrderRepository
 
 
 
-	public async Task<Order> UpdateOrderStatusAsync(int orderId, int status)
-	{
-		var od = await _context.Orders.FindAsync(orderId);
-		if (od == null)
-		{
-			return null;
-		}
+    public async Task<Order> UpdateOrderStatusAsync(int orderId, int status)
+    {
+        var od = await _context.Orders.FindAsync(orderId);
+        if (od == null)
+        {
+            return null;
+        }
 
-		od.Status = status;
-		_context.Orders.Update(od);
-		await _context.SaveChangesAsync();
+        od.Status = status;
 
-		return od;
-	}
+        if (status == 8)
+        {
+            od.RefundDate = DateTime.Now;
+        }
+        if (status == 5)
+        {
+            od.CancelDate = DateTime.Now;
+        }
+        _context.Orders.Update(od);
+        await _context.SaveChangesAsync();
 
-	public async Task<IEnumerable<Order>> GetOrdersWithTablesAsync()
+        return od;
+    }
+
+
+    public async Task<IEnumerable<Order>> GetOrdersWithTablesAsync()
 	{
 		return await _context.Orders
 			.Include(o => o.OrderTables)
@@ -1106,6 +1116,10 @@ public class OrderRepository : IOrderRepository
 		order.Status = 5;
         order.CancelationReason = reason;
 		order.CancelBy = cancelBy;
+        if (order.Status == 5)
+        {
+           order.CancelDate = DateTime.Now;
+        }
         _context.Orders.Update(order);
         await _context.SaveChangesAsync();
 
