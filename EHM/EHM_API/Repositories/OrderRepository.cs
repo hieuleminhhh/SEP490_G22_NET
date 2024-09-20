@@ -57,12 +57,12 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.OrderTables)
                 .ThenInclude(ot => ot.Table)
             .FirstOrDefaultAsync(o => o.OrderId == id);
-
-        // Conditionally load the Reservations if the Order Type is 3
+		
+        
         if (order != null && order.Type == 3)
         {
             await _context.Entry(order)
-                .Collection(o => o.Reservations)  // Use Collection() for collections
+                .Collection(o => o.Reservations)
                 .LoadAsync();
         }
 
