@@ -1,6 +1,8 @@
 ﻿using EHM_API.DTOs.OrderDetailDTO.Manager;
+using EHM_API.Models;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +16,13 @@ namespace EHM_API.Controllers
     {
         private readonly IOrderDetailService _service;
         private readonly IOrderService _orderService;
+        private readonly EHMDBContext _context;
 
-        public OrderDetailsForChefController(IOrderDetailService service, IOrderService orderService)
+        public OrderDetailsForChefController(IOrderDetailService service, IOrderService orderService, EHMDBContext context)
         {
             _service = service;
             _orderService = orderService;
+            _context = context;
         }
 
         [HttpPut("{orderDetailId}/quantity")]
@@ -148,6 +152,16 @@ namespace EHM_API.Controllers
         {
             var results = await _orderService.GetOrderDetailsForStaffType1Async();
             return Ok(results);
+        }
+        [HttpGet("checkOrder/{orderId}")]
+        public async Task<IActionResult> CheckOrderDetails(int orderId)
+        {
+            var orderDetails = await _context.OrderDetails
+                .Where(od => od.OrderId == orderId)
+                .ToListAsync();
+            bool allServed = orderDetails.All(od => od.Quantity == od.DishesServed);
+
+            return Ok(allServed);
         }
     }
 }
