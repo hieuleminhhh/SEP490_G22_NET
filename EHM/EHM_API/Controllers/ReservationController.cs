@@ -179,7 +179,7 @@ namespace EHM_API.Controllers
 				return StatusCode(500, new { message = "Đã xảy ra lỗi khi lấy thông tin đặt bàn. Vui lòng thử lại sau." });
 			}
 		}
-		[Authorize(Roles = "Cashier, User")]
+		[Authorize(Roles = "OrderStaff, User")]
 		[HttpPut("{reservationId}/update-status")]
         public async Task<IActionResult> UpdateStatus(int reservationId, [FromBody] UpdateStatusReservationDTO updateStatusReservationDTO)
         {
@@ -223,7 +223,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
-		[Authorize(Roles = "Cashier")]
+		[Authorize(Roles = "OrderStaff")]
 		[HttpPost("register-tables")]
         public async Task<IActionResult> RegisterTables([FromBody] RegisterTablesDTO registerTablesDTO)
         {
@@ -259,7 +259,7 @@ namespace EHM_API.Controllers
 		}
 
 
-		[Authorize(Roles = "Cashier")]
+		[Authorize(Roles = "OrderStaff")]
 		[HttpPut("{reservationId}/table/{tableId}/status")]
         public async Task<IActionResult> UpdateReservationAndTableStatus(int reservationId, int tableId, [FromBody] UpdateStatusReservationTable updateStatusReservationTable)
         {
@@ -300,7 +300,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
-		[Authorize(Roles = "Cashier")]
+		[Authorize(Roles = "OrderStaff")]
 		[HttpPut("{reservationId}/tables/status")]
 		public async Task<IActionResult> UpdateTableStatuses(int reservationId, [FromBody] UpdateStatusTableByReservation dto)
 		{
@@ -313,7 +313,7 @@ namespace EHM_API.Controllers
 			return NoContent();
 		}
 
-		[Authorize(Roles = "Cashier, User")]
+		[Authorize(Roles = "OrderStaff, User")]
 		[HttpPut("{reservationId}/reason-cancel")]
         public async Task<IActionResult> UpdateReasonCancel(int reservationId, [FromBody] ReasonCancelDTO? reasonCancelDTO)
         {
