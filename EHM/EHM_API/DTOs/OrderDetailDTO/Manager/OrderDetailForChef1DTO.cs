@@ -10,6 +10,7 @@
         public DateTime? RecevingOrder { get; set; }
         public string? Note { get; set; }
         public int? DishesServed { get; set; }
+        public int? OrderId { get; set; }
         public virtual ICollection<ComboDetailForChefDTO> ComboDetailsForChef { get; set; }
     }
 }
