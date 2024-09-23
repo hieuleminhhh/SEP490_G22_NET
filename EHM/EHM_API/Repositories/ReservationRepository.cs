@@ -111,7 +111,7 @@ namespace EHM_API.Repositories
 			return address;
 		}
 
-        public async Task<Reservation> CreateReservationAsync(CreateReservationDTO reservationDTO)
+        public async Task<CReservationDTO> CreateReservationAsync(CreateReservationDTO reservationDTO)
         {
             var guest = await GetOrCreateGuest(reservationDTO.GuestPhone, reservationDTO.Email);
 
@@ -131,11 +131,10 @@ namespace EHM_API.Repositories
                 AccountId = reservationDTO.AccountId != 0 ? reservationDTO.AccountId : null // Gán AccountId nếu tồn tại
             };
 
+            List<OrderDetail> orderDetails = new List<OrderDetail>();
+
             if (reservationDTO.OrderDetails != null && reservationDTO.OrderDetails.Any())
             {
-                // Tạo Order nếu có OrderDetails
-                var orderDetails = new List<OrderDetail>();
-
                 foreach (var item in reservationDTO.OrderDetails)
                 {
                     Dish dish = null;
@@ -189,8 +188,6 @@ namespace EHM_API.Repositories
                     };
 
                     reservation.Order = order;
-
-                    // Gán AccountId của Reservation theo AccountId của Order
                     reservation.AccountId = order.AccountId;
                 }
             }
@@ -198,8 +195,36 @@ namespace EHM_API.Repositories
             _context.Reservations.Add(reservation);
             await _context.SaveChangesAsync();
 
-            return reservation;
+            // Trả về CReservationDTO
+            return new CReservationDTO
+            {
+                ReservationId = reservation.ReservationId,
+                AccountId = reservation.AccountId,
+                GuestPhone = guest.GuestPhone,
+                Email = guest.Email,
+                GuestAddress = address.GuestAddress,
+                ConsigneeName = reservationDTO.ConsigneeName,
+                ReservationTime = reservation.ReservationTime,
+                GuestNumber = reservation.GuestNumber,
+                Note = reservation.Note,
+                OrderDate = reservation.Order?.OrderDate,
+                Status = reservation.Status,
+                RecevingOrder = reservation.Order?.RecevingOrder,
+                TotalAmount = reservation.Order?.TotalAmount,
+                Deposits = reservation.Order?.Deposits ?? 0,
+                Type = reservation.Order?.Type,
+                OrderDetails = reservation.Order?.OrderDetails?.Select(od => new CReservationOrderDetailsDTO
+                {
+                    DishId = od.DishId,
+                    ComboId = od.ComboId,
+                    Quantity = (int)od.Quantity,
+                    UnitPrice = od.UnitPrice,
+                    Note = od.Note,
+                    OrderTime = od.OrderTime
+                }).ToList()
+            };
         }
+
 
 
 
