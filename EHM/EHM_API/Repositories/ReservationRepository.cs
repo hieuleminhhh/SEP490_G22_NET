@@ -111,92 +111,99 @@ namespace EHM_API.Repositories
 			return address;
 		}
 
-		public async Task<Reservation> CreateReservationAsync(CreateReservationDTO reservationDTO)
-		{
-			var guest = await GetOrCreateGuest(reservationDTO.GuestPhone, reservationDTO.Email);
+        public async Task<Reservation> CreateReservationAsync(CreateReservationDTO reservationDTO)
+        {
+            var guest = await GetOrCreateGuest(reservationDTO.GuestPhone, reservationDTO.Email);
 
-			var address = await GetOrCreateAddress(
-				reservationDTO.GuestPhone,
-				reservationDTO.GuestAddress,
-				reservationDTO.ConsigneeName
-			);
+            var address = await GetOrCreateAddress(
+                reservationDTO.GuestPhone,
+                reservationDTO.GuestAddress,
+                reservationDTO.ConsigneeName
+            );
 
-			var reservation = new Reservation
-			{
-				AddressId = address.AddressId,
-				ReservationTime = reservationDTO.ReservationTime,
-				GuestNumber = reservationDTO.GuestNumber,
-				Note = reservationDTO.Note,
-				Status = reservationDTO.Status ?? 0
-			};
+            var reservation = new Reservation
+            {
+                AddressId = address.AddressId,
+                ReservationTime = reservationDTO.ReservationTime,
+                GuestNumber = reservationDTO.GuestNumber,
+                Note = reservationDTO.Note,
+                Status = reservationDTO.Status ?? 0,
+                AccountId = reservationDTO.AccountId != 0 ? reservationDTO.AccountId : null // Gán AccountId nếu tồn tại
+            };
 
-			if (reservationDTO.OrderDetails != null)
-			{
-				var orderDetails = new List<OrderDetail>();
+            if (reservationDTO.OrderDetails != null && reservationDTO.OrderDetails.Any())
+            {
+                // Tạo Order nếu có OrderDetails
+                var orderDetails = new List<OrderDetail>();
 
-				foreach (var item in reservationDTO.OrderDetails)
-				{
-					Dish dish = null;
-					Combo combo = null;
+                foreach (var item in reservationDTO.OrderDetails)
+                {
+                    Dish dish = null;
+                    Combo combo = null;
 
-					if (item.DishId.HasValue && item.DishId > 0)
-					{
-						dish = await _Dishrepository.GetDishByIdAsync(item.DishId.Value);
-						if (dish == null)
-						{
-							throw new KeyNotFoundException("Món ăn này không tồn tại");
-						}
-					}
-					else if (item.ComboId.HasValue && item.ComboId > 0)
-					{
-						combo = await _Comborepository.GetComboByIdAsync(item.ComboId.Value);
-						if (combo == null)
-						{
-							throw new KeyNotFoundException("Combo này không tồn tại");
-						}
-					}
+                    if (item.DishId.HasValue && item.DishId > 0)
+                    {
+                        dish = await _Dishrepository.GetDishByIdAsync(item.DishId.Value);
+                        if (dish == null)
+                        {
+                            throw new KeyNotFoundException("Món ăn này không tồn tại.");
+                        }
+                    }
+                    else if (item.ComboId.HasValue && item.ComboId > 0)
+                    {
+                        combo = await _Comborepository.GetComboByIdAsync(item.ComboId.Value);
+                        if (combo == null)
+                        {
+                            throw new KeyNotFoundException("Combo này không tồn tại.");
+                        }
+                    }
 
-					var orderDetail = new OrderDetail
-					{
-						DishId = dish?.DishId,
-						ComboId = combo?.ComboId,
-						Quantity = item.Quantity,
-						UnitPrice = item.UnitPrice,
-						Note = item.Note,
-						OrderTime = DateTime.Now
-					};
+                    var orderDetail = new OrderDetail
+                    {
+                        DishId = dish?.DishId,
+                        ComboId = combo?.ComboId,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                        Note = item.Note,
+                        OrderTime = DateTime.Now
+                    };
 
-					orderDetails.Add(orderDetail);
-				}
+                    orderDetails.Add(orderDetail);
+                }
 
-				if (orderDetails.Any())
-				{
+                if (orderDetails.Any())
+                {
                     var order = new Order
                     {
                         AccountId = reservationDTO.AccountId != 0 ? (int?)reservationDTO.AccountId : null,
                         OrderDate = DateTime.Now,
-						Status = reservationDTO.Status ?? 0,
-						RecevingOrder = reservationDTO.RecevingOrder,
-						TotalAmount = reservationDTO.TotalAmount,
-						OrderDetails = orderDetails,
-						GuestPhone = guest.GuestPhone,
-						AddressId = address.AddressId,
-						Note = reservationDTO.Note,
-						Deposits = reservationDTO.Deposits,
-						Type = reservationDTO.Type
-					};
+                        Status = reservationDTO.Status ?? 0,
+                        RecevingOrder = reservationDTO.RecevingOrder,
+                        TotalAmount = reservationDTO.TotalAmount,
+                        OrderDetails = orderDetails,
+                        GuestPhone = guest.GuestPhone,
+                        AddressId = address.AddressId,
+                        Note = reservationDTO.Note,
+                        Deposits = reservationDTO.Deposits,
+                        Type = reservationDTO.Type
+                    };
 
-					reservation.Order = order;
-				}
-			}
+                    reservation.Order = order;
 
-			_context.Reservations.Add(reservation);
-			await _context.SaveChangesAsync();
+                    // Gán AccountId của Reservation theo AccountId của Order
+                    reservation.AccountId = order.AccountId;
+                }
+            }
 
-			return reservation;
-		}
+            _context.Reservations.Add(reservation);
+            await _context.SaveChangesAsync();
 
-		public async Task<Address> GetAddressByGuestPhoneAsync(string guestPhone)
+            return reservation;
+        }
+
+
+
+        public async Task<Address> GetAddressByGuestPhoneAsync(string guestPhone)
 		{
 			return await _context.Addresses.FirstOrDefaultAsync(a => a.GuestPhone == guestPhone);
 		}
