@@ -56,26 +56,47 @@ namespace EHM_API.Services
 		}
 
 
-		public async Task<CategoryDTO> UpdateCategoryAsync(int id, CategoryDTO categoryDTO)
-		{
-			var existingCategory = await _categoryRepository.GetByIdAsync(id);
-			if (existingCategory == null)
-			{
-				return null;
-			}
+        public async Task<CategoryDTO> UpdateCategoryAsync(int id, CategoryDTO categoryDTO)
+        {
+            var existingCategory = await _categoryRepository.GetByIdAsync(id);
+            if (existingCategory == null)
+            {
+                return null; // Danh mục không tồn tại
+            }
 
-			_mapper.Map(categoryDTO, existingCategory);
+            // Kiểm tra xem danh mục có món ăn nào không
+            var hasDishes = existingCategory.Dishes != null && existingCategory.Dishes.Any();
+            if (hasDishes)
+            {
+                throw new InvalidOperationException("Không thể cập nhật danh mục khi danh mục đã chứa món ăn.");
+            }
 
-			var updatedCategory = await _categoryRepository.UpdateAsync(existingCategory);
-			return _mapper.Map<CategoryDTO>(updatedCategory);
-		}
+            // Nếu danh mục không có món ăn, tiến hành cập nhật
+            _mapper.Map(categoryDTO, existingCategory);
 
-		public async Task<bool> DeleteCategoryAsync(int id)
-		{
-			return await _categoryRepository.DeleteAsync(id);
-		}
+            var updatedCategory = await _categoryRepository.UpdateAsync(existingCategory);
+            return _mapper.Map<CategoryDTO>(updatedCategory);
+        }
 
-		public async Task<CategoryDTO> GetCategoryByNameAsync(string categoryName)
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category == null)
+            {
+                return false; // Danh mục không tồn tại
+            }
+
+            // Kiểm tra xem danh mục có món ăn nào không
+            if (category.Dishes != null && category.Dishes.Any())
+            {
+                throw new InvalidOperationException("Không thể xóa danh mục vì đã có món ăn liên kết.");
+            }
+
+            return await _categoryRepository.DeleteAsync(id);
+        }
+
+
+        public async Task<CategoryDTO> GetCategoryByNameAsync(string categoryName)
 		{
 			var category = await _categoryRepository.FindByNameAsync(categoryName);
 			if (category == null)
