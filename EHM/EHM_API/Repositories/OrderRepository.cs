@@ -1155,44 +1155,53 @@ public class OrderRepository : IOrderRepository
             ? endDate.Value.Date
             : DateTime.Today;
 
+        // Lấy danh sách tất cả các Cashier
+        var cashiersQuery = _context.Accounts
+            .Where(a => a.Role == "Cashier" && a.IsActive == true);
+
+        // Nếu lọc theo collectedById
+        if (collectedById.HasValue)
+        {
+            cashiersQuery = cashiersQuery.Where(a => a.AccountId == collectedById);
+        }
+
+        var cashiers = await cashiersQuery.ToListAsync();
+
         // Bắt đầu truy vấn cho Orders (IQueryable)
         var ordersQuery = _context.Orders
             .Where(o => o.Status == 4 &&
                         o.Invoice.PaymentStatus == 1 &&
                         o.Invoice.PaymentTime.HasValue &&
                         (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
-                        o.Invoice.PaymentTime.Value.Date <= endDate);
-
-        // Lọc theo CollectedById nếu được cung cấp
-        if (collectedById.HasValue)
-        {
-            ordersQuery = ordersQuery.Where(o => o.CollectedBy == collectedById);
-        }
-
-        // Thực hiện Include sau khi đã áp dụng tất cả các điều kiện lọc
-        ordersQuery = ordersQuery
+                        o.Invoice.PaymentTime.Value.Date <= endDate)
             .Include(o => o.Invoice)
             .Include(o => o.Collected); // Include cho Account (CollectedBy)
 
-        // Truy xuất danh sách Orders sau khi lọc
+        // Truy xuất danh sách Orders
         var orders = await ordersQuery.ToListAsync();
 
-        // Nhóm các đơn hàng theo CollectedBy
-        var groupedOrders = orders.GroupBy(o => o.CollectedBy);
+        // Kết hợp Cashiers với Orders, đảm bảo rằng tất cả các Cashier đều được bao gồm
+        var cashierOrderGroups = cashiers.GroupJoin(
+            orders,
+            cashier => cashier.AccountId,
+            order => order.CollectedBy,
+            (cashier, ordersGroup) => new { Cashier = cashier, Orders = ordersGroup }
+        );
 
         var statistics = new List<OrderStatisticsDTO>();
 
-        // Duyệt qua từng nhóm đơn hàng để tính toán thống kê
-        foreach (var group in groupedOrders)
+        // Duyệt qua từng Cashier và tính toán thống kê
+        foreach (var group in cashierOrderGroups)
         {
-            var collectedBy = group.FirstOrDefault()?.Collected;
+            var cashier = group.Cashier;
+            var ordersForCashier = group.Orders;
 
-            int totalOrders = group.Count();
-            decimal totalRevenue = group.Sum(o => o.Invoice.PaymentAmount ?? 0);
+            int totalOrders = ordersForCashier.Count();
+            decimal totalRevenue = ordersForCashier.Sum(o => o.Invoice.PaymentAmount ?? 0);
 
-            var ordersByPaymentMethod0 = group.Where(o => o.Invoice.PaymentMethods == 0);
-            var ordersByPaymentMethod1 = group.Where(o => o.Invoice.PaymentMethods == 1);
-            var ordersByPaymentMethod2 = group.Where(o => o.Invoice.PaymentMethods == 2);
+            var ordersByPaymentMethod0 = ordersForCashier.Where(o => o.Invoice.PaymentMethods == 0);
+            var ordersByPaymentMethod1 = ordersForCashier.Where(o => o.Invoice.PaymentMethods == 1);
+            var ordersByPaymentMethod2 = ordersForCashier.Where(o => o.Invoice.PaymentMethods == 2);
 
             decimal revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
             decimal revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
@@ -1201,14 +1210,14 @@ public class OrderRepository : IOrderRepository
             int orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
             int orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
             int orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
-            var orderIds = group.Select(o => o.OrderId).ToList();
+            var orderIds = ordersForCashier.Select(o => o.OrderId).ToList();
 
-            // Thêm thông tin thống kê vào danh sách
+            // Thêm thông tin thống kê vào danh sách, bao gồm cả Cashier không có đơn hàng
             statistics.Add(new OrderStatisticsDTO
             {
-                CollectedById = collectedBy?.AccountId ?? 0,
-                CollectedByFirstName = collectedBy?.FirstName,
-                CollectedByLastName = collectedBy?.LastName,
+                CollectedById = cashier.AccountId,
+                CollectedByFirstName = cashier.FirstName,
+                CollectedByLastName = cashier.LastName,
                 TotalOrders = totalOrders,
                 TotalRevenue = totalRevenue,
                 RevenueByPaymentMethod0 = revenueByPaymentMethod0,
@@ -1223,6 +1232,7 @@ public class OrderRepository : IOrderRepository
 
         return statistics;
     }
+
 
 
 
