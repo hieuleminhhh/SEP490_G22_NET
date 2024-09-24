@@ -1150,81 +1150,65 @@ public class OrderRepository : IOrderRepository
     }
     public async Task<List<OrderStatisticsDTO>> GetOrderStatisticsByCollectedByAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
     {
+        // Đặt giá trị endDate là ngày hiện tại nếu không được cung cấp
         endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today
-                  ? endDate.Value.Date
-                  : DateTime.Today;
+            ? endDate.Value.Date
+            : DateTime.Today;
 
-       
-        var cashiers = await _context.Accounts
-            .Where(a => a.Role == "Cashier")
-            .ToListAsync();
-
-       
+        // Bắt đầu truy vấn cho Orders (IQueryable)
         var ordersQuery = _context.Orders
             .Where(o => o.Status == 4 &&
                         o.Invoice.PaymentStatus == 1 &&
                         o.Invoice.PaymentTime.HasValue &&
                         (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
-                        o.Invoice.PaymentTime.Value.Date <= endDate)
-            .Include(o => o.Invoice)
-            .Include(o => o.Collected);
+                        o.Invoice.PaymentTime.Value.Date <= endDate);
 
-        
+        // Lọc theo CollectedById nếu được cung cấp
         if (collectedById.HasValue)
         {
-            ordersQuery = (Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Order, Account?>)ordersQuery.Where(o => o.CollectedBy == collectedById);
+            ordersQuery = ordersQuery.Where(o => o.CollectedBy == collectedById);
         }
 
+        // Thực hiện Include sau khi đã áp dụng tất cả các điều kiện lọc
+        ordersQuery = ordersQuery
+            .Include(o => o.Invoice)
+            .Include(o => o.Collected); // Include cho Account (CollectedBy)
+
+        // Truy xuất danh sách Orders sau khi lọc
         var orders = await ordersQuery.ToListAsync();
 
- 
+        // Nhóm các đơn hàng theo CollectedBy
         var groupedOrders = orders.GroupBy(o => o.CollectedBy);
 
         var statistics = new List<OrderStatisticsDTO>();
 
-       
-        foreach (var cashier in cashiers)
+        // Duyệt qua từng nhóm đơn hàng để tính toán thống kê
+        foreach (var group in groupedOrders)
         {
-            var group = groupedOrders.FirstOrDefault(g => g.Key == cashier.AccountId);
+            var collectedBy = group.FirstOrDefault()?.Collected;
 
-            int totalOrders = 0;
-            decimal totalRevenue = 0;
+            int totalOrders = group.Count();
+            decimal totalRevenue = group.Sum(o => o.Invoice.PaymentAmount ?? 0);
 
-            decimal revenueByPaymentMethod0 = 0;
-            decimal revenueByPaymentMethod1 = 0;
-            decimal revenueByPaymentMethod2 = 0;
+            var ordersByPaymentMethod0 = group.Where(o => o.Invoice.PaymentMethods == 0);
+            var ordersByPaymentMethod1 = group.Where(o => o.Invoice.PaymentMethods == 1);
+            var ordersByPaymentMethod2 = group.Where(o => o.Invoice.PaymentMethods == 2);
 
-            int orderCountByPaymentMethod0 = 0;
-            int orderCountByPaymentMethod1 = 0;
-            int orderCountByPaymentMethod2 = 0;
+            decimal revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
+            decimal revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
+            decimal revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
 
-            List<int> orderIds = new List<int>();
+            int orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
+            int orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
+            int orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
+            var orderIds = group.Select(o => o.OrderId).ToList();
 
-            if (group != null) 
-            {
-                totalOrders = group.Count();
-                totalRevenue = group.Sum(o => o.Invoice.PaymentAmount ?? 0);
-
-                var ordersByPaymentMethod0 = group.Where(o => o.Invoice.PaymentMethods == 0);
-                var ordersByPaymentMethod1 = group.Where(o => o.Invoice.PaymentMethods == 1);
-                var ordersByPaymentMethod2 = group.Where(o => o.Invoice.PaymentMethods == 2);
-
-                revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
-                revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
-                revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
-
-                orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
-                orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
-                orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
-                orderIds = group.Select(o => o.OrderId).ToList();
-            }
-
-           
+            // Thêm thông tin thống kê vào danh sách
             statistics.Add(new OrderStatisticsDTO
             {
-                CollectedById = cashier.AccountId,
-                CollectedByFirstName = cashier.FirstName,
-                CollectedByLastName = cashier.LastName,
+                CollectedById = collectedBy?.AccountId ?? 0,
+                CollectedByFirstName = collectedBy?.FirstName,
+                CollectedByLastName = collectedBy?.LastName,
                 TotalOrders = totalOrders,
                 TotalRevenue = totalRevenue,
                 RevenueByPaymentMethod0 = revenueByPaymentMethod0,
