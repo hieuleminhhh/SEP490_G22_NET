@@ -576,12 +576,12 @@ namespace EHM_API.Services
 			var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
 			return order;
 		}
-		public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
-		{
-			return await _orderRepository.GetOrderStatisticsAsync(startDate, endDate);
-		}
+        public async Task<List<CollectedByStatisticsDTO>> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
+        {
+            return await _orderRepository.GetOrderStatisticsByCollectedByAsync(startDate, endDate, collectedById);
+        }
 
-		public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
+        public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
 		{
 			var salesByCategory = await _orderRepository.GetSalesByCategoryAsync(startDate, endDate);
 			var categories = await _context.Categories.ToListAsync();
