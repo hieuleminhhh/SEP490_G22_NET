@@ -705,11 +705,12 @@ namespace EHM_API.Controllers
             return Ok(updatedOrder);
         }
         [HttpGet("statistics")]
-        public async Task<ActionResult<List<CollectedByStatisticsDTO>>> GetOrderStatistics(DateTime? startDate, DateTime? endDate, int? collectedById)
+        public async Task<ActionResult<List<OrderStatisticsDTO>>> GetOrderStatistics(DateTime? startDate, DateTime? endDate, int? collectedById)
         {
             var statistics = await _orderService.GetOrderStatisticsAsync(startDate, endDate, collectedById);
-            return Ok(statistics); 
+            return Ok(statistics);
         }
+
 
 
 

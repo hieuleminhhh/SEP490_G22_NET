@@ -1148,83 +1148,98 @@ public class OrderRepository : IOrderRepository
             .Where(o => o.Status == status && o.StaffId == staffId)
             .ToListAsync();
     }
-    public async Task<List<CollectedByStatisticsDTO>> GetOrderStatisticsByCollectedByAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
+    public async Task<List<OrderStatisticsDTO>> GetOrderStatisticsByCollectedByAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
     {
         endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today
                   ? endDate.Value.Date
                   : DateTime.Today;
 
- 
+       
+        var cashiers = await _context.Accounts
+            .Where(a => a.Role == "Cashier")
+            .ToListAsync();
+
+       
         var ordersQuery = _context.Orders
             .Where(o => o.Status == 4 &&
                         o.Invoice.PaymentStatus == 1 &&
                         o.Invoice.PaymentTime.HasValue &&
                         (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
-                        o.Invoice.PaymentTime.Value.Date <= endDate);
-
-   
-        ordersQuery = ordersQuery
+                        o.Invoice.PaymentTime.Value.Date <= endDate)
             .Include(o => o.Invoice)
-            .Include(o => o.Collected); 
+            .Include(o => o.Collected);
 
-      
+        
         if (collectedById.HasValue)
         {
-            ordersQuery = ordersQuery.Where(o => o.CollectedBy == collectedById);
+            ordersQuery = (Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Order, Account?>)ordersQuery.Where(o => o.CollectedBy == collectedById);
         }
 
         var orders = await ordersQuery.ToListAsync();
 
-        
+ 
         var groupedOrders = orders.GroupBy(o => o.CollectedBy);
 
-        var collectedStatistics = new List<CollectedByStatisticsDTO>();
+        var statistics = new List<OrderStatisticsDTO>();
 
-        foreach (var group in groupedOrders)
+       
+        foreach (var cashier in cashiers)
         {
-            var collectedBy = group.FirstOrDefault()?.Collected;
+            var group = groupedOrders.FirstOrDefault(g => g.Key == cashier.AccountId);
 
-            var totalOrders = group.Count();
-            var totalRevenue = group.Sum(o => o.Invoice.PaymentAmount ?? 0);
+            int totalOrders = 0;
+            decimal totalRevenue = 0;
 
-            var ordersByPaymentMethod0 = group.Where(o => o.Invoice.PaymentMethods == 0);
-            var ordersByPaymentMethod1 = group.Where(o => o.Invoice.PaymentMethods == 1);
-            var ordersByPaymentMethod2 = group.Where(o => o.Invoice.PaymentMethods == 2);
+            decimal revenueByPaymentMethod0 = 0;
+            decimal revenueByPaymentMethod1 = 0;
+            decimal revenueByPaymentMethod2 = 0;
 
-            var revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
-            var revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
-            var revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
+            int orderCountByPaymentMethod0 = 0;
+            int orderCountByPaymentMethod1 = 0;
+            int orderCountByPaymentMethod2 = 0;
 
-            var orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
-            var orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
-            var orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
-            var orderIds = group.Select(o => o.OrderId).ToList();
+            List<int> orderIds = new List<int>();
 
-            collectedStatistics.Add(new CollectedByStatisticsDTO
+            if (group != null) 
             {
-                CollectedById = collectedBy?.AccountId ?? 0,  
-                CollectedByFirstName = collectedBy?.FirstName,
-                CollectedByLastName = collectedBy?.LastName,
-                Revenue = new List<OrderStatisticsDTO>
-            {
-                new OrderStatisticsDTO
-                {
-                    TotalOrders = totalOrders,
-                    TotalRevenue = totalRevenue,
-                    RevenueByPaymentMethod0 = revenueByPaymentMethod0,
-                    RevenueByPaymentMethod1 = revenueByPaymentMethod1,
-                    RevenueByPaymentMethod2 = revenueByPaymentMethod2,
-                    OrderCountByPaymentMethod0 = orderCountByPaymentMethod0,
-                    OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
-                    OrderCountByPaymentMethod2 = orderCountByPaymentMethod2,
-                    OrderIds = orderIds
-                }
+                totalOrders = group.Count();
+                totalRevenue = group.Sum(o => o.Invoice.PaymentAmount ?? 0);
+
+                var ordersByPaymentMethod0 = group.Where(o => o.Invoice.PaymentMethods == 0);
+                var ordersByPaymentMethod1 = group.Where(o => o.Invoice.PaymentMethods == 1);
+                var ordersByPaymentMethod2 = group.Where(o => o.Invoice.PaymentMethods == 2);
+
+                revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
+                revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
+                revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
+
+                orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
+                orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
+                orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
+                orderIds = group.Select(o => o.OrderId).ToList();
             }
+
+           
+            statistics.Add(new OrderStatisticsDTO
+            {
+                CollectedById = cashier.AccountId,
+                CollectedByFirstName = cashier.FirstName,
+                CollectedByLastName = cashier.LastName,
+                TotalOrders = totalOrders,
+                TotalRevenue = totalRevenue,
+                RevenueByPaymentMethod0 = revenueByPaymentMethod0,
+                RevenueByPaymentMethod1 = revenueByPaymentMethod1,
+                RevenueByPaymentMethod2 = revenueByPaymentMethod2,
+                OrderCountByPaymentMethod0 = orderCountByPaymentMethod0,
+                OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
+                OrderCountByPaymentMethod2 = orderCountByPaymentMethod2,
+                OrderIds = orderIds
             });
         }
 
-        return collectedStatistics;
+        return statistics;
     }
+
 
 
 
