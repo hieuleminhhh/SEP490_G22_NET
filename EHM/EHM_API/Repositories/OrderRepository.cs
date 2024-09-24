@@ -1148,50 +1148,84 @@ public class OrderRepository : IOrderRepository
             .Where(o => o.Status == status && o.StaffId == staffId)
             .ToListAsync();
     }
-    public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
+    public async Task<List<CollectedByStatisticsDTO>> GetOrderStatisticsByCollectedByAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
     {
-      
         endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today
                   ? endDate.Value.Date
                   : DateTime.Today;
 
-        var orders = await _context.Orders
+ 
+        var ordersQuery = _context.Orders
             .Where(o => o.Status == 4 &&
                         o.Invoice.PaymentStatus == 1 &&
                         o.Invoice.PaymentTime.HasValue &&
                         (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
-                        o.Invoice.PaymentTime.Value.Date <= endDate)
+                        o.Invoice.PaymentTime.Value.Date <= endDate);
+
+   
+        ordersQuery = ordersQuery
             .Include(o => o.Invoice)
-            .ToListAsync();
+            .Include(o => o.Collected); 
 
-        var totalOrders = orders.Count;
-        var totalRevenue = orders.Sum(o => o.Invoice.PaymentAmount ?? 0);
-
-        var ordersByPaymentMethod0 = orders.Where(o => o.Invoice.PaymentMethods == 0);
-        var ordersByPaymentMethod1 = orders.Where(o => o.Invoice.PaymentMethods == 1);
-        var ordersByPaymentMethod2 = orders.Where(o => o.Invoice.PaymentMethods == 2);
-
-        var revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
-        var revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
-        var revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
-
-        var orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
-        var orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
-        var orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
-        var orderIds = orders.Select(o => o.OrderId).ToList();
-        return new OrderStatisticsDTO
+      
+        if (collectedById.HasValue)
         {
-            TotalOrders = totalOrders,
-            TotalRevenue = totalRevenue,
-            RevenueByPaymentMethod0 = revenueByPaymentMethod0,
-            RevenueByPaymentMethod1 = revenueByPaymentMethod1,
-            RevenueByPaymentMethod2 = revenueByPaymentMethod2,
-            OrderCountByPaymentMethod0 = orderCountByPaymentMethod0,
-            OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
-            OrderCountByPaymentMethod2 = orderCountByPaymentMethod2,
-            OrderIds = orderIds
-        };
+            ordersQuery = ordersQuery.Where(o => o.CollectedBy == collectedById);
+        }
+
+        var orders = await ordersQuery.ToListAsync();
+
+        
+        var groupedOrders = orders.GroupBy(o => o.CollectedBy);
+
+        var collectedStatistics = new List<CollectedByStatisticsDTO>();
+
+        foreach (var group in groupedOrders)
+        {
+            var collectedBy = group.FirstOrDefault()?.Collected;
+
+            var totalOrders = group.Count();
+            var totalRevenue = group.Sum(o => o.Invoice.PaymentAmount ?? 0);
+
+            var ordersByPaymentMethod0 = group.Where(o => o.Invoice.PaymentMethods == 0);
+            var ordersByPaymentMethod1 = group.Where(o => o.Invoice.PaymentMethods == 1);
+            var ordersByPaymentMethod2 = group.Where(o => o.Invoice.PaymentMethods == 2);
+
+            var revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
+            var revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
+            var revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
+
+            var orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
+            var orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
+            var orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
+            var orderIds = group.Select(o => o.OrderId).ToList();
+
+            collectedStatistics.Add(new CollectedByStatisticsDTO
+            {
+                CollectedById = collectedBy?.AccountId ?? 0,  
+                CollectedByFirstName = collectedBy?.FirstName,
+                CollectedByLastName = collectedBy?.LastName,
+                Revenue = new List<OrderStatisticsDTO>
+            {
+                new OrderStatisticsDTO
+                {
+                    TotalOrders = totalOrders,
+                    TotalRevenue = totalRevenue,
+                    RevenueByPaymentMethod0 = revenueByPaymentMethod0,
+                    RevenueByPaymentMethod1 = revenueByPaymentMethod1,
+                    RevenueByPaymentMethod2 = revenueByPaymentMethod2,
+                    OrderCountByPaymentMethod0 = orderCountByPaymentMethod0,
+                    OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
+                    OrderCountByPaymentMethod2 = orderCountByPaymentMethod2,
+                    OrderIds = orderIds
+                }
+            }
+            });
+        }
+
+        return collectedStatistics;
     }
+
 
 
     public async Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
