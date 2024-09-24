@@ -58,14 +58,15 @@ namespace EHM_API.Services
 			return _mapper.Map<ReservationDetailDTO>(reservation);
 		}
 
-		public async Task CreateReservationAsync(CreateReservationDTO reservationDTO)
-		{
-			await _repository.CreateReservationAsync(reservationDTO);
-		}
+        public async Task<CReservationDTO> CreateReservationAsync(CreateReservationDTO reservationDTO)
+        {
+            return await _repository.CreateReservationAsync(reservationDTO);
+        }
 
 
 
-		public async Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status)
+
+        public async Task<int> CountOrdersWithStatusOnDateAsync(DateTime date, int status)
 		{
 			return await _repository.CountOrdersWithStatusOnDateAsync(date, status);
 		}
