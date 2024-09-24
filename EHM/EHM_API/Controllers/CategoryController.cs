@@ -104,79 +104,102 @@ namespace EHM_API.Controllers
 			}
 		}
 
-		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
-		{
-			var errors = new Dictionary<string, string>();
+        [HttpPut]
+        public async Task<IActionResult> UpdateCategory([FromBody] CategoryDTO categoryDTO)
+        {
+            var errors = new Dictionary<string, string>();
 
-			if (categoryDTO == null || string.IsNullOrWhiteSpace(categoryDTO.CategoryName))
-			{
-				errors["categoryName"] = "Tên danh mục món ăn là bắt buộc.";
-			}
-			else
-			{
-				var categoryName = categoryDTO.CategoryName.Trim();
+            // Kiểm tra xem categoryDTO có null hoặc CategoryName có trống không
+            if (categoryDTO == null || string.IsNullOrWhiteSpace(categoryDTO.CategoryName))
+            {
+                errors["categoryName"] = "Tên danh mục món ăn là bắt buộc.";
+            }
+            else
+            {
+                var categoryName = categoryDTO.CategoryName.Trim();
 
-				if (categoryName.Length > 100)
-				{
-					errors["categoryName"] = "Tên danh mục phải ít hơn 100 ký tự.";
-				}
+                if (categoryName.Length > 100)
+                {
+                    errors["categoryName"] = "Tên danh mục phải ít hơn 100 ký tự.";
+                }
 
-				if (!categoryName.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_'))
-				{
-					errors["categoryName"] = "Tên danh mục chứa các ký tự không hợp lệ.";
-				}
-			}
+                if (!categoryName.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_'))
+                {
+                    errors["categoryName"] = "Tên danh mục chứa các ký tự không hợp lệ.";
+                }
+            }
 
-			if (errors.Any())
-			{
-				return BadRequest(errors);
-			}
+            if (errors.Any())
+            {
+                return BadRequest(errors);
+            }
 
-			var existingCategory = await _categoryService.GetCategoryByIdAsync(id);
-			if (existingCategory == null)
-			{
-				return NotFound(new { message = "Không tìm thấy danh mục." });
-			}
+            // Kiểm tra nếu CategoryId có giá trị
+            if (!categoryDTO.CategoryId.HasValue)
+            {
+                return BadRequest(new { message = "CategoryId là bắt buộc." });
+            }
 
-			var duplicateCategory = await _categoryService.GetCategoryByNameAsync(categoryDTO.CategoryName);
-			if (duplicateCategory != null && duplicateCategory.CategoryId != id)
-			{
-				return Conflict(new { message = "Tên danh mục đã tồn tại." });
-			}
+            var existingCategory = await _categoryService.GetCategoryByIdAsync(categoryDTO.CategoryId.Value);
+            if (existingCategory == null)
+            {
+                return NotFound(new { message = "Không tìm thấy danh mục." });
+            }
 
-			try
-			{
-				var updatedCategory = await _categoryService.UpdateCategoryAsync(id, categoryDTO);
-				if (updatedCategory == null)
-				{
-					return NotFound(new { message = "Không tìm thấy danh mục sau khi cập nhật." });
-				}
+            // Kiểm tra tên danh mục trùng lặp
+            var duplicateCategory = await _categoryService.GetCategoryByNameAsync(categoryDTO.CategoryName);
+            if (duplicateCategory != null && duplicateCategory.CategoryId != categoryDTO.CategoryId)
+            {
+                return Conflict(new { message = "Tên danh mục đã tồn tại." });
+            }
 
-				return Ok(new { message = "Tên danh mục món ăn được cập nhật thành công", updatedCategory });
-			}
-			catch (ArgumentException ex)
-			{
-				return BadRequest(new { message = ex.Message });
-			}
-			catch (InvalidOperationException ex)
-			{
-				return Conflict(new { message = ex.Message });
-			}
-		}
-		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteCategory(int id)
-		{
-			var result = await _categoryService.DeleteCategoryAsync(id);
-			if (!result)
-			{
-				return NotFound();
-			}
-			return NoContent();
-		}
+            try
+            {
+                var updatedCategory = await _categoryService.UpdateCategoryAsync(categoryDTO.CategoryId.Value, categoryDTO);
+                if (updatedCategory == null)
+                {
+                    return NotFound(new { message = "Không tìm thấy danh mục sau khi cập nhật." });
+                }
 
-		
+                return Ok(new { message = "Tên danh mục món ăn được cập nhật thành công", updatedCategory });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra lỗi khi cập nhật danh mục." });
+            }
+        }
 
-		
-	}
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            try
+            {
+                var result = await _categoryService.DeleteCategoryAsync(id);
+                if (!result)
+                {
+                    return NotFound(new { message = "Không tìm thấy danh mục." });
+                }
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Đã xảy ra lỗi khi xóa danh mục." });
+            }
+        }
+
+
+
+
+
+    }
 }

@@ -55,24 +55,47 @@ namespace EHM_API.Services
 
         public async Task<OrderDTOAll> GetOrderByIdAsync(int id)
         {
+            // Lấy order từ cơ sở dữ liệu
             var order = await _orderRepository.GetByIdAsync(id);
             if (order == null)
             {
                 return null;
             }
 
+            // Kết hợp chi tiết order
             var combinedOrderDetails = CombineOrderDetails(order.OrderDetails);
             var orderDto = _mapper.Map<OrderDTOAll>(order);
             orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(combinedOrderDetails);
 
-            // Kiểm tra nếu type là 3 và có thông tin Reservations thì ánh xạ
-            // Nếu chỉ cần một đối tượng duy nhất
-            if (order.Type == 3 && order.Reservations != null && order.Reservations.Any())
+            // Lấy thông tin Staff (nếu có)
+            if (order.StaffId.HasValue)
             {
-                // Gán đối tượng đầu tiên từ danh sách Reservations
-                orderDto.Reservation = _mapper.Map<ReservationDTOByOrderId>(order.Reservations.First());
+                var staff = await _context.Accounts.FindAsync(order.StaffId.Value);
+                if (staff != null)
+                {
+                    orderDto.StaffId = staff.AccountId;
+                    orderDto.StaffFirstName = staff.FirstName;
+                    orderDto.StaffLastName = staff.LastName;
+                }
             }
 
+            // Lấy thông tin AcceptBy (nếu có)
+            if (order.AcceptBy.HasValue)
+            {
+                var acceptBy = await _context.Accounts.FindAsync(order.AcceptBy.Value);
+                if (acceptBy != null)
+                {
+                    orderDto.AcceptBy = acceptBy.AccountId;
+                    orderDto.AcceptByFirstName = acceptBy.FirstName;
+                    orderDto.AcceptByLastName = acceptBy.LastName;
+                }
+            }
+
+            // Xử lý nếu là loại order có Reservation
+            if (order.Type == 3 && order.Reservations != null && order.Reservations.Any())
+            {
+                orderDto.Reservation = _mapper.Map<ReservationDTOByOrderId>(order.Reservations.First());
+            }
 
             return orderDto;
         }

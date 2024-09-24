@@ -398,17 +398,27 @@ namespace EHM_API.Repositories
 				.ToListAsync();
 		}
 
-		public async Task<IEnumerable<Order>> GetOrdersWithInvoicesByStatusAndDepositAsync(int status, decimal minDeposit)
-		{
-			return await _context.Orders
-				.Include(o => o.Address)
-				.Include(o => o.Staff)
-				.Include(o => o.Collected)
-				.Include(o => o.Invoice)
-				.Where(o => ((o.Status == status || o.Status == 8) && o.Deposits > minDeposit && (o.InvoiceId==null || (o.InvoiceId.HasValue && (o.Invoice.PaymentStatus == 2 || o.Invoice.PaymentStatus == 1)))))
-				.OrderByDescending(o => o.OrderDate)
-				.ToListAsync();
-		}
+        public async Task<IEnumerable<Order>> GetOrdersWithInvoicesByStatusAndDepositAsync(int status, decimal minDeposit)
+        {
+            return await _context.Orders
+                .Include(o => o.Address)
+                .Include(o => o.Staff)
+                .Include(o => o.Collected)
+                .Include(o => o.Invoice)
+                .Include(o => o.Reservations)
+                .Where(o =>
+                    (o.Status == status || o.Status == 8)
+                    && o.Deposits > minDeposit
+                    && (o.InvoiceId == null || (o.InvoiceId.HasValue && (o.Invoice.PaymentStatus == 2 || o.Invoice.PaymentStatus == 1)))
+                   
+                    && !o.Reservations.Any(r => r.Status == 5 && r.ReservationTime.Value.Date < DateTime.Now.Date && o.Deposits > 0)
+                )
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
+
+
+
 
         public async Task<List<Order>> GetOrdersUnpaidForShipAsync()
         {
@@ -422,6 +432,8 @@ namespace EHM_API.Repositories
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
+
+
 
 
         public async Task<Order> GetOrderByIdAsync(int orderId)

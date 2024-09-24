@@ -40,6 +40,7 @@ namespace EHM_API.DTOs.ReservationDTO.Guest
 		public decimal? TotalAmount { get; set; }
 		public string? Note { get; set; }
         public string? CancelBy { get; set; }
+        public int? AccountId { get; set; }
         public ICollection<OrderItemDTO3> OrderDetails { get; set; }
 	}
 
