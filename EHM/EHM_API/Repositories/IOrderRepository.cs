@@ -40,7 +40,7 @@ public interface IOrderRepository
     Task<Order?> GetOrderById(int orderId);
 	Task<IEnumerable<OrderTable>> GetOrderTablesByOrderIdAsync(int orderId);
     Task<IEnumerable<Order>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
-    Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate);
+    Task<List<OrderStatisticsDTO>> GetOrderStatisticsByCollectedByAsync(DateTime? startDate, DateTime? endDate, int? collectedById);
     Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate);
     Task<List<Order?>> GetOrderByIdAsync(List<int> orderIds);
 
@@ -53,5 +53,6 @@ public interface IOrderRepository
     Task SaveAsync();
     Task UpdateOrderShipTimeAsync(Order order);
     Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto);
+    Task<List<CollectedByStatisticsDTO>> GetExtendedOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById);
 }
 

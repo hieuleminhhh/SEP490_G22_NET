@@ -51,7 +51,7 @@ namespace EHM_API.Services
         Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, UpdateOrderAccountDTO updateOrderAccountDTO);
         Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
         Task<Order> UpdateForOrderStatusAsync(int orderId, int status);
-        Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate);
+        Task<List<OrderStatisticsDTO>> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById);
         Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate);
         Task<List<ExportOrderDTO?>> GetOrderDetailsByIdsAsync(List<int> orderIds);
 
@@ -61,5 +61,6 @@ namespace EHM_API.Services
         Task<bool> UpdateStaffByOrderIdAsync(UpdateStaffDTO updateStaffDTO);
         Task<List<OrderDetailWithStaffDTO>> GetOrdersWithStatus8Async();
         Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto);
+        Task<List<CollectedByStatisticsDTO>> GetExtendedOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById);
     }
 }

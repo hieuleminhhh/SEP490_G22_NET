@@ -378,7 +378,7 @@ namespace EHM_API.Services
             {
                 order.Status = 2;
             }
-
+			order.Deposits = dto.Deposits;
             // Update the order status
             await _orderRepository.UpdateOrderAsync(order);
 
@@ -576,12 +576,13 @@ namespace EHM_API.Services
 			var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
 			return order;
 		}
-		public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
-		{
-			return await _orderRepository.GetOrderStatisticsAsync(startDate, endDate);
-		}
+        public async Task<List<OrderStatisticsDTO>> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
+        {
+            return await _orderRepository.GetOrderStatisticsByCollectedByAsync(startDate, endDate, collectedById);
+        }
 
-		public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
+
+        public async Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
 		{
 			var salesByCategory = await _orderRepository.GetSalesByCategoryAsync(startDate, endDate);
 			var categories = await _context.Categories.ToListAsync();
@@ -753,6 +754,9 @@ namespace EHM_API.Services
         {
             return await _orderRepository.UpdateAcceptByAsync(dto);
         }
-
+        public async Task<List<CollectedByStatisticsDTO>> GetExtendedOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
+        {
+            return await _orderRepository.GetExtendedOrderStatisticsAsync(startDate, endDate, collectedById);
+        }
     }
 }
