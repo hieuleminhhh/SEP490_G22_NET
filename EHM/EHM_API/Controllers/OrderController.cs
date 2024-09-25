@@ -592,7 +592,7 @@ namespace EHM_API.Controllers
 			}
 		}
 
-		[Authorize(Roles = "OrderStaff,Cashier")]
+		/*[Authorize(Roles = "OrderStaff,Cashier")]*/
 		[HttpPut("UpdateStatusAndCreateInvoice/{orderId}")]
 		public async Task<IActionResult> UpdateStatusAndCreateInvoice(int orderId, UpdateStatusAndCInvoiceD dto)
 		{
@@ -775,6 +775,13 @@ namespace EHM_API.Controllers
                 .AnyAsync(od => od.ComboId == comboId);
             return Ok(comboExistsInOrder);
         }
+        [HttpGet("CheckCategoryInDish/{categoryId}")]
+        public async Task<ActionResult<bool>> CheckCategoryInDish(int categoryId)
+        {
+            var comboExistsInOrder = await _context.Dishes
+                .AnyAsync(od => od.CategoryId == categoryId);
+            return Ok(comboExistsInOrder);
+        }
         [HttpPut("update-staff")]
         public async Task<IActionResult> UpdateStaffByOrderId([FromBody] UpdateStaffDTO updateStaffDTO)
         {
@@ -809,6 +816,12 @@ namespace EHM_API.Controllers
             }
 
             return Ok("AcceptBy updated successfully.");
+        }
+        [HttpGet("extended-statistics")]
+        public async Task<ActionResult<List<CollectedByStatisticsDTO>>> GetExtendedOrderStatistics(DateTime? startDate, DateTime? endDate, int? collectedById)
+        {
+            var statistics = await _orderService.GetExtendedOrderStatisticsAsync(startDate, endDate, collectedById);
+            return Ok(statistics);
         }
 
     }
