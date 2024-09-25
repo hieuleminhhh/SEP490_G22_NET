@@ -53,6 +53,5 @@ public interface IOrderRepository
     Task SaveAsync();
     Task UpdateOrderShipTimeAsync(Order order);
     Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto);
-    Task<List<CollectedByStatisticsDTO>> GetExtendedOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById);
 }
 

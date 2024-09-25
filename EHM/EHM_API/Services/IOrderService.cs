@@ -61,6 +61,5 @@ namespace EHM_API.Services
         Task<bool> UpdateStaffByOrderIdAsync(UpdateStaffDTO updateStaffDTO);
         Task<List<OrderDetailWithStaffDTO>> GetOrdersWithStatus8Async();
         Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto);
-        Task<List<CollectedByStatisticsDTO>> GetExtendedOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById);
     }
 }
