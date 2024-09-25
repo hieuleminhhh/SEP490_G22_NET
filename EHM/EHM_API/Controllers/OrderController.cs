@@ -817,12 +817,6 @@ namespace EHM_API.Controllers
 
             return Ok("AcceptBy updated successfully.");
         }
-        [HttpGet("extended-statistics")]
-        public async Task<ActionResult<List<CollectedByStatisticsDTO>>> GetExtendedOrderStatistics(DateTime? startDate, DateTime? endDate, int? collectedById)
-        {
-            var statistics = await _orderService.GetExtendedOrderStatisticsAsync(startDate, endDate, collectedById);
-            return Ok(statistics);
-        }
-
+       
     }
 }

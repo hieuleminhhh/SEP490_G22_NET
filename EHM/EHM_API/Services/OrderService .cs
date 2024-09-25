@@ -754,9 +754,6 @@ namespace EHM_API.Services
         {
             return await _orderRepository.UpdateAcceptByAsync(dto);
         }
-        public async Task<List<CollectedByStatisticsDTO>> GetExtendedOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
-        {
-            return await _orderRepository.GetExtendedOrderStatisticsAsync(startDate, endDate, collectedById);
-        }
+   
     }
 }
