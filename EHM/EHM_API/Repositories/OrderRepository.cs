@@ -1148,50 +1148,93 @@ public class OrderRepository : IOrderRepository
             .Where(o => o.Status == status && o.StaffId == staffId)
             .ToListAsync();
     }
-    public async Task<OrderStatisticsDTO> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate)
+    public async Task<List<OrderStatisticsDTO>> GetOrderStatisticsByCollectedByAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
     {
-      
+        // Đặt giá trị endDate là ngày hiện tại nếu không được cung cấp
         endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today
-                  ? endDate.Value.Date
-                  : DateTime.Today;
+            ? endDate.Value.Date
+            : DateTime.Today;
 
-        var orders = await _context.Orders
+        // Lấy danh sách tất cả các Cashier
+        var cashiersQuery = _context.Accounts
+            .Where(a => a.Role == "Cashier" && a.IsActive == true);
+
+        // Nếu lọc theo collectedById
+        if (collectedById.HasValue)
+        {
+            cashiersQuery = cashiersQuery.Where(a => a.AccountId == collectedById);
+        }
+
+        var cashiers = await cashiersQuery.ToListAsync();
+
+        // Bắt đầu truy vấn cho Orders (IQueryable)
+        var ordersQuery = _context.Orders
             .Where(o => o.Status == 4 &&
                         o.Invoice.PaymentStatus == 1 &&
                         o.Invoice.PaymentTime.HasValue &&
                         (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
                         o.Invoice.PaymentTime.Value.Date <= endDate)
             .Include(o => o.Invoice)
-            .ToListAsync();
+            .Include(o => o.Collected); // Include cho Account (CollectedBy)
 
-        var totalOrders = orders.Count;
-        var totalRevenue = orders.Sum(o => o.Invoice.PaymentAmount ?? 0);
+        // Truy xuất danh sách Orders
+        var orders = await ordersQuery.ToListAsync();
 
-        var ordersByPaymentMethod0 = orders.Where(o => o.Invoice.PaymentMethods == 0);
-        var ordersByPaymentMethod1 = orders.Where(o => o.Invoice.PaymentMethods == 1);
-        var ordersByPaymentMethod2 = orders.Where(o => o.Invoice.PaymentMethods == 2);
+        // Kết hợp Cashiers với Orders, đảm bảo rằng tất cả các Cashier đều được bao gồm
+        var cashierOrderGroups = cashiers.GroupJoin(
+            orders,
+            cashier => cashier.AccountId,
+            order => order.CollectedBy,
+            (cashier, ordersGroup) => new { Cashier = cashier, Orders = ordersGroup }
+        );
 
-        var revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
-        var revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
-        var revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
+        var statistics = new List<OrderStatisticsDTO>();
 
-        var orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
-        var orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
-        var orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
-        var orderIds = orders.Select(o => o.OrderId).ToList();
-        return new OrderStatisticsDTO
+        // Duyệt qua từng Cashier và tính toán thống kê
+        foreach (var group in cashierOrderGroups)
         {
-            TotalOrders = totalOrders,
-            TotalRevenue = totalRevenue,
-            RevenueByPaymentMethod0 = revenueByPaymentMethod0,
-            RevenueByPaymentMethod1 = revenueByPaymentMethod1,
-            RevenueByPaymentMethod2 = revenueByPaymentMethod2,
-            OrderCountByPaymentMethod0 = orderCountByPaymentMethod0,
-            OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
-            OrderCountByPaymentMethod2 = orderCountByPaymentMethod2,
-            OrderIds = orderIds
-        };
+            var cashier = group.Cashier;
+            var ordersForCashier = group.Orders;
+
+            int totalOrders = ordersForCashier.Count();
+            decimal totalRevenue = ordersForCashier.Sum(o => o.Invoice.PaymentAmount ?? 0);
+
+            var ordersByPaymentMethod0 = ordersForCashier.Where(o => o.Invoice.PaymentMethods == 0);
+            var ordersByPaymentMethod1 = ordersForCashier.Where(o => o.Invoice.PaymentMethods == 1);
+            var ordersByPaymentMethod2 = ordersForCashier.Where(o => o.Invoice.PaymentMethods == 2);
+
+            decimal revenueByPaymentMethod0 = ordersByPaymentMethod0.Sum(o => o.Invoice.PaymentAmount ?? 0);
+            decimal revenueByPaymentMethod1 = ordersByPaymentMethod1.Sum(o => o.Invoice.PaymentAmount ?? 0);
+            decimal revenueByPaymentMethod2 = ordersByPaymentMethod2.Sum(o => o.Invoice.PaymentAmount ?? 0);
+
+            int orderCountByPaymentMethod0 = ordersByPaymentMethod0.Count();
+            int orderCountByPaymentMethod1 = ordersByPaymentMethod1.Count();
+            int orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
+            var orderIds = ordersForCashier.Select(o => o.OrderId).ToList();
+
+            // Thêm thông tin thống kê vào danh sách, bao gồm cả Cashier không có đơn hàng
+            statistics.Add(new OrderStatisticsDTO
+            {
+                CollectedById = cashier.AccountId,
+                CollectedByFirstName = cashier.FirstName,
+                CollectedByLastName = cashier.LastName,
+                TotalOrders = totalOrders,
+                TotalRevenue = totalRevenue,
+                RevenueByPaymentMethod0 = revenueByPaymentMethod0,
+                RevenueByPaymentMethod1 = revenueByPaymentMethod1,
+                RevenueByPaymentMethod2 = revenueByPaymentMethod2,
+                OrderCountByPaymentMethod0 = orderCountByPaymentMethod0,
+                OrderCountByPaymentMethod1 = orderCountByPaymentMethod1,
+                OrderCountByPaymentMethod2 = orderCountByPaymentMethod2,
+                OrderIds = orderIds
+            });
+        }
+
+        return statistics;
     }
+
+
+
 
 
     public async Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
