@@ -5,6 +5,7 @@ using EHM_API.Models;
 using EHM_API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -20,13 +21,15 @@ namespace EHM_API.Controllers
 		private readonly IDishService _dishService;
 		private readonly IComboService _comboService;
 		private readonly ITableService _tableService;
+        private readonly EHMDBContext _context;
 
-        public ReservationsController(IReservationService service, IDishService dishService, IComboService comboService, ITableService tableService)
+        public ReservationsController(IReservationService service, IDishService dishService, IComboService comboService, ITableService tableService, EHMDBContext context)
         {
             _service = service;
             _dishService = dishService;
             _comboService = comboService;
             _tableService = tableService;
+            _context = context;
         }
 
         [HttpGet]
@@ -427,6 +430,35 @@ namespace EHM_API.Controllers
 
             return Ok("AcceptBy updated successfully.");
         }
+        [HttpGet("{reservationId}/guest-email")]
+        public async Task<IActionResult> GetGuestEmailByReservation(int reservationId)
+        {
+            // Tìm Reservation dựa trên ReservationId
+            var reservation = await _context.Reservations
+                .Include(r => r.Address) // Include Address để lấy thông tin từ Address
+                .ThenInclude(a => a.GuestPhoneNavigation) // Include GuestPhoneNavigation để lấy thông tin từ Guest
+                .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
 
+            if (reservation == null)
+            {
+                return NotFound(new { message = "Không tìm thấy thông tin đặt chỗ với ID đã cung cấp." });
+            }
+
+            // Lấy thông tin GuestPhone từ Address
+            var guestPhone = reservation.Address.GuestPhone;
+            if (guestPhone == null)
+            {
+                return NotFound(new { message = "Không tìm thấy số điện thoại khách." });
+            }
+
+            // Lấy thông tin email từ Guest thông qua GuestPhone
+            var guest = reservation.Address.GuestPhoneNavigation;
+            if (guest == null || string.IsNullOrWhiteSpace(guest.Email))
+            {
+                return NotFound(new { message = "Không tìm thấy email cho khách với số điện thoại đã cung cấp." });
+            }
+
+            return Ok(new { guestPhone = guest.GuestPhone, email = guest.Email });
+        }
     }
 }

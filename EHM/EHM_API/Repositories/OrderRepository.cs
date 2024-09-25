@@ -1232,11 +1232,6 @@ public class OrderRepository : IOrderRepository
 
         return statistics;
     }
-
-
-
-
-
     public async Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
     {
         // Đảm bảo endDate không vượt quá ngày hôm nay
@@ -1347,5 +1342,88 @@ public class OrderRepository : IOrderRepository
 
         return true; // Trả về true nếu cập nhật thành công
     }
+    public async Task<List<CollectedByStatisticsDTO>> GetExtendedOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
+    {
+        endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today ? endDate.Value.Date : DateTime.Today;
 
+        // Lấy danh sách Cashier
+        var cashiersQuery = _context.Accounts
+            .Where(a => a.Role == "Cashier" && a.IsActive == true);
+
+        if (collectedById.HasValue)
+        {
+            cashiersQuery = cashiersQuery.Where(a => a.AccountId == collectedById);
+        }
+
+        var cashiers = await cashiersQuery.ToListAsync();
+        var ordersQuery = _context.Orders
+            .Where(o => (!startDate.HasValue || o.OrderDate.Value.Date >= startDate.Value.Date) &&
+                        o.OrderDate.Value.Date <= endDate)
+            .Include(o => o.OrderDetails)
+            .Include(o => o.Reservations)
+            .Include(o => o.Invoice);
+
+        var orders = await ordersQuery.ToListAsync();
+        var statistics = new List<CollectedByStatisticsDTO>();
+
+        foreach (var cashier in cashiers)
+        {
+            var ordersForCashier = orders.Where(o => o.CollectedBy == cashier.AccountId).ToList();
+
+            // Tính tổng số đơn đã thu tiền
+            var paidOrders = ordersForCashier.Where(o => o.Invoice != null &&
+                                                         o.Invoice.PaymentStatus == 1 &&
+                                                         (o.Invoice.PaymentMethods == 0 || o.Invoice.PaymentMethods == 2) &&
+                                                         o.Status == 4).ToList();
+
+            var refundedOrders = ordersForCashier.Where(o => o.Status == 8).ToList();
+
+            // Tính doanh thu theo các phương thức thanh toán
+            decimal totalRevenueByPaymentMethod0 = paidOrders.Sum(o => o.Invoice?.PaymentAmount ?? 0);
+            decimal totalRefundedAmount = refundedOrders.Sum(o => o.Deposits ?? 0);
+
+            // Doanh thu tổng (PaymentMethod 0 và 1)
+            decimal totalRevenue = totalRevenueByPaymentMethod0 + ordersForCashier.Sum(o => o.Invoice?.PaymentMethods == 1 ? o.Invoice?.PaymentAmount ?? 0 : 0);
+
+            // Tính tổng số tiền đã hoàn trả
+            decimal totalCancelledOrdersRevenue = refundedOrders.Sum(o => o.Deposits ?? 0);
+
+            // Lấy các đơn đặc biệt
+            var unreceivedDeliveryOrders = ordersForCashier
+                .Where(o => o.Status == 5 && o.Type == 2 && o.Deposits.HasValue &&
+                            o.OrderDetails != null && o.OrderDetails.Any(od => od.DishesServed > 0))
+                .Select(o => o.OrderId).ToList();
+
+            var overdueReservationOrders = ordersForCashier
+                .Where(o => o.Status == 5 && o.Type == 3 && o.Deposits.HasValue &&
+                            o.Reservations != null && o.Reservations.Any(r => r.Status == 5 && r.ReservationTime < DateTime.Now))
+                .Select(o => o.OrderId).ToList();
+
+            var uncollectedTakeawayOrders = ordersForCashier
+                .Where(o => o.Status == 5 && o.Type == 1 && o.Deposits.HasValue &&
+                            o.RecevingOrder.Value.Date < DateTime.Now)
+                .Select(o => o.OrderId).ToList();
+
+            statistics.Add(new CollectedByStatisticsDTO
+            {
+                CollectedById = cashier.AccountId,
+                CollectedByFirstName = cashier.FirstName,
+                CollectedByLastName = cashier.LastName,
+                TotalOrders = ordersForCashier.Count(),
+                TotalRevenue = totalRevenue,
+                TotalRefundedAmount = totalRefundedAmount,
+                TotalCancelledOrdersRevenue = totalCancelledOrdersRevenue,
+                PaidOrderIds = paidOrders.Select(o => o.OrderId).ToList(),
+                RefundedOrderIds = refundedOrders.Select(o => o.OrderId).ToList(),
+                CompletedOrderIds = ordersForCashier.Where(o => o.Status == 4 && o.Invoice != null && o.Invoice.PaymentStatus == 1)
+    .Select(o => o.OrderId)
+    .ToList(),
+                UnreceivedDeliveryOrderIds = unreceivedDeliveryOrders,
+                OverdueReservationOrderIds = overdueReservationOrders,
+                UncollectedTakeawayOrderIds = uncollectedTakeawayOrders,
+            });
+        }
+
+        return statistics;
+    }
 }
