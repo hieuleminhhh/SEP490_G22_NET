@@ -191,36 +191,37 @@ public class OrderRepository : IOrderRepository
 			.Take(pageSize)
 			.ToListAsync();
 
-		var orderDTOs = orders.Select(o => new OrderDTO
-		{
-			OrderId = o.OrderId,
-			OrderDate = (DateTime)o.OrderDate,
-			Status = (int)o.Status,
-			RecevingOrder = o.RecevingOrder,
-			AccountId = o.AccountId,
+        var orderDTOs = orders.Select(o => new OrderDTO
+        {
+            OrderId = o.OrderId,
+            OrderDate = o.OrderDate.HasValue ? o.OrderDate.Value : DateTime.MinValue, // Kiểm tra null
+            Status = (int)o.Status,
+            RecevingOrder = o.RecevingOrder.HasValue ? o.RecevingOrder.Value : (DateTime?)null, // Kiểm tra null cho nullable DateTime
+            AccountId = o.AccountId,
             TableIds = o.OrderTables.Select(tb => new TableAllDTO
             {
                 TableId = tb.TableId,
-                Capacity = tb.Table?.Capacity ?? 0,
+                Capacity = tb.Table?.Capacity ?? 0, // Sử dụng giá trị mặc định nếu null
                 Floor = tb.Table?.Floor ?? null,
                 Status = tb.Table?.Status ?? 0,
             }).ToList(),
             InvoiceId = o.InvoiceId,
             DiscountPercent = o.Discount?.DiscountPercent ?? 0,
             TotalAmount = o.TotalAmount,
-			GuestPhone = o.GuestPhone,
-			Deposits = (decimal)o.Deposits,
-			AddressId = o.AddressId ?? 0,
+            GuestPhone = o.GuestPhone,
+            Deposits = o.Deposits ?? 0, // Kiểm tra null cho nullable decimal
+            AddressId = o.AddressId ?? 0, // Kiểm tra null cho nullable int
             GuestAddress = o.Address?.GuestAddress,
             ConsigneeName = o.Address?.ConsigneeName,
             PaymentStatus = o.Invoice != null ? o.Invoice.PaymentStatus : default(int),
             PaymentMethods = o.Invoice != null ? o.Invoice.PaymentMethods : default(int),
             Note = o.Note,
-			Type = o.Type,
-			DiscountId = o.DiscountId
-		}).ToList();
+            Type = o.Type,
+            DiscountId = o.DiscountId
+        }).ToList();
 
-		return new PagedResult<OrderDTO>(orderDTOs, totalOrders, page, pageSize);
+
+        return new PagedResult<OrderDTO>(orderDTOs, totalOrders, page, pageSize);
 	}
 
 
@@ -1232,11 +1233,6 @@ public class OrderRepository : IOrderRepository
 
         return statistics;
     }
-
-
-
-
-
     public async Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
     {
         // Đảm bảo endDate không vượt quá ngày hôm nay
@@ -1347,5 +1343,4 @@ public class OrderRepository : IOrderRepository
 
         return true; // Trả về true nếu cập nhật thành công
     }
-
 }
