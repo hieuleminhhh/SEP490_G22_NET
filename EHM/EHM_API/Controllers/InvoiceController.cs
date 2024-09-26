@@ -139,7 +139,7 @@ namespace EHM_API.Controllers
 		}
 
 
-		[Authorize(Roles = "OrderStaff,Cashier")]
+		/*[Authorize(Roles = "OrderStaff,Cashier")]*/
 		[HttpGet("GetInvoiceByOrderId/{orderId}")]
 		public async Task<ActionResult<InvoiceDetailDTO>> GetInvoiceByOrderId(int orderId)
 		{
