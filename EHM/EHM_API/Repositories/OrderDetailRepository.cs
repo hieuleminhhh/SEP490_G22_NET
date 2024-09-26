@@ -45,13 +45,13 @@ namespace EHM_API.Repositories
                     (
                       // Type = 1: Mang về
                       (od.Order.Type == 1 && od.Order.OrderDate.HasValue
-                      && od.Order.Status == 6
-                    &&((od.Order.RecevingOrder == null && od.Order.OrderDate.Value.Date ==today)
+                      && (od.Order.Status == 6 || od.Order.Status == 2)
+                    && ((od.Order.RecevingOrder == null && od.Order.OrderDate.Value.Date ==today)
                     ||(od.Order.RecevingOrder.Value.Date == od.Order.OrderDate.Value.Date)))
                         // Type = 2: Online
                         || (od.Order.Type == 2
                             && od.Order.RecevingOrder.HasValue
-                            && od.Order.Status == 6
+                            && (od.Order.Status == 6 || od.Order.Status == 2)
                             && od.OrderTime.HasValue 
                             && (od.OrderTime.Value.Date == od.Order.RecevingOrder.Value.Date
                             || od.Order.RecevingOrder.Value.Date == od.Order.OrderDate.Value.Date))
