@@ -48,6 +48,7 @@
         public string? ComboName { get; set; }
         public string? Note { get; set; }
         public decimal? Price { get; set; }
+        public bool IsServed { get; set; }
     }
 
     public class AddressDTO1

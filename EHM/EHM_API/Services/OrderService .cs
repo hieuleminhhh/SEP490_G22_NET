@@ -378,7 +378,7 @@ namespace EHM_API.Services
             {
                 order.Status = 2;
             }
-
+			order.Deposits = dto.Deposits;
             // Update the order status
             await _orderRepository.UpdateOrderAsync(order);
 
@@ -753,6 +753,86 @@ namespace EHM_API.Services
         public async Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto)
         {
             return await _orderRepository.UpdateAcceptByAsync(dto);
+        }
+        public async Task<List<CashierReportDTO>> GetCashierReportAsync(DateTime? startDate, DateTime? endDate)
+        {
+            // Đặt giá trị endDate là ngày hiện tại nếu không được cung cấp
+            endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today ? endDate.Value.Date : DateTime.Today;
+
+            // Lấy danh sách tất cả các Cashier
+            var cashiersQuery = _context.Accounts
+                .Where(a => a.Role == "cashier" && a.IsActive == true);
+
+            var cashiers = await cashiersQuery.ToListAsync();
+
+            // Bắt đầu truy vấn cho Orders (IQueryable)
+            var ordersQuery = _context.Orders
+                .Where(o => o.Status == 4 && o.Invoice.PaymentStatus == 1 && o.Invoice.PaymentTime.HasValue &&
+                            (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
+                            o.Invoice.PaymentTime.Value.Date <= endDate)
+                .Include(o => o.Invoice)
+                .Include(o => o.Collected); // Include cho Account (CollectedBy)
+
+            var refundOrdersQuery = _context.Orders
+                .Where(o => o.Status == 8 && o.Staff != null && o.Staff.Role == "cashier");
+
+            // Truy xuất danh sách Orders và Refund Orders
+            var orders = await ordersQuery.ToListAsync();
+            var refundOrders = await refundOrdersQuery.ToListAsync();
+
+            // Kết hợp Cashiers với Orders, đảm bảo rằng tất cả các Cashier đều được bao gồm
+            var cashierOrderGroups = cashiers.GroupJoin(
+                orders,
+                cashier => cashier.AccountId,
+                order => order.CollectedBy,
+                (cashier, ordersGroup) => new { Cashier = cashier, Orders = ordersGroup }
+            );
+
+            var statistics = new List<CashierReportDTO>();
+
+            // Duyệt qua từng Cashier và tính toán thống kê
+            foreach (var group in cashierOrderGroups)
+            {
+                var cashier = group.Cashier;
+                var ordersForCashier = group.Orders.ToList();
+
+                // Đếm các loại đơn hàng
+                int shipOrderCount = ordersForCashier.Count(o => o.Type == 2);
+                int dineInOrderCount = ordersForCashier.Count(o => o.Type == 3 || o.Type == 4);
+                int takeawayOrderCount = ordersForCashier.Count(o => o.Type == 1);
+
+                // Doanh thu (Revenue)
+                decimal totalRevenue = ordersForCashier.Sum(o => o.Invoice?.PaymentAmount ?? 0);
+
+                decimal totalCashToSubmit = ordersForCashier
+           .Where(o => o.Invoice.PaymentStatus == 1 && o.Status == 4 && o.Invoice.PaymentMethods == 0)
+           .Sum(o => o.Invoice.PaymentAmount ?? 0);
+                // Số lượng đơn hoàn tiền
+                var refundOrdersForCashier = refundOrders.Where(o => o.Staff?.AccountId == cashier.AccountId).ToList();
+                int refundOrderCount = refundOrdersForCashier.Count;
+                decimal totalRefunds = refundOrdersForCashier.Sum(o => o.Deposits ?? 0);
+
+                // Tổng số lượng đơn hoàn thành
+                int completedOrderCount = ordersForCashier.Count();
+
+                // Thêm thông tin thống kê vào danh sách
+                statistics.Add(new CashierReportDTO
+                {
+                    CashierId = cashier.AccountId,
+                    FirstName = cashier.FirstName,
+                    LastName = cashier.LastName,
+                    ShipOrderCount = shipOrderCount,
+                    DineInOrderCount = dineInOrderCount,
+                    TakeawayOrderCount = takeawayOrderCount,
+                    RefundOrderCount = refundOrderCount,
+                    Revenue = totalRevenue,
+                    TotalRefunds = totalRefunds,
+                    CompletedOrderCount = completedOrderCount,
+                     TotalCashToSubmit = totalCashToSubmit
+                });
+            }
+
+            return statistics;
         }
 
     }

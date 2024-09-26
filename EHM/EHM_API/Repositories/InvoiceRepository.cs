@@ -28,9 +28,9 @@ namespace EHM_API.Repositories
                     .ThenInclude(od => od.Combo)
                 .Include(i => i.Orders)
                     .ThenInclude(o => o.Address)
-				.Include(i => i.Orders)
-				   .ThenInclude(o => o.Discount)
-				.FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
+                .Include(i => i.Orders)
+                    .ThenInclude(o => o.Discount)
+                .FirstOrDefaultAsync(i => i.InvoiceId == invoiceId);
 
             if (invoice == null)
             {
@@ -51,9 +51,9 @@ namespace EHM_API.Repositories
             {
                 InvoiceId = invoice.InvoiceId,
                 PaymentAmount = invoice.PaymentAmount,
-				PaymentTime = invoice.PaymentTime,
-				PaymentStatus = invoice.PaymentStatus,
-				ConsigneeName = consigneeName,
+                PaymentTime = invoice.PaymentTime,
+                PaymentStatus = invoice.PaymentStatus,
+                ConsigneeName = consigneeName,
                 GuestPhone = guestPhone,
                 Address = guestAddress,
                 OrderDate = order.OrderDate,
@@ -61,28 +61,29 @@ namespace EHM_API.Repositories
                 AmountReceived = invoice.AmountReceived,
                 ReturnAmount = invoice.ReturnAmount,
                 Taxcode = invoice.Taxcode,
-				DiscountName = order.Discount?.DiscountName,
-				DiscountPercent = order.Discount?.DiscountPercent,
-				Note = order.Discount?.Note,
-				TotalMoney = order.Discount?.TotalMoney,
-				QuantityLimit = order.Discount?.QuantityLimit,
-				Deposits = (decimal)order.Deposits,
-				ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
+                DiscountName = order.Discount?.DiscountName,
+                DiscountPercent = order.Discount?.DiscountPercent,
+                Note = order.Discount?.Note,
+                TotalMoney = order.Discount?.TotalMoney,
+                QuantityLimit = order.Discount?.QuantityLimit,
+                Deposits = order.Deposits ?? 0m, // Sửa lỗi nullable
+                ItemInvoice = (order.OrderDetails ?? Enumerable.Empty<OrderDetail>()).Select(od => new ItemInvoiceDTO
                 {
-                    DishId = od.DishId ?? 0,
+                    DishId = od.DishId ?? 0,  // Sửa lỗi nullable
                     ItemName = od.Dish?.ItemName,
-                    ComboId = od.ComboId ?? 0,
+                    ComboId = od.ComboId ?? 0,  // Sửa lỗi nullable
                     NameCombo = od.Combo?.NameCombo,
                     Price = (od.Dish?.Price ?? od.Combo?.Price) ?? 0,
-                    UnitPrice = od.UnitPrice,
-                    Quantity = od.Quantity
+                    UnitPrice = od.UnitPrice ?? 0,  // Sửa lỗi nullable
+                    Quantity = od.Quantity ?? 0  // Sửa lỗi nullable
                 }).ToList()
             };
 
             return invoiceDetailDTO;
         }
 
-		public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
+
+        public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
         {
             var order = await _context.Orders
                 .Include(o => o.Address)

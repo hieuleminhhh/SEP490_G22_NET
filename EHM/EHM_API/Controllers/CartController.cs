@@ -243,9 +243,9 @@ namespace EHM_API.Controllers
 					["error"] = ex.Message
 				});
 			}
-		}
-		[Authorize(Roles = "OrderStaff")]
-		[HttpPost("AddNewOrderTakeAway")]
+        }
+        [Authorize(Roles = "OrderStaff,Cashier")]
+        [HttpPost("AddNewOrderTakeAway")]
         public async Task<IActionResult> AddNewOder2([FromBody] TakeOutDTO takeoutDTO)
         {
             var errors = new Dictionary<string, string>();
