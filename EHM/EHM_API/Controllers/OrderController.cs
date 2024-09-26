@@ -817,6 +817,14 @@ namespace EHM_API.Controllers
 
             return Ok("AcceptBy updated successfully.");
         }
-       
+
+        [HttpGet("cashier-report")]
+        public async Task<IActionResult> GetCashierReport([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        {
+            // Gọi service với startDate và endDate, nếu không có giá trị thì sẽ lấy toàn bộ
+            var report = await _orderService.GetCashierReportAsync(startDate, endDate);
+            return Ok(report);
+        }
+
     }
 }
