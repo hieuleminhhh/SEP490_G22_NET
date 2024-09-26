@@ -672,17 +672,21 @@ namespace EHM_API.Services
             }
 
             string? email = null;
-
+			string? name = null;
        
             if (order.GuestPhoneNavigation != null)
             {
                 email = order.GuestPhoneNavigation.Email;
             }
-
+            if (order.Address != null)
+            {
+                name = order.Address.ConsigneeName;
+            }
             var orderEmailDto = new OrderEmailDTO
             {
                 OrderId = order.OrderId,
-                Email = email
+                Email = email,
+				ConsigneeName = name
             };
 
             return orderEmailDto;
