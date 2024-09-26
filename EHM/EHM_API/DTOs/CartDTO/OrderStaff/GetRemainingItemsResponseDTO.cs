@@ -11,6 +11,7 @@
         public int ComboId { get; set; }
         public string Name { get; set; }
         public int? QuantityRemaining { get; set; }
+        public bool IsServed { get; set; }
     }
 
     public class DishRemainingDTO
@@ -18,5 +19,6 @@
         public int DishId { get; set; }
         public string Name { get; set; }
         public int? QuantityRemaining { get; set; }
+        public bool IsServed { get; set; }
     }
 }

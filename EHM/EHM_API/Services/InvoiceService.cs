@@ -34,27 +34,28 @@ namespace EHM_API.Services
 			return invoiceDetail;
 		}
 
-		private IEnumerable<ItemInvoiceDTO> CombineInvoiceItems(IEnumerable<ItemInvoiceDTO> items)
-		{
-			return items
-				.GroupBy(item => new { item.DishId, item.ComboId })
-				.Select(g =>
-				{
-					var first = g.First();
-					return new ItemInvoiceDTO
-					{
-						DishId = first.DishId,
-						ItemName = first.ItemName,
-						ComboId = first.ComboId,
-						NameCombo = first.NameCombo,
-						Price = first.Price,
-						UnitPrice = g.Sum(item => item.UnitPrice),
-						Quantity = g.Sum(item => item.Quantity)
-					};
-				})
-				.ToList();
-		}
-		public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
+        private IEnumerable<ItemInvoiceDTO> CombineInvoiceItems(IEnumerable<ItemInvoiceDTO> items)
+        {
+            return items
+                .GroupBy(item => new { item.DishId, item.ComboId })
+                .Select(g =>
+                {
+                    var first = g.First();
+                    return new ItemInvoiceDTO
+                    {
+                        DishId = first.DishId,
+                        ItemName = first.ItemName,
+                        ComboId = first.ComboId,
+                        NameCombo = first.NameCombo,
+                        Price = first.Price,
+                        UnitPrice = g.Sum(item => item.UnitPrice ?? 0),  // Kiểm tra nullable
+                        Quantity = g.Sum(item => item.Quantity ?? 0)  // Kiểm tra nullable
+                    };
+                })
+                .ToList();
+        }
+
+        public async Task<int> CreateInvoiceForOrderAsync(int orderId, CreateInvoiceForOrderDTO createInvoiceDto)
         {
             return await _invoiceRepository.CreateInvoiceForOrderAsync(orderId, createInvoiceDto);
         }
