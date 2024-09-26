@@ -804,6 +804,9 @@ namespace EHM_API.Services
                 // Doanh thu (Revenue)
                 decimal totalRevenue = ordersForCashier.Sum(o => o.Invoice?.PaymentAmount ?? 0);
 
+                decimal totalCashToSubmit = ordersForCashier
+           .Where(o => o.Invoice.PaymentStatus == 1 && o.Status == 4 && o.Invoice.PaymentMethods == 0)
+           .Sum(o => o.Invoice.PaymentAmount ?? 0);
                 // Số lượng đơn hoàn tiền
                 var refundOrdersForCashier = refundOrders.Where(o => o.Staff?.AccountId == cashier.AccountId).ToList();
                 int refundOrderCount = refundOrdersForCashier.Count;
@@ -824,7 +827,8 @@ namespace EHM_API.Services
                     RefundOrderCount = refundOrderCount,
                     Revenue = totalRevenue,
                     TotalRefunds = totalRefunds,
-                    CompletedOrderCount = completedOrderCount
+                    CompletedOrderCount = completedOrderCount,
+                     TotalCashToSubmit = totalCashToSubmit
                 });
             }
 

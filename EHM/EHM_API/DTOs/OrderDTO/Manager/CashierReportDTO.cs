@@ -12,6 +12,7 @@
         public decimal Revenue { get; set; } // Doanh thu
         public decimal TotalRefunds { get; set; } // Số tiền đã hoàn
         public int CompletedOrderCount { get; set; }
+        public decimal TotalCashToSubmit { get; set; }
     }
 
 }
