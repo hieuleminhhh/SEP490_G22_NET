@@ -1299,6 +1299,7 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders
             .Include(o => o.Account)
             .Include(o => o.GuestPhoneNavigation)
+			.Include(o => o.Address)
             .FirstOrDefaultAsync(o => o.OrderId == orderId);
     }
     public async Task<Order?> GetOrderByStaffIdAsync(int staffId)
