@@ -809,8 +809,7 @@ namespace EHM_API.Map
               .ForMember(dest => dest.DishName, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ItemName : null))
     .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo != null ? src.Combo.NameCombo : null))
     .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.ImageUrl : src.Combo != null ? src.Combo.ImageUrl : null))
-    .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.Price : src.Combo != null ? src.Combo.Price : (decimal?)null))
-     .ForMember(dest => dest.IsServed, opt => opt.MapFrom(src => src.Quantity == src.DishesServed)); ;
+    .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Dish != null ? src.Dish.Price : src.Combo != null ? src.Combo.Price : (decimal?)null));
 
             CreateMap<Notification, NotificationAllDTO>().ReverseMap();
             CreateMap<NotificationCreateDTO, Notification>();
@@ -821,6 +820,7 @@ namespace EHM_API.Map
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
             CreateMap<Reservation, ReservationDTOByOrderId>();
             CreateMap<HashSet<Reservation>, IEnumerable<ReservationDTOByOrderId>>();
+            CreateMap<StatiticsForManager, Order>().ReverseMap();
         }
 
 

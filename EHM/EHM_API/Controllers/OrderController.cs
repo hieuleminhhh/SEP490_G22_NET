@@ -825,6 +825,97 @@ namespace EHM_API.Controllers
             var report = await _orderService.GetCashierReportAsync(startDate, endDate);
             return Ok(report);
         }
+        [HttpGet("checkAccountID")]
+        public async Task<IActionResult> GetAccountIdByOrderId(int orderId)
+        {
+            // Tìm Order dựa trên OrderId
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            if (order == null)
+            {
+                return NotFound(new { message = "Không tìm thấy đơn hàng với ID đã cung cấp." });
+            }
+
+            // Lấy AccountId từ Order
+            var accountId = order.AccountId;
+
+            if (accountId == null)
+            {
+                return NotFound(new { message = "Đơn hàng không có tài khoản liên kết." });
+            }
+
+            return Ok(new { AccountId = accountId });
+        }
+        [HttpGet("api/orders/by-cashier")]
+        public async Task<IActionResult> GetOrdersByCashierAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
+        {
+            // Đặt giá trị endDate là ngày hiện tại nếu không được cung cấp
+            endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today
+                ? endDate.Value.Date
+                : DateTime.Today;
+
+            // Lấy danh sách tất cả các Cashier
+            var cashiersQuery = _context.Accounts
+                .Where(a => a.Role == "Cashier" && a.IsActive == true);
+
+            // Nếu lọc theo collectedById
+            if (collectedById.HasValue)
+            {
+                cashiersQuery = cashiersQuery.Where(a => a.AccountId == collectedById);
+            }
+
+            var cashiers = await cashiersQuery.ToListAsync();
+
+            // Bắt đầu truy vấn cho Orders
+            var ordersQuery = _context.Orders
+                .Where(o => o.Status == 4 &&  // Lọc các đơn hàng đã hoàn thành
+                            o.Invoice.PaymentStatus == 1 &&  // Đơn hàng đã thanh toán
+                            o.Invoice.PaymentTime.HasValue &&  // Có thời gian thanh toán
+                            (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
+                            o.Invoice.PaymentTime.Value.Date <= endDate)  // Trong khoảng thời gian yêu cầu
+                .Include(o => o.Invoice)
+                .Include(o => o.Collected); // Bao gồm thông tin tài khoản đã thu tiền
+
+            var orders = await ordersQuery.ToListAsync();
+
+            // Kết hợp Cashiers với Orders, đảm bảo rằng tất cả các Cashier đều được bao gồm
+            var cashierOrderGroups = cashiers.GroupJoin(
+                orders,
+                cashier => cashier.AccountId,
+                order => order.CollectedBy,
+                (cashier, ordersGroup) => new { Cashier = cashier, Orders = ordersGroup }
+            );
+
+            // Tạo danh sách kết quả
+            var result = new List<object>();
+
+            // Duyệt qua từng Cashier và đơn hàng tương ứng
+            foreach (var group in cashierOrderGroups)
+            {
+                var cashier = group.Cashier;
+                var ordersForCashier = group.Orders;
+
+                var ordersDto = ordersForCashier.Select(order => new
+                {
+                    order.OrderId,
+                    order.OrderDate,
+                    order.TotalAmount,
+                    PaymentAmount = order.Invoice?.PaymentAmount,
+                    PaymentStatus = order.Invoice?.PaymentStatus,
+                    PaymentTime = order.Invoice?.PaymentTime
+                }).ToList();
+
+                result.Add(new
+                {
+                    CashierId = cashier.AccountId,
+                    CashierName = $"{cashier.FirstName} {cashier.LastName}",
+                    Orders = ordersDto
+                });
+            }
+
+            return Ok(result);
+        }
 
     }
 }
