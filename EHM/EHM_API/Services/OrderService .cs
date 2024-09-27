@@ -823,8 +823,9 @@ namespace EHM_API.Services
                 decimal totalRevenue = ordersForCashier.Sum(o => o.Invoice?.PaymentAmount ?? 0);
 
                 decimal totalCashToSubmit = ordersForCashier
-           .Where(o => o.Invoice.PaymentStatus == 1 && o.Status == 4 && o.Invoice.PaymentMethods == 0)
-           .Sum(o => o.Invoice.PaymentAmount ?? 0);
+                    .Where(o => o.Invoice.PaymentStatus == 1 && o.Status == 4 && o.Invoice.PaymentMethods == 0)
+                    .Sum(o => o.Invoice.PaymentAmount ?? 0);
+
                 // Số lượng đơn hoàn tiền
                 var refundOrdersForCashier = refundOrders.Where(o => o.Staff?.AccountId == cashier.AccountId).ToList();
                 int refundOrderCount = refundOrdersForCashier.Count;
@@ -832,6 +833,36 @@ namespace EHM_API.Services
 
                 // Tổng số lượng đơn hoàn thành
                 int completedOrderCount = ordersForCashier.Count();
+
+                // Chuyển đổi danh sách đơn hàng và đơn hoàn tiền sang OrderDTO
+                var orderDTOs = ordersForCashier.Select(o => new OrderReportDTO
+                {
+                    OrderId = o.OrderId,
+                    OrderDate = o.OrderDate,
+                    Status = o.Status,
+                    TotalAmount = o.TotalAmount,
+                    GuestPhone = o.GuestPhone,
+                    Deposits = o.Deposits,
+                    Note = o.Note,
+                    Type = o.Type,
+                    IsRefundOrder = false // Đơn hàng thông thường
+                }).ToList();
+
+                var refundOrderDTOs = refundOrdersForCashier.Select(o => new OrderReportDTO
+                {
+                    OrderId = o.OrderId,
+                    OrderDate = o.OrderDate,
+                    Status = o.Status,
+                    TotalAmount = o.TotalAmount,
+                    GuestPhone = o.GuestPhone,
+                    Deposits = o.Deposits,
+                    Note = o.Note,
+                    Type = o.Type,
+                    IsRefundOrder = true // Đơn hoàn tiền
+                }).ToList();
+
+                // Gộp cả đơn hàng thông thường và đơn hoàn tiền vào ListOrder
+                var allOrders = orderDTOs.Concat(refundOrderDTOs).ToList();
 
                 // Thêm thông tin thống kê vào danh sách
                 statistics.Add(new CashierReportDTO
@@ -846,7 +877,8 @@ namespace EHM_API.Services
                     Revenue = totalRevenue,
                     TotalRefunds = totalRefunds,
                     CompletedOrderCount = completedOrderCount,
-                     TotalCashToSubmit = totalCashToSubmit
+                    TotalCashToSubmit = totalCashToSubmit,
+                    ListOrder = allOrders // Gộp cả đơn hàng và đơn hoàn tiền
                 });
             }
 
