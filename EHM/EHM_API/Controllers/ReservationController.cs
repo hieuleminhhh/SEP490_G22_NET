@@ -438,6 +438,7 @@ namespace EHM_API.Controllers
                 .Include(r => r.Address) // Include Address để lấy thông tin từ Address
                 .ThenInclude(a => a.GuestPhoneNavigation) // Include GuestPhoneNavigation để lấy thông tin từ Guest
                 .Include(r => r.Account) // Include Account để lấy thông tin từ Account
+                .Include(r => r.Order) // Include Order để lấy thông tin từ Order
                 .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
 
             if (reservation == null)
@@ -445,7 +446,7 @@ namespace EHM_API.Controllers
                 return NotFound(new { message = "Không tìm thấy thông tin đặt chỗ với ID đã cung cấp." });
             }
 
-            // Lấy thông tin GuestPhone từ Address
+            // Lấy thông tin từ Reservation và Address
             var guestPhone = reservation.Address.GuestPhone;
             if (guestPhone == null)
             {
@@ -459,8 +460,16 @@ namespace EHM_API.Controllers
                 return NotFound(new { message = "Không tìm thấy email cho khách với số điện thoại đã cung cấp." });
             }
 
-            // Lấy ConsigneeName từ Account
-            var consigneeNameFromAccount = reservation.Address?.ConsigneeName;
+            // Lấy ConsigneeName từ Address
+            var consigneeNameFromAddress = reservation.Address?.ConsigneeName;
+
+            // Lấy thông tin từ Order
+            var orderId = reservation.OrderId;
+            var order = reservation.Order;
+            if (order == null)
+            {
+                return NotFound(new { message = "Không tìm thấy thông tin đơn hàng." });
+            }
 
             // Lấy thông tin từ Setting
             var setting = await _context.Settings.FirstOrDefaultAsync(); // Lấy thông tin đầu tiên từ Setting
@@ -469,11 +478,16 @@ namespace EHM_API.Controllers
                 return NotFound(new { message = "Không tìm thấy thông tin thiết lập." });
             }
 
+            // Trả về kết quả bao gồm các trường mới
             return Ok(new
             {
-                guestPhone = guest.GuestPhone,
+                reservationId = reservation.ReservationId,
+                reservationTime = reservation.ReservationTime,
+                guestNumber = reservation.GuestNumber,
+                orderId = reservation.OrderId,
+                guestPhone = guestPhone,
+                consigneeName = consigneeNameFromAddress,
                 email = guest.Email,
-                consigneeName = consigneeNameFromAccount,
                 eateryName = setting.EateryName,
                 settingPhone = setting.Phone,
                 settingAddress = setting.Address,
@@ -485,5 +499,6 @@ namespace EHM_API.Controllers
                 linkContact = setting.LinkContact
             });
         }
+
     }
 }
