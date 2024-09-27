@@ -699,7 +699,8 @@ namespace EHM_API.Services
                 CloseTime = setting?.CloseTime,
                 Qrcode = setting?.Qrcode,
                 Logo = setting?.Logo,
-                LinkContact = setting?.LinkContact
+                LinkContact = setting?.LinkContact,
+                ShipTime = order?.ShipTime
             };
 
             return orderEmailDto;
