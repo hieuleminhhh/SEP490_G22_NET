@@ -526,15 +526,7 @@ namespace EHM_API.Services
 			}
 
 
-			if (order.AccountId.HasValue)
-			{
-				invoice.AccountId = order.AccountId;
-			}
-			else
-			{
-				invoice.AccountId = null;
-			}
-
+		
 			invoice.PaymentTime = DateTime.Now;
 			invoice.PaymentStatus = order.Deposits > 0 ? 1 : 0;
 

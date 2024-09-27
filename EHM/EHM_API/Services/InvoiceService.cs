@@ -244,27 +244,33 @@ namespace EHM_API.Services
             var order = await _invoiceRepository.GetOrderByIdAsync(orderId);
             if (order == null)
             {
-                return false;
+                return false; // Không tìm thấy đơn hàng
             }
 
             var invoice = order.Invoice;
             if (invoice == null)
             {
-                return false;
+                return false; // Không tìm thấy hóa đơn
             }
 
+            // Cập nhật trạng thái thanh toán
             invoice.PaymentStatus = 1;
             invoice.PaymentTime = DateTime.Now;
             invoice.PaymentAmount = dto.PaymentAmount;
 
-         
+            // Cập nhật người thu tiền trong đơn hàng
             order.CollectedBy = dto.CollectedBy;
 
-            await _invoiceRepository.UpdateInvoiceAsync(invoice);
-            await _orderRepository.UpdateOrderAsync(order); 
+            // Cập nhật tài khoản trong hóa đơn giống với CollectedBy
+            invoice.AccountId = dto.CollectedBy; // Cập nhật AccountId
 
-            return true;
+            // Cập nhật hóa đơn và đơn hàng
+            await _invoiceRepository.UpdateInvoiceAsync(invoice);
+            await _orderRepository.UpdateOrderAsync(order);
+
+            return true; // Cập nhật thành công
         }
+
 
         public async Task<UpdateAmountInvoiceDTO?> UpdateInvoiceAsync(UpdateAmountInvoiceDTO updateAmountInvoiceDTO)
         {
