@@ -437,6 +437,7 @@ namespace EHM_API.Controllers
             var reservation = await _context.Reservations
                 .Include(r => r.Address) // Include Address để lấy thông tin từ Address
                 .ThenInclude(a => a.GuestPhoneNavigation) // Include GuestPhoneNavigation để lấy thông tin từ Guest
+                .Include(r => r.Account) // Include Account để lấy thông tin từ Account
                 .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
 
             if (reservation == null)
@@ -458,7 +459,31 @@ namespace EHM_API.Controllers
                 return NotFound(new { message = "Không tìm thấy email cho khách với số điện thoại đã cung cấp." });
             }
 
-            return Ok(new { guestPhone = guest.GuestPhone, email = guest.Email });
+            // Lấy ConsigneeName từ Account
+            var consigneeNameFromAccount = reservation.Address?.ConsigneeName;
+
+            // Lấy thông tin từ Setting
+            var setting = await _context.Settings.FirstOrDefaultAsync(); // Lấy thông tin đầu tiên từ Setting
+            if (setting == null)
+            {
+                return NotFound(new { message = "Không tìm thấy thông tin thiết lập." });
+            }
+
+            return Ok(new
+            {
+                guestPhone = guest.GuestPhone,
+                email = guest.Email,
+                consigneeName = consigneeNameFromAccount,
+                eateryName = setting.EateryName,
+                settingPhone = setting.Phone,
+                settingAddress = setting.Address,
+                settingEmail = setting.Email,
+                openTime = setting.OpenTime,
+                closeTime = setting.CloseTime,
+                qrcode = setting.Qrcode,
+                logo = setting.Logo,
+                linkContact = setting.LinkContact
+            });
         }
     }
 }
