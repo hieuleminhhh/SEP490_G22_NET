@@ -448,35 +448,22 @@ namespace EHM_API.Controllers
 
             // Lấy thông tin từ Reservation và Address
             var guestPhone = reservation.Address.GuestPhone;
-            if (guestPhone == null)
-            {
-                return NotFound(new { message = "Không tìm thấy số điện thoại khách." });
-            }
+           
 
             // Lấy thông tin email từ Guest thông qua GuestPhone
             var guest = reservation.Address.GuestPhoneNavigation;
-            if (guest == null || string.IsNullOrWhiteSpace(guest.Email))
-            {
-                return NotFound(new { message = "Không tìm thấy email cho khách với số điện thoại đã cung cấp." });
-            }
-
+          
             // Lấy ConsigneeName từ Address
             var consigneeNameFromAddress = reservation.Address?.ConsigneeName;
 
             // Lấy thông tin từ Order
             var orderId = reservation.OrderId;
             var order = reservation.Order;
-            if (order == null)
-            {
-                return NotFound(new { message = "Không tìm thấy thông tin đơn hàng." });
-            }
+           
 
             // Lấy thông tin từ Setting
             var setting = await _context.Settings.FirstOrDefaultAsync(); // Lấy thông tin đầu tiên từ Setting
-            if (setting == null)
-            {
-                return NotFound(new { message = "Không tìm thấy thông tin thiết lập." });
-            }
+           
 
             // Trả về kết quả bao gồm các trường mới
             return Ok(new
@@ -485,7 +472,7 @@ namespace EHM_API.Controllers
                 reservationTime = reservation.ReservationTime,
                 guestNumber = reservation.GuestNumber,
                 orderId = reservation.OrderId,
-                guestPhone = guestPhone,
+                guestPhone = guestPhone, 
                 consigneeName = consigneeNameFromAddress,
                 email = guest.Email,
                 eateryName = setting.EateryName,
