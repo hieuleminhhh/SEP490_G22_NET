@@ -789,7 +789,8 @@ namespace EHM_API.Services
                             (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
                             o.Invoice.PaymentTime.Value.Date <= endDate)
                 .Include(o => o.Invoice)
-                .Include(o => o.Collected); // Include cho Account (CollectedBy)
+                .Include(o => o.Collected) // Include cho Account (CollectedBy)
+                .Include(o => o.Invoice.Account); // Include cho Account trong Invoice
 
             var refundOrdersQuery = _context.Orders
                 .Where(o => o.Status == 8 && o.Staff != null && o.Staff.Role == "cashier");
@@ -802,7 +803,7 @@ namespace EHM_API.Services
             var cashierOrderGroups = cashiers.GroupJoin(
                 orders,
                 cashier => cashier.AccountId,
-                order => order.CollectedBy,
+                order => order.CollectedBy ?? order.AccountId ?? order.Invoice.AccountId, // Kiểm tra AccountId của CollectedBy, AccountId, và Account trong Invoice
                 (cashier, ordersGroup) => new { Cashier = cashier, Orders = ordersGroup }
             );
 
