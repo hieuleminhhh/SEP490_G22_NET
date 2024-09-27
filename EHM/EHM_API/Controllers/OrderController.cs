@@ -916,6 +916,51 @@ namespace EHM_API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("GetNoRefundOrderDetails")]
+        public async Task<IActionResult> GetOrderSummary(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var now = DateTime.Now;
 
+            // Lấy danh sách đơn hàng dựa trên các điều kiện
+            var query = _context.Orders.AsQueryable();
+
+            // Nếu có ngày bắt đầu và ngày kết thúc, áp dụng lọc
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query = query.Where(o =>
+                    (o.RecevingOrder.HasValue && o.RecevingOrder >= startDate && o.RecevingOrder <= endDate) ||
+                    (!o.RecevingOrder.HasValue && o.OrderDate >= startDate && o.OrderDate <= endDate));
+            }
+
+            // Thêm điều kiện cho từng loại đơn hàng
+            var type2Orders = await query
+                .Where(o => o.Status == 5 && o.Deposits > 0 && o.Type == 2)
+                .ToListAsync();
+
+            var type3Orders = await query
+                .Where(o => o.Status == 5 && o.Deposits > 0 && o.Type == 3 &&
+                            o.Reservations.Any(r => r.Status == 5 && r.ReservationTime < now))
+                .ToListAsync();
+
+            var type1Orders = await query
+                .Where(o => o.Status == 5 && o.Deposits > 0 && o.Type == 1 &&
+                            o.RecevingOrder < now)
+                .ToListAsync();
+
+            // Tính tổng số tiền đặt cọc
+            var totalDeposits = type2Orders.Sum(o => o.Deposits) +
+                                type3Orders.Sum(o => o.Deposits) +
+                                type1Orders.Sum(o => o.Deposits);
+
+            var result = new
+            {
+                TotalDeposits = totalDeposits,
+                Type2Orders = type2Orders,
+                Type3Orders = type3Orders,
+                Type1Orders = type1Orders
+            };
+
+            return Ok(result);
+        }
     }
 }
