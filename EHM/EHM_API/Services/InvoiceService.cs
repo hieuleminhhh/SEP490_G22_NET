@@ -147,14 +147,7 @@ namespace EHM_API.Services
 				invoice.Address = order.Address.GuestAddress;
 			}
 
-			if (order.AccountId.HasValue)
-			{
-				invoice.AccountId = order.AccountId;
-			}
-			else
-			{
-				invoice.AccountId = null; 
-			}
+			
 
 			await _invoiceRepository.CreateInvoiceAsync(invoice);
 
