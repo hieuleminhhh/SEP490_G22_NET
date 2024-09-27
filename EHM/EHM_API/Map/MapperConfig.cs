@@ -667,9 +667,18 @@ namespace EHM_API.Map
                  .ForMember(dest => dest.ConsigneeName, opt => opt.MapFrom(src => src.Address.ConsigneeName))
                  .ForMember(dest => dest.ItemInOrderDetails, opt => opt.MapFrom(src => src.OrderDetails))
                  .ForMember(dest => dest.Status, opt => opt.MapFrom<OrderStatusResolver>())
+                  .ForMember(dest => dest.StatusOrder, opt => opt.MapFrom(src => src.Status))
                  .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
                    .ForMember(dest => dest.DiscountPercent, opt => opt.MapFrom(src => src.Discount != null ? src.Discount.DiscountPercent : (decimal?)null))
-                 .ForMember(dest => dest.DiscountedPrice, opt => opt.Ignore());
+                 .ForMember(dest => dest.DiscountedPrice, opt => opt.Ignore())
+                  .ForMember(dest => dest.CancelationReason, opt => opt.MapFrom(src => src.CancelationReason))
+                   .ForMember(dest => dest.CancelBy, opt => opt.MapFrom(src => src.CancelBy))
+                    .ForMember(dest => dest.CancelDate, opt => opt.MapFrom(src => src.CancelDate))
+                     .ForMember(dest => dest.StaffId, opt => opt.MapFrom(src => src.StaffId))
+                      .ForMember(dest => dest.ShipTime, opt => opt.MapFrom(src => src.ShipTime))
+                       .ForMember(dest => dest.CollectedBy, opt => opt.MapFrom(src => src.CollectedBy))
+                        .ForMember(dest => dest.AcceptBy, opt => opt.MapFrom(src => src.AcceptBy))
+                         .ForMember(dest => dest.RefundDate, opt => opt.MapFrom(src => src.RefundDate));
 
             // Mapping OrderDetail to ItemInOrderDetail
             CreateMap<OrderDetail, ItemInOrderDetail>()
