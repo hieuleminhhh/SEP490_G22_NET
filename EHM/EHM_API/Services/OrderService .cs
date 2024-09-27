@@ -672,8 +672,8 @@ namespace EHM_API.Services
             }
 
             string? email = null;
-			string? name = null;
-       
+            string? name = null;
+
             if (order.GuestPhoneNavigation != null)
             {
                 email = order.GuestPhoneNavigation.Email;
@@ -682,15 +682,29 @@ namespace EHM_API.Services
             {
                 name = order.Address.ConsigneeName;
             }
+
+            // Lấy thông tin từ bảng Setting
+            var setting = await _context.Settings.FirstOrDefaultAsync();
+
             var orderEmailDto = new OrderEmailDTO
             {
                 OrderId = order.OrderId,
                 Email = email,
-				ConsigneeName = name
+                ConsigneeName = name,
+                EateryName = setting?.EateryName,
+                Phone = setting?.Phone,
+                Address = setting?.Address,
+                SettingEmail = setting?.Email,
+                OpenTime = setting?.OpenTime,
+                CloseTime = setting?.CloseTime,
+                Qrcode = setting?.Qrcode,
+                Logo = setting?.Logo,
+                LinkContact = setting?.LinkContact
             };
 
             return orderEmailDto;
         }
+
         public async Task<bool> UpdateStaffByOrderIdAsync(UpdateStaffDTO updateStaffDTO)
         {
             var order = await _orderRepository.GetOrderByIdAsync(updateStaffDTO.OrderId);
