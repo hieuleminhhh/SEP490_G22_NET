@@ -819,10 +819,10 @@ namespace EHM_API.Controllers
         }
 
         [HttpGet("cashier-report")]
-        public async Task<IActionResult> GetCashierReport([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        public async Task<IActionResult> GetCashierReport([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] int? collectedById)
         {
             // Gọi service với startDate và endDate, nếu không có giá trị thì sẽ lấy toàn bộ
-            var report = await _orderService.GetCashierReportAsync(startDate, endDate);
+            var report = await _orderService.GetCashierReportAsync(startDate, endDate, collectedById);
             return Ok(report);
         }
         [HttpGet("checkAccountID")]
