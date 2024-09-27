@@ -825,6 +825,28 @@ namespace EHM_API.Controllers
             var report = await _orderService.GetCashierReportAsync(startDate, endDate);
             return Ok(report);
         }
+        [HttpGet("checkAccountID")]
+        public async Task<IActionResult> GetAccountIdByOrderId(int orderId)
+        {
+            // Tìm Order dựa trên OrderId
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+            if (order == null)
+            {
+                return NotFound(new { message = "Không tìm thấy đơn hàng với ID đã cung cấp." });
+            }
+
+            // Lấy AccountId từ Order
+            var accountId = order.AccountId;
+
+            if (accountId == null)
+            {
+                return NotFound(new { message = "Đơn hàng không có tài khoản liên kết." });
+            }
+
+            return Ok(new { AccountId = accountId });
+        }
 
     }
 }
