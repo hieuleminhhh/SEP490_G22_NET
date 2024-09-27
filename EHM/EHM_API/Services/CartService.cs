@@ -212,7 +212,7 @@ namespace EHM_API.Services
                         }
                     }
 
-                  
+                    var isServed = order.OrderDetails.Any(od => od.DishesServed > 0);
                     return new OrderByID
                     {
                         OrderId = order.OrderId,
@@ -227,7 +227,8 @@ namespace EHM_API.Services
                         CancelationReason = order.CancelationReason,
                         Address = _mapper.Map<AddressDTO1>(order.Address),
                         OrderDetails = _mapper.Map<List<OrderDetailDTO2>>(order.OrderDetails),
-                        Reservation = reservation
+                        Reservation = reservation,
+                         IsServed = isServed
                     };
                 }).ToList()
             };
