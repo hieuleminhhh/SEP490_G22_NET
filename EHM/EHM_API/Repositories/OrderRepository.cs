@@ -1165,10 +1165,9 @@ public class OrderRepository : IOrderRepository
         {
             var cashierAccount = await cashiersQuery.FirstOrDefaultAsync(a => a.AccountId == collectedById);
 
-            // Nếu không phải là Cashier, kiểm tra CollectedBy từ Order
+            // Nếu không phải là Cashier, kiểm tra các đơn hàng bởi CollectedBy
             if (cashierAccount == null)
             {
-                // Lọc theo collectedById từ đơn hàng
                 var ordersByCollectedBy = await _context.Orders
                     .Where(o => o.CollectedBy == collectedById &&
                                 o.Status == 4 &&
@@ -1177,7 +1176,7 @@ public class OrderRepository : IOrderRepository
                                 (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
                                 o.Invoice.PaymentTime.Value.Date <= endDate)
                     .Include(o => o.Invoice)
-                    .Include(o => o.Collected) // Include cho Account (CollectedBy)
+                    .Include(o => o.Collected)  // Include cho Account (CollectedBy)
                     .ToListAsync();
 
                 if (ordersByCollectedBy.Count == 0)
@@ -1214,7 +1213,7 @@ public class OrderRepository : IOrderRepository
         // Lấy tất cả các Cashier hoặc lọc theo Cashier đã chỉ định
         var cashiers = await cashiersQuery.ToListAsync();
 
-        // Bắt đầu truy vấn cho Orders (IQueryable)
+        // Bắt đầu truy vấn cho Orders và chỉ lấy các đơn hàng có `PaymentStatus` là 1
         var ordersQuery = _context.Orders
             .Where(o => o.Status == 4 &&
                         o.Invoice.PaymentStatus == 1 &&
@@ -1222,8 +1221,8 @@ public class OrderRepository : IOrderRepository
                         (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
                         o.Invoice.PaymentTime.Value.Date <= endDate)
             .Include(o => o.Invoice)
-            .Include(o => o.Collected) // Include cho Account (CollectedBy)
-            .Include(o => o.Account);  // Include cho Account đặt đơn
+            .Include(o => o.Collected)  // Include cho Account (CollectedBy)
+            .Include(o => o.Invoice.Account);  // Include Account đặt đơn từ Invoice
 
         // Truy xuất danh sách Orders
         var orders = await ordersQuery.ToListAsync();
@@ -1232,7 +1231,7 @@ public class OrderRepository : IOrderRepository
         var cashierOrderGroups = cashiers.GroupJoin(
             orders,
             cashier => cashier.AccountId,
-            order => order.CollectedBy ?? order.AccountId,  // Kết hợp với CollectedBy hoặc AccountId nếu CollectedBy là null
+            order => order.Invoice.AccountId,  // Lấy theo AccountId của Invoice
             (cashier, ordersGroup) => new { Cashier = cashier, Orders = ordersGroup }
         );
 
@@ -1260,7 +1259,7 @@ public class OrderRepository : IOrderRepository
             int orderCountByPaymentMethod2 = ordersByPaymentMethod2.Count();
             var orderIds = ordersForCashier.Select(o => o.OrderId).ToList();
 
-            // Thêm thông tin thống kê vào danh sách, bao gồm cả Cashier không có đơn hàng
+            // Thêm thông tin thống kê vào danh sách
             statistics.Add(new OrderStatisticsDTO
             {
                 CollectedById = cashier.AccountId,
@@ -1280,6 +1279,7 @@ public class OrderRepository : IOrderRepository
 
         return statistics;
     }
+
 
     public async Task<Dictionary<int, int>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate)
     {
