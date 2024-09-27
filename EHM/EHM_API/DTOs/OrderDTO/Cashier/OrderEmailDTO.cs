@@ -14,5 +14,6 @@
         public string? Qrcode { get; set; }
         public string? Logo { get; set; }
         public string? LinkContact { get; set; }
+        public DateTime? ShipTime { get; set; }
     }
 }
