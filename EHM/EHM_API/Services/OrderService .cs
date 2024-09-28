@@ -569,37 +569,24 @@ namespace EHM_API.Services
 
 			return _mapper.Map<OrderAccountDTO>(order);
 		}
-        public async Task<OrderResponseDTO> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
+        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
         {
             var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, staffId);
 
-            // Map dữ liệu sang DTO
+            // Ánh xạ các đơn hàng sang DTO
             var orderDetails = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders).ToList();
 
-            // Khai báo biến để lưu tổng PaymentAmount
-            decimal totalPaymentAmount = 0;
-
-            // Tính tổng PaymentAmount nếu status = 4 và có CollectedBy
-            if (status == 4)
-            {
-                totalPaymentAmount = orders
-                    .Where(o => o.CollectedBy != null && o.Invoice != null)
-                    .Sum(o => o.Invoice.PaymentAmount ?? 0);
-            }
-
-            // Cập nhật thuộc tính IsCollected cho mỗi OrderDetail
+            // Kiểm tra và cập nhật thuộc tính IsCollected cho từng OrderDetail
             foreach (var orderDetail in orderDetails)
             {
-                orderDetail.IsCollected = orderDetail.CollectedBy.HasValue;
+                // Kiểm tra nếu CollectedBy có tồn tại và không phải là null
+                orderDetail.IsCollected = orderDetail.CollectedBy != null && orderDetail.CollectedBy > 0;
             }
 
-            // Trả về đối tượng chứa cả danh sách orderDetails và tổng PaymentAmount
-            return new OrderResponseDTO
-            {
-                OrderDetails = orderDetails,
-                TotalPaymentAmount = totalPaymentAmount
-            };
+            return orderDetails; // Trả về danh sách OrderDetail đã được cập nhật
         }
+
+
 
 
         public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)

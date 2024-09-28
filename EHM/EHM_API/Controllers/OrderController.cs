@@ -683,18 +683,14 @@ namespace EHM_API.Controllers
 
 
         [HttpGet("orders/status/{status}/staff/{staffId}")]
-        public async Task<ActionResult<OrderResponseDTO>> GetOrdersByStatusAndAccountId(int status, int staffId)
+        public async Task<ActionResult<IEnumerable<OrderDetailForStaffType1>>> GetOrdersByStatusAndAccountId(int status, int staffId)
         {
-            var result = await _orderService.GetOrdersByStatusAndAccountIdAsync(status, staffId);
-
-            // Kiểm tra nếu không có đơn hàng nào
-            if (result.OrderDetails == null || !result.OrderDetails.Any())
+            var orders = await _orderService.GetOrdersByStatusAndAccountIdAsync(status, staffId);
+            if (orders == null || !orders.Any())
             {
                 return NotFound();
             }
-
-            // Trả về kết quả
-            return Ok(result);
+            return Ok(orders);
         }
 
 
