@@ -574,7 +574,7 @@ namespace EHM_API.Services
             var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, staffId);
 
             // Map dữ liệu sang DTO
-            var orderDetails = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
+            var orderDetails = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders).ToList();
 
             // Khai báo biến để lưu tổng PaymentAmount
             decimal totalPaymentAmount = 0;
@@ -587,6 +587,12 @@ namespace EHM_API.Services
                     .Sum(o => o.Invoice.PaymentAmount ?? 0);
             }
 
+            // Cập nhật thuộc tính IsCollected cho mỗi OrderDetail
+            foreach (var orderDetail in orderDetails)
+            {
+                orderDetail.IsCollected = orderDetail.CollectedBy.HasValue;
+            }
+
             // Trả về đối tượng chứa cả danh sách orderDetails và tổng PaymentAmount
             return new OrderResponseDTO
             {
@@ -594,6 +600,7 @@ namespace EHM_API.Services
                 TotalPaymentAmount = totalPaymentAmount
             };
         }
+
 
         public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
 		{

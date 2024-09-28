@@ -966,5 +966,23 @@ namespace EHM_API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("total-payment-amount")]
+        public async Task<IActionResult> GetTotalPaymentAmount()
+        {
+            // Lấy tất cả các đơn hàng có các điều kiện đã chỉ định
+            var totalPaymentAmount = await _context.Orders
+                .Include(o => o.Invoice) // Include Invoice để có thông tin về PaymentAmount
+                .Where(o => o.Status == 4 &&          // Order status = 4
+                            o.Type == 2 &&            // Type của Order = 2
+                            o.Invoice.PaymentStatus == 1 && // Payment status = 1
+                            o.Invoice.PaymentMethods == 1) // Payment method = 1
+                .SumAsync(o => o.Invoice.PaymentAmount ?? 0); // Cộng tổng PaymentAmount
+
+            return Ok(new
+            {
+                TotalPaymentAmount = totalPaymentAmount
+            });
+        }
+
     }
 }
