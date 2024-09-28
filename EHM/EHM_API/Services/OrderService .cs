@@ -526,15 +526,7 @@ namespace EHM_API.Services
 			}
 
 
-			if (order.AccountId.HasValue)
-			{
-				invoice.AccountId = order.AccountId;
-			}
-			else
-			{
-				invoice.AccountId = null;
-			}
-
+		
 			invoice.PaymentTime = DateTime.Now;
 			invoice.PaymentStatus = order.Deposits > 0 ? 1 : 0;
 
@@ -699,7 +691,8 @@ namespace EHM_API.Services
                 CloseTime = setting?.CloseTime,
                 Qrcode = setting?.Qrcode,
                 Logo = setting?.Logo,
-                LinkContact = setting?.LinkContact
+                LinkContact = setting?.LinkContact,
+                ShipTime = order?.ShipTime
             };
 
             return orderEmailDto;
@@ -829,7 +822,7 @@ namespace EHM_API.Services
                         OrderId = o.OrderId,
                         OrderDate = o.OrderDate,
                         Status = o.Status,
-                        TotalAmount = o.TotalAmount,
+                       TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                         GuestPhone = o.GuestPhone,
                         Deposits = o.Deposits,
                         Note = o.Note,
@@ -899,7 +892,7 @@ namespace EHM_API.Services
                     OrderId = o.OrderId,
                     OrderDate = o.OrderDate,
                     Status = o.Status,
-                    TotalAmount = o.TotalAmount,
+                    TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                     GuestPhone = o.GuestPhone,
                     Deposits = o.Deposits,
                     Note = o.Note,
@@ -912,7 +905,7 @@ namespace EHM_API.Services
                     OrderId = o.OrderId,
                     OrderDate = o.OrderDate,
                     Status = o.Status,
-                    TotalAmount = o.TotalAmount,
+                    TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                     GuestPhone = o.GuestPhone,
                     Deposits = o.Deposits,
                     Note = o.Note,
