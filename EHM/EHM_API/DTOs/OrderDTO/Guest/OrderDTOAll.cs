@@ -42,7 +42,7 @@
         public DateTime? CancelDate { get; set; }
         public DateTime? RefundDate { get; set; }
         public IEnumerable<OrderDetailDTO> OrderDetails { get; set; }
-		public IEnumerable<TableOfOrderDTO> Tables { get; set; }
+        public IEnumerable<TableOfOrderDTO> Tables { get; set; }
         public ReservationDTOByOrderId? Reservation { get; set; }
 
     }
@@ -63,5 +63,14 @@
         public int? Status { get; set; }
         public string? ReasonCancel { get; set; }
         public DateTime? TimeIn { get; set; }
+        public IEnumerable<TableOfReservationDTO> TablesOfReservation { get; set; }
+    }
+    public class TableOfReservationDTO
+    {
+        public int TableId { get; set; }
+        public int? Status { get; set; }
+        public int? Capacity { get; set; }
+        public string? Floor { get; set; }
+        public string? Lable { get; set; }
     }
 }

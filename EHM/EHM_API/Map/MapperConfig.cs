@@ -113,7 +113,11 @@ namespace EHM_API.Map
 
 
             CreateMap<Table, TableOfOrderDTO>();
-
+            CreateMap<TableReservation, TableOfReservationDTO>()
+               .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Table.Status))
+               .ForMember(dest => dest.Capacity, opt => opt.MapFrom(src => src.Table.Capacity))
+               .ForMember(dest => dest.Floor, opt => opt.MapFrom(src => src.Table.Floor))
+               .ForMember(dest => dest.Lable, opt => opt.MapFrom(src => src.Table.Lable));
 
             CreateMap<CreateOrderDTO, Order>();
             CreateMap<UpdateOrderDTO, Order>();
