@@ -841,6 +841,7 @@ namespace EHM_API.Services
                     DineInOrderCount = ordersByCollectedBy.Count(o => o.Type == 3 || o.Type == 4),
                     TakeawayOrderCount = ordersByCollectedBy.Count(o => o.Type == 1),
                     RefundOrderCount = 0,  // Đơn hoàn tiền không cần tính ở đây
+                    CompletedOrderCount = ordersByCollectedBy.Count(o => o.Type == 1 || o.Type == 2 || o.Type == 3 || o.Type == 4), // Tổng đơn hàng hoàn thành
                     Revenue = ordersByCollectedBy.Sum(o => o.Invoice.PaymentAmount ?? 0),
                     TotalCashToSubmit = ordersByCollectedBy.Where(o => o.Invoice.PaymentMethods == 0).Sum(o => o.Invoice.PaymentAmount ?? 0),
                     ListOrder = ordersByCollectedBy.Select(o => new OrderReportDTO
@@ -848,7 +849,7 @@ namespace EHM_API.Services
                         OrderId = o.OrderId,
                         OrderDate = o.OrderDate,
                         Status = o.Status,
-                       TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
+                        TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                         GuestPhone = o.GuestPhone,
                         Deposits = o.Deposits,
                         Note = o.Note,
@@ -880,7 +881,9 @@ namespace EHM_API.Services
 
             // Truy vấn cho Refund Orders
             var refundOrdersQuery = _context.Orders
-                .Where(o => o.Status == 8 && o.Staff != null && o.Staff.Role == "cashier")
+                .Where(o => o.Status == 8 && o.Staff != null && o.Staff.Role == "cashier" &&
+                            (!startDate.HasValue || o.RefundDate.HasValue && o.RefundDate.Value.Date >= startDate.Value.Date) &&
+                            (!endDate.HasValue || o.RefundDate.HasValue && o.RefundDate.Value.Date <= endDate))
                 .Include(o => o.Invoice)
                 .Include(o => o.Staff); // Include cho Staff (người xử lý đơn hoàn tiền)
 
@@ -904,6 +907,7 @@ namespace EHM_API.Services
                 int shipOrderCount = ordersForCashier.Count(o => o.Type == 2);
                 int dineInOrderCount = ordersForCashier.Count(o => o.Type == 3 || o.Type == 4);
                 int takeawayOrderCount = ordersForCashier.Count(o => o.Type == 1);
+                int completedOrderCount = shipOrderCount + dineInOrderCount + takeawayOrderCount; // Tổng số đơn hàng hoàn thành
                 decimal totalRevenue = ordersForCashier.Sum(o => o.Invoice.PaymentAmount ?? 0);
                 decimal totalCashToSubmit = ordersForCashier.Where(o => o.Invoice.PaymentMethods == 0).Sum(o => o.Invoice.PaymentAmount ?? 0);
 
@@ -952,6 +956,7 @@ namespace EHM_API.Services
                     DineInOrderCount = dineInOrderCount,
                     TakeawayOrderCount = takeawayOrderCount,
                     RefundOrderCount = refundOrderCount,
+                    CompletedOrderCount = completedOrderCount, // Sử dụng tổng số đơn hàng hoàn thành
                     Revenue = totalRevenue,
                     TotalRefunds = totalRefunds,
                     TotalCashToSubmit = totalCashToSubmit,
