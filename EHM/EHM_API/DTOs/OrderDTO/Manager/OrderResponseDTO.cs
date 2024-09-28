@@ -4,7 +4,8 @@ namespace EHM_API.DTOs.OrderDTO.Manager
 {
     public class OrderResponseDTO
     {
-        public IEnumerable<OrderDetailForStaffType1> OrderDetails { get; set; }
+        public OrderDetailForStaffType1 OrderDetail { get; set; }
         public decimal TotalPaymentAmount { get; set; }
+        public decimal TotalPaymentAmount1 { get; set; }
     }
 }
