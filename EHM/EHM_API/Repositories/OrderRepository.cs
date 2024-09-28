@@ -1146,6 +1146,7 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.OrderTables)
             .Include(o => o.Address)
             .Include(o => o.Discount)
+            .Include(o => o.Invoice)
             .Where(o => o.Status == status && o.StaffId == staffId)
             .ToListAsync();
     }

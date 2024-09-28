@@ -62,10 +62,8 @@ namespace EHM_API.Services
                 return null;
             }
 
-            // Kết hợp chi tiết order
-            var combinedOrderDetails = CombineOrderDetails(order.OrderDetails);
+            // Map dữ liệu order sang DTO
             var orderDto = _mapper.Map<OrderDTOAll>(order);
-            orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(combinedOrderDetails);
 
             // Lấy thông tin Staff (nếu có)
             if (order.StaffId.HasValue)
@@ -94,11 +92,24 @@ namespace EHM_API.Services
             // Xử lý nếu là loại order có Reservation
             if (order.Type == 3 && order.Reservations != null && order.Reservations.Any())
             {
-                orderDto.Reservation = _mapper.Map<ReservationDTOByOrderId>(order.Reservations.First());
+                var reservation = order.Reservations.First();
+                var reservationDto = _mapper.Map<ReservationDTOByOrderId>(reservation);
+
+                // Lấy thông tin TableOfReservation từ TableReservation
+                var tableReservations = await _context.TableReservations
+                    .Where(tr => tr.ReservationId == reservation.ReservationId)
+                    .Include(tr => tr.Table)  // Bao gồm thông tin về Table
+                    .ToListAsync();
+
+                // Sử dụng AutoMapper để ánh xạ các TableReservation sang TableOfReservationDTO
+                reservationDto.TablesOfReservation = _mapper.Map<IEnumerable<TableOfReservationDTO>>(tableReservations);
+
+                orderDto.Reservation = reservationDto;
             }
 
             return orderDto;
         }
+
 
 
 
@@ -526,15 +537,7 @@ namespace EHM_API.Services
 			}
 
 
-			if (order.AccountId.HasValue)
-			{
-				invoice.AccountId = order.AccountId;
-			}
-			else
-			{
-				invoice.AccountId = null;
-			}
-
+		
 			invoice.PaymentTime = DateTime.Now;
 			invoice.PaymentStatus = order.Deposits > 0 ? 1 : 0;
 
@@ -566,12 +569,40 @@ namespace EHM_API.Services
 
 			return _mapper.Map<OrderAccountDTO>(order);
 		}
-		public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
-		{
-			var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, staffId);
-			return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
-		}
-		public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
+        public async Task<OrderResponseDTO> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
+        {
+            var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, staffId);
+
+            // Map dữ liệu sang DTO
+            var orderDetails = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders).ToList();
+
+            // Khai báo biến để lưu tổng PaymentAmount
+            decimal totalPaymentAmount = 0;
+
+            // Tính tổng PaymentAmount nếu status = 4 và có CollectedBy
+            if (status == 4)
+            {
+                totalPaymentAmount = orders
+                    .Where(o => o.CollectedBy != null && o.Invoice != null)
+                    .Sum(o => o.Invoice.PaymentAmount ?? 0);
+            }
+
+            // Cập nhật thuộc tính IsCollected cho mỗi OrderDetail
+            foreach (var orderDetail in orderDetails)
+            {
+                orderDetail.IsCollected = orderDetail.CollectedBy.HasValue;
+            }
+
+            // Trả về đối tượng chứa cả danh sách orderDetails và tổng PaymentAmount
+            return new OrderResponseDTO
+            {
+                OrderDetails = orderDetails,
+                TotalPaymentAmount = totalPaymentAmount
+            };
+        }
+
+
+        public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
 		{
 			var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
 			return order;
@@ -699,7 +730,8 @@ namespace EHM_API.Services
                 CloseTime = setting?.CloseTime,
                 Qrcode = setting?.Qrcode,
                 Logo = setting?.Logo,
-                LinkContact = setting?.LinkContact
+                LinkContact = setting?.LinkContact,
+                ShipTime = order?.ShipTime
             };
 
             return orderEmailDto;
@@ -829,7 +861,7 @@ namespace EHM_API.Services
                         OrderId = o.OrderId,
                         OrderDate = o.OrderDate,
                         Status = o.Status,
-                        TotalAmount = o.TotalAmount,
+                       TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                         GuestPhone = o.GuestPhone,
                         Deposits = o.Deposits,
                         Note = o.Note,
@@ -899,7 +931,7 @@ namespace EHM_API.Services
                     OrderId = o.OrderId,
                     OrderDate = o.OrderDate,
                     Status = o.Status,
-                    TotalAmount = o.TotalAmount,
+                    TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                     GuestPhone = o.GuestPhone,
                     Deposits = o.Deposits,
                     Note = o.Note,
@@ -912,7 +944,7 @@ namespace EHM_API.Services
                     OrderId = o.OrderId,
                     OrderDate = o.OrderDate,
                     Status = o.Status,
-                    TotalAmount = o.TotalAmount,
+                    TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                     GuestPhone = o.GuestPhone,
                     Deposits = o.Deposits,
                     Note = o.Note,
