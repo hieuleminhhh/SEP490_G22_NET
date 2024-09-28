@@ -967,7 +967,7 @@ namespace EHM_API.Controllers
             return Ok(result);
         }
         [HttpGet("total-payment-amount")]
-        public async Task<IActionResult> GetTotalPaymentAmount()
+        public async Task<IActionResult> GetTotalPaymentAmount(DateTime? startDate = null, DateTime? endDate = null)
         {
             // Lấy tất cả các đơn hàng có các điều kiện đã chỉ định
             var totalPaymentAmount = await _context.Orders
@@ -976,6 +976,8 @@ namespace EHM_API.Controllers
                             o.Type == 2 &&            // Type của Order = 2
                             o.Invoice.PaymentStatus == 1 && // Payment status = 1
                             o.Invoice.PaymentMethods == 1) // Payment method = 1
+                .Where(o => !startDate.HasValue || o.Invoice.PaymentTime >= startDate) // Kiểm tra startDate
+                .Where(o => !endDate.HasValue || o.Invoice.PaymentTime <= endDate) // Kiểm tra endDate
                 .SumAsync(o => o.Invoice.PaymentAmount ?? 0); // Cộng tổng PaymentAmount
 
             return Ok(new
@@ -983,6 +985,7 @@ namespace EHM_API.Controllers
                 TotalPaymentAmount = totalPaymentAmount
             });
         }
+
 
     }
 }
