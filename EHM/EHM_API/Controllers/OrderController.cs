@@ -683,14 +683,18 @@ namespace EHM_API.Controllers
 
 
         [HttpGet("orders/status/{status}/staff/{staffId}")]
-        public async Task<ActionResult<IEnumerable<OrderDetailForStaffType1>>> GetOrdersByStatusAndAccountId(int status, int staffId)
+        public async Task<ActionResult<OrderResponseDTO>> GetOrdersByStatusAndAccountId(int status, int staffId)
         {
-            var orders = await _orderService.GetOrdersByStatusAndAccountIdAsync(status, staffId);
-            if (orders == null || !orders.Any())
+            var result = await _orderService.GetOrdersByStatusAndAccountIdAsync(status, staffId);
+
+            // Kiểm tra nếu không có đơn hàng nào
+            if (result.OrderDetails == null || !result.OrderDetails.Any())
             {
                 return NotFound();
             }
-            return Ok(orders);
+
+            // Trả về kết quả
+            return Ok(result);
         }
 
 
@@ -962,5 +966,26 @@ namespace EHM_API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("total-payment-amount")]
+        public async Task<IActionResult> GetTotalPaymentAmount(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            // Lấy tất cả các đơn hàng có các điều kiện đã chỉ định
+            var totalPaymentAmount = await _context.Orders
+                .Include(o => o.Invoice) // Include Invoice để có thông tin về PaymentAmount
+                .Where(o => o.Status == 4 &&          // Order status = 4
+                            o.Type == 2 &&            // Type của Order = 2
+                            o.Invoice.PaymentStatus == 1 && // Payment status = 1
+                            o.Invoice.PaymentMethods == 1) // Payment method = 1
+                .Where(o => !startDate.HasValue || o.Invoice.PaymentTime >= startDate) // Kiểm tra startDate
+                .Where(o => !endDate.HasValue || o.Invoice.PaymentTime <= endDate) // Kiểm tra endDate
+                .SumAsync(o => o.Invoice.PaymentAmount ?? 0); // Cộng tổng PaymentAmount
+
+            return Ok(new
+            {
+                TotalPaymentAmount = totalPaymentAmount
+            });
+        }
+
+
     }
 }

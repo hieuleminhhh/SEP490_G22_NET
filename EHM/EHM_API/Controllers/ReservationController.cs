@@ -439,6 +439,8 @@ namespace EHM_API.Controllers
                 .ThenInclude(a => a.GuestPhoneNavigation) // Include GuestPhoneNavigation để lấy thông tin từ Guest
                 .Include(r => r.Account) // Include Account để lấy thông tin từ Account
                 .Include(r => r.Order) // Include Order để lấy thông tin từ Order
+                .Include(r => r.TableReservations) // Include TableReservations để lấy thông tin từ TableReservation
+                    .ThenInclude(tr => tr.Table) // Include Table để lấy thông tin từ Table
                 .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
 
             if (reservation == null)
@@ -448,22 +450,29 @@ namespace EHM_API.Controllers
 
             // Lấy thông tin từ Reservation và Address
             var guestPhone = reservation.Address.GuestPhone;
-           
 
             // Lấy thông tin email từ Guest thông qua GuestPhone
             var guest = reservation.Address.GuestPhoneNavigation;
-          
+
             // Lấy ConsigneeName từ Address
             var consigneeNameFromAddress = reservation.Address?.ConsigneeName;
 
             // Lấy thông tin từ Order
             var orderId = reservation.OrderId;
             var order = reservation.Order;
-           
 
             // Lấy thông tin từ Setting
             var setting = await _context.Settings.FirstOrDefaultAsync(); // Lấy thông tin đầu tiên từ Setting
-           
+
+            // Lấy thông tin bảng từ TableReservations
+            var tablesInfo = reservation.TableReservations.Select(tr => new
+            {
+                tableId = tr.Table.TableId,
+                status = tr.Table.Status,
+                capacity = tr.Table.Capacity,
+                floor = tr.Table.Floor,
+                label = tr.Table.Lable
+            }).ToList();
 
             // Trả về kết quả bao gồm các trường mới
             return Ok(new
@@ -472,7 +481,7 @@ namespace EHM_API.Controllers
                 reservationTime = reservation.ReservationTime,
                 guestNumber = reservation.GuestNumber,
                 orderId = reservation.OrderId,
-                guestPhone = guestPhone, 
+                guestPhone = guestPhone,
                 consigneeName = consigneeNameFromAddress,
                 email = guest.Email,
                 eateryName = setting.EateryName,
@@ -483,9 +492,11 @@ namespace EHM_API.Controllers
                 closeTime = setting.CloseTime,
                 qrcode = setting.Qrcode,
                 logo = setting.Logo,
-                linkContact = setting.LinkContact
+                linkContact = setting.LinkContact,
+                tables = tablesInfo // Thêm thông tin bảng vào kết quả trả về
             });
         }
+
 
     }
 }

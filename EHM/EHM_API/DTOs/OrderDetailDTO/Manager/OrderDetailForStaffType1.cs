@@ -23,6 +23,7 @@
         public int? CollectedBy { get; set; }
         public int? AcceptBy { get; set; }
         public DateTime? RefundDate { get; set; }
+        public bool IsCollected { get; set; }
         public virtual ICollection<ItemInOrderDetail> ItemInOrderDetails { get; set; }
     }
 }
