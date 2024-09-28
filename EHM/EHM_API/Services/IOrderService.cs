@@ -49,7 +49,7 @@ namespace EHM_API.Services
         Task<CancelationReasonDTO?> UpdateCancelationReasonAsync(int orderId, CancelationReasonDTO? cancelationReasonDTO);
 		Task AcceptOrderAsync(int orderId, AcceptOrderDTO acceptOrderDto);
         Task<OrderAccountDTO?> UpdateAccountIdAsync(int orderId, UpdateOrderAccountDTO updateOrderAccountDTO);
-        Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int accountId);
+        Task<OrderResponseDTO> GetOrdersByStatusAndAccountIdAsync(int status, int staffId);
         Task<Order> UpdateForOrderStatusAsync(int orderId, int status);
         Task<List<OrderStatisticsDTO>> GetOrderStatisticsAsync(DateTime? startDate, DateTime? endDate, int? collectedById);
         Task<IEnumerable<CategorySalesDTO>> GetSalesByCategoryAsync(DateTime? startDate, DateTime? endDate);
@@ -61,6 +61,6 @@ namespace EHM_API.Services
         Task<bool> UpdateStaffByOrderIdAsync(UpdateStaffDTO updateStaffDTO);
         Task<List<OrderDetailWithStaffDTO>> GetOrdersWithStatus8Async();
         Task<bool> UpdateAcceptByAsync(UpdateAcceptByDTO dto);
-        Task<List<CashierReportDTO>> GetCashierReportAsync(DateTime? startDate, DateTime? endDate);
+        Task<List<CashierReportDTO>> GetCashierReportAsync(DateTime? startDate, DateTime? endDate, int? collectedById);
     }
 }

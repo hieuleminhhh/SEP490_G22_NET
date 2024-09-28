@@ -62,10 +62,8 @@ namespace EHM_API.Services
                 return null;
             }
 
-            // Kết hợp chi tiết order
-            var combinedOrderDetails = CombineOrderDetails(order.OrderDetails);
+            // Map dữ liệu order sang DTO
             var orderDto = _mapper.Map<OrderDTOAll>(order);
-            orderDto.OrderDetails = _mapper.Map<IEnumerable<OrderDetailDTO>>(combinedOrderDetails);
 
             // Lấy thông tin Staff (nếu có)
             if (order.StaffId.HasValue)
@@ -94,11 +92,24 @@ namespace EHM_API.Services
             // Xử lý nếu là loại order có Reservation
             if (order.Type == 3 && order.Reservations != null && order.Reservations.Any())
             {
-                orderDto.Reservation = _mapper.Map<ReservationDTOByOrderId>(order.Reservations.First());
+                var reservation = order.Reservations.First();
+                var reservationDto = _mapper.Map<ReservationDTOByOrderId>(reservation);
+
+                // Lấy thông tin TableOfReservation từ TableReservation
+                var tableReservations = await _context.TableReservations
+                    .Where(tr => tr.ReservationId == reservation.ReservationId)
+                    .Include(tr => tr.Table)  // Bao gồm thông tin về Table
+                    .ToListAsync();
+
+                // Sử dụng AutoMapper để ánh xạ các TableReservation sang TableOfReservationDTO
+                reservationDto.TablesOfReservation = _mapper.Map<IEnumerable<TableOfReservationDTO>>(tableReservations);
+
+                orderDto.Reservation = reservationDto;
             }
 
             return orderDto;
         }
+
 
 
 
@@ -526,15 +537,7 @@ namespace EHM_API.Services
 			}
 
 
-			if (order.AccountId.HasValue)
-			{
-				invoice.AccountId = order.AccountId;
-			}
-			else
-			{
-				invoice.AccountId = null;
-			}
-
+		
 			invoice.PaymentTime = DateTime.Now;
 			invoice.PaymentStatus = order.Deposits > 0 ? 1 : 0;
 
@@ -566,12 +569,33 @@ namespace EHM_API.Services
 
 			return _mapper.Map<OrderAccountDTO>(order);
 		}
-		public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
-		{
-			var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, staffId);
-			return _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
-		}
-		public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
+        public async Task<OrderResponseDTO> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
+        {
+            var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, staffId);
+
+            // Map dữ liệu sang DTO
+            var orderDetails = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
+
+            // Khai báo biến để lưu tổng PaymentAmount
+            decimal totalPaymentAmount = 0;
+
+            // Tính tổng PaymentAmount nếu status = 4 và có CollectedBy
+            if (status == 4)
+            {
+                totalPaymentAmount = orders
+                    .Where(o => o.CollectedBy != null && o.Invoice != null)
+                    .Sum(o => o.Invoice.PaymentAmount ?? 0);
+            }
+
+            // Trả về đối tượng chứa cả danh sách orderDetails và tổng PaymentAmount
+            return new OrderResponseDTO
+            {
+                OrderDetails = orderDetails,
+                TotalPaymentAmount = totalPaymentAmount
+            };
+        }
+
+        public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
 		{
 			var order = await _orderRepository.UpdateOrderStatusAsync(orderId, status);
 			return order;
@@ -699,7 +723,8 @@ namespace EHM_API.Services
                 CloseTime = setting?.CloseTime,
                 Qrcode = setting?.Qrcode,
                 Logo = setting?.Logo,
-                LinkContact = setting?.LinkContact
+                LinkContact = setting?.LinkContact,
+                ShipTime = order?.ShipTime
             };
 
             return orderEmailDto;
@@ -772,75 +797,134 @@ namespace EHM_API.Services
         {
             return await _orderRepository.UpdateAcceptByAsync(dto);
         }
-        public async Task<List<CashierReportDTO>> GetCashierReportAsync(DateTime? startDate, DateTime? endDate)
+        public async Task<List<CashierReportDTO>> GetCashierReportAsync(DateTime? startDate, DateTime? endDate, int? collectedById)
         {
             // Đặt giá trị endDate là ngày hiện tại nếu không được cung cấp
-            endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today ? endDate.Value.Date : DateTime.Today;
+            endDate = endDate.HasValue && endDate.Value.Date <= DateTime.Today
+                ? endDate.Value.Date
+                : DateTime.Today;
 
             // Lấy danh sách tất cả các Cashier
             var cashiersQuery = _context.Accounts
                 .Where(a => a.Role == "cashier" && a.IsActive == true);
 
+            // Nếu có collectedById, kiểm tra tài khoản có phải là Cashier không
+            if (collectedById.HasValue)
+            {
+                var cashierAccount = await cashiersQuery.FirstOrDefaultAsync(a => a.AccountId == collectedById);
+
+                // Nếu không phải là Cashier, chỉ truy vấn theo collectedById
+                if (cashierAccount == null)
+                {
+                    var ordersByCollectedBy = await _context.Orders
+                        .Where(o => o.CollectedBy == collectedById &&
+                                    o.Status == 4 &&
+                                    o.Invoice.PaymentStatus == 1 &&
+                                    o.Invoice.PaymentTime.HasValue &&
+                                    (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
+                                    o.Invoice.PaymentTime.Value.Date <= endDate)
+                        .Include(o => o.Invoice)
+                        .Include(o => o.Collected)  // Include cho Account (CollectedBy)
+                        .ToListAsync();
+
+                    // Nếu không có đơn hàng nào
+                    if (ordersByCollectedBy.Count == 0)
+                    {
+                        return new List<CashierReportDTO>();
+                    }
+
+                    var collectedByOrders = ordersByCollectedBy.First().Collected;
+
+                    // Trả về thống kê cho cashier
+                    return new List<CashierReportDTO>
+            {
+                new CashierReportDTO
+                {
+                    CashierId = collectedByOrders.AccountId,
+                    FirstName = collectedByOrders.FirstName,
+                    LastName = collectedByOrders.LastName,
+                    ShipOrderCount = ordersByCollectedBy.Count(o => o.Type == 2),
+                    DineInOrderCount = ordersByCollectedBy.Count(o => o.Type == 3 || o.Type == 4),
+                    TakeawayOrderCount = ordersByCollectedBy.Count(o => o.Type == 1),
+                    RefundOrderCount = 0,  // Đơn hoàn tiền không cần tính ở đây
+                    Revenue = ordersByCollectedBy.Sum(o => o.Invoice.PaymentAmount ?? 0),
+                    TotalCashToSubmit = ordersByCollectedBy.Where(o => o.Invoice.PaymentMethods == 0).Sum(o => o.Invoice.PaymentAmount ?? 0),
+                    ListOrder = ordersByCollectedBy.Select(o => new OrderReportDTO
+                    {
+                        OrderId = o.OrderId,
+                        OrderDate = o.OrderDate,
+                        Status = o.Status,
+                       TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
+                        GuestPhone = o.GuestPhone,
+                        Deposits = o.Deposits,
+                        Note = o.Note,
+                        Type = o.Type,
+                        IsRefundOrder = false
+                    }).ToList()
+                }
+            };
+                }
+
+                // Nếu có cashier, lọc theo AccountId đã chỉ định
+                cashiersQuery = cashiersQuery.Where(a => a.AccountId == collectedById);
+            }
+
             var cashiers = await cashiersQuery.ToListAsync();
 
-            // Bắt đầu truy vấn cho Orders (IQueryable)
+            // Bắt đầu truy vấn cho Orders
             var ordersQuery = _context.Orders
-                .Where(o => o.Status == 4 && o.Invoice.PaymentStatus == 1 && o.Invoice.PaymentTime.HasValue &&
+                .Where(o => o.Status == 4 &&
+                            o.Invoice.PaymentStatus == 1 &&
+                            o.Invoice.PaymentTime.HasValue &&
                             (!startDate.HasValue || o.Invoice.PaymentTime.Value.Date >= startDate.Value.Date) &&
                             o.Invoice.PaymentTime.Value.Date <= endDate)
                 .Include(o => o.Invoice)
-                .Include(o => o.Collected); // Include cho Account (CollectedBy)
+                .Include(o => o.Collected)  // Include cho Account (CollectedBy)
+                .Include(o => o.Invoice.Account);  // Include Account đặt đơn từ Invoice
 
-            var refundOrdersQuery = _context.Orders
-                .Where(o => o.Status == 8 && o.Staff != null && o.Staff.Role == "cashier");
-
-            // Truy xuất danh sách Orders và Refund Orders
             var orders = await ordersQuery.ToListAsync();
+
+            // Truy vấn cho Refund Orders
+            var refundOrdersQuery = _context.Orders
+                .Where(o => o.Status == 8 && o.Staff != null && o.Staff.Role == "cashier")
+                .Include(o => o.Invoice)
+                .Include(o => o.Staff); // Include cho Staff (người xử lý đơn hoàn tiền)
+
             var refundOrders = await refundOrdersQuery.ToListAsync();
 
-            // Kết hợp Cashiers với Orders, đảm bảo rằng tất cả các Cashier đều được bao gồm
             var cashierOrderGroups = cashiers.GroupJoin(
                 orders,
                 cashier => cashier.AccountId,
-                order => order.CollectedBy,
+                order => order.CollectedBy ?? order.Invoice.AccountId,
                 (cashier, ordersGroup) => new { Cashier = cashier, Orders = ordersGroup }
             );
 
             var statistics = new List<CashierReportDTO>();
 
-            // Duyệt qua từng Cashier và tính toán thống kê
             foreach (var group in cashierOrderGroups)
             {
                 var cashier = group.Cashier;
-                var ordersForCashier = group.Orders.ToList();
+                var ordersForCashier = group.Orders;
 
-                // Đếm các loại đơn hàng
+                // Tính toán thống kê cho đơn hàng thông thường
                 int shipOrderCount = ordersForCashier.Count(o => o.Type == 2);
                 int dineInOrderCount = ordersForCashier.Count(o => o.Type == 3 || o.Type == 4);
                 int takeawayOrderCount = ordersForCashier.Count(o => o.Type == 1);
+                decimal totalRevenue = ordersForCashier.Sum(o => o.Invoice.PaymentAmount ?? 0);
+                decimal totalCashToSubmit = ordersForCashier.Where(o => o.Invoice.PaymentMethods == 0).Sum(o => o.Invoice.PaymentAmount ?? 0);
 
-                // Doanh thu (Revenue)
-                decimal totalRevenue = ordersForCashier.Sum(o => o.Invoice?.PaymentAmount ?? 0);
-
-                decimal totalCashToSubmit = ordersForCashier
-                    .Where(o => o.Invoice.PaymentStatus == 1 && o.Status == 4 && o.Invoice.PaymentMethods == 0)
-                    .Sum(o => o.Invoice.PaymentAmount ?? 0);
-
-                // Số lượng đơn hoàn tiền
+                // Tính toán cho đơn hoàn tiền
                 var refundOrdersForCashier = refundOrders.Where(o => o.Staff?.AccountId == cashier.AccountId).ToList();
                 int refundOrderCount = refundOrdersForCashier.Count;
                 decimal totalRefunds = refundOrdersForCashier.Sum(o => o.Deposits ?? 0);
 
-                // Tổng số lượng đơn hoàn thành
-                int completedOrderCount = ordersForCashier.Count();
-
-                // Chuyển đổi danh sách đơn hàng và đơn hoàn tiền sang OrderDTO
+                // Gộp danh sách đơn hàng và đơn hoàn tiền
                 var orderDTOs = ordersForCashier.Select(o => new OrderReportDTO
                 {
                     OrderId = o.OrderId,
                     OrderDate = o.OrderDate,
                     Status = o.Status,
-                    TotalAmount = o.TotalAmount,
+                    TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                     GuestPhone = o.GuestPhone,
                     Deposits = o.Deposits,
                     Note = o.Note,
@@ -853,7 +937,7 @@ namespace EHM_API.Services
                     OrderId = o.OrderId,
                     OrderDate = o.OrderDate,
                     Status = o.Status,
-                    TotalAmount = o.TotalAmount,
+                    TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                     GuestPhone = o.GuestPhone,
                     Deposits = o.Deposits,
                     Note = o.Note,
@@ -876,7 +960,6 @@ namespace EHM_API.Services
                     RefundOrderCount = refundOrderCount,
                     Revenue = totalRevenue,
                     TotalRefunds = totalRefunds,
-                    CompletedOrderCount = completedOrderCount,
                     TotalCashToSubmit = totalCashToSubmit,
                     ListOrder = allOrders // Gộp cả đơn hàng và đơn hoàn tiền
                 });
