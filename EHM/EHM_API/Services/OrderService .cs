@@ -569,31 +569,25 @@ namespace EHM_API.Services
 
 			return _mapper.Map<OrderAccountDTO>(order);
 		}
-        public async Task<OrderResponseDTO> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
+        public async Task<IEnumerable<OrderDetailForStaffType1>> GetOrdersByStatusAndAccountIdAsync(int status, int staffId)
         {
             var orders = await _orderRepository.GetOrdersByStatusAndAccountIdAsync(status, staffId);
 
-            // Map dữ liệu sang DTO
-            var orderDetails = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders);
+            // Ánh xạ các đơn hàng sang DTO
+            var orderDetails = _mapper.Map<IEnumerable<OrderDetailForStaffType1>>(orders).ToList();
 
-            // Khai báo biến để lưu tổng PaymentAmount
-            decimal totalPaymentAmount = 0;
-
-            // Tính tổng PaymentAmount nếu status = 4 và có CollectedBy
-            if (status == 4)
+            // Kiểm tra và cập nhật thuộc tính IsCollected cho từng OrderDetail
+            foreach (var orderDetail in orderDetails)
             {
-                totalPaymentAmount = orders
-                    .Where(o => o.CollectedBy != null && o.Invoice != null)
-                    .Sum(o => o.Invoice.PaymentAmount ?? 0);
+                // Kiểm tra nếu CollectedBy có tồn tại và không phải là null
+                orderDetail.IsCollected = orderDetail.CollectedBy != null && orderDetail.CollectedBy > 0;
             }
 
-            // Trả về đối tượng chứa cả danh sách orderDetails và tổng PaymentAmount
-            return new OrderResponseDTO
-            {
-                OrderDetails = orderDetails,
-                TotalPaymentAmount = totalPaymentAmount
-            };
+            return orderDetails; // Trả về danh sách OrderDetail đã được cập nhật
         }
+
+
+
 
         public async Task<Order> UpdateForOrderStatusAsync(int orderId, int status)
 		{
@@ -847,6 +841,7 @@ namespace EHM_API.Services
                     DineInOrderCount = ordersByCollectedBy.Count(o => o.Type == 3 || o.Type == 4),
                     TakeawayOrderCount = ordersByCollectedBy.Count(o => o.Type == 1),
                     RefundOrderCount = 0,  // Đơn hoàn tiền không cần tính ở đây
+                    CompletedOrderCount = ordersByCollectedBy.Count(o => o.Type == 1 || o.Type == 2 || o.Type == 3 || o.Type == 4), // Tổng đơn hàng hoàn thành
                     Revenue = ordersByCollectedBy.Sum(o => o.Invoice.PaymentAmount ?? 0),
                     TotalCashToSubmit = ordersByCollectedBy.Where(o => o.Invoice.PaymentMethods == 0).Sum(o => o.Invoice.PaymentAmount ?? 0),
                     ListOrder = ordersByCollectedBy.Select(o => new OrderReportDTO
@@ -854,7 +849,7 @@ namespace EHM_API.Services
                         OrderId = o.OrderId,
                         OrderDate = o.OrderDate,
                         Status = o.Status,
-                       TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
+                        TotalAmount = (o.TotalAmount ?? 0) - ((o.TotalAmount ?? 0) * (o.Discount?.DiscountPercent ?? 0) / 100),
                         GuestPhone = o.GuestPhone,
                         Deposits = o.Deposits,
                         Note = o.Note,
@@ -886,7 +881,9 @@ namespace EHM_API.Services
 
             // Truy vấn cho Refund Orders
             var refundOrdersQuery = _context.Orders
-                .Where(o => o.Status == 8 && o.Staff != null && o.Staff.Role == "cashier")
+                .Where(o => o.Status == 8 && o.Staff != null && o.Staff.Role == "cashier" &&
+                            (!startDate.HasValue || o.RefundDate.HasValue && o.RefundDate.Value.Date >= startDate.Value.Date) &&
+                            (!endDate.HasValue || o.RefundDate.HasValue && o.RefundDate.Value.Date <= endDate))
                 .Include(o => o.Invoice)
                 .Include(o => o.Staff); // Include cho Staff (người xử lý đơn hoàn tiền)
 
@@ -910,6 +907,7 @@ namespace EHM_API.Services
                 int shipOrderCount = ordersForCashier.Count(o => o.Type == 2);
                 int dineInOrderCount = ordersForCashier.Count(o => o.Type == 3 || o.Type == 4);
                 int takeawayOrderCount = ordersForCashier.Count(o => o.Type == 1);
+                int completedOrderCount = shipOrderCount + dineInOrderCount + takeawayOrderCount; // Tổng số đơn hàng hoàn thành
                 decimal totalRevenue = ordersForCashier.Sum(o => o.Invoice.PaymentAmount ?? 0);
                 decimal totalCashToSubmit = ordersForCashier.Where(o => o.Invoice.PaymentMethods == 0).Sum(o => o.Invoice.PaymentAmount ?? 0);
 
@@ -958,6 +956,7 @@ namespace EHM_API.Services
                     DineInOrderCount = dineInOrderCount,
                     TakeawayOrderCount = takeawayOrderCount,
                     RefundOrderCount = refundOrderCount,
+                    CompletedOrderCount = completedOrderCount, // Sử dụng tổng số đơn hàng hoàn thành
                     Revenue = totalRevenue,
                     TotalRefunds = totalRefunds,
                     TotalCashToSubmit = totalCashToSubmit,
