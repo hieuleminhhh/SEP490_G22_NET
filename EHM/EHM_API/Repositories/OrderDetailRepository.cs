@@ -209,6 +209,7 @@ namespace EHM_API.Repositories
             return await _context.OrderDetails
                 .Include(od => od.Order)
                 .ThenInclude(od => od.OrderTables)
+                 .ThenInclude(ot => ot.Table)
                 .Include(od => od.Dish)
                 .Include(od => od.Combo)  
                 .Where(od => (od.Dish.ItemName.Contains(keyword) || od.Combo.NameCombo.Contains(keyword))

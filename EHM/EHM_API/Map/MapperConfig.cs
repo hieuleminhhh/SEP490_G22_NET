@@ -658,12 +658,17 @@ namespace EHM_API.Map
                .ForMember(dest => dest.Dishes, opt => opt.MapFrom(src => src.Dishes));
 
             CreateMap<OrderDetail, OrderDetailForStaff>()
-                .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
-                .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo))
-                .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.Order.Type))
-                .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.Order.OrderDate))
-                .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Order.OrderTables.FirstOrDefault().TableId))
-                .ForMember(dest => dest.QuantityRequired, opt => opt.MapFrom(src => src.Quantity - src.DishesServed));
+       .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Dish.ItemName))
+       .ForMember(dest => dest.ComboName, opt => opt.MapFrom(src => src.Combo.NameCombo))
+       .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.Order.Type))
+       .ForMember(dest => dest.OrderTime, opt => opt.MapFrom(src => src.Order.OrderDate))
+       .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.Order.OrderTables.FirstOrDefault().TableId))
+       .ForMember(dest => dest.QuantityRequired, opt => opt.MapFrom(src => src.Quantity - src.DishesServed))
+       // Map for TableLabel from Table entity
+       .ForMember(dest => dest.TableLabel, opt => opt.MapFrom(src => src.Order.OrderTables.FirstOrDefault().Table.Lable))
+       // Map for Floor from Table entity
+       .ForMember(dest => dest.Floor, opt => opt.MapFrom(src => src.Order.OrderTables.FirstOrDefault().Table.Floor));
+
 
             CreateMap<Order, OrderDetailForStaffType1>()
                  .ForMember(dest => dest.OrderType, opt => opt.MapFrom(src => src.Type))

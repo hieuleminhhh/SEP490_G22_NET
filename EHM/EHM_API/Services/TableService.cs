@@ -196,29 +196,28 @@ namespace EHM_API.Services
                 throw new Exception($"Không có bàn nào ở tầng {currentFloor}");
             }
 
-            if (newFloor == null)
+            if (newFloor == "0") // Kiểm tra nếu newFloor là "0"
             {
-                // Nếu tầng mới là null hoặc 0, cập nhật Floor = null và Status = 2
+                // Nếu newFloor là 0, cập nhật Floor = null và Status = 2
                 foreach (var table in tables)
                 {
-                    table.Floor = null;
-                    table.Status = 2;
+                    table.Floor = null;   // Cập nhật Floor thành null
+                    table.Status = 2;     // Cập nhật trạng thái thành 2
                     _context.Tables.Update(table);
                 }
             }
             else
             {
-                // Nếu tầng mới khác null và khác 0, cập nhật tầng mới và giữ nguyên Status
+                // Nếu newFloor khác "0", cập nhật tầng mới
                 foreach (var table in tables)
                 {
-                    table.Floor = newFloor; // Loại bỏ .Value vì newFloor là kiểu int
+                    table.Floor = newFloor; // Cập nhật tầng mới
                     _context.Tables.Update(table);
                 }
             }
 
             await _context.SaveChangesAsync();
         }
-
         public IEnumerable<TableReservationAllDTO> GetTableReservationsByDate(DateTime reservationTime)
         {
             var reservations = _repository.GetByReservationTime(reservationTime);
