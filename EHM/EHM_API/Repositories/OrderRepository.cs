@@ -937,7 +937,7 @@ public class OrderRepository : IOrderRepository
 						OrderId = order.OrderId,
 						DishesServed = 0,
 						Note = detailDto.Note,
-						OrderTime = detailDto.OrderTime
+						OrderTime = DateTime.Now
 					};
 
 					_context.OrderDetails.Add(orderDetail);
