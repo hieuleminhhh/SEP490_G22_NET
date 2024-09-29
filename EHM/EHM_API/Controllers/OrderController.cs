@@ -965,20 +965,43 @@ namespace EHM_API.Controllers
         [HttpGet("total-payment-amount")]
         public async Task<IActionResult> GetTotalPaymentAmount(DateTime? startDate = null, DateTime? endDate = null)
         {
-            // Lấy tất cả các đơn hàng có các điều kiện đã chỉ định
-            var totalPaymentAmount = await _context.Orders
-                .Include(o => o.Invoice) // Include Invoice để có thông tin về PaymentAmount
-                .Where(o => o.Status == 4 &&          // Order status = 4
-                            o.Type == 2 &&            // Type của Order = 2
+            // Lấy tất cả các đơn hàng với các điều kiện đã chỉ định
+            var orders = await _context.Orders
+                .Include(o => o.Invoice)  // Include Invoice để có thông tin về PaymentAmount
+                .Include(o => o.Invoice.Account) // Include Account của Invoice để kiểm tra role
+                .Where(o => o.Status == 4 &&               // Order status = 4
+                            o.Type == 2 &&                 // Type của Order = 2
                             o.Invoice.PaymentStatus == 1 && // Payment status = 1
-                            o.Invoice.PaymentMethods == 1) // Payment method = 1
+                            o.Invoice.PaymentMethods == 1)  // Payment method = 1
                 .Where(o => !startDate.HasValue || o.Invoice.PaymentTime >= startDate) // Kiểm tra startDate
-                .Where(o => !endDate.HasValue || o.Invoice.PaymentTime <= endDate) // Kiểm tra endDate
-                .SumAsync(o => o.Invoice.PaymentAmount ?? 0); // Cộng tổng PaymentAmount
+                .Where(o => !endDate.HasValue || o.Invoice.PaymentTime <= endDate)     // Kiểm tra endDate
+                .Where(o => o.Invoice.Account.Role != "Cashier") // Thêm điều kiện lọc role khác "cashier"
+                .ToListAsync(); // Truy vấn danh sách đơn hàng
 
+            // Biến để lưu tổng số tiền thanh toán
+            decimal totalPaymentAmount = 0;
+
+            // Danh sách invoiceId để hiển thị
+            List<int> invoiceIds = new List<int>();
+
+            // Duyệt qua tất cả các đơn hàng và tính tổng PaymentAmount
+            foreach (var order in orders)
+            {
+                // Kiểm tra nếu PaymentAmount không null thì cộng vào tổng
+                if (order.Invoice.PaymentAmount.HasValue)
+                {
+                    totalPaymentAmount += order.Invoice.PaymentAmount.Value;
+
+                    // Thêm InvoiceId vào danh sách
+                    invoiceIds.Add(order.Invoice.InvoiceId);
+                }
+            }
+
+            // Trả về kết quả với tổng số tiền thanh toán và danh sách invoiceId
             return Ok(new
             {
-                TotalPaymentAmount = totalPaymentAmount
+                TotalPaymentAmount = totalPaymentAmount,
+                InvoiceIds = invoiceIds // Hiển thị danh sách InvoiceId
             });
         }
 
